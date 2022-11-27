@@ -1,5 +1,5 @@
 const BASE_URL = "http://localhost:8080"
-const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJiMDcyZTI4My05MjRlLTRhM2YtYjM2Mi0yYjQ1NzcwNDFlMDkiLCJpc3MiOiJwYW5ib28iLCJleHAiOjE2Njk1MTk5MTEsImlhdCI6MTY2ODkxNTExMSwidXNlcm5hbWUiOiJVc2VyMSJ9.us8FReyxldoGZ-06pVOiMOJLAetwvE5Li_N4c5EnZj7zTEbtL-MIEdBRWGomqEmUa9ub1zdzkO-rgD_1wGobHg"
+const TOKEN = localStorage.getItem('TOKEN')
 
 /**
  * 拉取时间线上的帖子
@@ -9,9 +9,9 @@ const TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJiMDcyZTI4My05MjRl
  */
 export function getTimeline(pageIndex, pageSize) {
     return fetch(`${BASE_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}`, {
-        method: 'Get',
+        method: 'GET',
         headers: {
-            "token": TOKEN,
+            'Authorization': TOKEN,
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -32,8 +32,8 @@ export function uploadFiles(files) {
 
         const xhr = new XMLHttpRequest()
         xhr.withCredentials = true;
-        xhr.open('Post', `${BASE_URL}/object/upload`, true)
-        xhr.setRequestHeader("token", TOKEN)
+        xhr.open('POST', `${BASE_URL}/object/upload`, true)
+        xhr.setRequestHeader('Authorization', TOKEN)
         xhr.onload = function () {
             if (xhr.status === 201) resolve(xhr.response)
             else reject(Error(xhr.response.error))
@@ -60,9 +60,9 @@ export function uploadFiles(files) {
  */
 export function posting(data) {
     return fetch(`${BASE_URL}/post`, {
-        method: 'Post',
+        method: 'POST',
         headers: {
-            "token": TOKEN,
+            'Authorization': TOKEN,
             'Content-Type': "application/json"
         },
         body: JSON.stringify(data),
@@ -71,18 +71,107 @@ export function posting(data) {
     })
 }
 
+// /**
+//  * 获取图片真实Url
+//  * @param {string} url 编码后Url
+//  * @returns 解码后Url
+//  */
+// export function getImgRealUrl(url){
+//     return fetch(`${BASE_URL}/object/preview/${url}`,{
+//         method:'Get',
+//         headers:{
+//             token:TOKEN,
+//         },
+//         redirect:'follow',
+//         credentials:'same-origin'
+//     })
+// }
+
 /**
- * 获取图片真实Url
- * @param {string} url 编码后Url
- * @returns 解码后Url
+ * 对帖子点赞
+ * @param {string} postId 待点赞帖子id
+ * @returns 点赞结果
  */
-export function getImgRealUrl(url){
-    return fetch(`${BASE_URL}/object/preview/${url}`,{
-        method:'Get',
-        headers:{
-            token:TOKEN,
+export function likeAPost(postId) {
+    return fetch(`${BASE_URL}/post/like/${postId}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': TOKEN,
         },
-        redirect:'follow',
-        credentials:'same-origin'
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 对帖子取消点赞
+ * @param {string} postId 待取消点赞帖子id
+ * @returns 取消点赞结果
+ */
+export function dislikeAPost(postId) {
+    return fetch(`${BASE_URL}/post/like/${postId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 用户登录
+ * @param {string} nickname 用户名
+ * @param {string} password 密码
+ * @returns 登录结果
+ */
+export function login(nickname, password) {
+    return fetch(`${BASE_URL}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify({
+            'username': nickname,
+            'password': password
+        }),
+        headers: {
+            'Content-Type': "application/json"
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 获取公钥
+ * @returns 公钥
+ */
+export function getPublicKey() {
+    return fetch(`${BASE_URL}/auth/publicKey`, {
+        method: 'GET',
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 用户注册
+ * @param {string} nickname 用户名
+ * @param {string} password 密码
+ * @param {string} avatarUrl 头像路径
+ * @returns 注册结果
+ */
+export function register(nickname, password, avatarUrl) {
+    return fetch(`${BASE_URL}/auth/register`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            'nickname': nickname,
+            'password': password,
+            'avatarUrl': avatarUrl
+        }),
+        headers: {
+            'Content-Type': "application/json"
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+
     })
 }

@@ -68,54 +68,47 @@ export default {
             imgList: [],
             imgUrls: [],
             isLoading: false,
-            result: ""
+            result: "",
+            data: {
+                "content": "",
+                "top": false,
+                "attachmentsUrl": []
+            }
         }
     },
     methods: {
-        submitPost() {
+        async submitPost() {
             const imgFileSelector = document.getElementById("imgFile")
             this.imgList = imgFileSelector.files;
 
-            if (this.content.length == 0) return
-            this.isLoading = true
+            try {
+                if (this.content.length == 0) throw new Error("文字内容不能为空！")
 
-            const data = {
-                "content": this.content,
-                "top": false,
-                "attachmentsUrl": [],
-                "userId": "b072e283-924e-4a3f-b362-2b4577041e09"
-            }
+                this.isLoading = true
+                this.data.content = this.content
 
-            if (this.imgList.length > 0) {
-                uploadFiles(this.imgList).then(response => {
-                    console.log(JSON.parse(response))
-                    data.attachmentsUrl = JSON.parse(response)
-                    return posting(data)
-                }).then(response => {
-                    this.result = response.json()
-                    this.content = ""
-                    this.imgList = []
-                    this.$emit('getData')
-                }).catch(err => {
-                    this.store.setMsg(err.message)
-                    console.error(err)
-                }).finally(() => {
-                    this.isLoading = false
-                })
-            } else {
-                posting(data).then(response => {
-                    this.result = response.json()
-                    this.content = ""
-                    this.imgList = []
-                    this.$emit('getData')
-                }).catch(err => {
-                    this.store.setMsg(err.message)
-                    console.error(err)
-                }).finally(() => {
-                    this.isLoading = false
-                })
+                if (this.imgList.length > 0) {
+                    const response = await uploadFiles(this.imgList)
+                    //if (!response.ok) throw new Error(response)
+                    this.data.attachmentsUrl = JSON.parse(response)
+                }
+
+                const response = await posting(this.data)
+                if (!response.ok) throw new Error(await response.text())
+                this.result = await response.json()
+
+                //防止重复提交上一次的内容
+                this.content = ""
+                this.imgList = []
+
+                // 发布完成后刷新页面
+                location.reload()
+            } catch (err) {
+                this.store.setMsg(err.message)
+                console.error(err)
+            } finally {
+                this.isLoading = false
             }
-            console.log(data)
 
         },
 

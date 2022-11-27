@@ -1,6 +1,5 @@
 <script setup>
 import Header from './components/bootstrap/Header.vue'
-import PostsTimeLine from './components/bootstrap/PostsTimeLine.vue'
 import GlobalBanner from './components/bootstrap/GlobalBanner.vue'
 import UserProfileOffCanvas from './components/bootstrap/UserProfileOffCanvas.vue'
 import Sidebar from './components/bootstrap/Sidebar.vue'
@@ -8,6 +7,7 @@ import RecommendUserCard from './components/bootstrap/RecommendUserCard.vue'
 import GlobalRefresh from './components/tailwind/GlobalRefresh.vue'
 import GlobalTipDialog from './components/tailwind/GlobalTipDialog.vue'
 import ImageSlide from './components/bootstrap/ImageSlide.vue'
+
 </script>
 
 <template>

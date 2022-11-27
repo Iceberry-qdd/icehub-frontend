@@ -5,7 +5,7 @@
         </button>
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(this.post.user.id)">
-                <img class="avatar img-fluid" :src="this.post.user.avatarUrl" width="40" height="40">
+                <img class="avatar img-fluid" loading="lazy" :src="defaultAvatar" width="40" height="40">
                 <i class="bi bi-patch-check-fill verify" v-if="this.post.user.verified"></i>
             </a>
             <div class="user-text">
@@ -19,8 +19,8 @@
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div class="row row-cols-3 gy-1 gx-1">
-                <div class="col" v-for="(pic,idx) in this.post.attachmentsUrl">
-                    <img @click="showSlide(post.attachmentsUrl,idx)" class="pic img-fluid" :src="pic">
+                <div class="col" v-for="(pic, idx) in this.post.attachmentsUrl">
+                    <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid" :src="pic">
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                 {{ this.post.reviewCount }}
             </button>
             <button type="button" class="btn op" @click="toggleLike">
-                <i class="bi bi-heart" v-if="!reaction[2]"></i>
+                <i class="bi bi-heart" v-if="!isLiked"></i>
                 <i class="bi bi-heart-fill" style="color: red;" v-else></i>
                 {{ this.post.likeCount }}
             </button>
@@ -107,7 +107,7 @@
 }
 
 .pic {
-    width: 8rem; 
+    width: 8rem;
     height: 8rem;
     border-radius: 4px;
     object-fit: cover;
@@ -135,15 +135,13 @@
 </style>
 
 <script>
-import { getImgRealUrl } from '../../api'
+import { likeAPost, dislikeAPost } from '../../api'
 import { store } from '../../store'
-
-//import { Alert, Toast } from 'bootstrap';
 export default {
     props: ['post'],
     data() {
         return {
-            reaction: [false, false, false],
+            reaction: [false, this.post.liked, false],
             store
         }
     },
@@ -154,11 +152,35 @@ export default {
             store.changeSelectUid(uid)
             //store.setMsg(uid)
         },
-        toggleLike() {
-            const lastState = this.reaction[2]
-            const lastCount = this.post.likeCount
-            this.reaction[2] = !lastState
-            this.post.likeCount = this.reaction[2] ? lastCount + 1 : lastCount - 1
+        async toggleLike() {
+            try {
+                if (this.post.liked == false) {
+                    const response = await likeAPost(this.post.id)
+                    if (!response.ok) throw new Error(await response.text())
+
+                    const result = await response.text()
+                    if (result == false) throw new Error("点赞失败!")
+
+                    const lastCount = this.post.likeCount
+                    this.post.likeCount = lastCount + 1
+                    this.post.liked = true
+                } else {
+                    const response = await dislikeAPost(this.post.id)
+                    if (!response.ok) throw new Error(await response.text())
+
+                    const result = await response.text()
+                    if (result == false) throw new Error("取消点赞失败!")
+
+                    const lastCount = this.post.likeCount
+                    this.post.likeCount = lastCount - 1
+                    this.post.liked = false
+                }
+            } catch (e) {
+                this.store.setMsg(e.message)
+                console.error(e)
+            }
+
+
         },
         toggleReview() {
             const lastState = this.reaction[1]
@@ -168,18 +190,27 @@ export default {
             const lastState = this.reaction[0]
             this.reaction[0] = !lastState
         },
-        showSlide(urls,idx){
-            console.log("img clicked!")
-            document.querySelector("body").setAttribute("style","overflow:hidden")
-            this.store.showSlide(urls,idx)
+        showSlide(urls, idx) {
+            document.querySelector("body").setAttribute("style", "overflow:hidden")
+            this.store.showSlide(urls, idx)
         }
     },
     computed: {
+        defaultAvatar() {
+            if (this.post.user.avatarUrl == null) {
+                return `https://api.multiavatar.com/${this.post.user.nickname}.svg`
+            } else {
+                return this.post.user.avatarUrl
+            }
+        },
         hasPics() {
             return this.post.attachmentsUrl.length != 0
         },
         hasTags() {
             return this.post.tags != undefined && this.post.tags.length != 0
+        },
+        isLiked() {
+            return this.post.liked
         },
         formattedTime() {
             let now = new Date()
@@ -210,6 +241,8 @@ export default {
             }
             return postTime
         }
+    },
+    created() {
     }
 }
 </script>

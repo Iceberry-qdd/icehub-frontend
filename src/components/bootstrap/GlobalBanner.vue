@@ -13,6 +13,11 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
+.btn-close:focus {
+    outline: none;
+    box-shadow: none;
+}
+
 .v-enter-active {
     animation: slide-in-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
@@ -52,7 +57,6 @@
     z-index: 100;
     left: 0;
     right: 0;
-    height: 6rem;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -65,7 +69,15 @@
 .alert {
     margin: 0;
     min-width: 25rem;
+    max-width: 48rem;
     pointer-events: all;
+
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
 }
 </style>
 
@@ -84,11 +96,6 @@ export default {
         }
     },
     watch: {
-        // hasError(newVal,oldVal){
-        //     if(newVal==true){
-        //         console.log(this.store.GLOBAL_MSG)
-        //     }
-        // }
     },
     computed: {
         hasError() {
