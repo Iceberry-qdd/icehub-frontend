@@ -175,3 +175,34 @@ export function register(nickname, password, avatarUrl) {
 
     })
 }
+
+/**
+ * 获取当前用户信息
+ * @returns 当前用户信息
+ */
+export function getCurUserInfo() {
+    return fetch(`${BASE_URL}/curUser`, {
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 根据id获取用户信息
+ * @param {string} id 待查询用户id
+ * @returns 用户信息
+ */
+export function getUserInfoById(id) {
+    return fetch(`${BASE_URL}/user/${id}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}

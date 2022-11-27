@@ -101,21 +101,21 @@ export default {
         return {
             users: [
                 { 
-                    "avatar": "../src/assets/avatar.jpg",
+                    "avatar":"https://api.multiavatar.com/Iceberry.svg",
                     "verified":true,
                     "nickname":"Iceberry",
                     "brief":"国家剧团作家，做有《家有儿女》等"
                 },
                 { 
-                    "avatar": "../src/assets/avatar.jpg",
+                    "avatar":"https://api.multiavatar.com/Iceberryss.svg",
                     "verified":true,
                     "nickname":"Iceberry新一轮较强冷空气将影响中国中东部大部地区，继续带来大风降温天气。受冷空气影响",
                     "brief":"国家剧团作家，做有《家有儿女》等,新一轮较强冷空气将影响中国中东部大部地区，继续带来大风降温天气。受冷空气影响"
                 },
                 { 
-                    "avatar": "../src/assets/avatar.jpg",
+                    "avatar":"https://api.multiavatar.com/Iceberrys.svg",
                     "verified":true,
-                    "nickname":"Iceberry",
+                    "nickname":"Iceberrys",
                     "brief":"国家剧团作家，做有《家有儿女》等"
                 }
             ]

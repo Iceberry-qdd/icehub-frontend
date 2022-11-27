@@ -1,5 +1,5 @@
 <template>
-    <div class="offcanvas offcanvas-end" :class="{show:isShow,hiding:!isShow}" tabindex="-1" id="offcanvasRight"
+    <div class="offcanvas offcanvas-end" :class="{ show: isShow, hiding: !isShow }" tabindex="-1" id="offcanvasRight"
         aria-labelledby="offcanvasRightLabel">
         <div class="offcanvas-header">
             <img src="../../assets/avatar2.jpg" class="offcanvas-header-img">
@@ -9,7 +9,7 @@
             <div class="user-info">
                 <img class="avatar img-fluid" src="../../assets/avatar.jpg" width="64" height="64">
                 <div class="user-nickname">
-                    <div class="nickname">{{store.GLOBAL_SELECT_UID}}</div>
+                    <div class="nickname">{{ state.user.nickname }}</div>
                     <i class="bi bi-patch-check-fill verify"></i>
                     <i class="bi bi-gender-female"></i>
                     <i class="bi bi-gender-male"></i>
@@ -34,34 +34,40 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.offcanvas-body{
+.offcanvas-body {
     margin-top: 10rem;
     height: fit-content;
 }
-.posts{
+
+.posts {
     width: fit-content;
 }
 
-.btn-close{
+.btn-close {
     background-color: #EEEEEE;
     border-radius: 4rem;
 }
-.brief,.city,.birth{
+
+.brief,
+.city,
+.birth {
     font-size: 10pt;
 }
-.bi-gender-female{
+
+.bi-gender-female {
     color: rgb(250, 104, 128);
 }
 
-.bi-gender-male{
+.bi-gender-male {
     color: #0d6efd;
 }
 
-.nickname{
+.nickname {
     font-size: 16pt;
     font-weight: bold;
 }
-.verify{
+
+.verify {
     color: #0d6efd;
 }
 
@@ -117,28 +123,50 @@
 }
 </style>
 
-<script>
+<script setup>
 import { store } from '../../store.js'
 import PostsTimeLine from './PostsTimeLine.vue'
 import postList from '../../mock/posts.json'
+import { computed, onUpdated, reactive,nextTick } from 'vue';
+import {getUserInfoById} from '../../api.js'
 
-export default {
-    data() {
-        return {
-            store,
-            posts: postList
-        };
-    },
-    methods: {
-        closeOffCanvas() {
-            store.clearSelectUid();
-        }
-    },
-    computed: {
-        isShow() {
-            return store.GLOBAL_SELECT_UID != null;
-        }
-    },
-    components: { PostsTimeLine }
+const state = reactive({
+    store,
+    posts: postList,
+    user:{"nickname":""}
+})
+
+function closeOffCanvas() {
+    state.store.clearSelectUid();
 }
+
+const isShow = computed(() => {
+    return state.store.GLOBAL_SELECT_UID != null;
+})
+
+async function getUserInfo(uid){
+    // await nextTick()
+    try{
+        const response = await getUserInfoById(uid)
+        if(!response.ok) throw new Error('获取用户信息失败！')
+
+        state.user=await response.json()
+    }catch(e){
+        state.store.setMsg(e)
+        console.log(e)
+    }
+}
+
+console.log('a')
+
+onUpdated(()=>{
+    const uid = state.store.GLOBAL_SELECT_UID
+
+    if( uid != null){
+        console.log(uid)
+        //TODO 此处调用异步方法会导致无限循环执行
+        //getUserInfo(uid)
+        // getPro()
+    }
+})
 </script>

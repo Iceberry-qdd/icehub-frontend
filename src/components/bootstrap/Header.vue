@@ -22,7 +22,7 @@
 export default {
     data() {
         return {
-            name: "Iceberry",
+            name: (JSON.parse(localStorage.getItem("CUR_USER"))).nickname,
             isChooseArr: [true, false, false, false]
         }
     },
