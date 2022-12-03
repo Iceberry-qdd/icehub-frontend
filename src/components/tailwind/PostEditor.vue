@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="border-b">
         <div v-if="isLoading"
             class="flex flex-col justify-center items-center z-[102] absolute w-full h-[12rem] bg-[#00000066] rounded">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -11,7 +11,7 @@
                 </path>
             </svg>
         </div>
-        <div class="bg-white rounded-md pl-2 pr-2 pt-2 pb-2">
+        <div class="bg-white pl-2 pr-2 pt-2 pb-2">
             <div>
                 <textarea v-model="content"
                     class="p-2 focus:outline-none tracking-wide text-sm leading-6 text-justify resize-none rounded w-full"

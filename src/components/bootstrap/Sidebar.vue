@@ -1,17 +1,17 @@
 <template>
     <ul class="list-group">
-        <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+        <li @click="routeTo('/')" class="active list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
-                <i class="bi bi-compass-fill"></i>
-                圈子
+                <i class="bi bi-house-door-fill"></i>
+                主页
             </div>
 
             <span class="badge bg-primary rounded-pill">99+</span>
         </li>
         <li class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
-                <i class="bi bi-person-plus-fill"></i>
-                关注
+                <i class="bi bi-compass-fill"></i>
+                探索
             </div>
 
             <span class="badge bg-primary rounded-pill">14</span>
@@ -79,18 +79,29 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
+.active{
+    background-color: #cfe2ff !important;
+    color: black;
+}
+
 .badge {
     background-color: #0d6efd !important;
     border-radius: 4rem !important;
 }
 
 .list-group {
-    width: 13rem;
+    width: 14%;
+    /* margin-right: 4%;
+    float: right; */
+    position: fixed;
+    left:15%;
 }
 
 .list-group-item {
     border: 0;
-    height: 4rem;
+    height: 3.5rem;
+    border-radius: 50rem !important;
+    margin: 0.2rem;
 }
 
 .bi {
@@ -100,8 +111,6 @@
 </style>
 
 <script>
-// import router from '../../route';
-
 export default {
     data() {
         return {

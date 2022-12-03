@@ -62,8 +62,8 @@
     /* padding: 0.4rem 0.4rem 1rem 0.8rem !important; */
     padding: 0.4rem 0rem 0rem 0rem !important;
     position: fixed;
-    left: 68.6%;
-    top: 5rem;
+    /* left: 68.6%;
+    top: 5rem; */
     /* width: 20rem; */
 }
 

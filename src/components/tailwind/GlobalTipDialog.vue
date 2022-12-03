@@ -1,5 +1,5 @@
 <template>
-    <div v-if="isShow" class="z-[100] bg-[#00000044] w-full h-full fixed flex items-center justify-center">
+    <div v-if="isShow" class="z-[105] bg-[#00000044] w-full h-full fixed flex items-center justify-center">
         <div
             class="z-[101] fixed  bg-white shadow-grey-500/50  shadow-lg w-60 h-60 rounded-lg flex flex-col justify-center items-center">
             <div>
@@ -30,7 +30,12 @@ export default {
         }
     },
     computed: {
-
-    }
+    },
+    // mounted(){
+    //     document.querySelector("body").setAttribute("style","overflow:hidden")
+    // },
+    // unmounted(){
+    //     document.querySelector("body").removeAttribute("style")
+    // }
 }
 </script>

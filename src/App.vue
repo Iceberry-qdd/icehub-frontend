@@ -1,13 +1,58 @@
+<template>
+    <div id="container">
+        <GlobalBanner></GlobalBanner>
+        <GlobalRefresh></GlobalRefresh>
+        <GlobalTipDialog></GlobalTipDialog>
+        <ImageSlide></ImageSlide>
+        <div id="sidebar-l">
+            <brand></brand>
+            <Sidebar id="menu"></Sidebar>
+        </div>
+        <div id="main">
+            <router-view></router-view>
+            </div>
+        <div id="sidebar-r">
+            <RecommendUserCard></RecommendUserCard>
+            </div>
+    </div>
+</template>
+
+<style scoped>
+#menu{
+    margin-top: 6rem;
+}
+
+#container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+#sidebar-l {
+    flex-basis: 40%;
+}
+
+#main {
+    
+    border-left: 1px solid #EEEEEE;
+    border-right: 1px solid #EEEEEE;
+    flex-basis: 50%;
+}
+
+#sidebar-r {
+    flex-basis: 40%;
+}
+</style>
+
 <script setup>
-import Header from './components/bootstrap/Header.vue'
 import GlobalBanner from './components/bootstrap/GlobalBanner.vue'
-import UserProfileOffCanvas from './components/bootstrap/UserProfileOffCanvas.vue'
 import Sidebar from './components/bootstrap/Sidebar.vue'
 import RecommendUserCard from './components/bootstrap/RecommendUserCard.vue'
 import GlobalRefresh from './components/tailwind/GlobalRefresh.vue'
 import GlobalTipDialog from './components/tailwind/GlobalTipDialog.vue'
 import ImageSlide from './components/bootstrap/ImageSlide.vue'
-import { onMounted, reactive, onErrorCaptured } from 'vue'
+import brand from './components/tailwind/brand.vue'
+import { onMounted, reactive } from 'vue'
 import { getCurUserInfo } from './api'
 import { store } from './store'
 
@@ -40,44 +85,3 @@ onMounted(() => {
 })
 
 </script>
-
-<template>
-    <div class="container">
-        <GlobalBanner></GlobalBanner>
-        <Header id="header"></Header>
-        <UserProfileOffCanvas></UserProfileOffCanvas>
-        <GlobalRefresh></GlobalRefresh>
-        <GlobalTipDialog></GlobalTipDialog>
-        <ImageSlide></ImageSlide>
-        <main>
-            <router-view></router-view>
-            <!-- <PostsTimeLine></PostsTimeLine> -->
-            <Sidebar id="sidebar"></Sidebar>
-            <RecommendUserCard></RecommendUserCard>
-        </main>
-    </div>
-</template>
-
-<style>
-@import url("bootstrap-icons/font/bootstrap-icons.css");
-
-#header {
-    position: fixed;
-    width: 100%;
-    z-index: 99;
-}
-
-#sidebar {
-    position: fixed;
-    left: 13rem;
-    top: 5rem;
-}
-
-main {
-    width: 40%;
-    padding-top: 5rem;
-    position: absolute;
-    left: 28%;
-    right: 28%;
-}
-</style>

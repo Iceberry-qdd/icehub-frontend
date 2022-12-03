@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="offcanvas-body">
-            <PostsTimeLine class="posts"></PostsTimeLine>
+            
         </div>
     </div>
 </template>
@@ -125,23 +125,23 @@
 
 <script setup>
 import { store } from '../../store.js'
-import PostsTimeLine from './PostsTimeLine.vue'
+
 import postList from '../../mock/posts.json'
-import { computed, onUpdated, reactive,nextTick } from 'vue';
+import { computed, onMounted, onUnmounted, onUpdated, reactive } from 'vue';
 import {getUserInfoById} from '../../api.js'
 
 const state = reactive({
-    store,
     posts: postList,
     user:{"nickname":""}
 })
 
 function closeOffCanvas() {
-    state.store.clearSelectUid();
+    document.querySelector("body").removeAttribute("style")
+    store.clearSelectUid();
 }
 
 const isShow = computed(() => {
-    return state.store.GLOBAL_SELECT_UID != null;
+    return store.GLOBAL_SELECT_UID != null;
 })
 
 async function getUserInfo(uid){
@@ -152,7 +152,7 @@ async function getUserInfo(uid){
 
         state.user=await response.json()
     }catch(e){
-        state.store.setMsg(e)
+        store.setMsg(e)
         console.log(e)
     }
 }
@@ -160,7 +160,7 @@ async function getUserInfo(uid){
 console.log('a')
 
 onUpdated(()=>{
-    const uid = state.store.GLOBAL_SELECT_UID
+    const uid = store.GLOBAL_SELECT_UID
 
     if( uid != null){
         console.log(uid)
@@ -169,4 +169,5 @@ onUpdated(()=>{
         // getPro()
     }
 })
+
 </script>

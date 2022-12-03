@@ -39,7 +39,7 @@
     position: fixed;
     height: 100%;
     width: 100%;
-    z-index: 103;
+    z-index: 105;
 
     background-color: #000000cc;
 }
@@ -82,12 +82,6 @@ export default {
         isShow() {
             return this.store.SLIDE_DATA.urls.length > 0
         }
-    },
-    mounted(){
-        // document.querySelector("body").setAttribute("style","overflow:hidden")
-    },
-    unmounted(){
-        // document.querySelector("body").removeAttribute("style")
     }
 }
 </script>

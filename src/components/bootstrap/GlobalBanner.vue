@@ -54,7 +54,7 @@
 
 .banner-container {
     position: fixed;
-    z-index: 100;
+    z-index: 200;
     left: 0;
     right: 0;
     display: flex;
