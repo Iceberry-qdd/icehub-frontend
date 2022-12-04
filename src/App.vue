@@ -5,20 +5,21 @@
         <GlobalTipDialog></GlobalTipDialog>
         <ImageSlide></ImageSlide>
         <div id="sidebar-l">
-            <brand></brand>
+            <Brand></Brand>
             <Sidebar id="menu"></Sidebar>
         </div>
         <div id="main">
+            <Header></Header>
             <router-view></router-view>
-            </div>
+        </div>
         <div id="sidebar-r">
             <RecommendUserCard></RecommendUserCard>
-            </div>
+        </div>
     </div>
 </template>
 
 <style scoped>
-#menu{
+#menu {
     margin-top: 6rem;
 }
 
@@ -26,21 +27,23 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
+    min-height: 100vh;
 }
 
 #sidebar-l {
     flex-basis: 40%;
+    border-right: 1px solid #EEEEEE;
 }
 
 #main {
-    
-    border-left: 1px solid #EEEEEE;
-    border-right: 1px solid #EEEEEE;
+    /* border-left: 1px solid #EEEEEE;
+    border-right: 1px solid #EEEEEE; */
     flex-basis: 50%;
 }
 
 #sidebar-r {
     flex-basis: 40%;
+    border-left: 1px solid #EEEEEE;
 }
 </style>
 
@@ -51,7 +54,8 @@ import RecommendUserCard from './components/bootstrap/RecommendUserCard.vue'
 import GlobalRefresh from './components/tailwind/GlobalRefresh.vue'
 import GlobalTipDialog from './components/tailwind/GlobalTipDialog.vue'
 import ImageSlide from './components/bootstrap/ImageSlide.vue'
-import brand from './components/tailwind/brand.vue'
+import Brand from './components/tailwind/Brand.vue'
+import Header from './components/tailwind/Header.vue'
 import { onMounted, reactive } from 'vue'
 import { getCurUserInfo } from './api'
 import { store } from './store'
@@ -75,6 +79,8 @@ async function curUser() {
     } catch (e) {
         store.setMsg(e)
         console.error(e)
+        localStorage.removeItem('TOKEN')
+        localStorage.removeItem('CUR_USER')
         self.location = 'auth.html'
         window.history.forward(1);
     }

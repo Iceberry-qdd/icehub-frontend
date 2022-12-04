@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Header></Header>
+        <!-- <Header></Header> -->
         <PostEditor @get-data="getData"></PostEditor>
         <PostCard v-for="(post, index) in state.posts" :post="post" :key="post.id" :index="index"></PostCard>
         <div class="ending">
@@ -21,7 +21,6 @@
 </style>
 
 <script setup>
-import Header from '../tailwind/Header.vue'
 import PostCard from './PostCard.vue'
 import { getTimeline } from '../../api.js'
 import { store } from '../../store.js'

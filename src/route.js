@@ -1,17 +1,18 @@
 import PostsTimeLine from './components/bootstrap/PostsTimeLine.vue'
 import Bookmark from './components/tailwind/Bookmark.vue'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import PostDetail from './components/tailwind/PostDetail.vue'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 
 
 const routes = [
     { path: '/', component: PostsTimeLine },
     { path: '/index', component: PostsTimeLine },
-    { path: '/bookmark', component: Bookmark },
-    // {path:'/auth','auth.html'}
+    { name: 'bookmark', path: '/bookmark', component: Bookmark },
+    { name: 'postDetail', path: '/post/:id', component: PostDetail }
 ]
 
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes,
 })
 

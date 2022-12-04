@@ -71,22 +71,6 @@ export function posting(data) {
     })
 }
 
-// /**
-//  * 获取图片真实Url
-//  * @param {string} url 编码后Url
-//  * @returns 解码后Url
-//  */
-// export function getImgRealUrl(url){
-//     return fetch(`${BASE_URL}/object/preview/${url}`,{
-//         method:'Get',
-//         headers:{
-//             token:TOKEN,
-//         },
-//         redirect:'follow',
-//         credentials:'same-origin'
-//     })
-// }
-
 /**
  * 对帖子点赞
  * @param {string} postId 待点赞帖子id
@@ -199,6 +183,22 @@ export function getCurUserInfo() {
 export function getUserInfoById(id) {
     return fetch(`${BASE_URL}/user/${id}`, {
         method: 'GET',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 根据帖子id查询帖子信息
+ * @param {string} id 帖子id
+ * @returns 帖子信息
+ */
+export function getPostById(id){
+    return fetch(`${BASE_URL}/post?pid=${id}`,{
+        method:'GET',
         headers: {
             'Authorization': TOKEN,
         },

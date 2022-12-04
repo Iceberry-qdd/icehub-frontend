@@ -2,7 +2,7 @@
     <div class="flex flex-row w-full h-full absolute">
         <div id="poster" class="basis-2/5 h-full">
             <div>
-                <img id="brand-bg" class="cursor-default object-cover h-screen w-screen grayscale hover:grayscale-0"
+                <img id="brand-bg" class="cursor-default object-cover h-full w-full grayscale hover:grayscale-0"
                     src="http://192.168.0.102:9000/b072e283-924e-4a3f-b362-2b4577041e09/david-suarez-6jYopEMk-NA-unsplash.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=9QUA5SAZ2EHSB42NU5ON%2F20221127%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20221127T041304Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiI5UVVBNVNBWjJFSFNCNDJOVTVPTiIsImV4cCI6MTY2OTUyNTk2NiwicGFyZW50IjoibWluaW9hZG1pbiJ9.5JzLij6hSkKke0XUHClN_E-jnEnePdQB3fCc294paGoKIDxXXG7h_zkPKT84tngblPfpxTQym87l7sK_D6-25Q&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=2ae8b40da88ffe8db7e208a097ac56051742320fcdd0f9e436e8c31653f646b3" />
             </div>
         </div>

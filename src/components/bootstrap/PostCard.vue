@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card" @click="routeTo(props.post.id)">
         <button type="button" class="btn menu">
             <i class="bi bi-chevron-down"></i>
         </button>
@@ -132,6 +132,7 @@
 .card-text {
     text-align: justify;
     font-size: 11pt;
+    word-break: break-all;
 }
 
 .post-time {
@@ -168,8 +169,9 @@
 </style>
 
 <script setup>
-import { computed, reactive } from 'vue';
+import { computed, onUpdated, reactive } from 'vue';
 import { likeAPost, dislikeAPost } from '../../api'
+import router from '../../route';
 import { store } from '../../store'
 
 const props = defineProps(['post'])
@@ -177,6 +179,11 @@ const props = defineProps(['post'])
 const state = reactive({
     reaction: [false, props.post.liked, false]
 })
+
+function routeTo(postId){
+    store.setSelectPostId(postId)
+    router.push({name:'postDetail',params:{id:postId}})
+}
 
 function getCardId(key) {
 }
@@ -277,5 +284,9 @@ const formattedTime = computed(() => {
         return `${now.getSeconds() - postTime.getSeconds()}秒前`
     }
     return postTime
+})
+
+onUpdated(()=>{
+    console.log(props.post)
 })
 </script>

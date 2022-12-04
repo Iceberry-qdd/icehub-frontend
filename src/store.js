@@ -24,5 +24,10 @@ export const store = reactive({
     },
     dismissSlide(){
         this.SLIDE_DATA={curIdx:-1,urls:[]}
+    },
+
+    SELECT_POST_ID:'',
+    setSelectPostId(id){
+        this.SELECT_POST_ID=id
     }
 })
