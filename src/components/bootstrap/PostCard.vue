@@ -33,16 +33,17 @@
         </div>
         <div class="btn-group" role="group">
             <button type="button" class="btn op" @click="toggleRepost">
-                <i class="bi bi-arrow-return-right"></i>
+                <!-- <i class="bi bi-arrow-return-right"></i> -->
+                <span class="material-icons-round">redo</span>
                 {{ props.post.repostCount }}
             </button>
             <button type="button" class="btn op" @click="toggleReview">
-                <i class="bi bi-chat-square"></i>
+                <!-- <i class="bi bi-chat-square"></i> -->
+                <span class="material-icons-round">chat_bubble_outline</span>
                 {{ props.post.reviewCount }}
             </button>
             <button type="button" class="btn op" @click="toggleLike">
-                <i class="bi bi-heart" v-if="!isLiked"></i>
-                <i class="bi bi-heart-fill" style="color: red;" v-else></i>
+                <span :class="{liked:isLiked}" class="material-icons-round">{{isLiked?'favorite':'favorite_border'}}</span>
                 {{ props.post.likeCount }}
             </button>
         </div>
@@ -52,7 +53,37 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
+.card:hover{
+    background-color: #F5F5F5;
+    cursor: pointer;
+}
 
+.btn:active{
+    outline: none !important;
+    border: 0;
+}
+
+.btn{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    column-gap: 0.5rem;
+}
+
+.material-icons-round{
+    font-size: 14pt;
+}
+
+.liked{
+    color: red;
+}
+
+.nickname{
+    font-weight: bold;
+}
 .verify {
     position: absolute;
     left: 32px;
@@ -76,12 +107,13 @@
 
 .card {
     border-radius: 0 !important;
-    border-bottom: 1px solid #DDDDDD;
+    border-bottom: 1px solid #EEEEEE;
     padding: 1rem 1rem 0 1rem;
 }
 
 .avatar {
     border-radius: 16%;
+    border:1px solid #EEEEEE;
 }
 
 #verify-badge {

@@ -5,6 +5,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
     { path: '/', component: PostsTimeLine },
+    { path: '/index', component: PostsTimeLine },
     { path: '/bookmark', component: Bookmark },
     // {path:'/auth','auth.html'}
 ]
