@@ -130,7 +130,7 @@ function getCurUserAvatar() {
         const avatar = (JSON.parse(localStorage.getItem("CUR_USER"))).avatarUrl
         const nickname = (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
 
-        if (avatar == null || avatar == '') {
+        if (!avatar || avatar == '') {
             return `https://api.multiavatar.com/${nickname}.svg`
         } else {
             return avatar

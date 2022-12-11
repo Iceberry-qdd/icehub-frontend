@@ -1,11 +1,11 @@
 <template>
-    <div class="card" >
+    <div class="card">
         <button type="button" class="btn menu">
             <i class="bi bi-chevron-down"></i>
         </button>
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(props.post.user.id)">
-                <img class="avatar img-fluid" loading="lazy" :src="defaultAvatar" width="40" height="40">
+                <img class="avatar img-fluid" loading="lazy" :src="avatar">
                 <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
             </a>
             <div class="user-text">
@@ -14,12 +14,12 @@
             </div>
         </div>
 
-        <div class="card-body" @click="routeTo(props.post.id)">
+        <div class="m-card-body" @click="routeTo(props.post.id)">
             <p class="card-text" id="content">{{ props.post.content }}</p>
         </div>
         <div class="card-pics container" v-if="hasPics">
-            <div class="row row-cols-3 gy-1 gx-1">
-                <div class="col" v-for="(pic, idx) in props.post.attachmentsUrl">
+            <div class="grid-item row row-cols-3">
+                <div class="col wrapper" v-for="(pic, idx) in props.post.attachmentsUrl">
                     <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid" :src="pic">
                 </div>
             </div>
@@ -32,18 +32,19 @@
             </div>
         </div>
         <div class="btn-group" role="group">
-            <button type="button" class="btn op" @click="toggleRepost">
+            <button type="button" class="btn op op-repost" @click="toggleRepost">
                 <!-- <i class="bi bi-arrow-return-right"></i> -->
                 <span class="material-icons-round">redo</span>
                 {{ props.post.repostCount }}
             </button>
-            <button type="button" class="btn op" @click="toggleReview">
+            <button type="button" class="btn op op-review" @click="toggleReview">
                 <!-- <i class="bi bi-chat-square"></i> -->
                 <span class="material-icons-round">chat_bubble_outline</span>
                 {{ props.post.reviewCount }}
             </button>
-            <button type="button" class="btn op" @click="toggleLike">
-                <span :class="{liked:isLiked}" class="material-icons-round">{{isLiked?'favorite':'favorite_border'}}</span>
+            <button type="button" class="btn op op-like" @click="toggleLike">
+                <span :class="{ liked: isLiked }"
+                    class="material-icons-round">{{ isLiked ? 'favorite' : 'favorite_border' }}</span>
                 {{ props.post.likeCount }}
             </button>
         </div>
@@ -53,37 +54,93 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.card:hover{
+.btn-group{
+    margin: 0 3.5rem;
+}
+.op-repost{
+    justify-content: flex-start;
+}
+
+.op-review{
+    justify-content: center;
+}
+
+.op-like{
+    justify-content: flex-end;
+}
+
+.user-info{
+    gap: 1rem;
+}
+
+.grid-item {
+    gap: 0.3rem;
+}
+
+.container,.row {
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+    /* width: 80%; */
+}
+
+.container{
+    width: 80% !important;
+}
+
+.wrapper {
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.wrapper img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform 400ms;
+}
+
+.wrapper:hover img {
+    transform: scale(1.2);
+
+}
+
+.card:hover {
     background-color: #F5F5F5;
     cursor: pointer;
 }
 
-.btn:active{
+.btn:active {
     outline: none !important;
     border: 0;
 }
 
-.btn{
+.btn {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
     align-content: center;
-    justify-content: center;
     align-items: center;
     column-gap: 0.5rem;
+    border: 0;
+    border-radius: 0;
+    padding: 0.5rem 0;
 }
 
-.material-icons-round{
+.material-icons-round {
     font-size: 14pt;
 }
 
-.liked{
+.liked {
     color: red;
 }
 
-.nickname{
+.nickname {
     font-weight: bold;
 }
+
 .verify {
     position: absolute;
     left: 32px;
@@ -112,21 +169,19 @@
 }
 
 .avatar {
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 16%;
-    border:1px solid #EEEEEE;
+    border: 1px solid #EEEEEE;
 }
 
 #verify-badge {
     background-color: red !important;
 }
 
-.card-body {
-    margin-left: 2.5rem;
-    padding-top: 0.5rem !important;
-}
-
-.user-text {
-    margin-left: 1rem;
+.m-card-body {
+    margin-left: 3.5rem;
+    padding: 0.5rem 0 0.5rem 0 !important;
 }
 
 .card-text {
@@ -140,26 +195,15 @@
     font-size: small;
 }
 
-.pic {
-    width: 8rem;
-    height: 8rem;
-    border-radius: 4px;
-    object-fit: cover;
-}
-
 .card-pics {
-    margin-left: 2.8rem;
-    margin-bottom: 1rem;
+    margin-left: 3.5rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
     display: flex;
 }
 
 .card-tags {
-    /*margin-left: 2.8rem;*/
     margin: 0 0 0.5rem 2.8rem;
-}
-
-.row {
-    width: 70%;
 }
 
 #badge {
@@ -173,7 +217,7 @@ import { computed, onUpdated, reactive } from 'vue';
 import { likeAPost, dislikeAPost } from '../../api'
 import router from '../../route';
 import { store } from '../../store'
-import {humanizedTime} from '../../utils/formatUtils.js'
+import { humanizedTime } from '../../utils/formatUtils.js'
 
 const props = defineProps(['post'])
 
@@ -181,13 +225,9 @@ const state = reactive({
     reaction: [false, props.post.liked, false]
 })
 
-function routeTo(postId){
-    // store.setSelectPostId(postId)
+function routeTo(postId) {
     store.setSelectPost(props.post)
-    router.push({name:'postDetail',params:{id:postId}})
-}
-
-function getCardId(key) {
+    router.push({ name: 'postDetail', params: { id: postId } })
 }
 
 function showUserProfile(uid) {
@@ -238,7 +278,7 @@ function showSlide(urls, idx) {
     store.showSlide(urls, idx)
 }
 
-const defaultAvatar = computed(() => {
+const avatar = computed(() => {
     if (props.post.user.avatarUrl == null) {
         return `https://api.multiavatar.com/${props.post.user.nickname}.svg`
     } else {
@@ -262,7 +302,7 @@ const formattedTime = computed(() => {
     return humanizedTime(props.post.createdTime)
 })
 
-onUpdated(()=>{
+onUpdated(() => {
     //console.log(props.post)
 })
 </script>

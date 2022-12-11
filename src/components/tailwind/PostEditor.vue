@@ -1,6 +1,6 @@
 <template>
     <div class="border-b">
-        <div v-if="isLoading"
+        <div v-if="state.isLoading"
             class="flex flex-col justify-center items-center z-[102] absolute w-[38.46%] h-[12.1rem] bg-[#00000066]">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24">
@@ -13,9 +13,9 @@
         </div>
         <div class="bg-white pl-2 pr-2 pt-2 pb-2">
             <div>
-                <textarea v-model="content"
-                    class="p-2 focus:outline-none tracking-wide text-sm leading-6 text-justify resize-none rounded w-full"
-                    maxlength="512" rows="5" placeholder="发布帖子" id="post" name="post"></textarea>
+                <textarea v-model="state.content" @keydown="resize"
+                    class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
+                    maxlength="512" rows="3" placeholder="发布帖子" id="post-input" name="post"></textarea>
             </div>
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
@@ -23,7 +23,9 @@
                         accept="image/*" />
                     <!-- <i @click="choosePics" :class="[imgList.length > 0 ? 'text-[#0d6efd]' : 'text-black']"
                         class=" cursor-pointer bi bi-images" title="添加照片"></i> -->
-                    <span title="添加图片" @click="choosePics" :class="[imgList.length > 0 ? 'text-[#0d6efd]' : 'text-black']" class="material-icons-round">photo_library</span>
+                    <span title="添加图片" @click="choosePics"
+                        :class="[state.imgList.length > 0 ? 'text-[#0d6efd]' : 'text-black']"
+                        class="material-icons-round">photo_library</span>
                     <span title="添加视频" class="material-icons-round">movie</span>
                     <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
                     <span title="添加代码片段" class="material-icons-round">code</span>
@@ -42,7 +44,7 @@
                     <i class="cursor-pointer bi bi-emoji-smile" title="添加表情"></i> -->
                 </div>
                 <div @click="submitPost"
-                    :class='[content.length > 0 ? "bg-[#0d6efd] cursor-pointer" : "bg-gray-400 cursor-not-allowed"]'
+                    :class='[state.content.length > 0 ? "bg-[#0d6efd] cursor-pointer" : "bg-gray-400 cursor-not-allowed"]'
                     class="text-sm py-2 px-6 rounded-full text-white">
                     <span>发布</span>
                 </div>
@@ -53,11 +55,11 @@
 </template>
 
 <style scoped>
-
-.material-icons-round{
-    font-size:14pt;
+.material-icons-round {
+    font-size: 14pt;
     cursor: pointer;
 }
+
 @keyframes spin {
     from {
         transform: rotate(0deg);
@@ -69,75 +71,71 @@
 }
 </style>
 
-<script>
+<script setup>
+import { reactive } from 'vue';
 import { uploadFiles, posting } from '../../api.js'
 import { store } from '../../store.js'
 
-export default {
-    data() {
-        return {
-            store,
-            content: "",
-            imgList: [],
-            imgUrls: [],
-            isLoading: false,
-            result: "",
-            data: {
-                "content": "",
-                "top": false,
-                "attachmentsUrl": []
-            }
-        }
-    },
-    methods: {
-        async submitPost() {
-            const imgFileSelector = document.getElementById("imgFile")
-            this.imgList = imgFileSelector.files;
-
-            try {
-                if (this.content.length == 0) throw new Error("文字内容不能为空！")
-
-                this.isLoading = true
-                this.data.content = this.content
-
-                if (this.imgList.length > 0) {
-                    const response = await uploadFiles(this.imgList)
-                    //if (!response.ok) throw new Error(response)
-                    this.data.attachmentsUrl = JSON.parse(response)
-                }
-
-                const response = await posting(this.data)
-                if (!response.ok) throw new Error(await response.text())
-                this.result = await response.json()
-
-                //防止重复提交上一次的内容
-                this.content = ""
-                this.imgList = []
-
-                // 发布完成后刷新页面
-                location.reload()
-            } catch (err) {
-                this.store.setMsg(err.message)
-                console.error(err)
-            } finally {
-                this.isLoading = false
-            }
-
-        },
-
-        choosePics() {
-            const imgFileSelector = document.getElementById("imgFile")
-            imgFileSelector.click()
-            const imgs = imgFileSelector.files;
-
-            if (imgs.length == 0) return
-            this.imgList = imgFileSelector.files;
-        }
-    },
-    computed: {
-    },
-    watch: {
-
+const state = reactive({
+    content: "",
+    imgList: [],
+    imgUrls: [],
+    isLoading: false,
+    result: "",
+    data: {
+        "content": "",
+        "top": false,
+        "attachmentsUrl": []
     }
+})
+
+function resize() {
+    const input = document.getElementById('post-input')
+    //console.log(input.scrollHeight)
+    input.style.height = `${input.scrollHeight}px`
+    //FIXME 当删除内容时无法自动调整大小
+}
+
+async function submitPost() {
+    const imgFileSelector = document.getElementById("imgFile")
+    state.imgList = imgFileSelector.files;
+
+    try {
+        if (state.content.length == 0) throw new Error("文字内容不能为空！")
+
+        state.isLoading = true
+        state.data.content = state.content
+
+        if (state.imgList.length > 0) {
+            const response = await uploadFiles(state.imgList)
+            //if (!response.ok) throw new Error(response)
+            state.data.attachmentsUrl = JSON.parse(response)
+        }
+
+        const response = await posting(state.data)
+        if (!response.ok) throw new Error(await response.text())
+        state.result = await response.json()
+
+        //防止重复提交上一次的内容
+        state.content = ""
+        state.imgList = []
+
+        // 发布完成后刷新页面
+        location.reload()
+    } catch (err) {
+        store.setMsg(err.message)
+        console.error(err)
+    } finally {
+        state.isLoading = false
+    }
+}
+
+function choosePics() {
+    const imgFileSelector = document.getElementById("imgFile")
+    imgFileSelector.click()
+    const imgs = imgFileSelector.files;
+
+    if (imgs.length == 0) return
+    state.imgList = imgFileSelector.files;
 }
 </script>

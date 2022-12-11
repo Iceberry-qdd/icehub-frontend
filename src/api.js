@@ -276,3 +276,35 @@ export function getSubReviewById(id,pageIndex, pageSize){
         credentials: 'same-origin'
     })
 }
+
+/**
+ * 对评论点赞
+ * @param {string} reviewId 待评论帖子id
+ * @returns 点赞结果
+ */
+export function likeAReview(reviewId) {
+    return fetch(`${BASE_URL}/review/like/${reviewId}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 对评论取消点赞
+ * @param {string} postId 待取消点赞评论id
+ * @returns 取消点赞结果
+ */
+export function dislikeAReview(reviewId) {
+    return fetch(`${BASE_URL}/review/like/${reviewId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}

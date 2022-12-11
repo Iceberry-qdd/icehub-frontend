@@ -5,7 +5,7 @@
         </button>
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(props.post.user.id)">
-                <img class="avatar img-fluid" loading="lazy" :src="defaultAvatar" width="48" height="48">
+                <img class="avatar img-fluid" loading="lazy" :src="defaultAvatar">
                 <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
             </a>
             <div class="user-text">
@@ -14,12 +14,12 @@
             </div>
         </div>
 
-        <div class="card-body">
+        <div class="m-card-body">
             <p class="card-text" id="content">{{ props.post.content }}</p>
         </div>
         <div class="card-pics container" v-if="hasPics">
-            <div class="row row-cols-3 gy-1 gx-1">
-                <div class="col" v-for="(pic, idx) in props.post.attachmentsUrl">
+            <div class="grid-item row row-cols-3">
+                <div class="col wrapper" v-for="(pic, idx) in props.post.attachmentsUrl">
                     <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid" :src="pic">
                 </div>
             </div>
@@ -32,17 +32,17 @@
             </div>
         </div>
         <div class="btn-group" role="group">
-            <button type="button" class="btn op" @click="toggleRepost">
+            <button type="button" class="btn op op-repost" @click="toggleRepost">
                 <!-- <i class="bi bi-arrow-return-right"></i> -->
                 <span class="material-icons-round">redo</span>
                 {{ props.post.repostCount }}
             </button>
-            <button type="button" class="btn op" @click="toggleReviewPanel">
+            <button type="button" class="btn op op-review" @click="toggleReviewPanel">
                 <!-- <i class="bi bi-chat-square"></i> -->
                 <span class="material-icons-round">chat_bubble_outline</span>
                 {{ props.post.reviewCount }}
             </button>
-            <button type="button" class="btn op" @click="toggleLike">
+            <button type="button" class="btn op op-like" @click="toggleLike">
                 <span :class="{ liked: isLiked }"
                     class="material-icons-round">{{ isLiked ? 'favorite' : 'favorite_border' }}</span>
                 {{ props.post.likeCount }}
@@ -54,6 +54,64 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
+.btn-group{
+    margin: 0 4rem;
+}
+.op-repost{
+    justify-content: flex-start;
+}
+
+.op-review{
+    justify-content: center;
+}
+
+.op-like{
+    justify-content: flex-end;
+}
+
+.btn:active {
+    outline: none !important;
+    border: 0;
+}
+
+.user-info{
+    gap: 1rem;
+}
+
+.grid-item {
+    gap: 0.3rem;
+}
+
+.container,.row {
+    --bs-gutter-x: 0;
+    --bs-gutter-y: 0;
+    /* width: 80%; */
+}
+
+.container{
+    width: 80% !important;
+}
+
+.wrapper {
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.wrapper img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform 400ms;
+}
+
+.wrapper:hover img {
+    transform: scale(1.2);
+
+}
+
 .btn:active {
     outline: none !important;
     border: 0;
@@ -64,9 +122,11 @@
     flex-wrap: nowrap;
     flex-direction: row;
     align-content: center;
-    justify-content: center;
     align-items: center;
     column-gap: 0.5rem;
+    border: 0;
+    border-radius: 0;
+    padding: 0.5rem 0;
 }
 
 .material-icons-round {
@@ -110,6 +170,8 @@
 }
 
 .avatar {
+    width: 3rem;
+    height: 3rem;
     border-radius: 16%;
     border: 1px solid #EEEEEE;
 }
@@ -118,13 +180,9 @@
     background-color: red !important;
 }
 
-.card-body {
-    margin-left: 3rem;
-    padding-top: 0.5rem !important;
-}
-
-.user-text {
-    margin-left: 1rem;
+.m-card-body {
+    margin-left: 4rem;
+    padding: 0.5rem 0 0.5rem 0 !important;
 }
 
 .card-text {
@@ -146,18 +204,15 @@
 }
 
 .card-pics {
-    margin-left: 3.3rem;
-    margin-bottom: 1rem;
+    margin-left: 4rem;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
     display: flex;
 }
 
 .card-tags {
     /*margin-left: 2.8rem;*/
     margin: 0 0 0.5rem 3rem;
-}
-
-.row {
-    width: 70%;
 }
 
 #badge {

@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div class="flex flex-col gap-y-4 pl-8 pr-8 py-2 border-gray-100 border-b-[1px]">
-            <div class='flex flex-row justify-between items-center'>
-                <div class="flex flex-row items-center gap-x-2">
-                    <div class="h-[40px] w-[40px] border-gray-300 border-[1px] rounded-md">
-                        <a href="as"><img src="https://api.multiavatar.com/User2.svg" height="40" width="40" /></a>
+        <div class="flex flex-col gap-y-4 px-[1rem] py-[1rem] border-gray-100 border-b-[1px]">
+            <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
+                <div class="flex flex-row items-center gap-x-4">
+                    <div class="w-[2.5rem] h-[2.5rem] border-gray-300 border-[1px] rounded-md">
+                        <a href="as"><img :src="avatar"/></a>
                         <i class="bi bi-patch-check-fill verify relative text-[10pt] left-[30px] bottom-[12px] text-blue-500"></i>
                     </div>
                     <div class="text-[12pt] font-bold">{{ props.review.user.nickname }}</div>
@@ -15,10 +15,10 @@
                     <div class='text-[10pt] text-gray-400'>{{ formattedTime }}</div>
                 </div>
             </div>
-            <div class="pl-[48px] text-[12pt]">
+            <div class="pl-[4rem] text-[12pt]">
                 {{ props.review.content }}
             </div>
-            <div class="flex flex-row justify-around">
+            <div class="flex flex-row justify-between px-[4rem]">
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2"
                     @click="toggleRepost">
                     <!-- <i class="bi bi-arrow-return-right"></i> -->
@@ -32,7 +32,9 @@
                     {{ props.review.reviewCount }}
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleLike">
-                    <span :class="{ liked: props.review.isLiked }" class="material-icons-round text-[13pt]">{{props.review.isLiked ? 'favorite' :'favorite_border' }}</span>
+                    <span :class="{ liked: isLiked }" class="material-icons-round text-[13pt]">{{
+                            isLiked ? 'favorite' : 'favorite_border'
+                    }}</span>
                     {{ props.review.likeCount }}
                 </button>
             </div>
@@ -40,19 +42,22 @@
         <ReviewEditor v-if="state.showPanel" class="bg-gray-100" :post="props.post" :parent="props.review">
         </ReviewEditor>
         <div v-if="state.subReviews.length > 0 && state.showPanel">
-            <Review class="bg-gray-100" v-for="(review, index) in state.subReviews" :review="review" :post="props.post" :key="review.id" :index="index"></Review>
+            <Review class="bg-gray-100" v-for="(review, index) in state.subReviews" :review="review" :post="props.post"
+                :key="review.id" :index="index"></Review>
         </div>
 
     </div>
 </template>
 
-<style>
-
+<style scoped>
+.liked{
+    color: red;
+}
 </style>
 
 <script setup>
 import { computed, reactive, onMounted } from 'vue';
-import { getReviewById, getSubReviewById } from '../../api';
+import { dislikeAReview, getReviewById, getSubReviewById, likeAReview } from '../../api';
 import { humanizedTime } from '../../utils/formatUtils.js'
 import ReviewEditor from './ReviewEditor.vue';
 import { store } from '../../store';
@@ -93,7 +98,6 @@ async function getParentReview(parentId) {
         if (!response.ok) throw new Error(await response.text())
 
         state.parentReview = await response.json()
-        //console.log(state.parentReview)
     } catch (e) {
         store.setMsg(e.message)
         console.error(e)
@@ -101,7 +105,6 @@ async function getParentReview(parentId) {
 }
 
 async function toggleReviewPanel() {
-    //console.log(props.review)
     const isShow = state.showPanel
     if (isShow == false) {
         await getSubReview()
@@ -115,12 +118,52 @@ async function getSubReview() {
         if (!response.ok) throw new Error(await response.text())
 
         state.subReviews = (await response.json()).content
-        //console.log(state.subReviews)
     } catch (e) {
         store.setMsg(e.message)
         console.error(e)
     }
 }
+
+async function toggleLike() {
+    try {
+        if (props.review.liked == false) {
+            const response = await likeAReview(props.review.id)
+            if (!response.ok) throw new Error(await response.text())
+
+            const result = await response.text()
+            if (result == false) throw new Error('点赞失败！')
+
+            const lastCount = props.review.likeCount
+            props.review.likeCount = lastCount + 1
+            props.review.liked = true
+        } else {
+            const response = await dislikeAReview(props.review.id)
+            if (!response.ok) throw new Error(await response.text())
+
+            const result = await response.text()
+            if (result == false) throw new Error('取消点赞失败！')
+
+            const lastCount = props.review.likeCount
+            props.review.likeCount = lastCount - 1
+            props.review.liked = false
+        }
+    } catch (e) {
+        store.setMsg(e.message)
+        console.error(e)
+    }
+}
+
+const isLiked = computed(()=>{
+    return props.review.liked
+})
+
+const avatar = computed(() => {
+    if (props.post.user.avatarUrl == null) {
+        return `https://api.multiavatar.com/${props.review.user.nickname}.svg`
+    } else {
+        return props.review.user.nickname
+    }
+})
 
 onMounted(() => {
     if (props.review.parentId != null) {
