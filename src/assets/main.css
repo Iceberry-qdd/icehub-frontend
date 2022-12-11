@@ -1,13 +1,19 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
 
-html,body{
+html,body {
     margin: 0;
     /* background-color: #F5F5F5; */
-    /* font-family: 'Roboto Mono'; */
+    /* font-family: 'Roboto Mono' !important; */
+    font-family: 'Noto Sans SC','Noto Color Emoji', sans-serif !important;
 }
 
-img,li,.userCard{
+img,li,.userCard {
     cursor: pointer;
+}
+
+.material-icons-round {
+    font-family: 'Material Icons Round','Noto Color Emoji' !important;
 }
 
 @tailwind base;

@@ -1,7 +1,7 @@
 <template>
     <div class="border-b">
         <div v-if="isLoading"
-            class="flex flex-col justify-center items-center z-[102] absolute w-full h-[12rem] bg-[#00000066] rounded">
+            class="flex flex-col justify-center items-center z-[102] absolute w-[38.46%] h-[12.1rem] bg-[#00000066]">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">

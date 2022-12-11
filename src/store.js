@@ -17,17 +17,25 @@ export const store = reactive({
         this.GLOBAL_SELECT_UID = null
     },
 
-    SLIDE_DATA:{curIdx:-1,urls:[]},
-    showSlide(urls,curIdx){
-        this.SLIDE_DATA.urls=urls
-        this.SLIDE_DATA.curIdx=curIdx
+    SLIDE_DATA: { curIdx: -1, urls: [] },
+    showSlide(urls, curIdx) {
+        this.SLIDE_DATA.urls = urls
+        this.SLIDE_DATA.curIdx = curIdx
     },
-    dismissSlide(){
-        this.SLIDE_DATA={curIdx:-1,urls:[]}
+    dismissSlide() {
+        this.SLIDE_DATA = { curIdx: -1, urls: [] }
     },
 
-    SELECT_POST_ID:'',
-    setSelectPostId(id){
-        this.SELECT_POST_ID=id
+    SELECT_POST: {},
+    setSelectPost(post) {
+        this.SELECT_POST = post
+    },
+
+    SHOW_REVIEW_PANEL: false,
+    showReviewPanel() {
+        this.SHOW_REVIEW_PANEL = true
+    },
+    dismissReviewPanel() {
+        this.SHOW_REVIEW_PANEL = false
     }
 })

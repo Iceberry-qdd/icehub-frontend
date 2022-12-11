@@ -1,6 +1,6 @@
 <template>
     <div id="h" class="flex flex-row justify-start gap-x-2 items-center px-2">
-        <span @click="routeToIndex" v-if="state.backArrow == true" class="material-icons-round cursor-pointer">arrow_back_ios</span>{{ state.titleText }}
+        <span @click="routeToIndex" v-if="state.backArrow == true" class="material-icons-round cursor-pointer text-[14pt]">arrow_back_ios</span>{{ state.titleText }}
     </div>
     <div id="h-hide"></div>
 </template>
@@ -26,7 +26,6 @@
 import { reactive, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import router from '../../route';
-import { store } from '../../store';
 
 const state = reactive({
     backArrow: false,
@@ -45,7 +44,7 @@ watch(() => route.path, (newUrl, oldUrl) => {
         state.titleText = '帖子详情'
 
         const pid = newUrl.replace('/post/','')
-        store.setSelectPostId(pid)
+        //store.setSelectPostId(pid)
     } else {
         state.backArrow = false
         state.titleText = ''

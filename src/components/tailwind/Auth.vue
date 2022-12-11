@@ -128,7 +128,7 @@ export default {
                 // response.headers.keys.array.forEach(e => {
                 //     console.log(e)
                 // });
-                console.log(token)
+                //console.log(token)
                 localStorage.setItem("TOKEN", token)
                 this.store.setMsg("登录成功！")
                 self.location = 'index'

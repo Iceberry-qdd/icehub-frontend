@@ -3,21 +3,15 @@
         <!-- <Header></Header> -->
         <PostEditor @get-data="getData"></PostEditor>
         <PostCard v-for="(post, index) in state.posts" :post="post" :key="post.id" :index="index"></PostCard>
-        <div class="ending">
-            <s>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</s>&#8226;<s>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;</s>
-        </div>
+        <div id="footer" class="w-full flex flex-row justify-center pt-4 text-sm text-gray-500">没有更多了</div>
     </div>
 
 </template>
 
 <style scoped>
-.ending {
-    color: lightgray;
-    text-align: center;
-    margin-bottom: 0.4rem;
-    font-weight: lighter;
+#footer{
+    height: 10vh;
 }
-
 </style>
 
 <script setup>

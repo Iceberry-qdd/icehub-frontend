@@ -1,39 +1,90 @@
 <template>
-    <PostCard v-if="state.post!=null" :post="state.post"></PostCard>
-
+    <div>
+        <PostCardDetail v-if="state.post.user != undefined" :post="state.post"></PostCardDetail>
+        <ReviewEditor v-if="store.SHOW_REVIEW_PANEL" :post="state.post" ></ReviewEditor>
+        <div v-if="state.reviews.length>0">
+            <Review v-for="(review, index) in state.reviews" :review="review" :post="state.post" :key="review.id" :index="index"></Review>
+        </div>
+        <div id="footer" class="w-full flex flex-row justify-center pt-4 text-sm text-gray-500">没有更多了</div>
+    </div>
 </template>
 
 <style scoped>
-
+#footer{
+    height: 10vh;
+}
 </style>
 
 <script setup>
 import { onMounted, reactive } from 'vue';
-import PostCard from '../bootstrap/PostCard.vue';
-import { getPostById } from '../../api.js'
+import { getPostById, getPostReviews } from '../../api.js'
 import { store } from '../../store';
+import PostCardDetail from '../bootstrap/PostCardDetail.vue';
+import Review from '../tailwind/Review.vue'
+import ReviewEditor from '../tailwind/ReviewEditor.vue'
 
 const state = reactive({
-    post: null
+    post: store.SELECT_POST,
+    reviews: [
+        // {
+        //     'id': "ased",
+        //     "content": '测试评论',
+        //     'user': { id: "asd", 'username': "Kitty", 'avatarUrl': null, verified: true },
+        //     'timestamps': 124698533,
+        //     'parentReviewId': 'aedff',
+        //     'likeCount': 4526,
+        //     "reviewCount": 120,
+        //     'isLiked': false
+        // },
+        // {
+        //     'id': "asedasd",
+        //     "content": '测试回复',
+        //     'user': { id: "asd", 'username': "Alice", 'avatarUrl': null, verified: true },
+        //     'timestamps': 158745622,
+        //     'parentReviewId': 'aedff',
+        //     'likeCount': 1207,
+        //     "reviewCount": 69,
+        //     'isLiked': false
+        // }
+    ],
+    pageIndex: 1,
+    pageSize: 10
 })
 
-async function getPost() {
+async function getPost(id) {
     try {
-        console.log('a')
-        const response = await getPostById(store.SELECT_POST_ID)
-        if (!response.ok) throw new Error(await result.text())
+        // console.log('a')
+        const response = await getPostById(id)
+        if (!response.ok) throw new Error(await response.text())
 
         state.post = await response.json()
     } catch (e) {
         store.setMsg(e.message)
         console.error(e)
     }
+}
 
+async function getReviews(postId, pageIndex, pageSize) {
+    try {
+        const response = await getPostReviews(postId, pageIndex, pageSize)
+        if (!response.ok) throw new Error(await response.text())
+
+        state.reviews = (await response.json()).content
+        //console.log(state.reviews)
+    } catch (e) {
+        store.setMsg(e.message)
+        console.error(e)
+    }
 }
 
 onMounted(() => {
-    getPost()
-    console.log(state.post)
-})
+    const postId = window.location.href.replace(new RegExp('.*/'), '')
+    // console.log(id)
+    if (state.post.user == undefined) {
+        getPost(postId)
+    }
 
+    //console.log(state.post.id)
+    getReviews(postId,state.pageIndex,state.pageSize)
+})
 </script>

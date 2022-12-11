@@ -3,8 +3,8 @@ const TOKEN = localStorage.getItem('TOKEN')
 
 /**
  * 拉取时间线上的帖子
- * @param {int} pageIndex 页码
- * @param {int} pageSize 页数
+ * @param {int} pageIndex 页数
+ * @param {int} pageSize 每页条数
  * @returns Promise<any>
  */
 export function getTimeline(pageIndex, pageSize) {
@@ -196,9 +196,79 @@ export function getUserInfoById(id) {
  * @param {string} id 帖子id
  * @returns 帖子信息
  */
-export function getPostById(id){
-    return fetch(`${BASE_URL}/post?pid=${id}`,{
-        method:'GET',
+export function getPostById(id) {
+    return fetch(`${BASE_URL}/post?pid=${id}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 根据帖子id获取评论信息
+ * @param {string} postId 帖子id
+ * @param {string} pageIndex 评论页数
+ * @param {string} pageSize 评论每页条数
+ * @returns 该帖子的评论信息
+ */
+export function getPostReviews(postId, pageIndex, pageSize) {
+    return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 发布评论
+ * @param {string} data 待发布评论内容
+ * @returns 发布结果
+ */
+export function reviewing(data) {
+    return fetch(`${BASE_URL}/review`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 根据id查询评论详情
+ * @param {string} id 评论id
+ * @returns 查询到的评论详情
+ */
+export function getReviewById(id) {
+    return fetch(`${BASE_URL}/review/${id}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 
+ * @param {string} id 评论id
+ * @param {string} pageIndex 评论页数
+ * @param {string} pageSize 评论每页条数
+ * @returns 该帖子的子评论
+ */
+export function getSubReviewById(id,pageIndex, pageSize){
+    return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}`,{
+        method: 'GET',
         headers: {
             'Authorization': TOKEN,
         },

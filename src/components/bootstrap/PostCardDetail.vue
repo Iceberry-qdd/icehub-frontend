@@ -1,11 +1,11 @@
 <template>
-    <div class="card" >
+    <div class="card" @click="routeTo(props.post.id)">
         <button type="button" class="btn menu">
             <i class="bi bi-chevron-down"></i>
         </button>
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(props.post.user.id)">
-                <img class="avatar img-fluid" loading="lazy" :src="defaultAvatar" width="40" height="40">
+                <img class="avatar img-fluid" loading="lazy" :src="defaultAvatar" width="48" height="48">
                 <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
             </a>
             <div class="user-text">
@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <div class="card-body" @click="routeTo(props.post.id)">
+        <div class="card-body">
             <p class="card-text" id="content">{{ props.post.content }}</p>
         </div>
         <div class="card-pics container" v-if="hasPics">
@@ -37,13 +37,14 @@
                 <span class="material-icons-round">redo</span>
                 {{ props.post.repostCount }}
             </button>
-            <button type="button" class="btn op" @click="toggleReview">
+            <button type="button" class="btn op" @click="toggleReviewPanel">
                 <!-- <i class="bi bi-chat-square"></i> -->
                 <span class="material-icons-round">chat_bubble_outline</span>
                 {{ props.post.reviewCount }}
             </button>
             <button type="button" class="btn op" @click="toggleLike">
-                <span :class="{liked:isLiked}" class="material-icons-round">{{isLiked?'favorite':'favorite_border'}}</span>
+                <span :class="{ liked: isLiked }"
+                    class="material-icons-round">{{ isLiked ? 'favorite' : 'favorite_border' }}</span>
                 {{ props.post.likeCount }}
             </button>
         </div>
@@ -53,17 +54,12 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.card:hover{
-    background-color: #F5F5F5;
-    cursor: pointer;
-}
-
-.btn:active{
+.btn:active {
     outline: none !important;
     border: 0;
 }
 
-.btn{
+.btn {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
@@ -73,17 +69,19 @@
     column-gap: 0.5rem;
 }
 
-.material-icons-round{
+.material-icons-round {
     font-size: 14pt;
 }
 
-.liked{
+.liked {
     color: red;
 }
 
-.nickname{
+.nickname {
     font-weight: bold;
+    font-size: 14pt;
 }
+
 .verify {
     position: absolute;
     left: 32px;
@@ -92,7 +90,7 @@
 }
 
 .op {
-    font-size: 11pt;
+    font-size: small;
 }
 
 .menu {
@@ -113,7 +111,7 @@
 
 .avatar {
     border-radius: 16%;
-    border:1px solid #EEEEEE;
+    border: 1px solid #EEEEEE;
 }
 
 #verify-badge {
@@ -121,7 +119,7 @@
 }
 
 .card-body {
-    margin-left: 2.5rem;
+    margin-left: 3rem;
     padding-top: 0.5rem !important;
 }
 
@@ -131,7 +129,7 @@
 
 .card-text {
     text-align: justify;
-    font-size: 11pt;
+    font-size: 14pt;
     word-break: break-all;
 }
 
@@ -148,14 +146,14 @@
 }
 
 .card-pics {
-    margin-left: 2.8rem;
+    margin-left: 3.3rem;
     margin-bottom: 1rem;
     display: flex;
 }
 
 .card-tags {
     /*margin-left: 2.8rem;*/
-    margin: 0 0 0.5rem 2.8rem;
+    margin: 0 0 0.5rem 3rem;
 }
 
 .row {
@@ -173,7 +171,6 @@ import { computed, onUpdated, reactive } from 'vue';
 import { likeAPost, dislikeAPost } from '../../api'
 import router from '../../route';
 import { store } from '../../store'
-import {humanizedTime} from '../../utils/formatUtils.js'
 
 const props = defineProps(['post'])
 
@@ -181,10 +178,9 @@ const state = reactive({
     reaction: [false, props.post.liked, false]
 })
 
-function routeTo(postId){
-    // store.setSelectPostId(postId)
-    store.setSelectPost(props.post)
-    router.push({name:'postDetail',params:{id:postId}})
+function routeTo(postId) {
+    //store.setSelectPostId(postId)
+    router.push({ name: 'postDetail', params: { id: postId } })
 }
 
 function getCardId(key) {
@@ -223,9 +219,12 @@ async function toggleLike() {
     }
 }
 
-function toggleReview() {
-    const lastState = props.reaction[1]
-    props.reaction[1] = !lastState
+function toggleReviewPanel() {
+    if (store.SHOW_REVIEW_PANEL == true) {
+        store.dismissReviewPanel()
+    } else {
+        store.showReviewPanel()
+    }
 }
 
 function toggleRepost() {
@@ -259,10 +258,36 @@ const isLiked = computed(() => {
 })
 
 const formattedTime = computed(() => {
-    return humanizedTime(props.post.createdTime)
+    let now = new Date()
+    let postTime = new Date(Number.parseInt(props.post.createdTime))
+
+    if (postTime.getFullYear() != now.getFullYear()) {
+        return `${postTime.getFullYear()}-${postTime.getMonth() + 1}-${postTime.getDate()}`
+    }
+
+    if (postTime.getMonth() != now.getMonth()) {
+        return `${postTime.getMonth() + 1}月${postTime.getDate()}日`
+    }
+
+    if (postTime.getDate() != now.getDate()) {
+        return `${now.getDate() - postTime.getDate()}天前`
+    }
+
+    if (postTime.getHours() != now.getHours()) {
+        return `${now.getHours() - postTime.getHours()}小时前`
+    }
+
+    if (postTime.getMinutes() != now.getMinutes()) {
+        return `${now.getMinutes() - postTime.getMinutes()}分钟前`
+    }
+
+    if (postTime.getSeconds() != now.getSeconds()) {
+        return `${now.getSeconds() - postTime.getSeconds()}秒前`
+    }
+    return postTime
 })
 
-onUpdated(()=>{
-    //console.log(props.post)
+onUpdated(() => {
+    console.log(props.post)
 })
 </script>
