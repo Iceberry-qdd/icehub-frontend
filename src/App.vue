@@ -3,7 +3,8 @@
         <GlobalBanner></GlobalBanner>
         <GlobalRefresh></GlobalRefresh>
         <GlobalTipDialog></GlobalTipDialog>
-        <ImageSlide></ImageSlide>
+        <!-- <ImageSlide></ImageSlide> -->
+        <ImageSlide2></ImageSlide2>
         <div id="sidebar-l">
             <Brand></Brand>
             <Sidebar id="menu"></Sidebar>
@@ -53,12 +54,12 @@ import Sidebar from './components/bootstrap/Sidebar.vue'
 import RecommendUserCard from './components/bootstrap/RecommendUserCard.vue'
 import GlobalRefresh from './components/tailwind/GlobalRefresh.vue'
 import GlobalTipDialog from './components/tailwind/GlobalTipDialog.vue'
-import ImageSlide from './components/bootstrap/ImageSlide.vue'
 import Brand from './components/tailwind/Brand.vue'
 import Header from './components/tailwind/Header.vue'
 import { onMounted, reactive } from 'vue'
 import { getCurUserInfo } from './api'
 import { store } from './store'
+import ImageSlide2 from './components/tailwind/ImageSlide2.vue'
 
 const state = reactive({
     user: null,

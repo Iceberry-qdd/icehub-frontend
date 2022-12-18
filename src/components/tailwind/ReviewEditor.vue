@@ -3,16 +3,16 @@
         <div class="border-[1px] rounded-md h-fit"><img :src="avatar" class="h-[2.5rem] w-[2.5rem]" />
         </div>
         <div class="w-full">
-            <div class="text-[11pt] mt-[20px] mb-2"> 回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
+            <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
             </div>
             <textarea v-model="state.content" @keydown="resize" :disabled="state.loading"
                 :class="{'text-gray-400':state.loading}"
                 class="focus:outline-none overflow-y-hidden tracking-wide resize-none text-lg leading-6 text-justify min-w-full max-w-full min-h-fit bg-transparent pr-2"
                 maxlength="512" placeholder="发布评论" id="review-input" name="review"></textarea>
             <div class="flex flex-row justify-between mr-8 items-center" v-if="state.content.length > 0">
-                <div class="flex flex-row gap-x-2">
-                    <div>图片</div>
-                    <div>定位</div>
+                <div class="flex flex-row gap-x-2 ">
+                    <div><span class="material-icons-round text-[13pt]">collections</span></div>
+                    <div><span class="material-icons-round text-[13pt]">location_on</span></div>
                 </div>
                 <div @click="submitReview"
                     class="text-sm py-2 px-6 rounded-full text-white bg-[#0d6efd] cursor-pointer">

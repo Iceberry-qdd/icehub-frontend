@@ -34,7 +34,7 @@
         <div class="btn-group" role="group">
             <button type="button" class="btn op op-repost" @click="toggleRepost">
                 <!-- <i class="bi bi-arrow-return-right"></i> -->
-                <span class="material-icons-round">redo</span>
+                <span class="material-icons-round">shortcut</span>
                 {{ props.post.repostCount }}
             </button>
             <button type="button" class="btn op op-review" @click="toggleReview">
@@ -130,7 +130,7 @@
 }
 
 .material-icons-round {
-    font-size: 14pt;
+    font-size: 16pt;
 }
 
 .liked {
@@ -149,7 +149,7 @@
 }
 
 .op {
-    font-size: 11pt;
+    font-size: 12pt;
 }
 
 .menu {

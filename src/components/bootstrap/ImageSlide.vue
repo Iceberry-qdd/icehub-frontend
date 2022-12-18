@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="isShow" id="carouselExampleControls" class="carousel slide" data-bs-interval="false">
+    <div v-if="isShow" id="carouselExampleControls" class="carousel slide carousel-fade" data-bs-interval="false">
         <button @click="close" type="button" class="btn-close" aria-label="Close"></button>
         <div class="carousel-inner">
             <div class="carousel-item" :class="{ active: idx == this.store.SLIDE_DATA.curIdx }"

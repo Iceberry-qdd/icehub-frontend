@@ -308,3 +308,26 @@ export function dislikeAReview(reviewId) {
         credentials: 'same-origin'
     })
 }
+
+/**
+ * 柑橘用户id返回用户帖子信息
+ * @param {string} uid 用户id
+ * @param {string} pageIndex 当前页码
+ * @param {string} pageSize 每页数量
+ * @returns 用户的帖子信息
+ */
+export function getUserPosts(uid,pageIndex,pageSize){
+    return fetch(`${BASE_URL}/post?uid=${uid}`,{
+        method:'POST',
+        headers:{
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({
+            'pageIndex':pageIndex,
+            'pageSize':pageSize
+        }),
+        redirect:'follow',
+        credentials:'same-origin'
+    })
+}

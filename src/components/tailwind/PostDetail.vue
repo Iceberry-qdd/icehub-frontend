@@ -25,28 +25,7 @@ import ReviewEditor from '../tailwind/ReviewEditor.vue'
 
 const state = reactive({
     post: store.SELECT_POST,
-    reviews: [
-        // {
-        //     'id': "ased",
-        //     "content": '测试评论',
-        //     'user': { id: "asd", 'username': "Kitty", 'avatarUrl': null, verified: true },
-        //     'timestamps': 124698533,
-        //     'parentReviewId': 'aedff',
-        //     'likeCount': 4526,
-        //     "reviewCount": 120,
-        //     'isLiked': false
-        // },
-        // {
-        //     'id': "asedasd",
-        //     "content": '测试回复',
-        //     'user': { id: "asd", 'username': "Alice", 'avatarUrl': null, verified: true },
-        //     'timestamps': 158745622,
-        //     'parentReviewId': 'aedff',
-        //     'likeCount': 1207,
-        //     "reviewCount": 69,
-        //     'isLiked': false
-        // }
-    ],
+    reviews: [],
     pageIndex: 1,
     pageSize: 10
 })
@@ -69,7 +48,8 @@ async function getReviews(postId, pageIndex, pageSize) {
         const response = await getPostReviews(postId, pageIndex, pageSize)
         if (!response.ok) throw new Error(await response.text())
 
-        state.reviews = (await response.json()).content
+        const { content } = await response.json()
+        state.reviews.push(...content)
         //console.log(state.reviews)
     } catch (e) {
         store.setMsg(e.message)

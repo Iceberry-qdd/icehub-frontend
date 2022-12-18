@@ -7,8 +7,10 @@
                         <a href="as"><img :src="avatar"/></a>
                         <i class="bi bi-patch-check-fill verify relative text-[10pt] left-[30px] bottom-[12px] text-blue-500"></i>
                     </div>
-                    <div class="text-[12pt] font-bold">{{ props.review.user.nickname }}</div>
-                    <div class="text-[11pt]"> 回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
+                    <div>
+                        <div class="text-[12pt] font-bold">{{ props.review.user.nickname }}</div>
+                        <div class="text-[11pt]"> 回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -22,17 +24,17 @@
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2"
                     @click="toggleRepost">
                     <!-- <i class="bi bi-arrow-return-right"></i> -->
-                    <span class="material-icons-round text-[13pt]">redo</span>
+                    <span class="material-icons-round text-[14pt]">redo</span>
                     12k
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2"
                     @click="toggleReviewPanel">
                     <!-- <i class="bi bi-chat-square"></i> -->
-                    <span class="material-icons-round text-[13pt]">chat_bubble_outline</span>
+                    <span class="material-icons-round text-[14pt]">chat_bubble_outline</span>
                     {{ props.review.reviewCount }}
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleLike">
-                    <span :class="{ liked: isLiked }" class="material-icons-round text-[13pt]">{{
+                    <span :class="{ liked: isLiked }" class="material-icons-round text-[14pt]">{{
                             isLiked ? 'favorite' : 'favorite_border'
                     }}</span>
                     {{ props.review.likeCount }}
@@ -50,7 +52,7 @@
 </template>
 
 <style scoped>
-.liked{
+.liked {
     color: red;
 }
 </style>
@@ -153,7 +155,7 @@ async function toggleLike() {
     }
 }
 
-const isLiked = computed(()=>{
+const isLiked = computed(() => {
     return props.review.liked
 })
 

@@ -1,6 +1,12 @@
 <template>
-    <div id="h" class="flex flex-row justify-start gap-x-2 items-center px-2">
-        <span @click="routeToIndex" v-if="state.backArrow == true" class="material-icons-round cursor-pointer text-[14pt]">arrow_back_ios</span>{{ state.titleText }}
+    <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem]">
+        <div class="text-[15pt] h-full flex flex-row items-center">
+            <div @click="routeTo('/index')" v-if="state.backArrow == true"
+                class="material-icons-round cursor-pointer text-[15pt] pr-[0.5rem]">arrow_back_ios</div>
+            <div>{{ state.titleText }}</div>
+        </div>
+        <div><span v-if="state.editIcon != ''" @click="routeTo('/profile/edit')"
+                class="material-icons-round text-[14pt]">{{ state.editIcon }}</span></div>
     </div>
     <div id="h-hide"></div>
 </template>
@@ -10,7 +16,7 @@
     background-color: rgb(255 255 255 / 84%);
     backdrop-filter: blur(25px);
     z-index: 104;
-    width: 38.36%;
+    width: 38.45%;
     height: 56px;
     position: fixed;
     border-bottom: 1px solid #EEEEEE;
@@ -30,6 +36,7 @@ import router from '../../route';
 const state = reactive({
     backArrow: false,
     titleText: '',
+    editIcon: '',
     url: window.location.href
 })
 
@@ -38,21 +45,32 @@ const route = useRoute()
 watch(() => route.path, (newUrl, oldUrl) => {
     if (newUrl.match('^/(index)?$')) {
         state.backArrow = false
-        state.titleText = ''
+        state.titleText = '主页'
+        state.editIcon = ''
     } else if (newUrl.match('^/post/.*$')) {
         state.backArrow = true
         state.titleText = '帖子详情'
-
-        const pid = newUrl.replace('/post/','')
+        state.editIcon = ''
+        const pid = newUrl.replace('/post/', '')
         //store.setSelectPostId(pid)
+    } else if (newUrl.match('^/profile/?$')) {
+        const user = JSON.parse(localStorage.getItem("CUR_USER"))
+        state.backArrow = true
+        state.titleText = user.nickname
+        state.editIcon = 'create'
+    } else if (newUrl.match('^/profile/edit/?$')) {
+        state.backArrow = true
+        state.titleText = '编辑个人资料'
+        state.editIcon = 'done'
     } else {
         state.backArrow = false
         state.titleText = ''
+        state.editIcon = ''
     }
 })
 
-function routeToIndex(){
-    router.push('/index')
+function routeTo(path) {
+    router.push(path)
 }
 
 </script>

@@ -13,7 +13,19 @@ img,li,.userCard {
 }
 
 .material-icons-round {
+    cursor: pointer;
     font-family: 'Material Icons Round','Noto Color Emoji' !important;
+    background-color: transparent;
+    border-radius: 24rem;
+    padding: 0.5rem;
+}
+
+.material-icons-round:hover {
+    cursor: pointer;
+    font-family: 'Material Icons Round','Noto Color Emoji' !important;
+    background-color: #00000022;
+    border-radius: 24rem;
+    padding: 0.5rem;
 }
 
 @tailwind base;
