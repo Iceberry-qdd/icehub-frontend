@@ -1,8 +1,8 @@
 <template>
     <div id="container">
         <GlobalBanner></GlobalBanner>
-        <GlobalRefresh></GlobalRefresh>
         <GlobalTipDialog></GlobalTipDialog>
+        <ImageCropper></ImageCropper>
         <!-- <ImageSlide></ImageSlide> -->
         <ImageSlide2></ImageSlide2>
         <div id="sidebar-l">
@@ -52,7 +52,7 @@
 import GlobalBanner from './components/bootstrap/GlobalBanner.vue'
 import Sidebar from './components/bootstrap/Sidebar.vue'
 import RecommendUserCard from './components/bootstrap/RecommendUserCard.vue'
-import GlobalRefresh from './components/tailwind/GlobalRefresh.vue'
+
 import GlobalTipDialog from './components/tailwind/GlobalTipDialog.vue'
 import Brand from './components/tailwind/Brand.vue'
 import Header from './components/tailwind/Header.vue'
@@ -60,6 +60,7 @@ import { onMounted, reactive } from 'vue'
 import { getCurUserInfo } from './api'
 import { store } from './store'
 import ImageSlide2 from './components/tailwind/ImageSlide2.vue'
+import ImageCropper from './components/tailwind/ImageCropper.vue'
 
 const state = reactive({
     user: null,
@@ -76,7 +77,8 @@ async function curUser() {
         state.user = await response.json()
         if (state.user == null) throw new Error('Not Login!')
 
-        localStorage.setItem('CUR_USER', JSON.stringify(state.user))
+        const user = JSON.stringify(state.user)
+        localStorage.setItem('CUR_USER', user)
     } catch (e) {
         store.setMsg(e)
         console.error(e)

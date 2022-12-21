@@ -1,6 +1,7 @@
 <template>
     <div>
         <!-- <Header></Header> -->
+        <GlobalRefresh></GlobalRefresh>
         <PostEditor @get-data="getData"></PostEditor>
         <PostCard v-for="(post, index) in state.posts" :post="post" :key="post.id" :index="index"></PostCard>
         <div id="footer" class="w-full flex flex-row justify-center pt-4 text-sm text-gray-500">没有更多了</div>
@@ -20,6 +21,7 @@ import { getTimeline } from '../../api.js'
 import { store } from '../../store.js'
 import PostEditor from '../tailwind/PostEditor.vue'
 import { onMounted, onUnmounted, reactive } from 'vue'
+import GlobalRefresh from '../tailwind/GlobalRefresh.vue'
 
 const state = reactive({
     posts: [],

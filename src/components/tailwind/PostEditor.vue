@@ -19,8 +19,7 @@
             </div>
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
-                    <input v-show="false" @change="choosePics" type="file" id="imgFile" name="imgFile" multiple="true"
-                        accept="image/*" />
+                    <input v-show="false" @change="choosePics" type="file" id="imgFile" name="imgFile" multiple="true" accept="image/*" />
                     <!-- <i @click="choosePics" :class="[imgList.length > 0 ? 'text-[#0d6efd]' : 'text-black']"
                         class=" cursor-pointer bi bi-images" title="添加照片"></i> -->
                     <span title="添加图片" @click="choosePics"

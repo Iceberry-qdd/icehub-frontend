@@ -24,6 +24,19 @@ img {
 
 .material-icons-round {
     font-size: 20pt;
+    cursor: pointer;
+    font-family: 'Material Icons Round','Noto Color Emoji' !important;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+}
+
+.material-icons-round:hover{
+    cursor: pointer;
+    font-family: 'Material Icons Round','Noto Color Emoji' !important;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
 }
 
 li:hover {

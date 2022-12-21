@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
 
 html,body {
     margin: 0;
     /* background-color: #F5F5F5; */
     /* font-family: 'Roboto Mono' !important; */
-    font-family: 'Noto Sans SC','Noto Color Emoji', sans-serif !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif, 'Segoe UI','Noto Color Emoji', !important;
 }
 
 img,li,.userCard {

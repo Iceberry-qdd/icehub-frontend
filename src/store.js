@@ -37,5 +37,13 @@ export const store = reactive({
     },
     dismissReviewPanel() {
         this.SHOW_REVIEW_PANEL = false
+    },
+
+    SHOW_IMAGE_CROPPER: false,
+    showImageCropper() {
+        this.SHOW_IMAGE_CROPPER = true
+    },
+    dismissImageCropper() {
+        this.SHOW_IMAGE_CROPPER = false
     }
 })

@@ -1,7 +1,7 @@
 <template>
     <Transition>
         <div v-if="isShow"
-            class="pointer-events-none w-full h-auto flex fixed z-[97] top-16 justify-center items-center content-center">
+            class="pointer-events-none w-[38.5%] h-auto flex fixed z-[97] top-16 justify-center items-center content-center">
             <div @click="dismiss"
                 class="pointer-events-auto cursor-pointer shadow-lg shadow-blue-500/25   bg-blue-500 gap-x-1 py-1 px-2 rounded-full flex flex-row items-center">
                 <div class="userAvatars flex justify-center -space-x-4">

@@ -2,7 +2,7 @@
     <div>
         <div>
             <div class="banner-cover">
-                <span class="material-icons-round">edit</span>
+                <span @click="showImageCropper" class="material-icons-round">edit</span>
             </div>
             <div class="avatar-cover">
                 <span class="material-icons-round">edit</span>
@@ -33,9 +33,8 @@
                     <label for="floatingInput">所在城市</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input v-model.trim="state.newUser.age" type="number"
-                        :class="[isAgeValid.valid ? 'is-valid' : 'is-invalid']" class="form-control" id="floatingInput"
-                        placeholder="年龄">
+                    <input v-model.trim="state.newUser.age" type="number" :class="isAgeValid.class" class="form-control"
+                        id="floatingInput" placeholder="年龄">
                     <label for="floatingInput">年龄</label>
                     <div class="invalid-feedback">{{ isAgeValid.msg }}</div>
                 </div>
@@ -45,20 +44,22 @@
                     <label for="floatingInput">性别</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input v-model.trim="state.newUser.email" type="email" :class="[isEmailValid.valid ? 'is-valid' : 'is-invalid']" class="form-control" id="floatingInput"
-                        placeholder="电子邮件">
+                    <input v-model.trim="state.newUser.email" type="email" :class="isEmailValid.class"
+                        class="form-control" id="floatingInput" placeholder="电子邮件">
                     <label for="floatingInput">电子邮件</label>
                     <div class="invalid-feedback">{{ isEmailValid.msg }}</div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input v-model.trim="state.newUser.phoneNumber" type="tel" :class="[isPhoneNoValid.valid ? 'is-valid' : 'is-invalid']" class="form-control" id="floatingInput"
-                        placeholder="手机号码">
+                    <input v-model.trim="state.newUser.phoneNumber" type="tel" :class="isPhoneNoValid.class"
+                        class="form-control" id="floatingInput" placeholder="手机号码">
                     <label for="floatingInput">手机号码</label>
                     <div class="invalid-feedback">{{ isPhoneNoValid.msg }}</div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="url" class="form-control" id="floatingInput" placeholder="手机号码">
+                    <input v-model.trim="state.newUser.website" type="url" class="form-control"
+                        :class="isWebsiteValid.class" id="floatingInput" placeholder="个人网站">
                     <label for="floatingInput">个人网站</label>
+                    <div class="invalid-feedback">{{ isWebsiteValid.msg }}</div>
                 </div>
             </div>
         </div>
@@ -159,65 +160,103 @@
 
 <script setup>
 import { reactive, computed } from 'vue';
+import { store } from '../../store.js'
 
 const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),
     newUser: JSON.parse(localStorage.getItem("CUR_USER"))
 })
 
-const formattedDate = computed(() => {
-    const timestamps = state.user.createdTime
-    const date = new Date(Number.parseInt(timestamps))
-    return `${date.getFullYear()}年${date.getMonth()}月${date.getDate()}日`
-})
+function showImageCropper(){
+    store.showImageCropper()
+    document.querySelector("body").setAttribute("style", "overflow:hidden")
+}
 
 const bannerPic = computed(() => {
     const bannerUrl = state.user.bannerUrl
-    if (bannerUrl == null) return '/src/assets/default-bg.jpg'
-    else return bannerUrl
+    return bannerUrl || '/src/assets/default-bg.jpg'
 })
 
 const avatarPic = computed(() => {
-    if (state.user.avatarUrl == null) {
-        return `https://api.multiavatar.com/${state.user.nickname}.svg`
-    } else {
-        return props.post.user.avatarUrl
-    }
+    const avatarUrl = state.user.avatarUrl
+    return avatarUrl || `https://api.multiavatar.com/${state.user.nickname}.svg`
 })
 
 const isAgeValid = computed(() => {
+    if (state.newUser.age == state.user.age) {
+        return { 'class': '', 'msg': '' }
+    }
+
+    if (state.newUser.age == '' && state.user.age == null) {
+        return { 'class': '', 'msg': '' }
+    }
+
     if (!state.newUser.age.toString().match('^[0-9]+$')) {
-        return { 'valid': false, 'msg': '您输入的不是一个有效的年龄' }
+        return { 'class': 'is-invalid', 'msg': '您输入的不是一个有效的年龄' }
     }
 
     if (state.newUser.age < 0) {
-        return { 'valid': false, 'msg': '年龄不能小于0！' }
+        return { 'class': 'is-invalid', 'msg': '年龄不能小于0！' }
     }
 
     if (state.newUser.age > 128) {
-        return { 'valid': false, 'msg': '此年龄值超出范围！' }
+        return { 'class': 'is-invalid', 'msg': '此年龄值超出我们所能处理的范围！' }
     }
 
-    return { 'valid': true, 'msg': '' }
+    return { 'class': 'is-valid', 'msg': '' }
 })
 
-const isEmailValid=computed(()=>{
-    if(!state.newUser.email) state.newUser.email=''
-
-    if(state.newUser.email.toString().match('^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}$')){
-        return { 'valid': true, 'msg': '' }
+const isEmailValid = computed(() => {
+    if (state.newUser.email == state.user.email) {
+        return { 'class': '', 'msg': '' }
     }
 
-    return { 'valid': false, 'msg': '您输入的不是一个有效的邮箱地址！' }
+    if (state.newUser.email == '' && state.user.email == null) {
+        return { 'class': '', 'msg': '' }
+    }
+
+    if (!state.newUser.email) state.newUser.email = ''
+
+    if (state.newUser.email.toString().match(/^\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}$/)) {
+        return { 'class': 'is-valid', 'msg': '' }
+    }
+
+    return { 'class': 'is-invalid', 'msg': '您输入的不是一个有效的邮箱地址！' }
 })
 
-const isPhoneNoValid=computed(()=>{
-    if(!state.newUser.phoneNumber) state.newUser.phoneNumber=''
-
-    if(state.newUser.phoneNumber.toString().match('^\\+?([0-9]+-?)+$')){
-        return { 'valid': true, 'msg': '' }
+const isPhoneNoValid = computed(() => {
+    if (state.newUser.phoneNumber == state.user.phoneNumber) {
+        return { 'class': '', 'msg': '' }
     }
 
-    return { 'valid': false, 'msg': '您输入的不是一个有效的手机号码！' }
+    if (state.newUser.phoneNumber == '' && state.user.phoneNumber == null) {
+        return { 'class': '', 'msg': '' }
+    }
+
+    if (!state.newUser.phoneNumber) state.newUser.phoneNumber = ''
+
+    if (state.newUser.phoneNumber.toString().match(/^(\+[0-9]{1,3})?[0-9]{3,5}-?[0-9]{3,5}-?[0-9]{3,5}-?$/)) {
+        return { 'class': 'is-valid', 'msg': '' }
+    }
+
+    return { 'class': 'is-invalid', 'msg': '您输入的不是一个有效的手机号码！' }
+})
+
+const isWebsiteValid = computed(() => {
+    if (state.newUser.website == state.user.website) {
+        return { 'class': '', 'msg': '' }
+    }
+
+    if (state.newUser.website == '' && state.user.website == null) {
+        return { 'class': '', 'msg': '' }
+    }
+
+    if (!state.newUser.website) state.newUser.website = ''
+
+    if (state.newUser.website.toString().match(/^https?:\/\/(www\.)?[a-zA-Z0-9]+\.[a-zA-Z]+\/?(\/?[a-zA-Z0-9.]+)?$/)) {
+        return { 'class': 'is-valid', 'msg': '' }
+    }
+
+    return { 'class': 'is-invalid', 'msg': '暂不支持您输入的网站！' }
 })
 </script>
