@@ -142,8 +142,15 @@ function moveMask(e) {
     const centerX = x * state.img.width / state.canvasWidth //鼠标指针所在位置
     const centerY = y * state.img.height / state.canvasHeight //鼠标指针所在位置
 
-    const startX = centerX - clipMaskWidth.value / 2
-    const startY = centerY - clipMaskHeight.value / 2
+    let startX = centerX - clipMaskWidth.value / 2
+    let startY = centerY - clipMaskHeight.value / 2
+
+    // 计算鼠标可移动的范围
+    if (startX < 0) startX = 0
+    if (startY < 0) startY = 0
+    if (state.img.width - startX < clipMaskWidth.value) startX = state.img.width - clipMaskWidth.value
+    if (state.img.height - startY < clipMaskHeight.value) startY = state.img.height - clipMaskHeight.value
+
     drawMask(state.ctx, startX, startY)
 }
 
