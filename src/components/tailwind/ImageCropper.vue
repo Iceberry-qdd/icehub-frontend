@@ -14,7 +14,7 @@
                 </div> -->
                 <canvas @mousemove="moveMask($event)" @mousedown="state.isMouseDown = true"
                     @mouseup="state.isMouseDown = false" @mouseleave="state.isMouseLeave == true" id="canvas"
-                    class="relative max-w-full max-h-full pointer-move" width="0" height="0"></canvas>
+                    class="relative max-w-full max-h-full cursor-move" width="0" height="0"></canvas>
             </div>
         </div>
     </div>
@@ -29,21 +29,28 @@
 </style>
 
 <script setup>
-import { reactive } from 'vue';
+import { onUnmounted, reactive, computed } from 'vue';
 import { store } from '../../store.js'
 
 const state = reactive({
     img: null,
-    imgWidth: 0,
-    imgHeight: 0,
-    clipMaskWidth: 0,
-    clipMaskHeight: 0,
+    canvasWidth: 0,
+    canvasHeight: 0,
     ctx: null,
     isMouseDown: false,
     isMouseLeave: false
 })
 
+const clipMaskWidth = computed(() => {
+    return state.img.width
+})
+
+const clipMaskHeight = computed(() => {
+    return 18 * state.img.width / 38
+})
+
 function dismiss() {
+    state.img = null
     document.querySelector("body").removeAttribute("style", "overflow:hidden")
     store.dismissImageCropper()
 }
@@ -52,7 +59,6 @@ function choosePics() {
     const imgFileSelector = document.getElementById("imgFile")
     imgFileSelector.click()
     const imgs = imgFileSelector.files;
-    //console.log(imgs)
 
     if (imgs.length == 0) return
 
@@ -70,12 +76,6 @@ function loadImage(file) {
         image.onload = function () {
             result.width = image.width
             result.height = image.height
-
-            state.imgWidth = image.naturalWidth
-            state.imgHeight = image.naturalHeight
-
-            state.clipMaskWidth = state.imgWidth
-            state.clipMaskHeight = 18 * state.imgWidth / 38
         }
         image.src = e.target.result
         image.crossOrigin = 'Anonymous'
@@ -97,28 +97,30 @@ function drawImage() {
         ctx.drawImage(state.img, 0, 0)
 
         state.ctx = ctx
+        state.canvasWidth = document.getElementById('canvas').clientWidth
+        state.canvasHeight = document.getElementById('canvas').clientHeight
         drawMask(ctx, 0, 0)
     }
 }
 
 function drawMask(ctx, startX, startY) {
-    ctx.clearRect(0, 0, state.imgWidth, state.imgHeight);
+    ctx.clearRect(0, 0, state.img.width, state.img.height)
     ctx.fillStyle = 'rgba(0,0,0,0.4)'
     ctx.fillRect(0, 0, state.img.width, state.img.height)
 
-    const clipMaskWidth = state.clipMaskWidth
-    const clipMaskHeight = state.clipMaskHeight
+    const cWidth = clipMaskWidth.value
+    const cHeight = clipMaskHeight.value
 
     ctx.globalCompositeOperation = 'source-atop';
-    ctx.clearRect(startX, startY, clipMaskWidth, clipMaskHeight)
+    ctx.clearRect(startX, startY, cWidth, cHeight)
 
     ctx.globalCompositeOperation = 'source-over';
     ctx.fillStyle = '#3b82f6';
     let size = 12; // 自定义像素点大小
     ctx.fillRect(0, 0, size, size);
-    ctx.fillRect(0, clipMaskHeight - size, size, size);
-    ctx.fillRect(clipMaskWidth - size, 0, size, size);
-    ctx.fillRect(clipMaskWidth - size, clipMaskHeight - size, size, size);
+    ctx.fillRect(0, cHeight - size, size, size);
+    ctx.fillRect(cWidth - size, 0, size, size);
+    ctx.fillRect(cWidth - size, cHeight - size, size, size);
 
     ctx.globalCompositeOperation = 'destination-over';
     ctx.drawImage(state.img, 0, 0)
@@ -126,6 +128,7 @@ function drawMask(ctx, startX, startY) {
 
 function moveMask(e) {
     if (state.isMouseDown == false || state.isMouseLeave == true) return
+
     const event = e || window.event;
     let x, y
     if (event.offsetX || event.offsetY) {  //适用非Mozilla浏览器
@@ -136,12 +139,15 @@ function moveMask(e) {
         y = event.layerY
     }
 
-    //console.log(x)
-    // const startX = x - state.clipMaskWidth / 2;
-    // const startY = y - state.clipMaskHeight / 2;
-    const startX = x //TODO 举行左上角转中心坐标
-    const startY = y
+    const centerX = x * state.img.width / state.canvasWidth //鼠标指针所在位置
+    const centerY = y * state.img.height / state.canvasHeight //鼠标指针所在位置
+
+    const startX = centerX - clipMaskWidth.value / 2
+    const startY = centerY - clipMaskHeight.value / 2
     drawMask(state.ctx, startX, startY)
 }
 
+onUnmounted(() => {
+    console.log('组件已销毁')
+})
 </script>
