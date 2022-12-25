@@ -1,5 +1,16 @@
 <template>
     <div>
+        <div v-if="state.isLoading == true" class="loading">
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                </circle>
+                <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+            </svg>
+            <div>正在提交...</div>
+        </div>
         <div>
             <div class="banner-cover">
                 <span @click="showImageCropper('banner')" class="material-icons-round">edit</span>
@@ -16,11 +27,11 @@
             </div>
             <div class="text-info">
                 <div class="form-floating mb-3">
-                    <input v-model.trim="state.newUser.nickname" type="text" class="form-control is-invalid"
-                        id="floatingInput" placeholder="用户名" required>
+                    <input @blur="checkUsernameValid" v-model.trim="state.newUser.nickname" type="text"
+                        class="form-control" :class="isUNameValid.class" id="floatingInput" placeholder="用户名" required>
                     <label for="floatingInput">用户名</label>
                     <!-- <div class="valid-feedback">Looks good!</div> -->
-                    <div class="invalid-feedback">此用户名已被使用！</div>
+                    <div class="invalid-feedback">{{ isUNameValid.msg }}</div>
                 </div>
                 <div class="form-floating mb-3">
                     <textarea v-model.trim="state.newUser.remark" class="form-control" placeholder="个人简介"
@@ -160,14 +171,35 @@
     padding-left: 1rem;
     padding-right: 1rem;
 }
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #00000066;
+    z-index: 107;
+    color: white;
+}
+
+.animate-spin {
+    color: white;
+}
 </style>
 
 <script setup>
-import { reactive, computed, watch,ref } from 'vue';
+import { reactive, computed, watch, ref } from 'vue';
 import { store } from '../../store.js';
-import { uploadUserAvatar, uploadUserBanner } from '../../api.js'
+import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '../../api.js'
+import router from '../../route';
 
-const selected=ref('')
+const selected = ref('')
 const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),
     newUser: {
@@ -185,7 +217,9 @@ const state = reactive({
         remark: JSON.parse(localStorage.getItem("CUR_USER")).remark
     },
     newAvatar: store.CROPPED_IMAGE.avatar,
-    newBanner: store.CROPPED_IMAGE.banner
+    newBanner: store.CROPPED_IMAGE.banner,
+    isLoading: false,
+    isUsernameExisted: false
 })
 
 function showImageCropper(mode) {
@@ -195,22 +229,43 @@ function showImageCropper(mode) {
 }
 
 watch(() => store.IS_SUBMIT_PROFILE, (newVal, oldVal) => {
-    if (oldVal == false && newVal == true) {
-        state.newUser.gender=selected.value
+    if (newVal == true) {
+        state.newUser.gender = selected.value
         console.table(state.newUser)
         //TODO 真正提交、检验用户名是否合规
+        submitProfile()
     }
 })
 
-async function submitProfile() {
+async function checkUsernameValid() {
     try {
+        const username = state.newUser.nickname
+        const response = await isUserExists(username)
+        if (!response.ok) throw new Error(await response.text())
+
+        const result = await response.text()
+        state.isUsernameExisted = result == 'true' ? true : false
+    } catch (e) {
+        store.setMsg(e.message)
+        console.error(e)
+    }
+}
+
+async function submitProfile() {
+    state.isLoading = true
+    try {
+        checkUsernameValid()
+        if (state.isUsernameExisted) throw new Error('该用户名已被使用！')
+
+        state.newAvatar = store.CROPPED_IMAGE.avatar
+        state.newBanner = store.CROPPED_IMAGE.banner
         if (state.newAvatar) {
-            uploadAvatar()
+            await uploadAvatar()
         } else {
             state.newUser.avatarUrl = null
         }
         if (state.newBanner) {
-            uploadBanner()
+            await uploadBanner()
         } else {
             state.newUser.bannerUrl = null
         }
@@ -219,16 +274,19 @@ async function submitProfile() {
         if (!response.ok) throw new Error(await response.text())
 
         const data = await response.json()
-        localStorage.setItem('CUR_USER', data)
+        localStorage.setItem('CUR_USER', JSON.stringify(data))
+        router.push('/profile')
     } catch (e) {
         store.setMsg(e.message)
         console.error(e)
+    } finally {
+        state.isLoading = false
     }
 }
 
 async function uploadAvatar() {
     try {
-        const data = state.newAvatar.split[','][1]
+        const data = state.newAvatar.split(',')[1]
         const response = await uploadUserAvatar(data)
         if (!response.ok) throw new Error(await response.text())
 
@@ -241,7 +299,7 @@ async function uploadAvatar() {
 
 async function uploadBanner() {
     try {
-        const data = state.newBanner.split[','][1]
+        const data = state.newBanner.split(',')[1]
         const response = await uploadUserBanner(data)
         if (!response.ok) throw new Error(await response.text())
 
@@ -264,6 +322,17 @@ const avatarPic = computed(() => {
     return clippedUrl || avatarUrl || `https://api.multiavatar.com/${state.user.nickname}.svg`
 })
 
+
+const isUNameValid = computed(() => {
+    if (state.newUser.nickname == state.user.nickname) {
+        return { 'class': '', 'msg': '' }
+    }
+    if (!state.isUsernameExisted) {
+        return { 'class': 'is-valid', 'msg': '' }
+    } else {
+        return { 'class': 'is-invalid', 'msg': '此用户名已被使用！' }
+    }
+})
 const isAgeValid = computed(() => {
     if (!state.newUser.age || state.newUser.age == state.user.age) {
         return { 'class': '', 'msg': '' }

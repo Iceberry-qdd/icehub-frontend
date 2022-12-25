@@ -4,7 +4,7 @@
             :class="{ active: menu.active }"
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
-                <img v-if="(menu.id == 8)" :src="menu.icon" />
+                <img v-if="(menu.id == 8)" :src="menu.icon" class="avatar" />
                 <span v-else class="material-icons-round">{{ menu.icon }}</span>{{ menu.name }}
             </div>
 
@@ -22,18 +22,22 @@ img {
     height: auto;
 }
 
+.avatar {
+    border-radius: 9999rem;
+}
+
 .material-icons-round {
     font-size: 20pt;
     cursor: pointer;
-    font-family: 'Material Icons Round','Noto Color Emoji' !important;
+    font-family: 'Material Icons Round', 'Noto Color Emoji' !important;
     background-color: transparent;
     border-radius: 0;
     padding: 0;
 }
 
-.material-icons-round:hover{
+.material-icons-round:hover {
     cursor: pointer;
-    font-family: 'Material Icons Round','Noto Color Emoji' !important;
+    font-family: 'Material Icons Round', 'Noto Color Emoji' !important;
     background-color: transparent;
     border-radius: 0;
     padding: 0;

@@ -4,8 +4,9 @@
             <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
                 <div class="flex flex-row items-center gap-x-4">
                     <div class="w-[2.5rem] h-[2.5rem] border-gray-300 border-[1px] rounded-md">
-                        <a href="as"><img :src="avatar"/></a>
-                        <i class="bi bi-patch-check-fill verify relative text-[10pt] left-[30px] bottom-[12px] text-blue-500"></i>
+                        <a href="as"><img :src="avatar" /></a>
+                        <i v-if="props.review.user.verified"
+                            class="bi bi-patch-check-fill verify relative text-[10pt] left-[30px] bottom-[12px] text-blue-500"></i>
                     </div>
                     <div>
                         <div class="text-[12pt] font-bold">{{ props.review.user.nickname }}</div>
@@ -160,10 +161,10 @@ const isLiked = computed(() => {
 })
 
 const avatar = computed(() => {
-    if (props.post.user.avatarUrl == null) {
+    if (props.review.user.avatarUrl == null) {
         return `https://api.multiavatar.com/${props.review.user.nickname}.svg`
     } else {
-        return props.review.user.nickname
+        return props.review.user.avatarUrl
     }
 })
 

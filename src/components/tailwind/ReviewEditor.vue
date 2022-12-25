@@ -1,12 +1,13 @@
 <template>
     <div class="flex flex-row gap-x-[1rem] py-[1rem] px-[1.5rem] border-b-[1px] border-gray-200">
-        <div class="border-[1px] rounded-md h-fit"><img :src="avatar" class="h-[2.5rem] w-[2.5rem]" />
+        <div class="border-[1px] rounded-md h-fit"><img :src="avatar" class="h-[2.5rem] w-[2.5rem] max-w-none" />
         </div>
         <div class="w-full">
-            <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
+            <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span
+                    class="cursor-pointer  font-bold">@{{ replyTo }}</span>
             </div>
             <textarea v-model="state.content" @keydown="resize" :disabled="state.loading"
-                :class="{'text-gray-400':state.loading}"
+                :class="{ 'text-gray-400': state.loading }"
                 class="focus:outline-none overflow-y-hidden tracking-wide resize-none text-lg leading-6 text-justify min-w-full max-w-full min-h-fit bg-transparent pr-2"
                 maxlength="512" placeholder="发布评论" id="review-input" name="review"></textarea>
             <div class="flex flex-row justify-between mr-8 items-center" v-if="state.content.length > 0">
@@ -17,8 +18,8 @@
                 <div @click="submitReview"
                     class="text-sm py-2 px-6 rounded-full text-white bg-[#0d6efd] cursor-pointer">
                     <span v-if="!state.loading">发布</span>
-                    <svg v-else class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
-                        fill="none" viewBox="0 0 24 24">
+                    <svg v-else class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
                         </circle>
                         <path class="opacity-75" fill="currentColor"

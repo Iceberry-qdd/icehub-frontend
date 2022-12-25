@@ -385,3 +385,19 @@ export function updateUserProfile(user) {
         credentials: 'same-origin'
     })
 }
+
+/**
+ * 根据用户昵称判断用户是否存在
+ * @param {string} nickname 用户昵称
+ * @returns 用户是否存在
+ */
+export function isUserExists(nickname) {
+    return fetch(`${BASE_URL}/user?n=${nickname}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}

@@ -2,7 +2,8 @@
     <div>
         <div>
             <div><img class=" w-[38rem] h-[18rem] object-cover object-center" :src="bannerPic" /></div>
-            <div><img class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg" :src="avatarPic" /></div>
+            <div><img class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
+                    :src="avatarPic" /></div>
             <div class="flex w-fit flex-row gap-x-2 relative top-[-4rem] right-[-30rem]">
                 <div>关注</div>
                 <div>私信</div>
@@ -49,16 +50,14 @@ const formattedDate = computed(() => {
 
 const bannerPic = computed(() => {
     const bannerUrl = state.user.bannerUrl
-    // if (bannerUrl == null) return '/src/assets/default-bg.jpg'
-    // else
-     return bannerUrl ||'/src/assets/default-bg.jpg'
+    return bannerUrl || '/src/assets/default-bg.jpg'
 })
 
 const avatarPic = computed(() => {
     if (!state.user.avatarUrl) {
         return `https://api.multiavatar.com/${state.user.nickname}.svg`
     } else {
-        return props.post.user.avatarUrl
+        return props.user.avatarUrl
     }
 })
 

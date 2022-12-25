@@ -1,11 +1,11 @@
 <template>
     <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem]">
         <div class="text-[15pt] h-full flex flex-row items-center">
-            <div @click="routeTo(state.routeUrl)" v-if="state.backArrow == true"
+            <div @click="routeTo(state.routeUrl, false)" v-if="state.backArrow == true"
                 class="material-icons-round cursor-pointer text-[15pt] pr-[0.5rem]">arrow_back_ios</div>
             <div>{{ state.titleText }}</div>
         </div>
-        <div><span v-if="state.editIcon != ''" @click="routeTo('/profile/edit')"
+        <div><span v-if="state.editIcon != ''" @click="routeTo('/profile/edit', state.submit)"
                 class="material-icons-round text-[14pt]">{{ state.editIcon }}</span></div>
     </div>
     <div id="h-hide"></div>
@@ -39,7 +39,8 @@ const state = reactive({
     routeUrl: '/',
     titleText: '',
     editIcon: '',
-    url: window.location.href
+    url: window.location.href,
+    submit: false
 })
 
 const route = useRoute()
@@ -50,6 +51,7 @@ watch(() => route.path, (newUrl, oldUrl) => {
         state.titleText = '主页'
         state.routeUrl = '/'
         state.editIcon = ''
+        state.submit = false
     } else if (newUrl.match('^/post/.*$')) {
         state.backArrow = true
         state.routeUrl = '/'
@@ -57,16 +59,19 @@ watch(() => route.path, (newUrl, oldUrl) => {
         state.editIcon = ''
         const pid = newUrl.replace('/post/', '')
         //store.setSelectPostId(pid)
+        state.submit = false
     } else if (newUrl.match('^/profile/?$')) {
         const user = JSON.parse(localStorage.getItem("CUR_USER"))
         state.backArrow = false
         state.titleText = user.nickname
         state.editIcon = 'create'
+        state.submit = false
     } else if (newUrl.match('^/profile/edit/?$')) {
         state.backArrow = true
         state.routeUrl = '/profile'
         state.titleText = '编辑个人资料'
         state.editIcon = 'done'
+        state.submit = true
     } else {
         state.backArrow = false
         state.titleText = ''
@@ -74,8 +79,8 @@ watch(() => route.path, (newUrl, oldUrl) => {
     }
 })
 
-function routeTo(path) {
-    if (state.editIcon == 'done') {
+function routeTo(path, submit) {
+    if (submit) {
         store.submitProfile()
     } else {
         router.push(path)
