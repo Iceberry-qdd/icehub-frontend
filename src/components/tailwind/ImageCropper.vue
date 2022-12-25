@@ -1,5 +1,5 @@
 <template>
-    <div v-if="store.SHOW_IMAGE_CROPPER">
+    <div>
         <input v-show="false" @change="choosePics" type="file" multiple="false" id="imgFile" name="imgFile"
             accept="image/*" />
         <div @click.self="dismiss"
@@ -43,11 +43,19 @@ const state = reactive({
     clipParams: { startX: 0, startY: 0 },
     isMouseDown: false,
     isMouseLeave: false,
-    banner: null
+    banner: null,
+    bannerImageType: 'image/png'
 })
 
 const clipMaskWidth = computed(() => {
-    return state.img.width
+    switch (store.CROPPED_IMAGE.mode) {
+        case 'banner':
+            return state.img.width
+        case 'avatar':
+            return state.img.width > state.img.height ? state.img.height : state.img.width
+        default:
+            return state.img.height
+    }
 })
 
 const clipMaskHeight = computed(() => {
@@ -55,17 +63,17 @@ const clipMaskHeight = computed(() => {
         case 'banner':
             return 18 * state.img.width / 38
         case 'avatar':
-            return state.img.width
+            return clipMaskWidth.value
         default:
             return state.img.height
     }
 })
 
 function dismiss() {
-    state.img = null
+    //state.img = null
     document.querySelector("body").removeAttribute("style", "overflow:hidden")
-    store.dismissImageCropper()
     store.setCroppedImageMode('')
+    store.dismissImageCropper()
 }
 
 function choosePics() {
@@ -80,6 +88,7 @@ function choosePics() {
 }
 
 function loadImage(file) {
+    state.bannerImageType = file.type
     const reader = new FileReader()
     let result = new Image()
 
@@ -179,9 +188,7 @@ function getClippedPic() {
     shadowCanvas.height = data.height
     ctx.putImageData(data, 0, 0)
 
-    //console.log(shadowCanvas.toDataURL().split(',')[1])
-
-    const base64ImageData = shadowCanvas.toDataURL()
+    const base64ImageData = shadowCanvas.toDataURL(state.bannerImageType)
     store.setCroppedImageData(base64ImageData)
 
     dismiss()

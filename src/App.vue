@@ -2,7 +2,7 @@
     <div id="container">
         <GlobalBanner></GlobalBanner>
         <GlobalTipDialog></GlobalTipDialog>
-        <ImageCropper></ImageCropper>
+        <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
         <!-- <ImageSlide></ImageSlide> -->
         <ImageSlide2></ImageSlide2>
         <div id="sidebar-l">
