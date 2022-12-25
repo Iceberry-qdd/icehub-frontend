@@ -266,8 +266,8 @@ export function getReviewById(id) {
  * @param {string} pageSize 评论每页条数
  * @returns 该帖子的子评论
  */
-export function getSubReviewById(id,pageIndex, pageSize){
-    return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}`,{
+export function getSubReviewById(id, pageIndex, pageSize) {
+    return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -310,24 +310,78 @@ export function dislikeAReview(reviewId) {
 }
 
 /**
- * 柑橘用户id返回用户帖子信息
+ * 根据用户id返回用户帖子信息
  * @param {string} uid 用户id
  * @param {string} pageIndex 当前页码
  * @param {string} pageSize 每页数量
  * @returns 用户的帖子信息
  */
-export function getUserPosts(uid,pageIndex,pageSize){
-    return fetch(`${BASE_URL}/post?uid=${uid}`,{
-        method:'POST',
-        headers:{
+export function getUserPosts(uid, pageIndex, pageSize) {
+    return fetch(`${BASE_URL}/post?uid=${uid}`, {
+        method: 'POST',
+        headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body:JSON.stringify({
-            'pageIndex':pageIndex,
-            'pageSize':pageSize
+        body: JSON.stringify({
+            'pageIndex': pageIndex,
+            'pageSize': pageSize
         }),
-        redirect:'follow',
-        credentials:'same-origin'
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 上传用户banner图
+ * @param {string} data 以base64编码的图片数据
+ * @returns 用户的新banner图信息
+ */
+export function uploadUserBanner(data) {
+    return fetch(`${BASE_URL}/object/upload/banner`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'text/plain'
+        },
+        body: data,
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 上传用户avatar图
+ * @param {string} data 以base64编码的图片数据
+ * @returns 用户的新avatar图信息
+ */
+export function uploadUserAvatar(data) {
+    return fetch(`${BASE_URL}/object/upload/avatar`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'text/plain'
+        },
+        body: data,
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 修改用户信息
+ * @param {object} user 待修改user实体类
+ * @returns 修改后的user信息
+ */
+export function updateUserProfile(user) {
+    return fetch(`${BASE_URL}/user`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user),
+        redirect: 'follow',
+        credentials: 'same-origin'
     })
 }

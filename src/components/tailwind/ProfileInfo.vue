@@ -49,12 +49,13 @@ const formattedDate = computed(() => {
 
 const bannerPic = computed(() => {
     const bannerUrl = state.user.bannerUrl
-    if (bannerUrl == null) return '/src/assets/default-bg.jpg'
-    else return bannerUrl
+    // if (bannerUrl == null) return '/src/assets/default-bg.jpg'
+    // else
+     return bannerUrl ||'/src/assets/default-bg.jpg'
 })
 
 const avatarPic = computed(() => {
-    if (state.user.avatarUrl == null) {
+    if (!state.user.avatarUrl) {
         return `https://api.multiavatar.com/${state.user.nickname}.svg`
     } else {
         return props.post.user.avatarUrl

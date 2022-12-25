@@ -4,6 +4,10 @@
             accept="image/*" />
         <div @click.self="dismiss"
             class="dialog fixed flex flex-row justify-center items-center w-screen h-screen bg-[#00000066] z-[107]">
+            <div class="cursor-pointer absolute bottom-[5%] flex fex-row gap-0 dialog-card rounded-full">
+                <div class="hover:bg-gray-300 py-2 px-4 rounded-l-full" @click="getClippedPic">确定</div>
+                <div class="hover:bg-gray-300 py-2 px-4 rounded-r-full" @click="dismiss">取消</div>
+            </div>
             <div
                 class="dialog-card fixed p-4 box-content flex flex-col gap-y-2 justify-center items-center w-1/2 h-2/3 rounded-md">
                 <span v-if="state.img == null" @click="choosePics"
@@ -34,11 +38,12 @@ import { store } from '../../store.js'
 
 const state = reactive({
     img: null,
-    canvasWidth: 0,
-    canvasHeight: 0,
+    canvasParams: { width: 0, height: 0 },
     ctx: null,
+    clipParams: { startX: 0, startY: 0 },
     isMouseDown: false,
-    isMouseLeave: false
+    isMouseLeave: false,
+    banner: null
 })
 
 const clipMaskWidth = computed(() => {
@@ -46,13 +51,21 @@ const clipMaskWidth = computed(() => {
 })
 
 const clipMaskHeight = computed(() => {
-    return 18 * state.img.width / 38
+    switch (store.CROPPED_IMAGE.mode) {
+        case 'banner':
+            return 18 * state.img.width / 38
+        case 'avatar':
+            return state.img.width
+        default:
+            return state.img.height
+    }
 })
 
 function dismiss() {
     state.img = null
     document.querySelector("body").removeAttribute("style", "overflow:hidden")
     store.dismissImageCropper()
+    store.setCroppedImageMode('')
 }
 
 function choosePics() {
@@ -97,8 +110,8 @@ function drawImage() {
         ctx.drawImage(state.img, 0, 0)
 
         state.ctx = ctx
-        state.canvasWidth = document.getElementById('canvas').clientWidth
-        state.canvasHeight = document.getElementById('canvas').clientHeight
+        state.canvasParams.width = document.getElementById('canvas').clientWidth
+        state.canvasParams.height = document.getElementById('canvas').clientHeight
         drawMask(ctx, 0, 0)
     }
 }
@@ -114,13 +127,13 @@ function drawMask(ctx, startX, startY) {
     ctx.globalCompositeOperation = 'source-atop';
     ctx.clearRect(startX, startY, cWidth, cHeight)
 
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = '#3b82f6';
-    let size = 12; // 自定义像素点大小
-    ctx.fillRect(0, 0, size, size);
-    ctx.fillRect(0, cHeight - size, size, size);
-    ctx.fillRect(cWidth - size, 0, size, size);
-    ctx.fillRect(cWidth - size, cHeight - size, size, size);
+    // ctx.globalCompositeOperation = 'source-over';
+    // ctx.fillStyle = '#3b82f6';
+    // let size = 12; // 自定义像素点大小
+    // ctx.fillRect(0, 0, size, size);
+    // ctx.fillRect(0, cHeight - size, size, size);
+    // ctx.fillRect(cWidth - size, 0, size, size);
+    // ctx.fillRect(cWidth - size, cHeight - size, size, size);
 
     ctx.globalCompositeOperation = 'destination-over';
     ctx.drawImage(state.img, 0, 0)
@@ -139,8 +152,8 @@ function moveMask(e) {
         y = event.layerY
     }
 
-    const centerX = x * state.img.width / state.canvasWidth //鼠标指针所在位置
-    const centerY = y * state.img.height / state.canvasHeight //鼠标指针所在位置
+    const centerX = x * state.img.width / state.canvasParams.width //鼠标指针所在位置
+    const centerY = y * state.img.height / state.canvasParams.height //鼠标指针所在位置
 
     let startX = centerX - clipMaskWidth.value / 2
     let startY = centerY - clipMaskHeight.value / 2
@@ -151,7 +164,27 @@ function moveMask(e) {
     if (state.img.width - startX < clipMaskWidth.value) startX = state.img.width - clipMaskWidth.value
     if (state.img.height - startY < clipMaskHeight.value) startY = state.img.height - clipMaskHeight.value
 
+    state.clipParams.startX = startX
+    state.clipParams.startY = startY
+
     drawMask(state.ctx, startX, startY)
+}
+
+function getClippedPic() {
+    const data = state.ctx.getImageData(state.clipParams.startX, state.clipParams.startY, clipMaskWidth.value, clipMaskHeight.value)
+
+    const shadowCanvas = document.createElement('canvas', { id: 'shadow-canvas' })
+    const ctx = shadowCanvas.getContext('2d')
+    shadowCanvas.width = data.width
+    shadowCanvas.height = data.height
+    ctx.putImageData(data, 0, 0)
+
+    //console.log(shadowCanvas.toDataURL().split(',')[1])
+
+    const base64ImageData = shadowCanvas.toDataURL()
+    store.setCroppedImageData(base64ImageData)
+
+    dismiss()
 }
 
 onUnmounted(() => {

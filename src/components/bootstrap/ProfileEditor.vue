@@ -2,10 +2,10 @@
     <div>
         <div>
             <div class="banner-cover">
-                <span @click="showImageCropper" class="material-icons-round">edit</span>
+                <span @click="showImageCropper('banner')" class="material-icons-round">edit</span>
             </div>
             <div class="avatar-cover">
-                <span class="material-icons-round">edit</span>
+                <span @click="showImageCropper('avatar')" class="material-icons-round">edit</span>
             </div>
         </div>
         <div class="content">
@@ -39,8 +39,12 @@
                     <div class="invalid-feedback">{{ isAgeValid.msg }}</div>
                 </div>
                 <div class="form-floating mb-3">
-                    <input v-model.trim="state.newUser.gender" type="text" class="form-control" id="floatingInput"
-                        placeholder="性别">
+                    <select v-model="selected" class="form-select">
+                        <option disabled value="">请选择性别</option>
+                        <option value="MALE">男</option>
+                        <option value="FEMALE">女</option>
+                        <option value="UNKNOWN">不设置</option>
+                    </select>
                     <label for="floatingInput">性别</label>
                 </div>
                 <div class="form-floating mb-3">
@@ -159,35 +163,109 @@
 </style>
 
 <script setup>
-import { reactive, computed } from 'vue';
-import { store } from '../../store.js'
+import { reactive, computed, watch,ref } from 'vue';
+import { store } from '../../store.js';
+import { uploadUserAvatar, uploadUserBanner } from '../../api.js'
 
+const selected=ref('')
 const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),
-    newUser: JSON.parse(localStorage.getItem("CUR_USER"))
+    newUser: {
+        id: JSON.parse(localStorage.getItem("CUR_USER")).id,
+        nickname: JSON.parse(localStorage.getItem("CUR_USER")).nickname,
+        avatarUrl: null,
+        bannerUrl: null,
+        age: JSON.parse(localStorage.getItem("CUR_USER")).age,
+        gender: JSON.parse(localStorage.getItem("CUR_USER")).gender,
+        address: JSON.parse(localStorage.getItem("CUR_USER")).address,
+        email: JSON.parse(localStorage.getItem("CUR_USER")).email,
+        city: JSON.parse(localStorage.getItem("CUR_USER")).city,
+        phoneNumber: JSON.parse(localStorage.getItem("CUR_USER")).phoneNumber,
+        website: JSON.parse(localStorage.getItem("CUR_USER")).website,
+        remark: JSON.parse(localStorage.getItem("CUR_USER")).remark
+    },
+    newAvatar: store.CROPPED_IMAGE.avatar,
+    newBanner: store.CROPPED_IMAGE.banner
 })
 
-function showImageCropper(){
+function showImageCropper(mode) {
+    store.setCroppedImageMode(mode)
     store.showImageCropper()
     document.querySelector("body").setAttribute("style", "overflow:hidden")
 }
 
+watch(() => store.IS_SUBMIT_PROFILE, (newVal, oldVal) => {
+    if (oldVal == false && newVal == true) {
+        state.newUser.gender=selected.value
+        console.table(state.newUser)
+        //TODO 真正提交、检验用户名是否合规
+    }
+})
+
+async function submitProfile() {
+    try {
+        if (state.newAvatar) {
+            uploadAvatar()
+        } else {
+            state.newUser.avatarUrl = null
+        }
+        if (state.newBanner) {
+            uploadBanner()
+        } else {
+            state.newUser.bannerUrl = null
+        }
+
+        const response = await updateUserProfile(state.newUser)
+        if (!response.ok) throw new Error(await response.text())
+
+        const data = await response.json()
+        localStorage.setItem('CUR_USER', data)
+    } catch (e) {
+        store.setMsg(e.message)
+        console.error(e)
+    }
+}
+
+async function uploadAvatar() {
+    try {
+        const data = state.newAvatar.split[','][1]
+        const response = await uploadUserAvatar(data)
+        if (!response.ok) throw new Error(await response.text())
+
+        state.newUser.avatarUrl = await response.json()
+    } catch (e) {
+        store.setMsg(e.message)
+        console.error(e)
+    }
+}
+
+async function uploadBanner() {
+    try {
+        const data = state.newBanner.split[','][1]
+        const response = await uploadUserBanner(data)
+        if (!response.ok) throw new Error(await response.text())
+
+        state.newUser.bannerUrl = await response.json()
+    } catch (e) {
+        store.setMsg(e.message)
+        console.error(e)
+    }
+}
+
 const bannerPic = computed(() => {
     const bannerUrl = state.user.bannerUrl
-    return bannerUrl || '/src/assets/default-bg.jpg'
+    const clippedUrl = store.CROPPED_IMAGE.banner
+    return clippedUrl || bannerUrl || '/src/assets/default-bg.jpg'
 })
 
 const avatarPic = computed(() => {
     const avatarUrl = state.user.avatarUrl
-    return avatarUrl || `https://api.multiavatar.com/${state.user.nickname}.svg`
+    const clippedUrl = store.CROPPED_IMAGE.avatar
+    return clippedUrl || avatarUrl || `https://api.multiavatar.com/${state.user.nickname}.svg`
 })
 
 const isAgeValid = computed(() => {
-    if (state.newUser.age == state.user.age) {
-        return { 'class': '', 'msg': '' }
-    }
-
-    if (state.newUser.age == '' && state.user.age == null) {
+    if (!state.newUser.age || state.newUser.age == state.user.age) {
         return { 'class': '', 'msg': '' }
     }
 
@@ -207,11 +285,7 @@ const isAgeValid = computed(() => {
 })
 
 const isEmailValid = computed(() => {
-    if (state.newUser.email == state.user.email) {
-        return { 'class': '', 'msg': '' }
-    }
-
-    if (state.newUser.email == '' && state.user.email == null) {
+    if (!state.newUser.email || state.newUser.email == state.user.email) {
         return { 'class': '', 'msg': '' }
     }
 
@@ -225,11 +299,7 @@ const isEmailValid = computed(() => {
 })
 
 const isPhoneNoValid = computed(() => {
-    if (state.newUser.phoneNumber == state.user.phoneNumber) {
-        return { 'class': '', 'msg': '' }
-    }
-
-    if (state.newUser.phoneNumber == '' && state.user.phoneNumber == null) {
+    if (!state.newUser.phoneNumber || state.newUser.phoneNumber == state.user.phoneNumber) {
         return { 'class': '', 'msg': '' }
     }
 
@@ -243,11 +313,7 @@ const isPhoneNoValid = computed(() => {
 })
 
 const isWebsiteValid = computed(() => {
-    if (state.newUser.website == state.user.website) {
-        return { 'class': '', 'msg': '' }
-    }
-
-    if (state.newUser.website == '' && state.user.website == null) {
+    if (!state.newUser.website || state.newUser.website == state.user.website) {
         return { 'class': '', 'msg': '' }
     }
 

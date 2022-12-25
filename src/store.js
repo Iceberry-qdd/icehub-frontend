@@ -45,5 +45,18 @@ export const store = reactive({
     },
     dismissImageCropper() {
         this.SHOW_IMAGE_CROPPER = false
+    },
+
+    CROPPED_IMAGE: { mode: '', banner: '', avatar: '', picture: '' },
+    setCroppedImageMode(mode) {
+        this.CROPPED_IMAGE.mode = mode
+    },
+    setCroppedImageData(data) {
+        this.CROPPED_IMAGE[this.CROPPED_IMAGE.mode]=data
+    },
+
+    IS_SUBMIT_PROFILE:false,
+    submitProfile(){
+        this.IS_SUBMIT_PROFILE=true
     }
 })
