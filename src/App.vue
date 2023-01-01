@@ -82,10 +82,10 @@ async function curUser() {
     } catch (e) {
         store.setMsg(e)
         console.error(e)
-        // localStorage.removeItem('TOKEN')
-        // localStorage.removeItem('CUR_USER')
-        // self.location = 'auth.html'
-        // window.history.forward(1);
+        localStorage.removeItem('TOKEN')
+        localStorage.removeItem('CUR_USER')
+        self.location = 'auth.html'
+        window.history.forward(1);
     }
 }
 

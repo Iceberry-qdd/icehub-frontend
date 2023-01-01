@@ -1,6 +1,6 @@
 <template>
     <ul class="list-group">
-        <li v-for="menu in state.menus" :key="menu.id" @click="routeTo(menu.routeTo, menu.id)"
+        <li v-for="menu in state.menus" :key="menu.id" @click="routeTo(menu.routeTo, menu.id,menu.routeParams.userId || null)"
             :class="{ active: menu.active }"
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
@@ -115,22 +115,27 @@ import router from '../../route.js'
 
 const state = reactive({
     menus: [
-        { id: 1, name: '主页', routeTo: '/index', icon: 'home', badgeCount: 12, visible: true, active: true },
-        { id: 2, name: '探索', routeTo: '/explore', icon: 'explore', badgeCount: 1, visible: true, active: false },
-        { id: 3, name: '书签', routeTo: '/bookmark', icon: 'bookmark', badgeCount: 0, visible: false, active: false },
-        { id: 4, name: '钱包', routeTo: '/wallet', icon: 'wallet', badgeCount: 0, visible: true, active: false },
-        { id: 5, name: '勋章', routeTo: '/badge', icon: 'local_police', badgeCount: 0, visible: true, active: false },
-        { id: 6, name: '活动', routeTo: '/activity', icon: 'celebration', badgeCount: 0, visible: true, active: false },
-        { id: 7, name: '管理', routeTo: '/manage', icon: 'memory', badgeCount: 0, visible: true, active: false },
-        { id: 8, name: getCurUserNickname(), routeTo: '/profile', icon: getCurUserAvatar(), badgeCount: 0, visible: true, active: false },
-        { id: 9, name: '设置', routeTo: '/setting', icon: 'settings', badgeCount: 0, visible: true, active: false }
+        { id: 1, name: '主页', routeTo: '/index', routeParams: {}, icon: 'home', badgeCount: 12, visible: true, active: true },
+        { id: 2, name: '探索', routeTo: '/explore', routeParams: {}, icon: 'explore', badgeCount: 1, visible: true, active: false },
+        { id: 3, name: '书签', routeTo: '/bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: false, active: false },
+        { id: 4, name: '钱包', routeTo: '/wallet', routeParams: {}, icon: 'wallet', badgeCount: 0, visible: true, active: false },
+        { id: 5, name: '勋章', routeTo: '/badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: true, active: false },
+        { id: 6, name: '活动', routeTo: '/activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: true, active: false },
+        { id: 7, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: true, active: false },
+        { id: 8, name: getCurUserNickname(), routeTo: '/profile', routeParams: { userId: getCurUserId() }, icon: getCurUserAvatar(), badgeCount: 0, visible: true, active: false },
+        { id: 9, name: '设置', routeTo: '/setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: true, active: false }
     ]
 })
 
-function routeTo(url, id) {
+function routeTo(url, mid, uid) {
     state.menus.forEach(menu => { menu.active = false })
-    state.menus[id - 1].active = true
-    router.push(url)
+    state.menus[mid - 1].active = true
+    if (!uid) {
+        router.push(url)
+    } else {
+        router.push({ name: 'profile', params: { id: uid } })
+    }
+
 }
 
 function getCurUserNickname() {
@@ -155,6 +160,11 @@ function getCurUserAvatar() {
     } catch (e) {
         return ''
     }
+}
+
+function getCurUserId() {
+    const userId = (JSON.parse(localStorage.getItem("CUR_USER"))).id
+    return userId || ''
 }
 
 </script>

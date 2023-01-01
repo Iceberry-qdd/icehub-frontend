@@ -13,8 +13,8 @@
 <script setup>
 import ProfileInfo from '../tailwind/ProfileInfo.vue'
 import PostCard from '../bootstrap/PostCard.vue'
-import { reactive, onMounted } from 'vue';
-import { getUserPosts } from '../../api';
+import { reactive, onMounted, onUnmounted } from 'vue';
+import { getUserPosts, getUserInfoById } from '../../api';
 import { store } from '../../store';
 
 const state = reactive({
@@ -37,8 +37,18 @@ async function getPosts() {
     }
 }
 
-onMounted(() => {
-    state.user = JSON.parse(localStorage.getItem("CUR_USER"))
-    getPosts()
+onMounted(async () => {
+    const userId = window.location.href.replace(/.*\//, '')
+    const user = JSON.parse(localStorage.getItem("CUR_USER"))
+    if (userId == user.id) {
+        state.user = user
+    } else {
+        state.user = store.SELECT_USER
+    }
+    await getPosts()
+})
+
+onUnmounted(() => {
+    store.clearSelectUser()
 })
 </script>

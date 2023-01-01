@@ -11,17 +11,20 @@
             <div class="relative top-[-3.5rem] flex flex-col gap-y-1 pl-[1rem]">
                 <div class="text-[18pt] font-bold">{{ state.user.nickname }}</div>
                 <div class="">{{ state.user.remark }}</div>
-                <div class="">
-                    <span>🎈</span> {{ formattedDate }}
+                <div class="flex flex-row gap-x-1 items-center">
+                    <calendar-three theme="outline" class="icon" size="16" fill="#333" :strokeWidth="3" />
+                    <div>{{ formattedDate }}</div>
                 </div>
-                <div v-if="state.user.verified == true" class="">
-                    <span>🥈</span>{{ state.user.verifiedInfo }}
+                <div v-if="state.user.verified == true" class="flex flex-row gap-x-1 items-center">
+                    <success theme="outline" size="18" class="icon" fill="#333" :strokeWidth="3" />
+                    <div>{{ state.user.verifiedInfo }}</div>
                 </div>
-                <div v-if="state.user.city != null">
-                    <span>💎</span>{{ state.user.city }}
+                <div v-if="state.user.city != null" class="flex flex-row gap-x-1 items-center">
+                    <local-two theme="outline" size="16" class="icon" fill="#333" :strokeWidth="3" />
+                    <div>{{ state.user.city }}</div>
                 </div>
                 <div class="flex flex-row gap-x-4">
-                    <div>订阅者 <span>{{ state.user.followedCount }}</span></div>
+                    <div>订阅者 <span>{{ state.user.followingCount }}</span></div>
                     <div>订阅 <span>{{ state.user.followerCount }}</span></div>
                 </div>
             </div>
@@ -30,11 +33,29 @@
 </template>
 
 <style scoped>
+.icon {
+    width: 1.2rem;
+    text-align: center;
+    text-align: -webkit-center;
+}
 
+.i-icon {
+    padding: 0;
+    background-color: transparent;
+    border-radius: 99rem;
+}
+
+.i-icon:hover {
+    cursor: auto;
+    padding: 0;
+    background-color: transparent;
+    border-radius: 99rem;
+}
 </style>
 
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed } from 'vue'
+import { CalendarThree, Success, LocalTwo } from '@icon-park/vue-next'
 
 const props = defineProps(['user'])
 

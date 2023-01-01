@@ -20,18 +20,17 @@
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
                     <input v-show="false" @change="choosePics" type="file" id="imgFile" name="imgFile" multiple="true" accept="image/*" />
-                    <!-- <i @click="choosePics" :class="[imgList.length > 0 ? 'text-[#0d6efd]' : 'text-black']"
-                        class=" cursor-pointer bi bi-images" title="添加照片"></i> -->
-                    <span title="添加图片" @click="choosePics"
+                    <!-- <span title="添加图片" @click="choosePics"
                         :class="[state.imgList.length > 0 ? 'text-[#0d6efd]' : 'text-black']"
-                        class="material-icons-round">photo_library</span>
-                    <span title="添加视频" class="material-icons-round">movie</span>
+                        class="material-icons-round">photo_library</span> -->
+                    <add-picture @click="choosePics" theme="outline" size="18" fill="#333" :strokeWidth="3"/>
+                    <video-two theme="outline" size="18" fill="#333" :strokeWidth="3"/>
                     <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
-                    <span title="添加代码片段" class="material-icons-round">code</span>
-                    <span title="公开" class="material-icons-round">visibility</span>
-                    <span title="提及某人" class="material-icons-round">alternate_email</span>
-                    <span title="定时发布" class="material-icons-round">schedule</span>
-                    <span title="添加表情" class="material-icons-round">sentiment_satisfied_alt</span>
+                    <source-code theme="outline" size="18" fill="#333" :strokeWidth="3"/>
+                    <preview-open theme="outline" size="18" fill="#333" :strokeWidth="3"/>
+                    <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3"/>
+                    <m-time theme="outline" size="18" fill="#333" :strokeWidth="3"/>
+                    <grinning-face-with-open-mouth theme="outline" size="18" fill="#333" :strokeWidth="3"/>
                     <!-- <i class="cursor-pointer bi bi-camera-video-fill" title="添加视频"></i>
                     <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
                     <i class="cursor-pointer bi bi-code-slash" title="添加代码片段"></i>
@@ -74,6 +73,7 @@
 import { reactive } from 'vue';
 import { uploadFiles, posting } from '../../api.js'
 import { store } from '../../store.js'
+import { VideoTwo,AddPicture,SourceCode,PreviewOpen,AtSign,Time as mTime,GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
 
 const state = reactive({
     content: "",
@@ -90,7 +90,6 @@ const state = reactive({
 
 function resize() {
     const input = document.getElementById('post-input')
-    //console.log(input.scrollHeight)
     input.style.height = `${input.scrollHeight}px`
     //FIXME 当删除内容时无法自动调整大小
 }

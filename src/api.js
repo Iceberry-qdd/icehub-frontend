@@ -401,3 +401,81 @@ export function isUserExists(nickname) {
         credentials: 'same-origin'
     })
 }
+
+/**
+ * 关注用户
+ * @param {string} userId 待关注用户id
+ * @returns 关注结果，成功或失败
+ */
+export function followUser(userId) {
+    return fetch(`${BASE_URL}/user/follow/${userId}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': TOKEN
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 取消关注用户
+ * @param {string} userId 待取消关注用户id
+ * @returns 取消关注结果，成功或失败
+ */
+export function unFollowUser(userId) {
+    return fetch(`${BASE_URL}/user/follow/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': TOKEN
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 查询用户关注者列表
+ * @param {string} userId 待查询用户id
+ * @param {int} pageIndex 分页页码
+ * @param {int} pageSize 分页页大小
+ * @returns 关注者列表
+ */
+export function getFollowerList(userId, pageIndex, pageSize) {
+    return fetch(`${BASE_URL}/user/follow/list?uid=${userId}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'pageIndex': pageIndex,
+            'pageSize': pageSize
+        }),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 查询用户关注用户列表
+ * @param {string} userId 待查询用户id
+ * @param {int} pageIndex 分页页码
+ * @param {int} pageSize 分页页大小
+ * @returns 关注用户列表
+ */
+export function getFollowingList(userId, pageIndex, pageSize) {
+    return fetch(`${BASE_URL}/user/follow/list?fid=${userId}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            'pageIndex': pageIndex,
+            'pageSize': pageSize
+        }),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}

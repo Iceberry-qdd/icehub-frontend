@@ -199,7 +199,6 @@ import { store } from '../../store.js';
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '../../api.js'
 import router from '../../route';
 
-const selected = ref('')
 const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),
     newUser: {
@@ -222,6 +221,8 @@ const state = reactive({
     isUsernameExisted: false
 })
 
+const selected = ref(state.user.gender)
+
 function showImageCropper(mode) {
     store.setCroppedImageMode(mode)
     store.showImageCropper()
@@ -232,7 +233,6 @@ watch(() => store.IS_SUBMIT_PROFILE, (newVal, oldVal) => {
     if (newVal == true) {
         state.newUser.gender = selected.value
         console.table(state.newUser)
-        //TODO 真正提交、检验用户名是否合规
         submitProfile()
     }
 })

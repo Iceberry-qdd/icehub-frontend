@@ -3,8 +3,8 @@
         <div class="flex flex-col gap-y-4 px-[1rem] py-[1rem] border-gray-100 border-b-[1px]">
             <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
                 <div class="flex flex-row items-center gap-x-4">
-                    <div class="w-[2.5rem] h-[2.5rem] border-gray-300 border-[1px] rounded-md">
-                        <a href="as"><img :src="avatar" /></a>
+                    <div class="w-[2.5rem] h-[2.5rem]">
+                        <a href="as"><img :src="avatar" class="rounded-[6px]" /></a>
                         <i v-if="props.review.user.verified"
                             class="bi bi-patch-check-fill verify relative text-[10pt] left-[30px] bottom-[12px] text-blue-500"></i>
                     </div>

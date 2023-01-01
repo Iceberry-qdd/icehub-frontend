@@ -1,7 +1,7 @@
 <template>
     <div class="card" @click="routeTo(props.post.id)">
         <button type="button" class="btn menu">
-            <i class="bi bi-chevron-down"></i>
+            <down theme="outline" size="24" fill="#333" :strokeWidth="2"/>
         </button>
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(props.post.user.id)">
@@ -34,17 +34,18 @@
         <div class="btn-group" role="group">
             <button type="button" class="btn op op-repost" @click="toggleRepost">
                 <!-- <i class="bi bi-arrow-return-right"></i> -->
-                <span class="material-icons-round">redo</span>
+                <share theme="outline" size="18" fill="#333" :strokeWidth="3"/>
                 {{ props.post.repostCount }}
             </button>
             <button type="button" class="btn op op-review" @click="toggleReviewPanel">
                 <!-- <i class="bi bi-chat-square"></i> -->
-                <span class="material-icons-round">chat_bubble_outline</span>
+                <!-- <span class="material-icons-round">chat_bubble_outline</span> -->
+                <message theme="outline" size="19" fill="#333" :strokeWidth="3"/>
                 {{ props.post.reviewCount }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
-                <span :class="{ liked: isLiked }"
-                    class="material-icons-round">{{ isLiked ? 'favorite' : 'favorite_border' }}</span>
+                <!-- <span :class="{ liked: isLiked }" class="material-icons-round">{{ isLiked ? 'favorite' : 'favorite_border' }}</span> -->
+                <like theme="outline" size="20" fill="#333" :strokeWidth="3"/>
                 {{ props.post.likeCount }}
             </button>
         </div>
@@ -53,10 +54,6 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
-
-.btn-group{
-    margin: 0 4rem;
-}
 .op-repost{
     justify-content: flex-start;
 }
@@ -86,10 +83,6 @@
     --bs-gutter-x: 0;
     --bs-gutter-y: 0;
     /* width: 80%; */
-}
-
-.container{
-    width: 80% !important;
 }
 
 .wrapper {
@@ -131,6 +124,12 @@
 
 .material-icons-round {
     font-size: 14pt;
+    padding: 0.25rem;
+}
+
+.material-icons-round:hover{
+    font-size: 14pt;
+    padding: 0.25rem;
 }
 
 .liked {
@@ -144,8 +143,8 @@
 
 .verify {
     position: absolute;
-    left: 32px;
-    top: 28px;
+    left: 40px;
+    top: 34px;
     color: #0d6efd;
 }
 
@@ -173,7 +172,6 @@
     width: 3rem;
     height: 3rem;
     border-radius: 16%;
-    border: 1px solid #EEEEEE;
 }
 
 #verify-badge {
@@ -181,8 +179,7 @@
 }
 
 .m-card-body {
-    margin-left: 4rem;
-    padding: 0.5rem 0 0.5rem 0 !important;
+    padding: 1rem 0 0.5rem 0 !important;
 }
 
 .card-text {
@@ -204,7 +201,7 @@
 }
 
 .card-pics {
-    margin-left: 4rem;
+    /* margin-left: 4rem; */
     margin-bottom: 0.5rem;
     margin-top: 0.5rem;
     display: flex;
@@ -226,6 +223,7 @@ import { computed, onUpdated, reactive } from 'vue';
 import { likeAPost, dislikeAPost } from '../../api'
 import router from '../../route';
 import { store } from '../../store'
+import {Down,Like,Message,Share} from '@icon-park/vue-next'
 
 const props = defineProps(['post'])
 

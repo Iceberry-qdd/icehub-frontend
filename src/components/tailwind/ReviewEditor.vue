@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-row gap-x-[1rem] py-[1rem] px-[1.5rem] border-b-[1px] border-gray-200">
-        <div class="border-[1px] rounded-md h-fit"><img :src="avatar" class="h-[2.5rem] w-[2.5rem] max-w-none" />
+        <div class="h-fit"><img :src="avatar" class="rounded-[6px] h-[2.5rem] w-[2.5rem] max-w-none" />
         </div>
         <div class="w-full">
             <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span
@@ -11,9 +11,9 @@
                 class="focus:outline-none overflow-y-hidden tracking-wide resize-none text-lg leading-6 text-justify min-w-full max-w-full min-h-fit bg-transparent pr-2"
                 maxlength="512" placeholder="发布评论" id="review-input" name="review"></textarea>
             <div class="flex flex-row justify-between mr-8 items-center" v-if="state.content.length > 0">
-                <div class="flex flex-row gap-x-2 ">
-                    <div><span class="material-icons-round text-[13pt]">collections</span></div>
-                    <div><span class="material-icons-round text-[13pt]">location_on</span></div>
+                <div class="flex flex-row gap-x-2 items-center">
+                    <add-picture theme="outline" size="20" fill="#333" :strokeWidth="3"/>
+                    <local-two theme="outline" size="20" class="icon" fill="#333" :strokeWidth="4"/>
                 </div>
                 <div @click="submitReview"
                     class="text-sm py-2 px-6 rounded-full text-white bg-[#0d6efd] cursor-pointer">
@@ -37,9 +37,10 @@
 </style>
 
 <script setup>
-import { reactive, computed } from 'vue';
-import { reviewing } from '../../api';
-import { store } from '../../store';
+import { reactive, computed } from 'vue'
+import { reviewing } from '../../api'
+import { store } from '../../store'
+import {AddPicture,LocalTwo} from '@icon-park/vue-next'
 
 const props = defineProps(['post', 'parent'])
 

@@ -58,5 +58,13 @@ export const store = reactive({
     IS_SUBMIT_PROFILE:false,
     submitProfile(){
         this.IS_SUBMIT_PROFILE=true
+    },
+
+    SELECT_USER:null,
+    setSelectUser(user){
+        this.SELECT_USER = user
+    },
+    clearSelectUser(){
+        this.SELECT_USER = null
     }
 })

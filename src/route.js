@@ -10,7 +10,7 @@ const routes = [
     { path: '/index', component: PostsTimeLine },
     { name: 'bookmark', path: '/bookmark', component: Bookmark },
     { name: 'postDetail', path: '/post/:id', component: PostDetail },
-    { name: 'profile', path: '/profile', component: Profile },
+    { name: 'profile', path: '/profile/:id', component: Profile },
     { name: 'profileEdit', path: '/profile/edit', component: ProfileEdit }
 ]
 

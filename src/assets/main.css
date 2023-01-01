@@ -28,6 +28,19 @@ img,li,.userCard {
     padding: 0.5rem;
 }
 
+.i-icon{
+    padding: 0.4rem;
+    background-color: transparent;
+    border-radius: 99rem;
+}
+
+.i-icon:hover{
+    cursor: pointer;
+    padding: 0.4rem;
+    background-color: #d3d3d5;
+    border-radius: 99rem;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

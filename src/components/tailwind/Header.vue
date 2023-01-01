@@ -5,7 +5,7 @@
                 class="material-icons-round cursor-pointer text-[15pt] pr-[0.5rem]">arrow_back_ios</div>
             <div>{{ state.titleText }}</div>
         </div>
-        <div><span v-if="state.editIcon != ''" @click="routeTo('/profile/edit', state.submit)"
+        <div><span v-if="state.editIcon" @click="routeTo('/profile/edit', state.submit)"
                 class="material-icons-round text-[14pt]">{{ state.editIcon }}</span></div>
     </div>
     <div id="h-hide"></div>
@@ -60,11 +60,12 @@ watch(() => route.path, (newUrl, oldUrl) => {
         const pid = newUrl.replace('/post/', '')
         //store.setSelectPostId(pid)
         state.submit = false
-    } else if (newUrl.match('^/profile/?$')) {
-        const user = JSON.parse(localStorage.getItem("CUR_USER"))
-        state.backArrow = false
-        state.titleText = user.nickname
-        state.editIcon = 'create'
+    } else if (newUrl.match('^/profile/?.*$')) {
+        const userId = window.location.href.replace(/.*\//, '')
+        const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
+        state.backArrow = userId != curUser.id
+        state.titleText = userId == curUser.id ? curUser.nickname : store.SELECT_USER.nickname
+        state.editIcon = userId == curUser.id ? 'create' : ''
         state.submit = false
     } else if (newUrl.match('^/profile/edit/?$')) {
         state.backArrow = true
@@ -80,6 +81,11 @@ watch(() => route.path, (newUrl, oldUrl) => {
 })
 
 function routeTo(path, submit) {
+    const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
+    if (!store.SELECT_USER || store.SELECT_USER.id != curUser.id){
+        router.push('/')
+    }
+
     if (submit) {
         store.submitProfile()
     } else {

@@ -7,6 +7,7 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
+    "@icon-park/vue-next": "^1.4.2",
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.9.1",
     "jsencrypt": "^3.3.1",
