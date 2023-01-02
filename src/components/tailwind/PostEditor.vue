@@ -1,15 +1,8 @@
 <template>
     <div class="border-b">
         <div v-if="state.isLoading"
-            class="flex flex-col justify-center items-center z-[102] absolute w-[38.46%] h-[12.1rem] bg-[#00000066]">
-            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                </circle>
-                <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                </path>
-            </svg>
+            class="flex flex-col justify-center items-center z-[102] fixed w-[38.46%] h-screen bg-[#00000066]">
+            <IconLoading :class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
         </div>
         <div class="bg-white pl-2 pr-2 pt-2 pb-2">
             <div>
@@ -19,18 +12,19 @@
             </div>
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
-                    <input v-show="false" @change="choosePics" type="file" id="imgFile" name="imgFile" multiple="true" accept="image/*" />
+                    <input v-show="false" @change="choosePics" type="file" id="imgFile" name="imgFile" multiple="true"
+                        accept="image/*" />
                     <!-- <span title="添加图片" @click="choosePics"
                         :class="[state.imgList.length > 0 ? 'text-[#0d6efd]' : 'text-black']"
                         class="material-icons-round">photo_library</span> -->
-                    <add-picture @click="choosePics" theme="outline" size="18" fill="#333" :strokeWidth="3"/>
-                    <video-two theme="outline" size="18" fill="#333" :strokeWidth="3"/>
+                    <add-picture @click="choosePics" theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <video-two theme="outline" size="18" fill="#333" :strokeWidth="3" />
                     <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
-                    <source-code theme="outline" size="18" fill="#333" :strokeWidth="3"/>
-                    <preview-open theme="outline" size="18" fill="#333" :strokeWidth="3"/>
-                    <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3"/>
-                    <m-time theme="outline" size="18" fill="#333" :strokeWidth="3"/>
-                    <grinning-face-with-open-mouth theme="outline" size="18" fill="#333" :strokeWidth="3"/>
+                    <source-code theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <preview-open theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <m-time theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <grinning-face-with-open-mouth theme="outline" size="18" fill="#333" :strokeWidth="3" />
                     <!-- <i class="cursor-pointer bi bi-camera-video-fill" title="添加视频"></i>
                     <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
                     <i class="cursor-pointer bi bi-code-slash" title="添加代码片段"></i>
@@ -73,7 +67,8 @@
 import { reactive } from 'vue';
 import { uploadFiles, posting } from '../../api.js'
 import { store } from '../../store.js'
-import { VideoTwo,AddPicture,SourceCode,PreviewOpen,AtSign,Time as mTime,GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
+import { VideoTwo, AddPicture, SourceCode, PreviewOpen, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
+import IconLoading from '../icons/IconLoading.vue';
 
 const state = reactive({
     content: "",

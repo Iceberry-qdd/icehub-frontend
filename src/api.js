@@ -192,6 +192,22 @@ export function getUserInfoById(id) {
 }
 
 /**
+ * 根据昵称获取用户信息
+ * @param {string} nickname 待查询用户昵称
+ * @returns 用户信息
+ */
+export function getUserInfoByNickname(nickname) {
+    return fetch(`${BASE_URL}/user/${nickname}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
  * 根据帖子id查询帖子信息
  * @param {string} id 帖子id
  * @returns 帖子信息

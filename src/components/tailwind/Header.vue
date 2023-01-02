@@ -61,11 +61,11 @@ watch(() => route.path, (newUrl, oldUrl) => {
         //store.setSelectPostId(pid)
         state.submit = false
     } else if (newUrl.match('^/profile/?.*$')) {
-        const userId = window.location.href.replace(/.*\//, '')
+        const nickname = window.location.href.replace(/.*\//, '')
         const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
-        state.backArrow = userId != curUser.id
-        state.titleText = userId == curUser.id ? curUser.nickname : store.SELECT_USER.nickname
-        state.editIcon = userId == curUser.id ? 'create' : ''
+        state.backArrow = nickname != curUser.nickname
+        state.titleText = nickname == curUser.nickname ? curUser.nickname : store.SELECT_USER.nickname
+        state.editIcon = nickname == curUser.nickname ? 'create' : ''
         state.submit = false
     } else if (newUrl.match('^/profile/edit/?$')) {
         state.backArrow = true
@@ -82,7 +82,7 @@ watch(() => route.path, (newUrl, oldUrl) => {
 
 function routeTo(path, submit) {
     const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
-    if (!store.SELECT_USER || store.SELECT_USER.id != curUser.id){
+    if (!store.SELECT_USER || store.SELECT_USER.id != curUser.id) {
         router.push('/')
     }
 

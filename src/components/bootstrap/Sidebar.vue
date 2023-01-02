@@ -1,7 +1,7 @@
 <template>
     <ul class="list-group">
-        <li v-for="menu in state.menus" :key="menu.id" @click="routeTo(menu.routeTo, menu.id,menu.routeParams.userId || null)"
-            :class="{ active: menu.active }"
+        <li v-for="menu in state.menus" :key="menu.id"
+            @click="routeTo(menu.routeTo, menu.id, menu.routeParams.nickname || null)" :class="{ active: menu.active }"
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
                 <img v-if="(menu.id == 8)" :src="menu.icon" class="avatar" />
@@ -112,6 +112,8 @@ li:hover {
 <script setup>
 import { reactive } from 'vue';
 import router from '../../route.js'
+import { store } from '../../store'
+import { getUserInfoByNickname } from '../../api.js'
 
 const state = reactive({
     menus: [
@@ -122,29 +124,33 @@ const state = reactive({
         { id: 5, name: '勋章', routeTo: '/badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: true, active: false },
         { id: 6, name: '活动', routeTo: '/activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: true, active: false },
         { id: 7, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: true, active: false },
-        { id: 8, name: getCurUserNickname(), routeTo: '/profile', routeParams: { userId: getCurUserId() }, icon: getCurUserAvatar(), badgeCount: 0, visible: true, active: false },
+        { id: 8, name: getCurUserNickname(), routeTo: '/profile', routeParams: { nickname: getCurUserNickname() }, icon: getCurUserAvatar(), badgeCount: 0, visible: true, active: false },
         { id: 9, name: '设置', routeTo: '/setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: true, active: false }
     ]
 })
 
-function routeTo(url, mid, uid) {
+async function routeTo(url, mid, nickname) {
     state.menus.forEach(menu => { menu.active = false })
     state.menus[mid - 1].active = true
-    if (!uid) {
+    if (!nickname) {
         router.push(url)
     } else {
-        router.push({ name: 'profile', params: { id: uid } })
+        await getUser(nickname)
+        router.push({ name: 'profile', params: { nickname: nickname } })
     }
-
 }
 
-function getCurUserNickname() {
+async function getUser(nickname) {
     try {
-        return (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
-    } catch (error) {
-        return '个人资料'
-    }
+        const response = await getUserInfoByNickname(nickname)
+        if (!response.ok) throw new Error(await response.text())
 
+        const user = await response.json()
+        store.setSelectUser(user)
+    } catch (e) {
+        store.setMsg(e)
+        console.error(e)
+    }
 }
 
 function getCurUserAvatar() {
@@ -162,9 +168,9 @@ function getCurUserAvatar() {
     }
 }
 
-function getCurUserId() {
-    const userId = (JSON.parse(localStorage.getItem("CUR_USER"))).id
-    return userId || ''
+function getCurUserNickname() {
+    const nickname = (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
+    return nickname || ''
 }
 
 </script>

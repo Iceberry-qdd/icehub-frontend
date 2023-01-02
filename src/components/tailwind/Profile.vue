@@ -14,7 +14,7 @@
 import ProfileInfo from '../tailwind/ProfileInfo.vue'
 import PostCard from '../bootstrap/PostCard.vue'
 import { reactive, onMounted, onUnmounted } from 'vue';
-import { getUserPosts, getUserInfoById } from '../../api';
+import { getUserPosts } from '../../api';
 import { store } from '../../store';
 
 const state = reactive({
@@ -37,15 +37,15 @@ async function getPosts() {
     }
 }
 
-onMounted(async () => {
-    const userId = window.location.href.replace(/.*\//, '')
+onMounted(() => {
+    const nickname = window.location.href.replace(/.*\//, '')
     const user = JSON.parse(localStorage.getItem("CUR_USER"))
-    if (userId == user.id) {
+    if (nickname == user.nickname) {
         state.user = user
     } else {
         state.user = store.SELECT_USER
     }
-    await getPosts()
+    getPosts()
 })
 
 onUnmounted(() => {

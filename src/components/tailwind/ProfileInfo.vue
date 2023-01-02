@@ -4,11 +4,19 @@
             <div><img class=" w-[38rem] h-[18rem] object-cover object-center" :src="bannerPic" /></div>
             <div><img class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
                     :src="avatarPic" /></div>
-            <div class="flex w-fit flex-row gap-x-2 relative top-[-4rem] right-[-30rem]">
-                <div>关注</div>
-                <div>私信</div>
+            <div v-if="!isMyself" class="flex w-fit flex-row gap-x-3 relative top-[-4rem] right-[-24rem]">
+                <div @click="toggleFollowState"
+                    class="bg-blue-500 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer"
+                    :class="{ 'bg-gray-300': state.user.following, 'bg-blue-500': !state.user.following, 'text-black': state.user.following, 'text-white': !state.user.following }">
+                    <div v-if="!state.loading"> {{ state.user.following ? '已订阅' : '＋订阅' }}</div>
+                    <IconLoading v-else :class="'h-5 w-5 text-white'"></IconLoading>
+                </div>
+                <div
+                    class="bg-white px-5 py-[0.325rem] rounded-full border-[1px] border-gray-300 font-bold cursor-pointer">
+                    私信</div>
             </div>
-            <div class="relative top-[-3.5rem] flex flex-col gap-y-1 pl-[1rem]">
+            <div class="relative flex flex-col gap-y-1 pl-[1rem]"
+                :class="{ 'top-[-4rem]': !isMyself, 'top-[-1.5rem]': isMyself }">
                 <div class="text-[18pt] font-bold">{{ state.user.nickname }}</div>
                 <div class="">{{ state.user.remark }}</div>
                 <div class="flex flex-row gap-x-1 items-center">
@@ -56,11 +64,16 @@
 <script setup>
 import { reactive, computed } from 'vue'
 import { CalendarThree, Success, LocalTwo } from '@icon-park/vue-next'
+import { followUser, unFollowUser } from '../../api'
+import { store } from '../../store'
+import IconLoading from '../icons/IconLoading.vue'
 
 const props = defineProps(['user'])
 
 const state = reactive({
-    user: props.user
+    user: props.user,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    loading: false
 })
 
 const formattedDate = computed(() => {
@@ -82,4 +95,50 @@ const avatarPic = computed(() => {
     }
 })
 
+const isMyself = computed(() => {
+    return state.user.id == state.curUser.id
+})
+
+function toggleFollowState() {
+    const userId = state.user.id
+    if (state.user.following) {
+        unFollowAUser(userId)
+    } else {
+        followAUser(userId)
+    }
+}
+
+async function followAUser(userId) {
+    state.loading = true
+    try {
+        const response = await followUser(userId)
+        if (!response.ok) throw new Error(await response.text())
+
+        const result = response.json()
+        if (result == false) throw new Error('关注失败！')
+        state.user.following = result
+    } catch (e) {
+        store.setMsg(e.message)
+        console.error(e)
+    } finally {
+        state.loading = false
+    }
+}
+
+async function unFollowAUser(userId) {
+    state.loading = true
+    try {
+        const response = await unFollowUser(userId)
+        if (!response.ok) throw new Error(await response.text())
+
+        const result = response.json()
+        if (result == false) throw new Error('取消关注失败！')
+        state.user.following = !result
+    } catch (e) {
+        store.setMsg(e.message)
+        console.error(e)
+    } finally {
+        state.loading = false
+    }
+}
 </script>

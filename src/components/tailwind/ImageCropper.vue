@@ -13,9 +13,6 @@
                 <span v-if="state.img == null" @click="choosePics"
                     class="material-icons-round rotate-[-90deg] text-[30pt]">logout</span>
                 <div v-if="state.img == null">选择本地图片</div>
-                <!-- <div v-if="state.img != null" class="max-w-full max-h-full">
-                    <img class="max-w-full max-h-full" src="../../assets/default-bg.jpg" />
-                </div> -->
                 <canvas @mousemove="moveMask($event)" @mousedown="state.isMouseDown = true"
                     @mouseup="state.isMouseDown = false" @mouseleave="state.isMouseLeave == true" id="canvas"
                     class="relative max-w-full max-h-full cursor-move" width="0" height="0"></canvas>

@@ -8,7 +8,7 @@
             <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="props.post.user"
                 v-if="state.showUserInfoPop" class="user-info-pop"></UserInfoPop>
             <a @mouseenter="state.showUserInfoPop = true" class="position-relative"
-                @click="routeToUser(props.post.user.id)">
+                @click="routeToUser(props.post.user.nickname)">
                 <img class="avatar img-fluid" loading="lazy" :src="avatar">
                 <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
             </a>
@@ -228,7 +228,7 @@
 
 <script setup>
 import { computed, onUpdated, reactive } from 'vue';
-import { likeAPost, dislikeAPost,getUserInfoById } from '../../api'
+import { likeAPost, dislikeAPost, getUserInfoByNickname } from '../../api'
 import router from '../../route';
 import { store } from '../../store'
 import { humanizedTime } from '../../utils/formatUtils.js'
@@ -247,14 +247,14 @@ function routeToPost(postId) {
     router.push({ name: 'postDetail', params: { id: postId } })
 }
 
-async function routeToUser(userId) {
-    await getUser(userId)
-    router.push({ name: 'profile', params: { id: userId } })
+async function routeToUser(nickname) {
+    await getUser(nickname)
+    router.push({ name: 'profile', params: { nickname: nickname } })
 }
 
-async function getUser(userId) {
+async function getUser(nickname) {
     try {
-        const response = await getUserInfoById(userId)
+        const response = await getUserInfoByNickname(nickname)
         if (!response.ok) throw new Error(await response.text())
 
         const user = await response.json()
