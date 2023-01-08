@@ -1,6 +1,6 @@
 <template>
-    <div v-if="state.mounted">
-        <Header v-if="state.mounted" :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
+    <div v-if="state.user">
+        <Header v-if="state.user" :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"></Header>
         <ProfileInfo :user="state.user"></ProfileInfo>
@@ -17,23 +17,28 @@
 import Header from '../tailwind/Header.vue'
 import ProfileInfo from '../tailwind/ProfileInfo.vue'
 import PostCard from '../bootstrap/PostCard.vue'
-import { reactive, onMounted, onUnmounted } from 'vue';
+import { reactive, onMounted, onUnmounted, computed } from 'vue';
 import { getUserPosts, getUserInfoByNickname } from '../../api';
 import { store } from '../../store';
+import { useRoute } from 'vue-router';
+
+const $route = useRoute()
+const user = JSON.parse(localStorage.getItem("CUR_USER"))
+const isCurUser = computed(() => {
+    return $route.params.nickname == user.nickname
+})
 
 const state = reactive({
     user: null,
-    isCurUser: false,
     posts: [],
-    mounted: false,
     pageIndex: 1,
     pageSize: 10,
     headerConfig: {
-        title: '',
-        goBack: false,
-        showMenu: false,
-        menuIcon: null,
-        menuAction: { action: 'route', param: '' }
+        title: $route.params.nickname,
+        goBack: !isCurUser.value,
+        showMenu: isCurUser.value,
+        menuIcon: isCurUser.value ? 'create' : '',
+        menuAction: { action: 'route', param: '/profile/edit' }
     }
 })
 
@@ -56,9 +61,7 @@ async function getUser(nickname) {
         if (!response.ok) throw new Error(await response.text())
 
         const user = await response.json()
-        state.headerConfig.title = user.nickname || ''
         state.user = user
-        //store.setSelectUser(user)
     } catch (e) {
         store.setMsg(e)
         console.error(e)
@@ -66,22 +69,10 @@ async function getUser(nickname) {
 }
 
 onMounted(async () => {
-    //state.mounted=false
-    const nickname = window.location.href.replace(/.*\//, '')
+    const nickname = $route.params.nickname
+
     await getUser(nickname)
-
-    const user = JSON.parse(localStorage.getItem("CUR_USER"))
-    state.isCurUser = nickname == user.nickname
-    state.headerConfig.goBack = !state.isCurUser
-    state.headerConfig.showMenu = state.isCurUser
-
-    if (state.isCurUser) {
-        state.headerConfig.menuIcon = 'create'
-        state.headerConfig.menuAction.param = '/profile/edit'
-    }
-
     await getPosts()
-    state.mounted = true
 })
 
 onUnmounted(() => {

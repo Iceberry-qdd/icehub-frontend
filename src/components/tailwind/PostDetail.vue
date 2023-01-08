@@ -27,6 +27,9 @@ import { store } from '../../store';
 import PostCardDetail from '../bootstrap/PostCardDetail.vue';
 import Review from '../tailwind/Review.vue'
 import ReviewEditor from '../tailwind/ReviewEditor.vue'
+import { useRoute } from 'vue-router';
+
+const $route = useRoute()
 
 const state = reactive({
     post: store.SELECT_POST,
@@ -44,7 +47,6 @@ const state = reactive({
 
 async function getPost(id) {
     try {
-        // console.log('a')
         const response = await getPostById(id)
         if (!response.ok) throw new Error(await response.text())
 
@@ -62,7 +64,6 @@ async function getReviews(postId, pageIndex, pageSize) {
 
         const { content } = await response.json()
         state.reviews.push(...content)
-        //console.log(state.reviews)
     } catch (e) {
         store.setMsg(e.message)
         console.error(e)
@@ -70,13 +71,11 @@ async function getReviews(postId, pageIndex, pageSize) {
 }
 
 onMounted(() => {
-    const postId = window.location.href.replace(new RegExp('.*/'), '')
-    // console.log(id)
+    const postId = $route.params.id
     if (state.post.user == undefined) {
         getPost(postId)
     }
 
-    //console.log(state.post.id)
     getReviews(postId, state.pageIndex, state.pageSize)
 })
 </script>
