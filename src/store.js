@@ -52,19 +52,24 @@ export const store = reactive({
         this.CROPPED_IMAGE.mode = mode
     },
     setCroppedImageData(data) {
-        this.CROPPED_IMAGE[this.CROPPED_IMAGE.mode]=data
+        this.CROPPED_IMAGE[this.CROPPED_IMAGE.mode] = data
     },
 
-    IS_SUBMIT_PROFILE:false,
-    submitProfile(){
-        this.IS_SUBMIT_PROFILE=true
+    IS_SUBMIT_PROFILE: false,
+    submitProfile() {
+        this.IS_SUBMIT_PROFILE = true
     },
 
-    SELECT_USER:null,
-    setSelectUser(user){
+    IS_SUBMIT: false,
+    submit() {
+        this.IS_SUBMIT = true
+    },
+
+    SELECT_USER: null,
+    setSelectUser(user) {
         this.SELECT_USER = user
     },
-    clearSelectUser(){
+    clearSelectUser() {
         this.SELECT_USER = null
     }
 })

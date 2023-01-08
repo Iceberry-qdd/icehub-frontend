@@ -32,8 +32,10 @@
                     <div>{{ state.user.city }}</div>
                 </div>
                 <div class="flex flex-row gap-x-4">
-                    <div>订阅者 <span>{{ state.user.followingCount }}</span></div>
-                    <div>订阅 <span>{{ state.user.followerCount }}</span></div>
+                    <div @click="routeTo('followerList', state.user.nickname)" class="cursor-pointer">订阅者
+                        <span>{{ state.user.followingCount }}</span>
+                    </div>
+                    <div class="cursor-pointer">订阅 <span>{{ state.user.followerCount }}</span></div>
                 </div>
             </div>
         </div>
@@ -66,6 +68,7 @@ import { reactive, computed } from 'vue'
 import { CalendarThree, Success, LocalTwo } from '@icon-park/vue-next'
 import { followUser, unFollowUser } from '../../api'
 import { store } from '../../store'
+import router from '../../route.js'
 import IconLoading from '../icons/IconLoading.vue'
 
 const props = defineProps(['user'])
@@ -95,9 +98,11 @@ const avatarPic = computed(() => {
     }
 })
 
-const isMyself = computed(() => {
-    return state.user.id == state.curUser.id
-})
+const isMyself = computed(() => { return state.user.id == state.curUser.id })
+
+function routeTo(routeName, routeParam) {
+    router.push({ name: routeName, params: { nickname: routeParam } })
+}
 
 function toggleFollowState() {
     const userId = state.user.id

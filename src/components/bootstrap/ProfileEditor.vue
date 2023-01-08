@@ -1,5 +1,8 @@
 <template>
     <div>
+        <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
+            :menuAction="state.headerConfig.menuAction"></Header>
         <div v-if="state.isLoading == true" class="loading">
             <IconLoading :class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
             <div>正在提交...</div>
@@ -183,6 +186,7 @@
 </style>
 
 <script setup>
+import Header from '../tailwind/Header.vue'
 import { reactive, computed, watch, ref } from 'vue';
 import { store } from '../../store.js';
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '../../api.js'
@@ -208,7 +212,14 @@ const state = reactive({
     newAvatar: store.CROPPED_IMAGE.avatar,
     newBanner: store.CROPPED_IMAGE.banner,
     isLoading: false,
-    isUsernameExisted: false
+    isUsernameExisted: false,
+    headerConfig: {
+        title: '编辑资料',
+        goBack: true,
+        showMenu: true,
+        menuIcon: 'done',
+        menuAction: { action: 'submit', param: true }
+    }
 })
 
 const selected = ref(state.user.gender)
@@ -219,7 +230,7 @@ function showImageCropper(mode) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
 }
 
-watch(() => store.IS_SUBMIT_PROFILE, (newVal, oldVal) => {
+watch(() => store.IS_SUBMIT, (newVal, oldVal) => {
     if (newVal == true) {
         state.newUser.gender = selected.value
         console.table(state.newUser)
@@ -265,7 +276,7 @@ async function submitProfile() {
 
         const data = await response.json()
         localStorage.setItem('CUR_USER', JSON.stringify(data))
-        router.push('/profile')
+        router.push({ name: 'profile', params: { nickname: data.nickname } })
     } catch (e) {
         store.setMsg(e.message)
         console.error(e)

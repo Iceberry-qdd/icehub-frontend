@@ -3,14 +3,12 @@
         <GlobalBanner></GlobalBanner>
         <GlobalTipDialog></GlobalTipDialog>
         <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
-        <!-- <ImageSlide></ImageSlide> -->
         <ImageSlide2></ImageSlide2>
         <div id="sidebar-l">
             <Brand></Brand>
             <Sidebar id="menu"></Sidebar>
         </div>
         <div id="main">
-            <Header></Header>
             <router-view></router-view>
         </div>
         <div id="sidebar-r">
@@ -55,7 +53,6 @@ import RecommendUserCard from './components/bootstrap/RecommendUserCard.vue'
 
 import GlobalTipDialog from './components/tailwind/GlobalTipDialog.vue'
 import Brand from './components/tailwind/Brand.vue'
-import Header from './components/tailwind/Header.vue'
 import { onMounted, reactive } from 'vue'
 import { getCurUserInfo } from './api'
 import { store } from './store'

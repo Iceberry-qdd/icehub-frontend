@@ -1,14 +1,20 @@
 <template>
-    <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem]">
-        <div class="text-[15pt] h-full flex flex-row items-center">
-            <div @click="routeTo(state.routeUrl, false)" v-if="state.backArrow == true"
-                class="material-icons-round cursor-pointer text-[15pt] pr-[0.5rem]">arrow_back_ios</div>
-            <div>{{ state.titleText }}</div>
+    <div>
+        <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem]">
+            <div class="text-[15pt] h-full flex flex-row items-center">
+                <div @click="routeBackTo" v-if="state.backArrow"
+                    class="material-icons-round cursor-pointer text-[14pt] mr-[0.5rem]">
+                    arrow_back_ios
+                </div>
+                <div class="text-[14pt]">{{ state.titleText }}</div>
+            </div>
+            <div>
+                <span v-if="state.menuIcon" @click="handleAction" class="material-icons-round text-[14pt]">{{ state.menuIcon }}</span>
+            </div>
         </div>
-        <div><span v-if="state.editIcon" @click="routeTo('/profile/edit', state.submit)"
-                class="material-icons-round text-[14pt]">{{ state.editIcon }}</span></div>
+        <div id="h-hide"></div>
     </div>
-    <div id="h-hide"></div>
+
 </template>
 
 <style scoped>
@@ -34,63 +40,44 @@ import { useRoute } from 'vue-router';
 import router from '../../route';
 import { store } from '../../store';
 
+const props = defineProps(['title', 'goBack', 'showMenu', 'menuIcon', 'menuAction'])
+
 const state = reactive({
-    backArrow: false,
+    backArrow: props.goBack,
+    titleText: props.title,
+    menuIcon: props.menuIcon,
+    showMenu: props.showMenu,
+    menuAction: props.menuAction,
+
     routeUrl: '/',
-    titleText: '',
     editIcon: '',
     url: window.location.href,
     submit: false
 })
 
-const route = useRoute()
 
-watch(() => route.path, (newUrl, oldUrl) => {
-    if (newUrl.match('^/(index)?$')) {
-        state.backArrow = false
-        state.titleText = '主页'
-        state.routeUrl = '/'
-        state.editIcon = ''
-        state.submit = false
-    } else if (newUrl.match('^/post/.*$')) {
-        state.backArrow = true
-        state.routeUrl = '/'
-        state.titleText = '帖子详情'
-        state.editIcon = ''
-        const pid = newUrl.replace('/post/', '')
-        //store.setSelectPostId(pid)
-        state.submit = false
-    } else if (newUrl.match('^/profile/?.*$')) {
-        const nickname = window.location.href.replace(/.*\//, '')
-        const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
-        state.backArrow = nickname != curUser.nickname
-        state.titleText = nickname == curUser.nickname ? curUser.nickname : store.SELECT_USER.nickname
-        state.editIcon = nickname == curUser.nickname ? 'create' : ''
-        state.submit = false
-    } else if (newUrl.match('^/profile/edit/?$')) {
-        state.backArrow = true
-        state.routeUrl = '/profile'
-        state.titleText = '编辑个人资料'
-        state.editIcon = 'done'
-        state.submit = true
-    } else {
-        state.backArrow = false
-        state.titleText = ''
-        state.editIcon = ''
+function handleAction() {
+    const action = state.menuAction.action
+    const param = state.menuAction.param
+    switch (action) {
+        case 'route':
+            routeTo(param)
+            break;
+        case 'submit':
+            store.IS_SUBMIT = param
+            break
+        default:
+            break;
     }
-})
+}
 
-function routeTo(path, submit) {
-    const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
-    if (!store.SELECT_USER || store.SELECT_USER.id != curUser.id) {
-        router.push('/')
-    }
+function routeTo(url) {
+    if (!url) return
+    router.push(url)
+}
 
-    if (submit) {
-        store.submitProfile()
-    } else {
-        router.push(path)
-    }
+function routeBackTo() {
+    router.back()
 }
 
 </script>

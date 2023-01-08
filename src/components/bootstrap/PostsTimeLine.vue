@@ -1,6 +1,8 @@
 <template>
     <div>
-        <!-- <Header></Header> -->
+        <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
+            :menuAction="state.headerConfig.menuAction"></Header>
         <GlobalRefresh></GlobalRefresh>
         <PostEditor @get-data="getData"></PostEditor>
         <PostCard v-for="(post, index) in state.posts" :post="post" :key="post.id" :index="index"></PostCard>
@@ -10,12 +12,13 @@
 </template>
 
 <style scoped>
-#footer{
+#footer {
     height: 10vh;
 }
 </style>
 
 <script setup>
+import Header from '../tailwind/Header.vue'
 import PostCard from './PostCard.vue'
 import { getTimeline } from '../../api.js'
 import { store } from '../../store.js'
@@ -26,7 +29,14 @@ import GlobalRefresh from '../tailwind/GlobalRefresh.vue'
 const state = reactive({
     posts: [],
     pageIdx: 1,
-    pageSize: 10
+    pageSize: 10,
+    headerConfig: {
+        title: '主页',
+        goBack: false,
+        showMenu: false,
+        menuIcon: null,
+        menuAction: { action: 'route', param: '' }
+    }
 })
 
 async function getData(pageIdx, pageSize) {
