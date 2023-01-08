@@ -1,5 +1,5 @@
 <template>
-    <div id="container">
+    <div v-if="state.user" id="container">
         <GlobalBanner></GlobalBanner>
         <GlobalTipDialog></GlobalTipDialog>
         <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
