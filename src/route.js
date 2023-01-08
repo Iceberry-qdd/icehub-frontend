@@ -3,25 +3,23 @@ import Bookmark from './components/tailwind/Bookmark.vue'
 import PostDetail from './components/tailwind/PostDetail.vue'
 import Profile from './components/tailwind/Profile.vue'
 import ProfileEdit from './components/bootstrap/ProfileEditor.vue'
-import FollowList from './components/tailwind/FollowList.vue'
-import FollowerItems from './components/tailwind/FollowerItems.vue'
-import FollowingItems from './components/tailwind/FollowingItems.vue'
+import Follow from './components/tailwind/Follow.vue'
+import FollowerList from './components/tailwind/FollowerList.vue'
+import FollowingList from './components/tailwind/FollowingList.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-    { path: '/', component: PostsTimeLine },
-    { path: '/index', component: PostsTimeLine },
+    { path: '/', component: PostsTimeLine, alias: ['/index', '/home'] },
     { name: 'bookmark', path: '/bookmark', component: Bookmark },
     { name: 'postDetail', path: '/post/:id', component: PostDetail },
     { name: 'profile', path: '/profile/:nickname', component: Profile },
     { name: 'profileEdit', path: '/profile/edit', component: ProfileEdit },
     {
-        name: 'followList',
-        path: '/follow',
-        component: FollowList,
+        path: '/',
+        component: Follow,
         children: [
-            { name: 'followerList', path: '/follower/:nickname', component: FollowerItems },
-            { name: 'followingList', path: '/following/:nickname', component: FollowingItems },
+            { name: 'followerList', path: '/follower/:nickname', component: FollowerList },
+            { name: 'followingList', path: '/following/:nickname', component: FollowingList },
         ]
     }
 ]

@@ -31,11 +31,13 @@
                     <local-two theme="outline" size="16" class="icon" fill="#333" :strokeWidth="3" />
                     <div>{{ state.user.city }}</div>
                 </div>
-                <div class="flex flex-row gap-x-4">
-                    <div @click="routeTo('followerList', state.user.nickname)" class="cursor-pointer">订阅者
+                <div class="flex flex-row gap-x-6">
+                    <div @click="routeTo('followerList', state.user.nickname)" class="cursor-pointer hover:underline">订阅我的
                         <span>{{ state.user.followingCount }}</span>
                     </div>
-                    <div class="cursor-pointer">订阅 <span>{{ state.user.followerCount }}</span></div>
+                    <div @click="routeTo('followingList', state.user.nickname)" class="cursor-pointer hover:underline">
+                        我的订阅 <span>{{ state.user.followerCount }}</span>
+                    </div>
                 </div>
             </div>
         </div>
