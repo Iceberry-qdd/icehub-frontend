@@ -1,4 +1,5 @@
-import PostsTimeLine from './components/bootstrap/PostsTimeLine.vue'
+import Index from './components/bootstrap/Index.vue'
+import Explore from './components/bootstrap/Explore.vue'
 import Bookmark from './components/tailwind/Bookmark.vue'
 import PostDetail from './components/tailwind/PostDetail.vue'
 import Profile from './components/tailwind/Profile.vue'
@@ -9,7 +10,8 @@ import FollowingList from './components/tailwind/FollowingList.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-    { path: '/', component: PostsTimeLine, alias: ['/index', '/home'] },
+    { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
+    { name: 'explore', path: '/explore', component: Explore },
     { name: 'bookmark', path: '/bookmark', component: Bookmark },
     { name: 'postDetail', path: '/post/:id', component: PostDetail },
     { name: 'profile', path: '/profile/:nickname', component: Profile },

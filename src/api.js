@@ -2,12 +2,29 @@ const BASE_URL = "http://localhost:8080"
 const TOKEN = localStorage.getItem('TOKEN')
 
 /**
- * 拉取时间线上的帖子
+ * 拉取公共时间线上的帖子
  * @param {int} pageIndex 页数
  * @param {int} pageSize 每页条数
  * @returns Promise<any>
  */
 export function getTimeline(pageIndex, pageSize) {
+    return fetch(`${BASE_URL}/timeline/public?pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 拉取用户时间线上的帖子
+ * @param {int} pageIndex 页数
+ * @param {int} pageSize 每页条数
+ * @returns Promise<any>
+ */
+export function getUserTimeline(pageIndex, pageSize) {
     return fetch(`${BASE_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}`, {
         method: 'GET',
         headers: {
