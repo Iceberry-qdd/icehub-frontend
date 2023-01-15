@@ -58,7 +58,6 @@ function fetchNewPost() {
     let scrollHeight = document.documentElement.scrollHeight
 
     if (scrollTop + clientHeight >= scrollHeight) {
-        // console.log("已触底")
         state.pageIdx++;
         setTimeout(() => { }, 3000)
         getData(state.pageIdx, state.pageSize)

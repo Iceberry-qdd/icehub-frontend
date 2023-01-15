@@ -85,7 +85,7 @@ async function followAUser(userId) {
         const response = await followUser(userId)
         if (!response.ok) throw new Error(await response.text())
 
-        const result = response.json()
+        const result = await response.json()
         if (result == false) throw new Error('关注失败！')
         state.user.following = result
     } catch (e) {
@@ -102,9 +102,9 @@ async function unFollowAUser(userId) {
         const response = await unFollowUser(userId)
         if (!response.ok) throw new Error(await response.text())
 
-        const result = response.json()
+        const result = await response.json()
         if (result == false) throw new Error('取消关注失败！')
-        state.user.following = result
+        state.user.following = !result
     } catch (e) {
         store.setMsg(e.message)
         console.error(e)

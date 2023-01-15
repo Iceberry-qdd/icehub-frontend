@@ -233,7 +233,7 @@ function showImageCropper(mode) {
 watch(() => store.IS_SUBMIT, (newVal, oldVal) => {
     if (newVal == true) {
         state.newUser.gender = selected.value
-        console.table(state.newUser)
+        //console.table(state.newUser)
         submitProfile()
     }
 })
