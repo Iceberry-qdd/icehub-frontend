@@ -1,37 +1,37 @@
 <template>
     <div class="card">
-        <button type="button" class="btn menu">
+        <button  type="button" class="btn menu">
             <!-- <i class="bi bi-chevron-down"></i> -->
-            <down theme="outline" size="24" fill="#333" :strokeWidth="2" />
-            <PostMenus></PostMenus>
+            <down @click="state.isShowMenu=true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
+            <PostMenus :user="state.post.user" @dismissMenu="state.isShowMenu=false" v-if="state.isShowMenu"></PostMenus>
         </button>
         <div class="user-info d-flex">
-            <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="props.post.user"
+            <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user"
                 v-if="state.showUserInfoPop" class="user-info-pop"></UserInfoPop>
             <a @mouseenter="state.showUserInfoPop = true" class="position-relative"
-                @click="routeToUser(props.post.user.nickname)">
+                @click="routeToUser(state.post.user.nickname)">
                 <img class="avatar img-fluid" loading="lazy" :src="avatar">
-                <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
+                <i class="bi bi-patch-check-fill verify" v-if="state.post.user.verified"></i>
             </a>
             <div class="user-text">
-                <div class="nickname">{{ props.post.user.nickname }}</div>
+                <div class="nickname">{{ state.post.user.nickname }}</div>
                 <div class="post-time">{{ formattedTime }}</div>
             </div>
         </div>
 
-        <div class="m-card-body" @click="routeToPost(props.post.id)">
-            <p class="card-text" id="content">{{ props.post.content }}</p>
+        <div class="m-card-body" @click="routeToPost(state.post.id)">
+            <p class="card-text" id="content">{{ state.post.content }}</p>
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div class="grid-item row row-cols-3">
-                <div class="col wrapper" v-for="(pic, idx) in props.post.attachmentsUrl">
+                <div class="col wrapper" v-for="(pic, idx) in state.post.attachmentsUrl">
                     <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid" :src="pic">
                 </div>
             </div>
         </div>
         <div class="card-tags container" v-if="hasTags">
             <div class="row row-cols-auto gx-3">
-                <div class="col" v-for="tag in props.post.tags">
+                <div class="col" v-for="tag in state.post.tags">
                     <span class="badge bg-primary" id="badge"># {{ tag }}</span>
                 </div>
             </div>
@@ -41,18 +41,18 @@
                 <!-- <i class="bi bi-arrow-return-right"></i> -->
                 <!-- <span class="material-icons-round">shortcut</span> -->
                 <share theme="outline" size="18" fill="#333" :strokeWidth="3" />
-                {{ props.post.repostCount }}
+                {{ state.post.repostCount }}
             </button>
             <button type="button" class="btn op op-review" @click="toggleReview">
                 <!-- <i class="bi bi-chat-square"></i> -->
                 <!-- <span class="material-icons-round">chat_bubble_outline</span> -->
                 <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
-                {{ props.post.reviewCount }}
+                {{ state.post.reviewCount }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
                 <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" />
                 <!-- <span :class="{ liked: isLiked }" class="material-icons-round">{{ isLiked ? 'favorite' : 'favorite_border' }}</span> -->
-                {{ props.post.likeCount }}
+                {{ state.post.likeCount }}
             </button>
         </div>
     </div>
@@ -229,7 +229,7 @@
 
 <script setup>
 import { computed, onUpdated, reactive } from 'vue';
-import PostMenus from '@/components/tailwind/postMenus.vue';
+import PostMenus from '@/components/tailwind/PostMenus.vue'; //NOTE 组件字母小写会导致hmr失效
 import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/api'
 import router from '@/route';
 import { store } from '@/store'
@@ -240,12 +240,14 @@ import { Down, Like, Message, Share } from '@icon-park/vue-next'
 const props = defineProps(['post'])
 
 const state = reactive({
+    post:props.post,
     reaction: [false, props.post.liked, false],
-    showUserInfoPop: false
+    showUserInfoPop: false,
+    isShowMenu:false
 })
 
 function routeToPost(postId) {
-    store.setSelectPost(props.post)
+    store.setSelectPost(state.post)
     router.push({ name: 'postDetail', params: { id: postId } })
 }
 
@@ -269,26 +271,26 @@ async function getUser(nickname) {
 
 async function toggleLike() {
     try {
-        if (props.post.liked == false) {
-            const response = await likeAPost(props.post.id)
+        if (state.post.liked == false) {
+            const response = await likeAPost(state.post.id)
             if (!response.ok) throw new Error(await response.text())
 
             const result = await response.text()
             if (result == false) throw new Error("点赞失败!")
 
-            const lastCount = props.post.likeCount
-            props.post.likeCount = lastCount + 1
-            props.post.liked = true
+            const lastCount = state.post.likeCount
+            state.post.likeCount = lastCount + 1
+            state.post.liked = true
         } else {
-            const response = await dislikeAPost(props.post.id)
+            const response = await dislikeAPost(state.post.id)
             if (!response.ok) throw new Error(await response.text())
 
             const result = await response.text()
             if (result == false) throw new Error("取消点赞失败!")
 
-            const lastCount = props.post.likeCount
-            props.post.likeCount = lastCount - 1
-            props.post.liked = false
+            const lastCount = state.post.likeCount
+            state.post.likeCount = lastCount - 1
+            state.post.liked = false
         }
     } catch (e) {
         store.setMsg(e.message)
@@ -312,27 +314,27 @@ function showSlide(urls, idx) {
 }
 
 const avatar = computed(() => {
-    if (props.post.user.avatarUrl == null) {
-        return `https://api.multiavatar.com/${props.post.user.nickname}.svg`
+    if (state.post.user.avatarUrl == null) {
+        return `https://api.multiavatar.com/${state.post.user.nickname}.svg`
     } else {
-        return props.post.user.avatarUrl
+        return state.post.user.avatarUrl
     }
 })
 
 const hasPics = computed(() => {
-    return props.post.attachmentsUrl.length != 0
+    return state.post.attachmentsUrl.length != 0
 })
 
 const hasTags = computed(() => {
-    return props.post.tags != undefined && props.post.tags.length != 0
+    return state.post.tags != undefined && state.post.tags.length != 0
 })
 
 const isLiked = computed(() => {
-    return props.post.liked
+    return state.post.liked
 })
 
 const likedIconTheme = computed(() => {
-    return props.post.liked ? 'filled' : 'outline'
+    return state.post.liked ? 'filled' : 'outline'
 })
 
 const likedIconColor = computed(() => {
@@ -340,10 +342,10 @@ const likedIconColor = computed(() => {
 })
 
 const formattedTime = computed(() => {
-    return humanizedTime(props.post.createdTime)
+    return humanizedTime(state.post.createdTime)
 })
 
 onUpdated(() => {
-    //console.log(props.post)
+    //console.log(state.post)
 })
 </script>
