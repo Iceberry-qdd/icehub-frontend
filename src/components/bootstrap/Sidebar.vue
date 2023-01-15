@@ -110,10 +110,13 @@ li:hover {
 </style>
 
 <script setup>
-import { reactive } from 'vue';
-import router from '../../route.js'
-import { store } from '../../store'
-import { getUserInfoByNickname } from '../../api.js'
+import { reactive, onMounted } from 'vue';
+import router from '@/route.js'
+import { store } from '@/store'
+import { getUserInfoByNickname } from '@/api.js'
+import { useRoute } from 'vue-router';
+
+const $route = useRoute()
 
 const state = reactive({
     menus: [
@@ -130,14 +133,18 @@ const state = reactive({
 })
 
 async function routeTo(url, mid, nickname) {
-    state.menus.forEach(menu => { menu.active = false })
-    state.menus[mid - 1].active = true
+    activeMenu(mid)
     if (!nickname) {
         router.push(url)
     } else {
         await getUser(nickname)
         router.push({ name: 'profile', params: { nickname: nickname } })
     }
+}
+
+function activeMenu(menuId) {
+    state.menus.forEach(menu => { menu.active = false })
+    state.menus[menuId - 1].active = true
 }
 
 async function getUser(nickname) {
@@ -172,5 +179,24 @@ function getCurUserNickname() {
     const nickname = (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
     return nickname || ''
 }
+
+onMounted(() => {
+    const url = $route.path
+    let menuId = 0
+
+    for (const menu of state.menus) {
+        if (url == '/' && menu.routeTo == '/index') {
+            menuId = menu.id
+            break
+        }
+
+        if (url.startsWith(menu.routeTo)) {
+            menuId = menu.id
+            break
+        }
+    }
+
+    activeMenu(menuId)
+})
 
 </script>
