@@ -36,9 +36,8 @@
 
 <script setup>
 import { reactive, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import router from '../../route';
-import { store } from '../../store';
+import router from '@/route';
+import { store } from '@/store';
 
 const props = defineProps(['title', 'goBack', 'showMenu', 'menuIcon', 'menuAction'])
 

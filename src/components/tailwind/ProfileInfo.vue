@@ -9,7 +9,7 @@
                     class="bg-blue-500 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer"
                     :class="{ 'bg-gray-300': state.user.following, 'bg-blue-500': !state.user.following, 'text-black': state.user.following, 'text-white': !state.user.following }">
                     <div v-if="!state.loading"> {{ state.user.following ? '已订阅' : '＋订阅' }}</div>
-                    <IconLoading v-else :class="'h-5 w-5 text-white'"></IconLoading>
+                    <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
                 </div>
                 <div
                     class="bg-white px-5 py-[0.325rem] rounded-full border-[1px] border-gray-300 font-bold cursor-pointer">
@@ -68,10 +68,10 @@
 <script setup>
 import { reactive, computed } from 'vue'
 import { CalendarThree, Success, LocalTwo } from '@icon-park/vue-next'
-import { followUser, unFollowUser } from '../../api'
-import { store } from '../../store'
-import router from '../../route.js'
-import IconLoading from '../icons/IconLoading.vue'
+import { followUser, unFollowUser } from '@/api'
+import { store } from '@/store'
+import router from '@/route.js'
+import IconLoading from '@/components/icons/IconLoading.vue'
 
 const props = defineProps(['user'])
 

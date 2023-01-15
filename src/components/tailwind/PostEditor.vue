@@ -2,7 +2,7 @@
     <div class="border-b">
         <div v-if="state.isLoading"
             class="flex flex-col justify-center items-center z-[102] fixed w-[38.46%] h-screen bg-[#00000066]">
-            <IconLoading :class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
+            <IconLoading class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
         </div>
         <div class="bg-white pl-2 pr-2 pt-2 pb-2">
             <div>
@@ -65,10 +65,10 @@
 
 <script setup>
 import { reactive } from 'vue';
-import { uploadFiles, posting } from '../../api.js'
-import { store } from '../../store.js'
+import { uploadFiles, posting } from '@/api.js'
+import { store } from '@/store.js'
 import { VideoTwo, AddPicture, SourceCode, PreviewOpen, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
-import IconLoading from '../icons/IconLoading.vue';
+import IconLoading from '@/components/icons/IconLoading.vue';
 
 const state = reactive({
     content: "",

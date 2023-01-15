@@ -20,7 +20,7 @@
                 :class="{ 'bg-gray-300': state.user.following, 'bg-blue-500': !state.user.following, 'text-black': state.user.following, 'text-white': !state.user.following }"
                 class="absolute bottom-3 right-3  text-[11pt] px-5 py-[0.3rem] rounded-full">
                 <div v-if="!state.loading"> {{ state.user.following ? '已订阅' : '订阅' }}</div>
-                <IconLoading v-else :class="'h-5 w-5 text-white'"></IconLoading>
+                <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
             </div>
         </div>
     </div>
@@ -35,9 +35,9 @@
 
 <script setup>
 import { computed, reactive } from 'vue'
-import { followUser, unFollowUser } from '../../api'
-import IconLoading from '../icons/IconLoading.vue'
-import { store } from '../../store'
+import { followUser, unFollowUser } from '@/api'
+import IconLoading from '@/components/icons/IconLoading.vue'
+import { store } from '@/store'
 
 const props = defineProps(['user'])
 

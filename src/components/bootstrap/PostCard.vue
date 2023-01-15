@@ -3,6 +3,7 @@
         <button type="button" class="btn menu">
             <!-- <i class="bi bi-chevron-down"></i> -->
             <down theme="outline" size="24" fill="#333" :strokeWidth="2" />
+            <PostMenus></PostMenus>
         </button>
         <div class="user-info d-flex">
             <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="props.post.user"
@@ -228,11 +229,12 @@
 
 <script setup>
 import { computed, onUpdated, reactive } from 'vue';
-import { likeAPost, dislikeAPost, getUserInfoByNickname } from '../../api'
-import router from '../../route';
-import { store } from '../../store'
-import { humanizedTime } from '../../utils/formatUtils.js'
-import UserInfoPop from '../tailwind/UserInfoPop.vue';
+import PostMenus from '@/components/tailwind/postMenus.vue';
+import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/api'
+import router from '@/route';
+import { store } from '@/store'
+import { humanizedTime } from '@/utils/formatUtils.js'
+import UserInfoPop from '@/components/tailwind/UserInfoPop.vue';
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
 
 const props = defineProps(['post'])

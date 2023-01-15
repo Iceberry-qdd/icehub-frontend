@@ -14,12 +14,12 @@
 </style>
 
 <script setup>
-import Header from '../tailwind/Header.vue'
-import ProfileInfo from '../tailwind/ProfileInfo.vue'
-import PostCard from '../bootstrap/PostCard.vue'
+import Header from '@/components/tailwind/Header.vue'
+import ProfileInfo from '@/components/tailwind/ProfileInfo.vue'
+import PostCard from '@/components/bootstrap/PostCard.vue'
 import { reactive, onMounted, onUnmounted, computed } from 'vue';
-import { getUserPosts, getUserInfoByNickname } from '../../api';
-import { store } from '../../store';
+import { getUserPosts, getUserInfoByNickname } from '@/api';
+import { store } from '@/store';
 import { useRoute } from 'vue-router';
 
 const $route = useRoute()

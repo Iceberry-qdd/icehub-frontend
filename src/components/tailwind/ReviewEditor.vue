@@ -18,7 +18,7 @@
                 <div @click="submitReview"
                     class="text-sm py-2 px-6 rounded-full text-white bg-[#0d6efd] cursor-pointer">
                     <span v-if="!state.loading">发布</span>
-                    <IconLoading v-else :class="'h-5 w-5 text-white'"></IconLoading>
+                    <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
                 </div>
             </div>
         </div>
@@ -31,10 +31,10 @@
 
 <script setup>
 import { reactive, computed } from 'vue'
-import { reviewing } from '../../api'
-import { store } from '../../store'
+import { reviewing } from '@/api'
+import { store } from '@/store'
 import { AddPicture, LocalTwo } from '@icon-park/vue-next'
-import IconLoading from '../icons/IconLoading.vue'
+import IconLoading from '@/components/icons/IconLoading.vue'
 
 const props = defineProps(['post', 'parent'])
 

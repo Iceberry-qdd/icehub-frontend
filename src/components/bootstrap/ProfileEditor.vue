@@ -186,12 +186,12 @@
 </style>
 
 <script setup>
-import Header from '../tailwind/Header.vue'
+import Header from '@/components/tailwind/Header.vue'
 import { reactive, computed, watch, ref } from 'vue';
-import { store } from '../../store.js';
-import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '../../api.js'
-import router from '../../route';
-import IconLoading from '../icons/IconLoading.vue';
+import { store } from '@/store.js';
+import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/api.js'
+import router from '@/route';
+import IconLoading from '@/components/icons/IconLoading.vue';
 
 const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),

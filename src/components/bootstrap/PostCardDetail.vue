@@ -220,9 +220,9 @@
 
 <script setup>
 import { computed, onUpdated, reactive } from 'vue';
-import { likeAPost, dislikeAPost } from '../../api'
-import router from '../../route';
-import { store } from '../../store'
+import { likeAPost, dislikeAPost } from '@/api'
+import router from '@/route';
+import { store } from '@/store'
 import {Down,Like,Message,Share} from '@icon-park/vue-next'
 
 const props = defineProps(['post'])

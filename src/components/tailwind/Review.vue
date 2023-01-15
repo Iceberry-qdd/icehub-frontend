@@ -60,10 +60,10 @@
 
 <script setup>
 import { computed, reactive, onMounted } from 'vue';
-import { dislikeAReview, getReviewById, getSubReviewById, likeAReview } from '../../api';
-import { humanizedTime } from '../../utils/formatUtils.js'
-import ReviewEditor from './ReviewEditor.vue';
-import { store } from '../../store';
+import { dislikeAReview, getReviewById, getSubReviewById, likeAReview } from '@/api';
+import { humanizedTime } from '@/utils/formatUtils.js'
+import ReviewEditor from '@/components/tailwind/ReviewEditor.vue';
+import { store } from '@/store';
 
 const props = defineProps(['review', 'post'])
 
@@ -82,7 +82,6 @@ const formattedTime = computed(() => {
 const replyTo = computed(() => {
     try {
         if (state.parentReview != null) {
-            //console.log(state.parentReview.user)
             return state.parentReview.user.nickname
         } else if (props.post.user.nickname) {
             return props.post.user.nickname

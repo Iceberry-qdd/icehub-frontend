@@ -47,17 +47,16 @@
 </style>
 
 <script setup>
-import GlobalBanner from './components/bootstrap/GlobalBanner.vue'
-import Sidebar from './components/bootstrap/Sidebar.vue'
-import RecommendUserCard from './components/bootstrap/RecommendUserCard.vue'
-
-import GlobalTipDialog from './components/tailwind/GlobalTipDialog.vue'
-import Brand from './components/tailwind/Brand.vue'
+import GlobalBanner from '@/components/bootstrap/GlobalBanner.vue'
+import Sidebar from '@/components/bootstrap/Sidebar.vue'
+import RecommendUserCard from '@/components/bootstrap/RecommendUserCard.vue'
+import GlobalTipDialog from '@/components/tailwind/GlobalTipDialog.vue'
+import Brand from '@/components/tailwind/Brand.vue'
 import { onMounted, reactive } from 'vue'
-import { getCurUserInfo } from './api'
-import { store } from './store'
-import ImageSlide2 from './components/tailwind/ImageSlide2.vue'
-import ImageCropper from './components/tailwind/ImageCropper.vue'
+import { getCurUserInfo } from '@/api'
+import { store } from '@/store'
+import ImageSlide2 from '@/components/tailwind/ImageSlide2.vue'
+import ImageCropper from '@/components/tailwind/ImageCropper.vue'
 
 const state = reactive({
     user: null,
@@ -81,7 +80,7 @@ async function curUser() {
         console.error(e)
         localStorage.removeItem('TOKEN')
         localStorage.removeItem('CUR_USER')
-        self.location = 'auth.html'
+        self.location = 'auth.html' // TODO 此跳转在有二级页面时不正确
         window.history.forward(1);
     }
 }

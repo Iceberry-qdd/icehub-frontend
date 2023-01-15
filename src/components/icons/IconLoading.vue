@@ -1,5 +1,5 @@
 <template>
-    <svg class="animate-spin" :class="state.class" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
         </circle>
         <path class="opacity-75" fill="currentColor"
@@ -9,10 +9,5 @@
 </template>
 
 <script setup>
-import { defineProps, reactive } from 'vue'
-const props = defineProps(['class'])
 
-const state = reactive({
-    class: props.class
-})
 </script>

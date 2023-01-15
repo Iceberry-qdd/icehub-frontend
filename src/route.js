@@ -1,13 +1,14 @@
-import Index from './components/bootstrap/Index.vue'
-import Explore from './components/bootstrap/Explore.vue'
-import Bookmark from './components/tailwind/Bookmark.vue'
-import PostDetail from './components/tailwind/PostDetail.vue'
-import Profile from './components/tailwind/Profile.vue'
-import ProfileEdit from './components/bootstrap/ProfileEditor.vue'
-import Follow from './components/tailwind/Follow.vue'
-import FollowerList from './components/tailwind/FollowerList.vue'
-import FollowingList from './components/tailwind/FollowingList.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+
+const Index = () => import('@/components/bootstrap/Index.vue')
+const Explore = () => import('@/components/bootstrap/Explore.vue')
+const Bookmark = () => import('@/components/tailwind/Bookmark.vue')
+const PostDetail = () => import('@/components/tailwind/PostDetail.vue')
+const Profile = () => import('@/components/tailwind/Profile.vue')
+const ProfileEditor = () => import('@/components/bootstrap/ProfileEditor.vue')
+const Follow = () => import('@/components/tailwind/Follow.vue')
+const FollowerList = () => import('@/components/tailwind/FollowerList.vue')
+const FollowingList = () => import('@/components/tailwind/FollowingList.vue')
 
 const routes = [
     { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
@@ -15,7 +16,7 @@ const routes = [
     { name: 'bookmark', path: '/bookmark', component: Bookmark },
     { name: 'postDetail', path: '/post/:id', component: PostDetail },
     { name: 'profile', path: '/profile/:nickname', component: Profile },
-    { name: 'profileEdit', path: '/profile/edit', component: ProfileEdit },
+    { name: 'profileEdit', path: '/profile/edit', component: ProfileEditor },
     {
         path: '/',
         component: Follow,

@@ -10,10 +10,10 @@
 <script setup>
 import { reactive, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { store } from '../../store'
-import { getUserInfoByNickname } from '../../api'
-import { getFollowerList } from '../../api'
-import FollowItem from '../tailwind/FollowItem.vue'
+import { store } from '@/store'
+import { getUserInfoByNickname } from '@/api'
+import { getFollowerList } from '@/api'
+import FollowItem from '@/components/tailwind/FollowItem.vue'
 
 const $route = useRoute()
 

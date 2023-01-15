@@ -21,7 +21,7 @@
                 'text-white': !state.user.following
             }" class=" px-[1rem] py-[0.4rem] text-white text-[11pt] font-bold rounded-full cursor-pointer">
                 <div v-if="!state.loading">{{ state.user.following ? '已订阅' : '订阅' }}</div>
-                <IconLoading v-else :class="'h-5 w-5 text-white'"></IconLoading>
+                <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
             </div>
         </div>
     </div>
@@ -45,8 +45,8 @@ img{
 
 <script setup>
 import { reactive } from 'vue'
-import { followUser, unFollowUser } from '../../api.js'
-import IconLoading from '../icons/IconLoading.vue'
+import { followUser, unFollowUser } from '@/api.js'
+import IconLoading from '@/components/icons/IconLoading.vue'
 
 
 const props = defineProps(["user"])

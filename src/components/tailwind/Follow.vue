@@ -19,9 +19,9 @@
 
 <script setup>
 import { reactive } from 'vue';
-import Header from './Header.vue'
+import Header from '@/components/tailwind/Header.vue'
 import { useRoute } from 'vue-router';
-import router from '../../route.js'
+import router from '@/route.js'
 
 const $route = useRoute()
 

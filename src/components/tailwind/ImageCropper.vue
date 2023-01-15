@@ -31,7 +31,7 @@
 
 <script setup>
 import { onUnmounted, reactive, computed } from 'vue';
-import { store } from '../../store.js'
+import { store } from '@/store.js'
 
 const state = reactive({
     img: null,

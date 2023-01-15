@@ -74,8 +74,8 @@
 </style>
 
 <script>
-import { getPublicKey, login, register } from '../../api';
-import { store } from '../../store'
+import { getPublicKey, login, register } from '@/api';
+import { store } from '@/store'
 import { JSEncrypt } from 'jsencrypt';
 
 export default {

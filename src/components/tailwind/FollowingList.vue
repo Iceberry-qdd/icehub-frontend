@@ -12,10 +12,9 @@
 <script setup>
 import { reactive, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { store } from '../../store'
-import { getUserInfoByNickname } from '../../api'
-import { getFollowingList } from '../../api'
-import FollowItem from '../tailwind/FollowItem.vue'
+import { store } from '@/store'
+import { getUserInfoByNickname,getFollowingList } from '@/api'
+import FollowItem from '@/components/tailwind/FollowItem.vue'
 
 const $route = useRoute()
 
@@ -35,7 +34,6 @@ async function getFollowing(nickname, index, size) {
         const response2 = await getFollowingList(id, index, size)
         if (!response2.ok) throw new Error(await response2.text())
         const { content } = await response2.json()
-        //console.log(content)
         state.followingList.push(...content)
     } catch (e) {
         store.setMsg(e.message)

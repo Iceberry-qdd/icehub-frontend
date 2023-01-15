@@ -20,13 +20,13 @@
 </style>
 
 <script setup>
-import Header from '../tailwind/Header.vue'
+import Header from '@/components/tailwind/Header.vue'
 import { onMounted, reactive } from 'vue';
-import { getPostById, getPostReviews } from '../../api.js'
-import { store } from '../../store';
-import PostCardDetail from '../bootstrap/PostCardDetail.vue';
-import Review from '../tailwind/Review.vue'
-import ReviewEditor from '../tailwind/ReviewEditor.vue'
+import { getPostById, getPostReviews } from '@/api.js'
+import { store } from '@/store';
+import PostCardDetail from '@/components/bootstrap/PostCardDetail.vue';
+import Review from '@/components/tailwind/Review.vue'
+import ReviewEditor from '@/components/tailwind/ReviewEditor.vue'
 import { useRoute } from 'vue-router';
 
 const $route = useRoute()
