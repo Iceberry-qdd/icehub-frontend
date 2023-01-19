@@ -1,7 +1,7 @@
 <template>
-    <div v-if="state.isShow">
+    <div>
         <div @mouseleave="dismiss"
-            class="flex flex-col z-[99] absolute min-w-[12rem] max-w-[18rem] h-auto left-[-10rem] top-0 bg-white rounded-[8px] shadow ring-1 ring-slate-900/5">
+            class="flex flex-col z-[99] absolute min-w-[12rem] max-w-[18rem] h-auto left-[-10rem] top-0 bg-white rounded-[8px] shadow-sm ring-1 ring-slate-900/5">
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">复制链接</div>
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">生成海报</div>
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">加入书签</div>
@@ -27,7 +27,6 @@ const emit = defineEmits(['dismissMenu'])
 const props = defineProps(['user'])
 
 const state = reactive({
-    isShow: true,
     user: props.user
 })
 
@@ -38,6 +37,5 @@ const followText = computed(() => {
 
 function dismiss() {
     emit('dismissMenu')
-    state.isShow = false
 }
 </script>

@@ -25,16 +25,15 @@
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleMenu">
                     <!-- <i class="bi bi-arrow-return-right"></i> -->
                     <!-- <share theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
-                    <more-one theme="filled" size="20" fill="#333" :strokeWidth="3" />
-                    12k
+                    <more-two theme="outline" size="20" fill="#333" :strokeWidth="3"/>
                 </button>
-                <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2"
+                <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1"
                     @click="toggleReviewPanel">
                     <!-- <i class="bi bi-chat-square"></i> -->
                     <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
                     {{ props.review.reviewCount }}
                 </button>
-                <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleLike">
+                <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1" @click="toggleLike">
                     <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" />
                     {{ props.review.likeCount }}
                 </button>
@@ -62,7 +61,7 @@ import { dislikeAReview, getReviewById, getSubReviewById, likeAReview } from '@/
 import { humanizedTime } from '@/utils/formatUtils.js'
 import ReviewEditor from '@/components/tailwind/ReviewEditor.vue'
 import { store } from '@/store'
-import { Like, Message, MoreOne } from '@icon-park/vue-next'
+import { Like, Message, MoreTwo } from '@icon-park/vue-next'
 
 const props = defineProps(['review', 'post'])
 

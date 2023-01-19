@@ -10,7 +10,7 @@
             </a>
             <div class="user-text">
                 <div class="nickname">{{ props.post.user.nickname }}</div>
-                <div class="post-time">{{ formattedTime }}</div>
+                <div class="post-time">发布于 {{ formattedTime }}</div>
             </div>
         </div>
 
@@ -147,7 +147,7 @@
     flex-direction: row;
     align-content: center;
     align-items: center;
-    column-gap: 0.5rem;
+    column-gap: 0.25rem;
     border: 0;
     border-radius: 0;
     padding: 0.5rem 0;
@@ -185,7 +185,8 @@
 
 .menu {
     position: absolute;
-    right: 1rem;
+    right: 0.5rem;
+    top: 0.5rem;
 }
 
 .bi {
@@ -224,13 +225,6 @@
     font-size: small;
 }
 
-/* .pic {
-    width: 8rem;
-    height: 8rem;
-    border-radius: 4px;
-    object-fit: cover;
-} */
-
 .card-pics {
     /* margin-left: 4rem; */
     margin-bottom: 0.5rem;
@@ -255,7 +249,7 @@ import { likeAPost, dislikeAPost } from '@/api'
 import router from '@/route.js';
 import { store } from '@/store.js'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
-import { humanizedTime } from '@/utils/formatUtils.js'
+import { standardTime } from '@/utils/formatUtils.js'
 
 const props = defineProps(['post'])
 
@@ -332,8 +326,8 @@ function toggleReviewPanel() {
 }
 
 function toggleRepost() {
-    const lastState = props.reaction[0]
-    props.reaction[0] = !lastState
+    const lastState = state.reaction[0]
+    state.reaction[0] = !lastState
 }
 
 function showSlide(urls, idx) {
@@ -357,13 +351,9 @@ const hasTags = computed(() => {
     return props.post.tags != undefined && props.post.tags.length != 0
 })
 
-const isLiked = computed(() => {
-    return props.post.liked
-})
+const isLiked = computed(() => { return props.post.liked })
 
-const formattedTime = computed(() => {
-    return humanizedTime(state.post.createdTime)
-})
+const formattedTime = computed(() => { return standardTime(state.post.createdTime) })
 
 onUpdated(() => {
     console.log(props.post)

@@ -22,7 +22,7 @@
         <div class="m-card-body" @click="routeToPost(state.post.id)">
             <p class="card-text" id="content">{{ state.post.content }}</p>
         </div>
-        <div class="card-pics container" v-if="hasPics">
+        <div class="card-pics container" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
                 <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl">
                     <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid" :class="gridWrapperClass" :src="pic">
@@ -85,7 +85,7 @@
 }
 
 .btn-group {
-    margin: 0 3.5rem;
+    margin: 0 0.8rem 0 3.5rem;
 }
 
 .op-repost {
@@ -182,7 +182,7 @@
     font-weight: bold;
 }
 
-.nickname:hover{
+.nickname:hover {
     text-decoration: underline;
 }
 
@@ -226,7 +226,7 @@
 
 .m-card-body {
     margin-left: 3.5rem;
-    padding: 0.5rem 0 0.5rem 0 !important;
+    padding: 0.5rem 0.8rem 0.5rem 0 !important;
 }
 
 .card-text {
@@ -241,9 +241,15 @@
 }
 
 .card-pics {
-    margin-left: 3.5rem;
+    margin: 0.5rem 0.8rem 0 3.5rem;
     bottom: 0.5rem;
-    margin-top: 0.5rem;
+}
+
+.card-pics-1 {
+    display: block;
+}
+
+.card-pics-2,.card-pics-3 {
     display: flex;
 }
 
@@ -258,7 +264,7 @@
 </style>
 
 <script setup>
-import { computed, onUpdated, reactive } from 'vue';
+import { computed, reactive } from 'vue';
 import PostMenus from '@/components/tailwind/PostMenus.vue'; //NOTE 组件字母小写会导致hmr失效
 import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/api'
 import router from '@/route';
@@ -276,6 +282,13 @@ const state = reactive({
     isShowMenu: false
 })
 
+const cardClass = computed(() => {
+    const picturesCount = state.post.attachmentsUrl.length
+    if (picturesCount == 1) return 'card-pics-1'
+    else if (picturesCount == 2 || picturesCount == 4) return 'card-pics-2'
+    else return 'card-pics-3'
+})
+
 const gridWrapperClass = computed(() => {
     const picturesCount = state.post.attachmentsUrl.length
     if (picturesCount == 1) return 'img-wrapper-h-grid-1'
@@ -283,7 +296,7 @@ const gridWrapperClass = computed(() => {
     else return 'img-wrapper-h-grid-3'
 })
 
-const gridTemplateClass=computed(()=>{
+const gridTemplateClass = computed(() => {
     const picturesCount = state.post.attachmentsUrl.length
     if (picturesCount == 1) return 'imgs-grid-1'
     else if (picturesCount == 2 || picturesCount == 4) return 'imgs-grid-2'

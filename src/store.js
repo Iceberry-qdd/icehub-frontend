@@ -16,7 +16,7 @@ export const store = reactive({
     },
     setErrorMsg(msg) {
         const count = this.GLOBAL_MSG.length
-        this.GLOBAL_MSG.push({ id: count, type: 'Error', msg: msg })
+        this.GLOBAL_MSG.push({ id: count, type: 'error', msg: msg })
     },
     dismissMsg() {
         this.GLOBAL_MSG.shift()
