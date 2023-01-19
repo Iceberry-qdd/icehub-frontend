@@ -44,10 +44,8 @@ const state = reactive({
 })
 
 const replyTo = computed(() => {
-    //console.log(props.post)
     try {
         if (props.parent) {
-            //getParentReview(props.parent.id)
             return props.parent.user.nickname
         } else if (props.post) {
             return props.post.user.nickname
@@ -55,7 +53,7 @@ const replyTo = computed(() => {
             throw new Error('获取评论用户名失败！')
         }
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 })
@@ -63,8 +61,8 @@ const replyTo = computed(() => {
 async function submitReview() {
     state.loading = true
     try {
-        if (state.content.trim() == '') throw new Error('评论内容为空！')
-        if (!props.post && !props.parent) console.error('同时为空！')
+        if (state.content.trim() == '') throw new Error('评论内容不能为空！')
+        if (!props.post && !props.parent) throw new Error('该评论非法！')
 
         const data = {
             'content': state.content,
@@ -76,7 +74,7 @@ async function submitReview() {
 
         location.reload()
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     } finally {
         state.loading = false
@@ -100,21 +98,8 @@ const avatar = computed(() => {
 
 function resize() {
     const input = document.getElementById('review-input')
-    //console.log(input.scrollHeight)
     input.style.height = `${input.scrollHeight}px`
     //FIXME 当删除内容时无法自动调整大小
 }
 
-// async function getParentReview(parentId){
-//     try{
-//         const response = await getReviewById(parentId)
-//         if (!response.ok) throw new Error(await response.text())
-
-//         state.parentReview = await response.json()
-//         //console.log(state.parentReview)
-//     }catch(e){
-//         store.setMsg(e.message)
-//         console.error(e)
-//     }
-// }
 </script>

@@ -116,7 +116,7 @@ async function submitPost() {
         // 发布完成后刷新页面
         location.reload()
     } catch (err) {
-        store.setMsg(err.message)
+        store.setErrorMsg(err.message)
         console.error(err)
     } finally {
         state.isLoading = false

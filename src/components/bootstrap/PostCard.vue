@@ -1,9 +1,9 @@
 <template>
     <div class="card">
-        <button  type="button" class="btn menu">
+        <button type="button" class="btn menu">
             <!-- <i class="bi bi-chevron-down"></i> -->
-            <down @click="state.isShowMenu=true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
-            <PostMenus :user="state.post.user" @dismissMenu="state.isShowMenu=false" v-if="state.isShowMenu"></PostMenus>
+            <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
+            <PostMenus :user="state.post.user" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
         <div class="user-info d-flex">
             <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user"
@@ -14,7 +14,7 @@
                 <i class="bi bi-patch-check-fill verify" v-if="state.post.user.verified"></i>
             </a>
             <div class="user-text">
-                <div class="nickname">{{ state.post.user.nickname }}</div>
+                <div @click="routeToUser(state.post.user.nickname)" class="nickname">{{ state.post.user.nickname }}</div>
                 <div class="post-time">{{ formattedTime }}</div>
             </div>
         </div>
@@ -23,9 +23,9 @@
             <p class="card-text" id="content">{{ state.post.content }}</p>
         </div>
         <div class="card-pics container" v-if="hasPics">
-            <div class="grid-item row row-cols-3">
-                <div class="col wrapper" v-for="(pic, idx) in state.post.attachmentsUrl">
-                    <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid" :src="pic">
+            <div class="imgs-grid" :class="gridTemplateClass">
+                <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl">
+                    <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid" :class="gridWrapperClass" :src="pic">
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@
                 <share theme="outline" size="18" fill="#333" :strokeWidth="3" />
                 {{ state.post.repostCount }}
             </button>
-            <button type="button" class="btn op op-review" @click="toggleReview">
+            <button @click="routeToPost(state.post.id)" type="button" class="btn op op-review">
                 <!-- <i class="bi bi-chat-square"></i> -->
                 <!-- <span class="material-icons-round">chat_bubble_outline</span> -->
                 <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
@@ -60,6 +60,23 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
+
+.imgs-grid {
+    display: grid;
+    gap: 0.35rem;
+}
+
+.imgs-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.imgs-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.imgs-grid-1 {
+    grid-template-columns: repeat(1, 1fr);
+}
 
 .user-info-pop {
     position: absolute;
@@ -91,35 +108,44 @@
     gap: 0.3rem;
 }
 
-.container,
-.row {
+.container,.row {
     --bs-gutter-x: 0;
     --bs-gutter-y: 0;
     /* width: 80%; */
 }
 
 .container {
-    width: 80% !important;
+    width: auto !important;
 }
 
 .wrapper {
-    width: 120px;
-    height: 120px;
     overflow: hidden;
     border-radius: 4px;
 }
 
-.wrapper img {
-    width: 120px;
-    height: 120px;
+.wrapper>img {
+    width: 100%;
+    /* height: 160px; */
     object-fit: cover;
     border-radius: 4px;
     transition: transform 400ms;
 }
 
+.img-wrapper-h-grid-1 {
+    max-height: 90vh;
+    min-height: fit-content;
+}
+
+.img-wrapper-h-grid-2 {
+    height: 160px;
+}
+
+.img-wrapper-h-grid-3 {
+    height: 120px;
+}
+
 .wrapper:hover img {
     transform: scale(1.2);
-
 }
 
 .card:hover {
@@ -154,6 +180,10 @@
 
 .nickname {
     font-weight: bold;
+}
+
+.nickname:hover{
+    text-decoration: underline;
 }
 
 .verify {
@@ -212,7 +242,7 @@
 
 .card-pics {
     margin-left: 3.5rem;
-    ottom: 0.5rem;
+    bottom: 0.5rem;
     margin-top: 0.5rem;
     display: flex;
 }
@@ -240,10 +270,24 @@ import { Down, Like, Message, Share } from '@icon-park/vue-next'
 const props = defineProps(['post'])
 
 const state = reactive({
-    post:props.post,
+    post: props.post,
     reaction: [false, props.post.liked, false],
     showUserInfoPop: false,
-    isShowMenu:false
+    isShowMenu: false
+})
+
+const gridWrapperClass = computed(() => {
+    const picturesCount = state.post.attachmentsUrl.length
+    if (picturesCount == 1) return 'img-wrapper-h-grid-1'
+    else if (picturesCount == 2 || picturesCount == 4) return 'img-wrapper-h-grid-2'
+    else return 'img-wrapper-h-grid-3'
+})
+
+const gridTemplateClass=computed(()=>{
+    const picturesCount = state.post.attachmentsUrl.length
+    if (picturesCount == 1) return 'imgs-grid-1'
+    else if (picturesCount == 2 || picturesCount == 4) return 'imgs-grid-2'
+    else return 'imgs-grid-3'
 })
 
 function routeToPost(postId) {
@@ -264,7 +308,7 @@ async function getUser(nickname) {
         const user = await response.json()
         store.setSelectUser(user)
     } catch (e) {
-        store.setMsg(e)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
@@ -293,14 +337,9 @@ async function toggleLike() {
             state.post.liked = false
         }
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
-}
-
-function toggleReview() {
-    const lastState = props.reaction[1]
-    props.reaction[1] = !lastState
 }
 
 function toggleRepost() {
@@ -345,7 +384,4 @@ const formattedTime = computed(() => {
     return humanizedTime(state.post.createdTime)
 })
 
-onUpdated(() => {
-    //console.log(state.post)
-})
 </script>

@@ -87,7 +87,7 @@ li:hover {
 .list-group {
     width: 14%;
     position: fixed;
-    left: 15%;
+    left: 12%;
 }
 
 .list-group-item {
@@ -122,8 +122,8 @@ const state = reactive({
     menus: [
         { id: 1, name: '主页', routeTo: '/index', routeParams: {}, icon: 'home', badgeCount: 12, visible: true, active: true },
         { id: 2, name: '探索', routeTo: '/explore', routeParams: {}, icon: 'explore', badgeCount: 1, visible: true, active: false },
-        { id: 3, name: '书签', routeTo: '/bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: false, active: false },
-        { id: 4, name: '钱包', routeTo: '/wallet', routeParams: {}, icon: 'wallet', badgeCount: 0, visible: true, active: false },
+        { id: 3, name: '消息', routeTo: '/notify', routeParams: {}, icon: 'notifications', badgeCount: 0, visible: true, active: false },
+        { id: 4, name: '书签', routeTo: '/bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: false, active: false },
         { id: 5, name: '勋章', routeTo: '/badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: true, active: false },
         { id: 6, name: '活动', routeTo: '/activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: true, active: false },
         { id: 7, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: true, active: false },
@@ -155,7 +155,7 @@ async function getUser(nickname) {
         const user = await response.json()
         store.setSelectUser(user)
     } catch (e) {
-        store.setMsg(e)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }

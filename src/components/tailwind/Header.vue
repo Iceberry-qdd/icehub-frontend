@@ -35,7 +35,7 @@
 </style>
 
 <script setup>
-import { reactive, watch } from 'vue';
+import { reactive } from 'vue';
 import router from '@/route';
 import { store } from '@/store';
 
@@ -47,7 +47,6 @@ const state = reactive({
     menuIcon: props.menuIcon,
     showMenu: props.showMenu,
     menuAction: props.menuAction,
-
     routeUrl: '/',
     editIcon: '',
     url: window.location.href,

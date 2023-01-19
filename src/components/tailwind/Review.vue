@@ -21,23 +21,21 @@
             <div class="pl-[4rem] text-[12pt]">
                 {{ props.review.content }}
             </div>
-            <div class="flex flex-row justify-between px-[4rem]">
-                <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2"
-                    @click="toggleRepost">
+            <div class="flex flex-row justify-between pl-[4rem]">
+                <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleMenu">
                     <!-- <i class="bi bi-arrow-return-right"></i> -->
-                    <span class="material-icons-round text-[14pt]">redo</span>
+                    <!-- <share theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
+                    <more-one theme="filled" size="20" fill="#333" :strokeWidth="3" />
                     12k
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2"
                     @click="toggleReviewPanel">
                     <!-- <i class="bi bi-chat-square"></i> -->
-                    <span class="material-icons-round text-[14pt]">chat_bubble_outline</span>
+                    <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
                     {{ props.review.reviewCount }}
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleLike">
-                    <span :class="{ liked: isLiked }" class="material-icons-round text-[14pt]">{{
-                            isLiked ? 'favorite' : 'favorite_border'
-                    }}</span>
+                    <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" />
                     {{ props.review.likeCount }}
                 </button>
             </div>
@@ -59,11 +57,12 @@
 </style>
 
 <script setup>
-import { computed, reactive, onMounted } from 'vue';
-import { dislikeAReview, getReviewById, getSubReviewById, likeAReview } from '@/api';
+import { computed, reactive, onMounted } from 'vue'
+import { dislikeAReview, getReviewById, getSubReviewById, likeAReview } from '@/api'
 import { humanizedTime } from '@/utils/formatUtils.js'
-import ReviewEditor from '@/components/tailwind/ReviewEditor.vue';
-import { store } from '@/store';
+import ReviewEditor from '@/components/tailwind/ReviewEditor.vue'
+import { store } from '@/store'
+import { Like, Message, MoreOne } from '@icon-park/vue-next'
 
 const props = defineProps(['review', 'post'])
 
@@ -89,7 +88,7 @@ const replyTo = computed(() => {
             throw new Error('获取评论用户名失败！')
         }
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 })
@@ -101,16 +100,14 @@ async function getParentReview(parentId) {
 
         state.parentReview = await response.json()
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
 
 async function toggleReviewPanel() {
     const isShow = state.showPanel
-    if (isShow == false) {
-        await getSubReview()
-    }
+    if (isShow == false) { await getSubReview() }
     state.showPanel = !isShow
 }
 
@@ -121,7 +118,7 @@ async function getSubReview() {
 
         state.subReviews = (await response.json()).content
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
@@ -150,13 +147,21 @@ async function toggleLike() {
             props.review.liked = false
         }
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
 
 const isLiked = computed(() => {
     return props.review.liked
+})
+
+const likedIconTheme = computed(() => {
+    return props.review.liked ? 'filled' : 'outline'
+})
+
+const likedIconColor = computed(() => {
+    return isLiked.value ? '#d0021b' : '#333'
 })
 
 const avatar = computed(() => {

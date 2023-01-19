@@ -47,7 +47,7 @@
 </style>
 
 <script setup>
-import GlobalBanner from '@/components/bootstrap/GlobalBanner.vue'
+import GlobalBanner from '@/components/tailwind/GlobalBanner.vue'
 import Sidebar from '@/components/bootstrap/Sidebar.vue'
 import RecommendUserCard from '@/components/bootstrap/RecommendUserCard.vue'
 import GlobalTipDialog from '@/components/tailwind/GlobalTipDialog.vue'
@@ -76,11 +76,14 @@ async function curUser() {
         const user = JSON.stringify(state.user)
         localStorage.setItem('CUR_USER', user)
     } catch (e) {
-        store.setMsg(e)
+        store.setErrorMsg(e.message)
         console.error(e)
+
         localStorage.removeItem('TOKEN')
         localStorage.removeItem('CUR_USER')
-        self.location = 'auth.html' // TODO 此跳转在有二级页面时不正确
+        setTimeout(() => {
+            self.location = 'auth.html' // TODO 此跳转在有二级页面时不正确
+        }, 3000)
         window.history.forward(1);
     }
 }

@@ -37,7 +37,7 @@ async function getData(pageIdx, pageSize) {
         const { content } = await response.json()
         state.posts.push(...content)
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }

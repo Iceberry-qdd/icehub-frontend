@@ -30,7 +30,7 @@
 </style>
 
 <script setup>
-import { onUnmounted, reactive, computed } from 'vue';
+import { reactive, computed } from 'vue';
 import { store } from '@/store.js'
 
 const state = reactive({
@@ -67,7 +67,6 @@ const clipMaskHeight = computed(() => {
 })
 
 function dismiss() {
-    //state.img = null
     document.querySelector("body").removeAttribute("style", "overflow:hidden")
     store.setCroppedImageMode('')
     store.dismissImageCropper()
@@ -191,7 +190,4 @@ function getClippedPic() {
     dismiss()
 }
 
-onUnmounted(() => {
-    console.log('组件已销毁')
-})
 </script>

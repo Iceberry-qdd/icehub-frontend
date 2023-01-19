@@ -3,7 +3,7 @@
         <a>
             <img id="brand-img" src="../../assets/logo.svg"/>
         </a>
-        <div class="text-2xl font-bold">Panboo</div>
+        <div class="text-2xl font-bold">Icehub</div>
     </div>
 </template>
 
@@ -15,7 +15,7 @@
 }
 
 #brand{
-    width: 15% !important;
+    /* width: 15% !important; */
 }
 </style>
 

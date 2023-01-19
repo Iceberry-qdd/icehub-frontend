@@ -50,7 +50,7 @@ async function getPosts() {
         const { content } = await response.json()
         state.posts.push(...content)
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
@@ -63,7 +63,7 @@ async function getUser(nickname) {
         const user = await response.json()
         state.user = user
     } catch (e) {
-        store.setMsg(e)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }

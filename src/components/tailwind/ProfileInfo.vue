@@ -15,20 +15,22 @@
                     class="bg-white px-5 py-[0.325rem] rounded-full border-[1px] border-gray-300 font-bold cursor-pointer">
                     私信</div>
             </div>
-            <div class="relative flex flex-col gap-y-1 pl-[1rem]"
-                :class="{ 'top-[-4rem]': !isMyself, 'top-[-1.5rem]': isMyself }">
+            <div class="relative flex flex-col gap-y-1 pl-[1rem]" :class="{ 'top-[-4rem]': !isMyself, 'top-[-1.5rem]': isMyself }">
                 <div class="text-[18pt] font-bold">{{ state.user.nickname }}</div>
                 <div class="">{{ state.user.remark }}</div>
-                <div class="flex flex-row gap-x-1 items-center">
-                    <calendar-three theme="outline" class="icon" size="16" fill="#333" :strokeWidth="3" />
+                <div class="flex flex-row gap-x-2 items-center">
+                    <!-- <calendar-three theme="outline" class="icon" size="16" fill="#333" :strokeWidth="3" /> -->
+                    <IconCalendar class="text-[14pt]"></IconCalendar>
                     <div>{{ formattedDate }}</div>
                 </div>
-                <div v-if="state.user.verified == true" class="flex flex-row gap-x-1 items-center">
-                    <success theme="outline" size="18" class="icon" fill="#333" :strokeWidth="3" />
+                <div v-if="state.user.verified == true" class="flex flex-row gap-x-2 items-center">
+                    <!-- <success theme="outline" size="18" class="icon" fill="#333" :strokeWidth="3" /> -->
+                    <IconVerify class="text-[13pt]"></IconVerify>
                     <div>{{ state.user.verifiedInfo }}</div>
                 </div>
-                <div v-if="state.user.city != null" class="flex flex-row gap-x-1 items-center">
-                    <local-two theme="outline" size="16" class="icon" fill="#333" :strokeWidth="3" />
+                <div v-if="state.user.city != null" class="flex flex-row gap-x-2 items-center">
+                    <!-- <local-two theme="outline" size="16" class="icon" fill="#333" :strokeWidth="3" /> -->
+                    <IconLocation class="text-[14pt]" title="所在城市"></IconLocation>
                     <div>{{ state.user.city }}</div>
                 </div>
                 <div class="flex flex-row gap-x-6">
@@ -67,11 +69,13 @@
 
 <script setup>
 import { reactive, computed } from 'vue'
-import { CalendarThree, Success, LocalTwo } from '@icon-park/vue-next'
 import { followUser, unFollowUser } from '@/api'
 import { store } from '@/store'
 import router from '@/route.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import IconCalendar from '@/components/icons/IconCalendar.vue'
+import IconVerify from '@/components/icons/IconVerify.vue'
+import IconLocation from '@/components/icons/IconLocation.vue'
 
 const props = defineProps(['user'])
 
@@ -125,7 +129,7 @@ async function followAUser(userId) {
         if (result == false) throw new Error('关注失败！')
         state.user.following = result
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     } finally {
         state.loading = false
@@ -142,7 +146,7 @@ async function unFollowAUser(userId) {
         if (result == false) throw new Error('取消关注失败！')
         state.user.following = !result
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     } finally {
         state.loading = false

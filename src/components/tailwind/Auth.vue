@@ -8,17 +8,17 @@
         </div>
         <div v-if="loginPannel" id="login-panel" class="basis-3/5 h-full bg-gray-100 flex items-center justify-center">
             <div class="flex flex-col items-center justify-center gap-y-4">
-                <div id="brand-name" class="font-bold text-2xl">Panboo</div>
-                <input :disabled="loading"
+                <div id="brand-name" class="font-bold text-2xl">Icehub</div>
+                <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
                     v-model="nickname" type="text" placeholder="请输入账号名" />
-                <input :disabled="loading"
+                <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
                     v-model="password" type="password" placeholder="请输入密码" />
                 <div class="flex flex-row gap-x-8">
-                    <button :disabled="loading" @click="login"
+                    <button :disabled="state.loading" @click="login"
                         class="p-2 w-32 bg-blue-500 rounded-md text-md text-white" name="login">
-                        <svg v-if="loading" class="animate-spin relative left-[2.725rem] h-5 w-5 text-white"
+                        <svg v-if="state.loading" class="animate-spin relative left-[2.725rem] h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
                             </circle>
@@ -28,8 +28,9 @@
                         </svg>
                         <span v-else>登录</span>
                     </button>
-                    <button :disabled="loading" :class="{ 'cursor-not-allowed': loading }" @click="toggleRegister"
-                        class="p-2 w-32 bg-white rounded-md text-md text-black" name="login">注册</button>
+                    <button :disabled="state.loading" :class="{ 'cursor-not-allowed': state.loading }"
+                        @click="toggleRegister" class="p-2 w-32 bg-white rounded-md text-md text-black"
+                        name="login">注册</button>
                 </div>
             </div>
         </div>
@@ -40,19 +41,19 @@
                 <!-- <div id="avatar-selector" class="font-bold text-2xl">
                     <div class="w-20 h-20 bg-blue-300 rounded-full "></div>
                 </div> -->
-                <input :disabled="loading"
+                <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
                     v-model="nickname" type="text" placeholder="请输入账号名" />
-                <input :disabled="loading"
+                <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
                     v-model="password" type="password" placeholder="请输入密码" />
-                <input :disabled="loading"
+                <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
                     v-model="rePassword" type="password" placeholder="请再次输入密码" />
                 <div class="flex flex-row gap-x-8">
-                    <button :disabled="loading" @click="register"
+                    <button :disabled="state.loading" @click="register"
                         class="p-2 w-32 bg-gray-100 rounded-md text-md text-black" name="login">
-                        <svg v-if="loading" class="animate-spin relative left-[2.725rem] h-5 w-5 text-white"
+                        <svg v-if="state.loading" class="animate-spin relative left-[2.725rem] h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
                             </circle>
@@ -73,114 +74,102 @@
 
 </style>
 
-<script>
-import { getPublicKey, login, register } from '@/api';
+<script setup>
+import { getPublicKey } from '@/api';
 import { store } from '@/store'
 import { JSEncrypt } from 'jsencrypt';
+import { reactive } from 'vue';
 
-export default {
-    data() {
-        return {
-            store,
-            nickname: "",
-            password: "",
-            publicKey: "",
-            rePassword: "",
-            loading: false,
-            loginFailed: false,
-            loginPannel: true,
-            avatarUrl: ""
-        }
-    },
-    methods: {
-        toggleRegister() {
-            this.loginPannel = false
-        },
-        async getPK() {
-            try {
-                const response = await getPublicKey()
-                if (!response.ok) throw new Error(await response.text())
+const state = reactive({
+    nickname: "",
+    password: "",
+    publicKey: "",
+    rePassword: "",
+    loading: false,
+    loginFailed: false,
+    loginPannel: true,
+    avatarUrl: ""
+})
 
-                const result = await response.text()
-                this.publicKey = result
-            } catch (e) {
-                this.store.setMsg(e.message)
-                console.error(e)
-            }
-        },
+function toggleRegister() { state.loginPannel = false }
 
-        async login() {
-            this.loading = true
-            try {
-                if (this.nickname.length == 0 || this.password.length == 0) {
-                    throw new Error("账户名和密码不能为空！")
-                }
+async function getPK() {
+    try {
+        const response = await getPublicKey()
+        if (!response.ok) throw new Error(await response.text())
 
-                if (this.publicKey == "" || this.publicKey == null) {
-                    await this.getPK()
-                }
-                const encryptedPK = this.encodePwd(this.publicKey, this.password)
-
-                const response = await login(this.nickname, encryptedPK)
-                if (!response.ok) throw new Error(await response.text())
-
-                const token = await response.text()
-                // response.headers.keys.array.forEach(e => {
-                //     console.log(e)
-                // });
-                //console.log(token)
-                localStorage.setItem("TOKEN", token)
-                this.store.setMsg("登录成功！")
-                self.location = 'index'
-                window.history.forward(1);
-            } catch (e) {
-                this.loginFailed = true
-                this.store.setMsg(e.message)
-                console.error(e)
-            } finally {
-                this.loading = false
-            }
-        },
-
-        encodePwd(publicKey, pwd) {
-            const encrypt = new JSEncrypt()
-            encrypt.setPrivateKey(publicKey)
-            const encryptedPK = encrypt.encrypt(pwd)
-            return encryptedPK
-        },
-
-        async register() {
-            this.loading = true
-            try {
-                if (this.nickname.length == 0 || this.password.length == 0 || this.rePassword.length == 0) {
-                    throw new Error("账户名和密码不能为空！")
-                }
-
-                if (this.password != this.rePassword) {
-                    throw new Error("两次输入密码不一致！")
-                }
-
-                if (this.publicKey == "" || this.publicKey == null) {
-                    await this.getPK()
-                }
-                const encryptedPK = this.encodePwd(this.publicKey, this.password)
-                const response = await register(this.nickname, encryptedPK)
-                if (!response.ok) throw new Error(await response.text())
-                this.store.setMsg("注册成功！");
-                this.password = ''
-                this.rePassword = ''
-                this.loginPannel = true
-            } catch (e) {
-                this.loginFailed = true
-                this.store.setMsg(e.message)
-                console.error(e)
-            } finally {
-                this.loading = false
-            }
-        }
-    },
-    computed: {
-
+        const result = await response.text()
+        state.publicKey = result
+    } catch (e) {
+        store.setErrorMsg(e.message)
+        console.error(e)
     }
 }
+
+async function login() {
+    state.loading = true
+    try {
+        if (state.nickname.length == 0 || state.password.length == 0) {
+            throw new Error("账户名和密码不能为空！")
+        }
+
+        if (state.publicKey == "" || state.publicKey == null) {
+            await getPK()
+        }
+        const encryptedPK = encodePwd(state.publicKey, state.password)
+
+        const response = await login(state.nickname, encryptedPK)
+        if (!response.ok) throw new Error(await response.text())
+
+        const token = await response.text()
+        localStorage.setItem("TOKEN", token)
+        store.setMsg("登录成功！")
+        self.location = 'index'
+        window.history.forward(1);
+    } catch (e) {
+        state.loginFailed = true
+        store.setErrorMsg(e.message)
+        console.error(e)
+    } finally {
+        state.loading = false
+    }
+}
+
+function encodePwd(publicKey, pwd) {
+    const encrypt = new JSEncrypt()
+    encrypt.setPrivateKey(publicKey)
+    const encryptedPK = encrypt.encrypt(pwd)
+    return encryptedPK
+}
+
+async function register() {
+    state.loading = true
+    try {
+        if (state.nickname.length == 0 || state.password.length == 0 || state.rePassword.length == 0) {
+            throw new Error("账户名和密码不能为空！")
+        }
+
+        if (state.password != state.rePassword) {
+            throw new Error("两次输入密码不一致！")
+        }
+
+        if (state.publicKey == "" || state.publicKey == null) {
+            await getPK()
+        }
+        const encryptedPK = encodePwd(state.publicKey, state.password)
+        const response = await register(state.nickname, encryptedPK)
+        if (!response.ok) throw new Error(await response.text())
+        state.store.setSuccessMsg("注册成功！");
+        state.password = ''
+        state.rePassword = ''
+        state.loginPannel = true
+    } catch (e) {
+        state.loginFailed = true
+        state.store.setErrorMsg(e.message)
+        console.error(e)
+    } finally {
+        state.loading = false
+    }
+}
+
 </script>

@@ -247,7 +247,7 @@ async function checkUsernameValid() {
         const result = await response.text()
         state.isUsernameExisted = result == 'true' ? true : false
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
@@ -278,7 +278,7 @@ async function submitProfile() {
         localStorage.setItem('CUR_USER', JSON.stringify(data))
         router.push({ name: 'profile', params: { nickname: data.nickname } })
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     } finally {
         state.isLoading = false
@@ -293,7 +293,7 @@ async function uploadAvatar() {
 
         state.newUser.avatarUrl = await response.json()
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
@@ -306,7 +306,7 @@ async function uploadBanner() {
 
         state.newUser.bannerUrl = await response.json()
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }

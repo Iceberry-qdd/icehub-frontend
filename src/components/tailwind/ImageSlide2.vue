@@ -1,7 +1,8 @@
 <template>
     <div v-if="isShow" class="flex flex-row fixed justify-between w-screen h-screen bg-[#000000cc] z-[105]">
         <div @click="close" class="fixed text-white z-[106]">
-            <span class="material-icons-round mt-4 ml-4 bg-[#6b728055] cursor-pointer hover:bg-[#6b7280cc] p-2 rounded-full">close</span>
+            <span
+                class="material-icons-round mt-4 ml-4 bg-[#6b728055] cursor-pointer hover:bg-[#6b7280cc] p-2 rounded-full">close</span>
         </div>
         <div @click="state.activeIndex--"
             class="cursor-pointer h-full w-[15%] z-[105] bg-transparent text-transparent hover:text-white hover:bg-gradient-to-r hover:from-black hover:to-transparent">
@@ -10,7 +11,8 @@
             </div>
         </div>
         <div class="flex absolute flex-col w-screen h-screen items-center justify-center">
-            <img v-show="index == activeImgIndex" class=" max-h-screen max-w-screen" :src="url" v-for="(url, index) in store.SLIDE_DATA.urls" :key="index" />
+            <img v-show="index == activeImgIndex" class=" max-h-screen max-w-screen" :src="url"
+                v-for="(url, index) in store.SLIDE_DATA.urls" :key="index" />
         </div>
         <div @click="state.activeIndex++"
             class="cursor_pointer h-full w-[15%] z-[105] bg-transparent text-transparent hover:text-white hover:bg-gradient-to-l hover:from-black hover:to-transparent">
@@ -40,9 +42,7 @@ function close() {
     document.querySelector("body").removeAttribute("style", "overflow:hidden")
 }
 
-const isShow = computed(() => {
-    return store.SLIDE_DATA.urls.length > 0
-})
+const isShow = computed(() => { return store.SLIDE_DATA.urls.length > 0 })
 
 const activeImgIndex = computed(() => {
     const len = store.SLIDE_DATA.urls.length

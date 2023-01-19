@@ -1,12 +1,25 @@
 import { reactive } from 'vue'
 
 export const store = reactive({
-    GLOBAL_MSG: "",
-    setMsg(msg) {
-        this.GLOBAL_MSG = msg
+    GLOBAL_MSG: [],
+    setInfoMsg(msg) {
+        const count = this.GLOBAL_MSG.length
+        this.GLOBAL_MSG.push({ id: count, type: 'info', msg: msg })
     },
-    clearMsg() {
-        this.GLOBAL_MSG = ""
+    setSuccessMsg(msg) {
+        const count = this.GLOBAL_MSG.length
+        this.GLOBAL_MSG.push({ id: count, type: 'success', msg: msg })
+    },
+    setWarningMsg(msg) {
+        const count = this.GLOBAL_MSG.length
+        this.GLOBAL_MSG.push({ id: count, type: 'warning', msg: msg })
+    },
+    setErrorMsg(msg) {
+        const count = this.GLOBAL_MSG.length
+        this.GLOBAL_MSG.push({ id: count, type: 'Error', msg: msg })
+    },
+    dismissMsg() {
+        this.GLOBAL_MSG.shift()
     },
 
     GLOBAL_SELECT_UID: null,

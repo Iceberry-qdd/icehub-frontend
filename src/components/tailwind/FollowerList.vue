@@ -33,11 +33,11 @@ async function getFollower(nickname, index, size) {
         const { id } = await response.json()
         const response2 = await getFollowerList(id, index, size)
         if (!response2.ok) throw new Error(await response2.text())
+        
         const { content } = await response2.json()
-        //console.log(content)
         state.followerList.push(...content)
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }

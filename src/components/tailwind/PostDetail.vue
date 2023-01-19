@@ -52,7 +52,7 @@ async function getPost(id) {
 
         state.post = await response.json()
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
@@ -65,7 +65,7 @@ async function getReviews(postId, pageIndex, pageSize) {
         const { content } = await response.json()
         state.reviews.push(...content)
     } catch (e) {
-        store.setMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }

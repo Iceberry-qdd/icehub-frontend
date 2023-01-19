@@ -30,7 +30,7 @@ main {
 </style>
 
 <script setup>
-import GlobalBanner from '@/components/bootstrap/GlobalBanner.vue';
+import GlobalBanner from '@/components/tailwind/GlobalBanner.vue';
 import Auth from '@/components/tailwind/Auth.vue'
 import { onMounted, reactive } from 'vue'
 import { store } from '@/store'
@@ -53,7 +53,7 @@ async function curUser() {
         }
 
     } catch (e) {
-        store.setMsg(e)
+        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
