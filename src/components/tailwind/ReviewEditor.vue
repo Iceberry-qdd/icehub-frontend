@@ -70,7 +70,7 @@ async function submitReview() {
             'parentId': props.parent ? props.parent.id : null
         }
         const response = await reviewing(data)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         location.reload()
     } catch (e) {

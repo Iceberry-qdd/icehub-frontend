@@ -233,7 +233,6 @@ function showImageCropper(mode) {
 watch(() => store.IS_SUBMIT, (newVal, oldVal) => {
     if (newVal == true) {
         state.newUser.gender = selected.value
-        //console.table(state.newUser)
         submitProfile()
     }
 })
@@ -242,7 +241,7 @@ async function checkUsernameValid() {
     try {
         const username = state.newUser.nickname
         const response = await isUserExists(username)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.text()
         state.isUsernameExisted = result == 'true' ? true : false
@@ -272,10 +271,11 @@ async function submitProfile() {
         }
 
         const response = await updateUserProfile(state.newUser)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const data = await response.json()
         localStorage.setItem('CUR_USER', JSON.stringify(data))
+        store.setSuccessMsg('您已成功修改个人资料！')
         router.push({ name: 'profile', params: { nickname: data.nickname } })
     } catch (e) {
         store.setErrorMsg(e.message)
@@ -289,7 +289,7 @@ async function uploadAvatar() {
     try {
         const data = state.newAvatar.split(',')[1]
         const response = await uploadUserAvatar(data)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         state.newUser.avatarUrl = await response.json()
     } catch (e) {
@@ -302,7 +302,7 @@ async function uploadBanner() {
     try {
         const data = state.newBanner.split(',')[1]
         const response = await uploadUserBanner(data)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         state.newUser.bannerUrl = await response.json()
     } catch (e) {

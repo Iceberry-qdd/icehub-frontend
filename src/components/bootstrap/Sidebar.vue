@@ -4,7 +4,7 @@
             @click="routeTo(menu.routeTo, menu.id, menu.routeParams.nickname || null)" :class="{ active: menu.active }"
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
-                <img v-if="(menu.id == 8)" :src="menu.icon" class="avatar" />
+                <img v-if="(menu.routeTo == '/profile')" :src="menu.icon" class="avatar" />
                 <span v-else class="material-icons-round">{{ menu.icon }}</span>{{ menu.name }}
             </div>
 
@@ -150,7 +150,7 @@ function activeMenu(menuId) {
 async function getUser(nickname) {
     try {
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const user = await response.json()
         store.setSelectUser(user)
@@ -162,26 +162,26 @@ async function getUser(nickname) {
 
 function getCurUserAvatar() {
     try {
-        const avatar = (JSON.parse(localStorage.getItem("CUR_USER"))).avatarUrl
-        const nickname = (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
+        const { avatarUrl, nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
 
-        if (!avatar || avatar == '') {
+        if (!avatarUrl) {
             return `https://api.multiavatar.com/${nickname}.svg`
         } else {
-            return avatar
+            return avatarUrl
         }
     } catch (e) {
-        return ''
+        store.setErrorMsg(e.message)
+        console.log(e.message)
     }
 }
 
 function getCurUserNickname() {
-    const nickname = (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
+    const { nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
     return nickname || ''
 }
 
 onMounted(() => {
-    const url = $route.path
+    const url = $route.path //FIXME 此处当页面刷新时，不生效，永远指向'/'
     let menuId = 0
 
     for (const menu of state.menus) {

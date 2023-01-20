@@ -79,7 +79,8 @@ const state = reactive({
     data: {
         "content": "",
         "top": false,
-        "attachmentsUrl": []
+        "attachmentsUrl": [],
+        "type":"NORMAL"
     }
 })
 
@@ -106,7 +107,7 @@ async function submitPost() {
         }
 
         const response = await posting(state.data)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
         state.result = await response.json()
 
         //防止重复提交上一次的内容

@@ -95,7 +95,7 @@ const replyTo = computed(() => {
 async function getParentReview(parentId) {
     try {
         const response = await getReviewById(parentId)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         state.parentReview = await response.json()
     } catch (e) {
@@ -113,7 +113,7 @@ async function toggleReviewPanel() {
 async function getSubReview() {
     try {
         const response = await getSubReviewById(props.review.id, state.pageIndex, state.pageSize)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         state.subReviews = (await response.json()).content
     } catch (e) {
@@ -126,7 +126,7 @@ async function toggleLike() {
     try {
         if (props.review.liked == false) {
             const response = await likeAReview(props.review.id)
-            if (!response.ok) throw new Error(await response.text())
+            if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error('点赞失败！')
@@ -136,7 +136,7 @@ async function toggleLike() {
             props.review.liked = true
         } else {
             const response = await dislikeAReview(props.review.id)
-            if (!response.ok) throw new Error(await response.text())
+            if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error('取消点赞失败！')

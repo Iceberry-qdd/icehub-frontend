@@ -13,7 +13,7 @@
                 <div class="text-[11pt] brief">{{ brief(state.user.remark) }}</div>
             </div>
         </div>
-        <div class="basis-1/6 h-full flex flex-row justify-center items-center">
+        <div v-if="!isSelf" class="basis-1/6 h-full flex flex-row justify-center items-center">
             <div @click="toggleFollowState" :class="{
                 'bg-blue-500': !state.user.following,
                 'bg-gray-300': state.user.following,
@@ -37,14 +37,14 @@
     -webkit-line-clamp: 2;
 }
 
-img{
+img {
     max-width: 64px;
     max-height: 64px;
 }
 </style>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { followUser, unFollowUser } from '@/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 
@@ -54,6 +54,11 @@ const props = defineProps(["user"])
 const state = reactive({
     user: props.user,
     loading: false
+})
+
+const isSelf = computed(() => {
+    const { id } = JSON.parse(localStorage.getItem("CUR_USER"))
+    return state.user.id == id
 })
 
 function avatarUrl(avatarUrl, nickname) {
@@ -83,7 +88,7 @@ async function followAUser() {
     state.loading = true
     try {
         const response = await followUser(id)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
         if (result == false) throw new Error('关注失败！')
@@ -101,7 +106,7 @@ async function unFollowAUser() {
     state.loading = true
     try {
         const response = await unFollowUser(id)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
         if (result == false) throw new Error('取消关注失败！')

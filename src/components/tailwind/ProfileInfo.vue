@@ -123,7 +123,7 @@ async function followAUser(userId) {
     state.loading = true
     try {
         const response = await followUser(userId)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const result = response.json()
         if (result == false) throw new Error('关注失败！')
@@ -140,7 +140,7 @@ async function unFollowAUser(userId) {
     state.loading = true
     try {
         const response = await unFollowUser(userId)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const result = response.json()
         if (result == false) throw new Error('取消关注失败！')

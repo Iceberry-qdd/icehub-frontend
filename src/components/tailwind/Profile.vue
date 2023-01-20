@@ -4,8 +4,7 @@
             :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"></Header>
         <ProfileInfo :user="state.user"></ProfileInfo>
-        <PostCard v-for="(post, index) in state.posts" :post="post" :key="post.id" :index="index"></PostCard>
-        <div id="footer" class="w-full flex flex-row justify-center pt-4 pb-4 text-sm text-gray-500">没有更多了</div>
+        <PostsTimeline :posts="state.posts" :curPageIndex="state.pageIndex" :totalPages="state.totalPages"></PostsTimeline>
     </div>
 </template>
 
@@ -16,7 +15,7 @@
 <script setup>
 import Header from '@/components/tailwind/Header.vue'
 import ProfileInfo from '@/components/tailwind/ProfileInfo.vue'
-import PostCard from '@/components/bootstrap/PostCard.vue'
+import PostsTimeline from '@/components/bootstrap/PostsTimeline.vue'
 import { reactive, onMounted, onUnmounted, computed } from 'vue';
 import { getUserPosts, getUserInfoByNickname } from '@/api';
 import { store } from '@/store';
@@ -33,6 +32,7 @@ const state = reactive({
     posts: [],
     pageIndex: 1,
     pageSize: 10,
+    totalPages: 0,
     headerConfig: {
         title: $route.params.nickname,
         goBack: !isCurUser.value,
@@ -45,10 +45,11 @@ const state = reactive({
 async function getPosts() {
     try {
         const response = await getUserPosts(state.user.id, state.pageIndex, state.pageSize)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
-        const { content } = await response.json()
+        const { content, totalPages } = await response.json()
         state.posts.push(...content)
+        state.totalPages = totalPages
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -58,7 +59,7 @@ async function getPosts() {
 async function getUser(nickname) {
     try {
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const user = await response.json()
         state.user = user
@@ -68,14 +69,31 @@ async function getUser(nickname) {
     }
 }
 
+function fetchNewPost() {
+    if (state.pageIndex >= state.totalPages) return
+
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+    const clientHeight = document.documentElement.clientHeight
+    const scrollHeight = document.documentElement.scrollHeight
+
+    if (scrollTop + clientHeight >= scrollHeight) {
+        setTimeout(() => {
+            state.pageIndex++
+            getPosts(state.pageIndex, state.pageSize)
+        }, 1000)
+    }
+}
+
 onMounted(async () => {
     const nickname = $route.params.nickname
 
     await getUser(nickname)
     await getPosts()
+    window.addEventListener('scroll', fetchNewPost)
 })
 
 onUnmounted(() => {
+    window.removeEventListener('scroll', fetchNewPost)
     store.clearSelectUser()
 })
 </script>

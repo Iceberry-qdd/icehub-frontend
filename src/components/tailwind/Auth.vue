@@ -96,7 +96,7 @@ function toggleRegister() { state.loginPannel = false }
 async function getPK() {
     try {
         const response = await getPublicKey()
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.text()
         state.publicKey = result
@@ -119,7 +119,7 @@ async function login() {
         const encryptedPK = encodePwd(state.publicKey, state.password)
 
         const response = await login(state.nickname, encryptedPK)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const token = await response.text()
         localStorage.setItem("TOKEN", token)
@@ -158,7 +158,7 @@ async function register() {
         }
         const encryptedPK = encodePwd(state.publicKey, state.password)
         const response = await register(state.nickname, encryptedPK)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
         state.store.setSuccessMsg("注册成功！");
         state.password = ''
         state.rePassword = ''

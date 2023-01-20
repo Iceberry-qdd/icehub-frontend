@@ -2,7 +2,7 @@
     <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
         :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
         :menuAction="state.headerConfig.menuAction"></Header>
-    <PostsTimeline :posts="state.posts"></PostsTimeline>
+    <PostsTimeline :posts="state.posts" :curPageIndex="state.pageIdx" :totalPages="state.totalPages"></PostsTimeline>
 </template>
 
 <style scoped>
@@ -20,6 +20,7 @@ const state = reactive({
     posts: [],
     pageIdx: 1,
     pageSize: 10,
+    totalPages: 0,
     headerConfig: {
         title: '探索',
         goBack: false,
@@ -32,10 +33,11 @@ const state = reactive({
 async function getData(pageIdx, pageSize) {
     try {
         const response = await getTimeline(pageIdx, pageSize)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
-        const { content } = await response.json()
+        const { content, totalPages } = await response.json()
         state.posts.push(...content)
+        state.totalPages = totalPages
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -43,14 +45,17 @@ async function getData(pageIdx, pageSize) {
 }
 
 function fetchNewPost() {
-    let scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    let clientHeight = document.documentElement.clientHeight
-    let scrollHeight = document.documentElement.scrollHeight
+    if (state.pageIdx >= state.totalPages) return
+
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+    const clientHeight = document.documentElement.clientHeight
+    const scrollHeight = document.documentElement.scrollHeight
 
     if (scrollTop + clientHeight >= scrollHeight) {
-        state.pageIdx++;
-        setTimeout(() => { }, 3000)
-        getData(state.pageIdx, state.pageSize)
+        setTimeout(() => {
+            state.pageIdx++
+            getData(state.pageIdx, state.pageSize)
+        }, 1000)
     }
 }
 

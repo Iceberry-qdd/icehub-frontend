@@ -1,6 +1,11 @@
 <template>
-    <FollowItem v-for="(user, index) in state.followerList" :key="index" :index="index" :user="user"></FollowItem>
-    <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">没有更多了</div>
+    <div>
+        <FollowItem v-for="(user, index) in state.followerList" :key="index" :index="index" :user="user"></FollowItem>
+        <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
+            <IconLoading v-if="hasMore" class="h-5 w-5 text-slate-500"></IconLoading>
+            <span v-else>没有更多了</span>
+        </div>
+    </div>
 </template>
     
 <style scoped>
@@ -8,60 +13,69 @@
 </style>
     
 <script setup>
-import { reactive, onMounted, onUnmounted } from 'vue'
+import { reactive, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { store } from '@/store'
 import { getUserInfoByNickname } from '@/api'
 import { getFollowerList } from '@/api'
 import FollowItem from '@/components/tailwind/FollowItem.vue'
+import IconLoading from '@/components/icons/IconLoading.vue'
 
 const $route = useRoute()
 
 const state = reactive({
     followerList: [],
-    index: 1,
-    size: 10,
-    nickname:null
+    pageIndex: 1,
+    pageSize: 10,
+    totalPages: 0,
+    nickname: null
 })
 
-async function getFollower(nickname, index, size) {
+const hasMore = computed(() => {
+    return state.pageIndex < state.totalPages
+})
+
+async function getFollower(nickname, pageIndex, pageSize) {
     try {
-        console.log(nickname)
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const { id } = await response.json()
-        const response2 = await getFollowerList(id, index, size)
-        if (!response2.ok) throw new Error(await response2.text())
-        
-        const { content } = await response2.json()
+        const response2 = await getFollowerList(id, pageIndex, pageSize)
+        if (!response2.ok) throw new Error((await response2.json()).error)
+
+        const { content, totalPages } = await response2.json()
         state.followerList.push(...content)
+        state.totalPages = totalPages
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
     }
 }
 
-function fetchNew() {
-    let scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    let clientHeight = document.documentElement.clientHeight
-    let scrollHeight = document.documentElement.scrollHeight
+function fetchNewList() {
+    if (state.pageIndex >= state.totalPages) return
+
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+    const clientHeight = document.documentElement.clientHeight
+    const scrollHeight = document.documentElement.scrollHeight
 
     if (scrollTop + clientHeight >= scrollHeight) {
-        state.pageIdx++;
-        setTimeout(() => { }, 3000)
-        getFollower(state.nickname, state.pageIdx, state.pageSize)
+        setTimeout(() => {
+            state.pageIndex++
+            getFollower(state.nickname, state.pageIndex, state.pageSize)
+        }, 1000)
     }
 }
 
 onMounted(() => {
     const nickname = $route.params.nickname
     state.nickname = nickname
-    getFollower(nickname, state.index, state.size)
-    window.addEventListener('scroll', fetchNew)
+    getFollower(nickname, state.pageIndex, state.pageSize)
+    window.addEventListener('scroll', fetchNewList)
 })
 
 onUnmounted(() => {
-    window.removeEventListener('scroll', fetchNew)
+    window.removeEventListener('scroll', fetchNewList)
 })
 </script>
