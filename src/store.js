@@ -84,5 +84,13 @@ export const store = reactive({
     },
     clearSelectUser() {
         this.SELECT_USER = null
+    },
+
+    REPOST_POST: null,
+    repost(post) {
+        this.REPOST_POST = post
+    },
+    clearRepost() {
+        this.REPOST_POST = null
     }
 })

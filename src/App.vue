@@ -4,6 +4,7 @@
         <GlobalTipDialog></GlobalTipDialog>
         <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
         <ImageSlide2></ImageSlide2>
+        <RepostPanel v-if="store.REPOST_POST"></RepostPanel>
         <div id="sidebar-l">
             <Brand></Brand>
             <Sidebar id="menu"></Sidebar>
@@ -57,6 +58,7 @@ import { getCurUserInfo } from '@/api'
 import { store } from '@/store'
 import ImageSlide2 from '@/components/tailwind/ImageSlide2.vue'
 import ImageCropper from '@/components/tailwind/ImageCropper.vue'
+import RepostPanel from './components/tailwind/RepostPanel.vue'
 
 const state = reactive({
     user: null,
