@@ -2,7 +2,7 @@
     <div>
         <div @mouseleave="dismiss"
             class="flex flex-col z-[99] absolute min-w-[12rem] max-w-[18rem] h-auto left-[-10rem] top-0 bg-white rounded-[8px] shadow-sm ring-1 ring-slate-900/5">
-            <div class="py-2 px-4 w-full text-start hover:bg-gray-100">复制链接</div>
+            <div class="py-2 px-4 w-full text-start hover:bg-gray-100 rounded-t-[8px]">复制链接</div>
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">生成海报</div>
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">加入书签</div>
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">{{ followText }}</div>
@@ -10,7 +10,7 @@
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">管理员选项</div>
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">屏蔽 {{ state.user.nickname }} 的所有内容</div>
             <div class="py-2 px-4 w-full text-start hover:bg-gray-100">举报此内容</div>
-            <div class="py-2 px-4 w-full text-start hover:bg-gray-100 text-red-500">删除此内容</div>
+            <div class="py-2 px-4 w-full text-start hover:bg-gray-100 text-red-500 rounded-b-[8px]">删除此内容</div>
         </div>
     </div>
 </template>
