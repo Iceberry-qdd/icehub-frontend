@@ -1,19 +1,20 @@
 <template>
     <div class="m-container w-[22rem] h-[12rem] rounded-[8px] shadow ring-1 ring-slate-900/5 ">
-        <div>
+        <div @click="routeToProfile">
             <img :src="bannerPic" class="w-full h-[6rem] object-cover rounded-t-[8px]" />
         </div>
         <div>
-            <img :src="avatarPic"
-                class="w-[3.5rem] h-[3.5rem] rounded-[8px] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white" />
+            <img @click="routeToProfile" :src="avatarPic" class="w-[3.5rem] h-[3.5rem] rounded-[8px] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white" />
             <div class="absolute top-[8rem] ml-[0.95rem] flex flex-row gap-x-1 items-center">
-                <div class=" font-bold text-[12pt]">{{ state.user.nickname }}</div>
+                <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline">{{ state.user.nickname }}</div>
                 <i class="bi bi-patch-check-fill verify text-[10pt] text-blue-500" v-if="state.user.verified"></i>
             </div>
             <div class="absolute top-[9.8rem] ml-[0.95rem] text-[11pt]">{{ brief }}</div>
         </div>
         <div class="text-[11pt] flex flex-row gap-x-2 absolute right-3 top-[6.25rem]">
-            <div>订阅者{{ state.user.followingCount }}</div>|<div>订阅{{ state.user.followerCount }}</div>
+            <div @click="routeToFollowerList" class="hover:underline">订阅者{{ state.user.followingCount }}</div>
+            <span>|</span>
+            <div @click="routeToFollowingList" class="hover:underline">订阅{{ state.user.followerCount }}</div>
         </div>
         <div>
             <div v-if="!isCurUser" @click="toggleFollowState"
@@ -38,6 +39,7 @@ import { computed, reactive } from 'vue'
 import { followUser, unFollowUser } from '@/api'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { store } from '@/store'
+import router from '@/route';
 
 const props = defineProps(['user'])
 
@@ -79,11 +81,23 @@ function toggleFollowState() {
     }
 }
 
+function routeToProfile(){
+    router.push({ name: 'profile', params: { nickname: state.user.nickname } })
+}
+
+function routeToFollowingList(){
+    router.push({ name: 'followingList', params: { nickname: state.user.nickname } })
+}
+
+function routeToFollowerList(){
+    router.push({ name: 'followerList', params: { nickname: state.user.nickname } })
+}
+
 async function followAUser(userId) {
     state.loading = true
     try {
         const response = await followUser(userId)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
         if (result == false) throw new Error('关注失败！')
@@ -100,7 +114,7 @@ async function unFollowAUser(userId) {
     state.loading = true
     try {
         const response = await unFollowUser(userId)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
         if (result == false) throw new Error('取消关注失败！')
