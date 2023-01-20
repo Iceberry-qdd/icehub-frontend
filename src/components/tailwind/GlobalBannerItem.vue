@@ -1,5 +1,5 @@
 <template>
-    <Transition @after-leave="clearData">
+    <Transition>
         <div v-if="state.show == true"
             class="pointer-events-auto bg-white flex flex-row items-center gap-x-2 rounded-[8px] shadow-sm ring-1 ring-slate-900/5 px-3 py-[0.6rem] min-w-[8rem] max-w-[36rem]">
             <div>
@@ -68,10 +68,7 @@
 
 .alert {
     margin: 0;
-    /* min-width: 25rem;
-    max-width: 48rem; */
     pointer-events: all;
-
     word-break: break-all;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -82,7 +79,7 @@
 </style>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, onUnmounted } from 'vue';
 import IconDone from '@/components/icons/IconDone.vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
 import IconWarning from '@/components/icons/IconWarning.vue'
@@ -93,7 +90,7 @@ const props = defineProps(['message', 'id'])
 const state = reactive({
     message: props.message,
     id: props.id,
-    show: true
+    show: false
 })
 
 const emits = defineEmits(['closeBanner'])
@@ -107,6 +104,11 @@ function clearData() {
 }
 
 onMounted(() => {
+    state.show = true
     closeBanner()
+})
+
+onUnmounted(() => {
+    clearData()
 })
 </script>
