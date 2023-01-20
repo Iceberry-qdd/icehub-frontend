@@ -1,7 +1,6 @@
 <template>
     <div class="card">
         <button type="button" class="btn menu">
-            <!-- <i class="bi bi-chevron-down"></i> -->
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
             <PostMenus :user="state.post.user" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
@@ -21,11 +20,13 @@
 
         <div class="m-card-body" @click="routeToPost(state.post.id)">
             <p class="card-text" id="content">{{ state.post.content }}</p>
+            <RepostCard v-if="state.post.root" :post="state.post.root"></RepostCard>
         </div>
         <div class="card-pics container" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
                 <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl">
-                    <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid" :class="gridWrapperClass" :src="pic">
+                    <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid"
+                        :class="gridWrapperClass" :src="pic">
                 </div>
             </div>
         </div>
@@ -37,21 +38,16 @@
             </div>
         </div>
         <div class="btn-group" role="group">
-            <button type="button" class="btn op op-repost" @click="toggleRepost">
-                <!-- <i class="bi bi-arrow-return-right"></i> -->
-                <!-- <span class="material-icons-round">shortcut</span> -->
-                <share theme="outline" size="18" fill="#333" :strokeWidth="3" />
+            <button type="button" class="btn op op-repost" @click="repostIt">
+                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{'m-active':isReposted}" />
                 {{ state.post.repostCount }}
             </button>
             <button @click="routeToPost(state.post.id)" type="button" class="btn op op-review">
-                <!-- <i class="bi bi-chat-square"></i> -->
-                <!-- <span class="material-icons-round">chat_bubble_outline</span> -->
                 <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
                 {{ state.post.reviewCount }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
                 <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" />
-                <!-- <span :class="{ liked: isLiked }" class="material-icons-round">{{ isLiked ? 'favorite' : 'favorite_border' }}</span> -->
                 {{ state.post.likeCount }}
             </button>
         </div>
@@ -61,6 +57,9 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
+.m-active{
+    background-color: #d1e7dd;
+}
 .imgs-grid {
     display: grid;
     gap: 0.35rem;
@@ -217,7 +216,6 @@
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 16%;
-    /* border: 1px solid #EEEEEE; */
 }
 
 #verify-badge {
@@ -249,7 +247,8 @@
     display: block;
 }
 
-.card-pics-2,.card-pics-3 {
+.card-pics-2,
+.card-pics-3 {
     display: flex;
 }
 
@@ -265,13 +264,14 @@
 
 <script setup>
 import { computed, reactive } from 'vue';
-import PostMenus from '@/components/tailwind/PostMenus.vue'; //NOTE 组件字母小写会导致hmr失效
+import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
 import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/api'
 import router from '@/route';
 import { store } from '@/store'
 import { humanizedTime } from '@/utils/formatUtils.js'
-import UserInfoPop from '@/components/tailwind/UserInfoPop.vue';
+import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
+import RepostCard from '@/components/tailwind/RepostCard.vue'
 
 const props = defineProps(['post'])
 
@@ -316,7 +316,7 @@ async function routeToUser(nickname) {
 async function getUser(nickname) {
     try {
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error(await response.text())
+        if (!response.ok) throw new Error((await response.json()).error)
 
         const user = await response.json()
         store.setSelectUser(user)
@@ -330,7 +330,7 @@ async function toggleLike() {
     try {
         if (state.post.liked == false) {
             const response = await likeAPost(state.post.id)
-            if (!response.ok) throw new Error(await response.text())
+            if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error("点赞失败!")
@@ -340,7 +340,7 @@ async function toggleLike() {
             state.post.liked = true
         } else {
             const response = await dislikeAPost(state.post.id)
-            if (!response.ok) throw new Error(await response.text())
+            if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error("取消点赞失败!")
@@ -355,10 +355,7 @@ async function toggleLike() {
     }
 }
 
-function toggleRepost() {
-    const lastState = props.reaction[0]
-    props.reaction[0] = !lastState
-}
+function repostIt() { store.repost(state.post) }
 
 function showSlide(urls, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
@@ -381,16 +378,16 @@ const hasTags = computed(() => {
     return state.post.tags != undefined && state.post.tags.length != 0
 })
 
-const isLiked = computed(() => {
-    return state.post.liked
-})
+const isLiked = computed(() => { return state.post.liked })
+
+const isReposted = computed(() => { return state.post.isReposted })
 
 const likedIconTheme = computed(() => {
     return state.post.liked ? 'filled' : 'outline'
 })
 
 const likedIconColor = computed(() => {
-    return isLiked.value ? '#d0021b' : '#333'
+    return isLiked.value ? '#FF0000' : '#333'
 })
 
 const formattedTime = computed(() => {

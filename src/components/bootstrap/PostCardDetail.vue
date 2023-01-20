@@ -1,21 +1,23 @@
 <template>
-    <div class="card" @click="routeTo(props.post.id)">
+    <div class="card">
         <button type="button" class="btn menu">
-            <down theme="outline" size="24" fill="#333" :strokeWidth="2" />
+            <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
+            <PostMenus :user="state.post.user" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(props.post.user.id)">
-                <img class="avatar img-fluid" loading="lazy" :src="defaultAvatar">
+                <img @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="defaultAvatar">
                 <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
             </a>
             <div class="user-text">
-                <div class="nickname">{{ props.post.user.nickname }}</div>
+                <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline">{{ props.post.user.nickname }}</div>
                 <div class="post-time">发布于 {{ formattedTime }}</div>
             </div>
         </div>
 
         <div class="m-card-body">
             <p class="card-text" id="content">{{ props.post.content }}</p>
+            <RepostCard v-if="state.post.root" :post="state.post.root" class="repostCard"></RepostCard>
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
@@ -33,19 +35,15 @@
             </div>
         </div>
         <div class="btn-group" role="group">
-            <button type="button" class="btn op op-repost" @click="toggleRepost">
-                <!-- <i class="bi bi-arrow-return-right"></i> -->
-                <share theme="outline" size="18" fill="#333" :strokeWidth="3" />
+            <button type="button" class="btn op op-repost" @click="repostIt">
+                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{'m-active':isReposted}" />
                 {{ props.post.repostCount }}
             </button>
             <button type="button" class="btn op op-review" @click="toggleReviewPanel">
-                <!-- <i class="bi bi-chat-square"></i> -->
-                <!-- <span class="material-icons-round">chat_bubble_outline</span> -->
                 <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
                 {{ props.post.reviewCount }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
-                <!-- <span :class="{ liked: isLiked }" class="material-icons-round">{{ isLiked ? 'favorite' : 'favorite_border' }}</span> -->
                 <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" />
                 {{ props.post.likeCount }}
             </button>
@@ -55,6 +53,13 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
+
+.repostCard{
+    margin-left: 4rem;
+}
+.m-active{
+    background-color: #d1e7dd;
+}
 
 .imgs-grid {
     display: grid;
@@ -244,18 +249,21 @@
 </style>
 
 <script setup>
-import { computed, onUpdated, reactive } from 'vue';
+import { computed, reactive } from 'vue'
 import { likeAPost, dislikeAPost } from '@/api'
 import router from '@/route.js';
 import { store } from '@/store.js'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import { standardTime } from '@/utils/formatUtils.js'
+import RepostCard from '@/components/tailwind/RepostCard.vue'
+import PostMenus from '@/components/tailwind/PostMenus.vue'
 
 const props = defineProps(['post'])
 
 const state = reactive({
     reaction: [false, props.post.liked, false],
-    post: props.post
+    post: props.post,
+    isShowMenu: false
 })
 
 const likedIconTheme = computed(() => {
@@ -263,7 +271,7 @@ const likedIconTheme = computed(() => {
 })
 
 const likedIconColor = computed(() => {
-    return isLiked.value ? '#d0021b' : '#333'
+    return isLiked.value ? '#FF0000' : '#333'
 })
 
 const gridWrapperClass = computed(() => {
@@ -280,19 +288,19 @@ const gridTemplateClass = computed(() => {
     else return 'imgs-grid-3'
 })
 
-function routeTo(postId) {
-    router.push({ name: 'postDetail', params: { id: postId } })
+function routeToUserProfile() {
+    router.push({ name: 'profile', params: { nickname: state.post.user.nickname } })
 }
 
-function showUserProfile(uid) {
-    store.changeSelectUid(uid)
-}
+function showUserProfile(uid) { store.changeSelectUid(uid) }
+
+function repostIt() { store.repost(state.post) }
 
 async function toggleLike() {
     try {
         if (props.post.liked == false) {
             const response = await likeAPost(props.post.id)
-            if (!response.ok) throw new Error(await response.text())
+            if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error("点赞失败!")
@@ -302,7 +310,7 @@ async function toggleLike() {
             props.post.liked = true
         } else {
             const response = await dislikeAPost(props.post.id)
-            if (!response.ok) throw new Error(await response.text())
+            if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error("取消点赞失败!")
@@ -323,11 +331,6 @@ function toggleReviewPanel() {
     } else {
         store.showReviewPanel()
     }
-}
-
-function toggleRepost() {
-    const lastState = state.reaction[0]
-    state.reaction[0] = !lastState
 }
 
 function showSlide(urls, idx) {
@@ -353,9 +356,9 @@ const hasTags = computed(() => {
 
 const isLiked = computed(() => { return props.post.liked })
 
+const isReposted = computed(() => { return state.post.isReposted })
+
 const formattedTime = computed(() => { return standardTime(state.post.createdTime) })
 
-onUpdated(() => {
-    console.log(props.post)
-})
+// FIXME 此组件若是直接从链接打开会报错
 </script>
