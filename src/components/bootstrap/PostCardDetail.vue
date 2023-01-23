@@ -36,7 +36,7 @@
         </div>
         <div class="btn-group" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
-                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{'m-active':isReposted}" />
+                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{ 'm-active': isReposted }" />
                 {{ props.post.repostCount }}
             </button>
             <button type="button" class="btn op op-review" @click="toggleReviewPanel">
@@ -54,10 +54,11 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.repostCard{
+.repostCard {
     margin-left: 4rem;
 }
-.m-active{
+
+.m-active {
     background-color: #d1e7dd;
 }
 
@@ -250,7 +251,7 @@
 
 <script setup>
 import { computed, reactive } from 'vue'
-import { likeAPost, dislikeAPost } from '@/api'
+import { likeAPost, dislikeAPost } from '@/api.js'
 import router from '@/route.js';
 import { store } from '@/store.js'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
@@ -360,5 +361,4 @@ const isReposted = computed(() => { return state.post.reposted })
 
 const formattedTime = computed(() => { return standardTime(state.post.createdTime) })
 
-// FIXME 此组件若是直接从链接打开会报错
 </script>
