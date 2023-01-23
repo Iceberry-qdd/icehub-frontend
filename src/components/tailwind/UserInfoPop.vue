@@ -12,9 +12,9 @@
             <div class="absolute top-[9.8rem] ml-[0.95rem] text-[11pt]">{{ brief }}</div>
         </div>
         <div class="text-[11pt] flex flex-row gap-x-2 absolute right-3 top-[6.25rem]">
-            <div @click="routeToFollowerList" class="hover:underline">订阅者{{ state.user.followingCount }}</div>
+            <div @click="routeToFollowerList" class="hover:underline">{{ followingCountText }}</div>
             <span>|</span>
-            <div @click="routeToFollowingList" class="hover:underline">订阅{{ state.user.followerCount }}</div>
+            <div @click="routeToFollowingList" class="hover:underline">{{ followerCountText }}</div>
         </div>
         <div>
             <div v-if="!isCurUser" @click="toggleFollowState"
@@ -45,8 +45,11 @@ const props = defineProps(['user'])
 
 const state = reactive({
     user: props.user,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     loading: false
 })
+
+const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const bannerPic = computed(() => {
     const bannerUrl = state.user.bannerUrl
@@ -67,9 +70,20 @@ const brief = computed(() => {
     return remark || defaultRemark
 })
 
-const isCurUser = computed(() => {
-    const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
-    return curUser.id == state.user.id
+const isCurUser = computed(() => { return state.curUser.id == state.user.id })
+
+const followingCountText = computed(() => {
+    const { gender, followingCount } = state.user
+    if (isMyself.value == true) return `订阅我的 ${followingCount}`
+    if (gender == 'FEMALE') return `订阅她的 ${followingCount}`
+    return `订阅他的 ${followingCount}`
+})
+
+const followerCountText = computed(() => {
+    const { gender, followerCount } = state.user
+    if (isMyself.value == true) return `我的订阅 ${followerCount}`
+    if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
+    return `他的订阅 ${followerCount}`
 })
 
 function toggleFollowState() {

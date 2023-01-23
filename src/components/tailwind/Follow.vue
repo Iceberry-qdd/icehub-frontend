@@ -18,14 +18,18 @@
 </style>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, computed, watch, onMounted } from 'vue'
 import Header from '@/components/tailwind/Header.vue'
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router'
 import router from '@/route.js'
+import { getUserInfoByNickname } from '@/api.js'
+import { store } from '@/store.js'
 
 const $route = useRoute()
 
 const state = reactive({
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    user: null,
     menus: [
         { id: 1, name: '我的订阅', isActive: $route.name == 'followingList', routeTo: `/following/${$route.params.nickname}` },
         { id: 2, name: '订阅我的', isActive: $route.name == 'followerList', routeTo: `/follower/${$route.params.nickname}` },
@@ -40,9 +44,42 @@ const state = reactive({
     }
 })
 
+const menuText = computed(() => {
+    const { gender } = state.user
+    if (isMyself.value) return '我'
+    if (gender == 'FEMALE') return '她'
+    return '他'
+})
+
+watch(() => state.user, (newVal, oldVal) => {
+    if (oldVal == null || newVal != null) {
+        state.menus.forEach(menu => { menu.name = menu.name.replace('我', menuText.value) })
+    }
+})
+
+const isMyself = computed(() => { return state.curUser.id == state.user.id })
+
 function routeTo(url, id) {
     state.menus.forEach(menu => { menu.isActive = false })
     state.menus[id - 1].isActive = true
     router.push(url)
 }
+
+async function getUserInfo(nickname) {
+    try {
+        const response = await getUserInfoByNickname(nickname)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = await response.json()
+        state.user = result
+    } catch (e) {
+        store.setErrorMsg(e.message)
+        console.error(e)
+    }
+}
+
+onMounted(() => {
+    const username = $route.params.nickname
+    getUserInfo(username)
+})
 </script>
