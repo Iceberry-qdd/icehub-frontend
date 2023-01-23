@@ -6,17 +6,18 @@
                     src="http://192.168.0.101:9000/b072e283-924e-4a3f-b362-2b4577041e09/095a3775479e5c6255b37346eb4f1658.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=SIHDHMTXP75LANWE1N9A%2F20230108%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230108T101804Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiJTSUhESE1UWFA3NUxBTldFMU45QSIsImV4cCI6MTY3MzE3NjY2NiwicGFyZW50IjoibWluaW9hZG1pbiJ9.lpAm-X3iKddwlyu2G-GvpFjt3K_NoDqCi1H10OmjA9-zRhf5ovSiRGiEJpGiXLj6SBXrNaUkGXcL6JbQDuyRWg&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=c471d5fdd64dcefc20f3a3293440c7f455fc1ec995633a7c2b6d425e42aea880" />
             </div>
         </div>
-        <div v-if="loginPannel" id="login-panel" class="basis-3/5 h-full bg-gray-100 flex items-center justify-center">
+        <div v-if="state.loginPannel" id="login-panel"
+            class="basis-3/5 h-full bg-gray-100 flex items-center justify-center">
             <div class="flex flex-col items-center justify-center gap-y-4">
                 <div id="brand-name" class="font-bold text-2xl">Icehub</div>
                 <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
-                    v-model="nickname" type="text" placeholder="请输入账号名" />
+                    v-model="state.nickname" type="text" placeholder="请输入账号名" />
                 <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
-                    v-model="password" type="password" placeholder="请输入密码" />
+                    v-model="state.password" type="password" placeholder="请输入密码" />
                 <div class="flex flex-row gap-x-8">
-                    <button :disabled="state.loading" @click="login"
+                    <button :disabled="state.loading" @click="tryLogin"
                         class="p-2 w-32 bg-blue-500 rounded-md text-md text-white" name="login">
                         <svg v-if="state.loading" class="animate-spin relative left-[2.725rem] h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -38,20 +39,17 @@
         <div v-else id="register-panel" class="basis-3/5 h-full bg-gray-100 flex items-center justify-center">
             <div class="flex flex-col items-center justify-center gap-y-4">
                 <div id="brand-name" class="font-bold text-2xl">Panboo</div>
-                <!-- <div id="avatar-selector" class="font-bold text-2xl">
-                    <div class="w-20 h-20 bg-blue-300 rounded-full "></div>
-                </div> -->
                 <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
-                    v-model="nickname" type="text" placeholder="请输入账号名" />
+                    v-model="state.nickname" type="text" placeholder="请输入账号名" />
                 <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
-                    v-model="password" type="password" placeholder="请输入密码" />
+                    v-model="state.password" type="password" placeholder="请输入密码" />
                 <input :disabled="state.loading"
                     class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
-                    v-model="rePassword" type="password" placeholder="请再次输入密码" />
+                    v-model="state.rePassword" type="password" placeholder="请再次输入密码" />
                 <div class="flex flex-row gap-x-8">
-                    <button :disabled="state.loading" @click="register"
+                    <button :disabled="state.loading" @click="tryRegister"
                         class="p-2 w-32 bg-gray-100 rounded-md text-md text-black" name="login">
                         <svg v-if="state.loading" class="animate-spin relative left-[2.725rem] h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -75,7 +73,7 @@
 </style>
 
 <script setup>
-import { getPublicKey } from '@/api';
+import { getPublicKey, login, register } from '@/api';
 import { store } from '@/store'
 import { JSEncrypt } from 'jsencrypt';
 import { reactive } from 'vue';
@@ -86,7 +84,7 @@ const state = reactive({
     publicKey: "",
     rePassword: "",
     loading: false,
-    loginFailed: false,
+    //loginFailed: false,
     loginPannel: true,
     avatarUrl: ""
 })
@@ -106,16 +104,14 @@ async function getPK() {
     }
 }
 
-async function login() {
+async function tryLogin() {
     state.loading = true
     try {
         if (state.nickname.length == 0 || state.password.length == 0) {
             throw new Error("账户名和密码不能为空！")
         }
 
-        if (state.publicKey == "" || state.publicKey == null) {
-            await getPK()
-        }
+        if (!state.publicKey) { await getPK() }
         const encryptedPK = encodePwd(state.publicKey, state.password)
 
         const response = await login(state.nickname, encryptedPK)
@@ -123,11 +119,11 @@ async function login() {
 
         const token = await response.text()
         localStorage.setItem("TOKEN", token)
-        store.setMsg("登录成功！")
+        store.setSuccessMsg("登录成功！")
         self.location = 'index'
         window.history.forward(1);
     } catch (e) {
-        state.loginFailed = true
+        //state.loginFailed = true
         store.setErrorMsg(e.message)
         console.error(e)
     } finally {
@@ -142,7 +138,7 @@ function encodePwd(publicKey, pwd) {
     return encryptedPK
 }
 
-async function register() {
+async function tryRegister() {
     state.loading = true
     try {
         if (state.nickname.length == 0 || state.password.length == 0 || state.rePassword.length == 0) {
@@ -164,7 +160,7 @@ async function register() {
         state.rePassword = ''
         state.loginPannel = true
     } catch (e) {
-        state.loginFailed = true
+        //state.loginFailed = true
         state.store.setErrorMsg(e.message)
         console.error(e)
     } finally {

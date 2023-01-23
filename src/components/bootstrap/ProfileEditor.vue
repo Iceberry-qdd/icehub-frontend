@@ -254,6 +254,12 @@ async function checkUsernameValid() {
 async function submitProfile() {
     state.isLoading = true
     try {
+        //FIXME 提交前检查是否修改过
+        // if(state.newUser == state.user){
+        //     store.setWarningMsg("您没有更改资料中的任何一项，因此您的个人资料将保持现状！")
+        //     return
+        // }
+
         checkUsernameValid()
         if (state.isUsernameExisted) throw new Error('该用户名已被使用！')
 
@@ -275,7 +281,7 @@ async function submitProfile() {
 
         const data = await response.json()
         localStorage.setItem('CUR_USER', JSON.stringify(data))
-        store.setSuccessMsg('您已成功修改个人资料！')
+        store.setSuccessMsg('变更成功！')
         router.push({ name: 'profile', params: { nickname: data.nickname } })
     } catch (e) {
         store.setErrorMsg(e.message)

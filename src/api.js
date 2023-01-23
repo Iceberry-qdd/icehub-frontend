@@ -408,7 +408,7 @@ export function uploadUserAvatar(data) {
  */
 export function updateUserProfile(user) {
     return fetch(`${BASE_URL}/user`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'

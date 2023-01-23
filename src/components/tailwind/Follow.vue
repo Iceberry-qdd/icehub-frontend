@@ -29,7 +29,7 @@ const state = reactive({
     menus: [
         { id: 1, name: '我的订阅', isActive: $route.name == 'followingList', routeTo: `/following/${$route.params.nickname}` },
         { id: 2, name: '订阅我的', isActive: $route.name == 'followerList', routeTo: `/follower/${$route.params.nickname}` },
-        { id: 3, name: '共同订阅', isActive: $route.name == 'coFollowingList', routeTo: `/coFollowing/${$route.params.nickname}` }
+        { id: 3, name: '共同订阅', isActive: $route.name == 'coFollowingList', routeTo: `/coFollow/${$route.params.nickname}` }
     ],
     headerConfig: {
         title: $route.params.nickname,

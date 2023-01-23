@@ -1,5 +1,5 @@
 <template>
-    <div class="border-[1px] border-gray-300 rounded-[8px] flex flex-col gap-y-1 pt-2">
+    <div class="border-[1px] m-bg-white border-gray-300 rounded-[8px] flex flex-col gap-y-1 pt-2">
         <div class="flex flex-row items-center px-2 gap-x-2 text-[11pt]">
             <img :src="avatar" class="w-[1.5rem] h-[1.5rem] rounded-[4px]" />
             <span class="font-bold">{{ state.post.user.nickname }}</span>
@@ -13,11 +13,13 @@
 </template>
 
 <style scoped>
-
+.m-bg-white{
+    background-color: white !important;
+}
 </style>
 
 <script setup>
-import { computed, reactive, onMounted } from 'vue'
+import { computed, reactive} from 'vue'
 import { humanizedTime } from '@/utils/formatUtils.js'
 
 const props = defineProps(['post'])
