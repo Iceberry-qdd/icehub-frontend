@@ -1,14 +1,14 @@
 <template>
     <div class="flex flex-row justify-between items-center h-[6rem] border-b-[1px] px-2 py-2 ">
         <div class="flex flex-row items-center basis-5/6 gap-x-4">
-            <div>
+            <div @click="routeToUserProfile">
                 <img :src="avatarUrl(state.user.avatarUrl, state.user.nickname)"
                     class="w-[72px] h-[72px] rounded-[8px]" />
             </div>
             <div class="h-full w-full">
-                <div class="font-bold text-[14pt] cursor-pointer hover:underline">{{ state.user.nickname }}
-                    <i v-show="state.user.verified == true"
-                        class="bi bi-patch-check-fill verify text-[11pt] text-blue-500"></i>
+                <div @click="routeToUserProfile" class="font-bold text-[14pt] cursor-pointer hover:underline">
+                    {{ state.user.nickname }}
+                    <i v-show="state.user.verified == true" class="bi bi-patch-check-fill verify text-[11pt] text-blue-500"></i>
                 </div>
                 <div class="text-[11pt] brief">{{ brief(state.user.remark) }}</div>
             </div>
@@ -47,7 +47,7 @@ img {
 import { reactive, computed } from 'vue'
 import { followUser, unFollowUser } from '@/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
-
+import router from '@/route.js'
 
 const props = defineProps(["user"])
 
@@ -60,6 +60,10 @@ const isSelf = computed(() => {
     const { id } = JSON.parse(localStorage.getItem("CUR_USER"))
     return state.user.id == id
 })
+
+function routeToUserProfile() {
+    router.push({ name: 'profile', params: { nickname: state.user.nickname } })
+}
 
 function avatarUrl(avatarUrl, nickname) {
     if (avatarUrl == null) {
