@@ -1,11 +1,6 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap'); */
-/* @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap'); */
-
 html,body {
     margin: 0;
-    /* background-color: #F5F5F5; */
-    /* font-family: 'Roboto Mono' !important; */
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif, 'Segoe UI'/*,'Noto Color Emoji',*/ !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif, 'Segoe UI' !important;
 }
 
 img,li,.userCard {
@@ -14,7 +9,7 @@ img,li,.userCard {
 
 .material-icons-round {
     cursor: pointer;
-    font-family: 'Material Icons Round'/*,'Noto Color Emoji'*/ !important;
+    font-family: 'Material Icons Round' !important;
     background-color: transparent;
     border-radius: 24rem;
     padding: 0.5rem;
@@ -22,7 +17,7 @@ img,li,.userCard {
 
 .material-icons-round:hover {
     cursor: pointer;
-    font-family: 'Material Icons Round'/*,'Noto Color Emoji'*/ !important;
+    font-family: 'Material Icons Round' !important;
     background-color: #00000022;
     border-radius: 24rem;
     padding: 0.5rem;

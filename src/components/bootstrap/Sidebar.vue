@@ -15,8 +15,6 @@
 </template>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Material+Icons+Round");
-
 img {
     max-width: 1.6rem;
     height: auto;
