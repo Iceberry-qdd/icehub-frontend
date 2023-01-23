@@ -3,11 +3,10 @@
         <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"></Header>
-        <PostCardDetail v-if="state.post.user != undefined" :post="state.post"></PostCardDetail>
+        <PostCardDetail v-if="state.post" :post="state.post"></PostCardDetail>
         <ReviewEditor v-if="store.SHOW_REVIEW_PANEL" :post="state.post"></ReviewEditor>
         <div v-if="state.reviews.length > 0">
-            <Review v-for="(review, index) in state.reviews" :review="review" :post="state.post" :key="review.id"
-                :index="index"></Review>
+            <Review v-for="(review, index) in state.reviews" :review="review" :post="state.post" :key="review.id" :index="index"></Review>
         </div>
         <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
             <IconLoading v-if="hasMore" class="h-5 w-5 text-slate-500"></IconLoading>
@@ -36,7 +35,7 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 const $route = useRoute()
 
 const state = reactive({
-    post: store.SELECT_POST,
+    post: null,
     reviews: [],
     pageIndex: 1,
     pageSize: 10,
@@ -95,11 +94,11 @@ function fetchNewReview() {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     const postId = $route.params.id
-    if (!state.post) { getPost(postId) }
+    if (!state.post) { await getPost(postId) }
 
-    getReviews(postId, state.pageIndex, state.pageSize)
+    await getReviews(postId, state.pageIndex, state.pageSize)
     window.addEventListener('scroll', fetchNewReview)
 })
 

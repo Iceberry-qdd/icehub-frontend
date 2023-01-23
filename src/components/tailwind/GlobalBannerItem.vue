@@ -1,15 +1,15 @@
 <template>
-    <Transition>
+    <Transition @after-leave="clearData">
         <div v-if="state.show == true"
             class="pointer-events-auto bg-white flex flex-row items-center gap-x-2 rounded-[8px] shadow-sm ring-1 ring-slate-900/5 px-3 py-[0.6rem] min-w-[8rem] max-w-[36rem]">
             <div>
                 <IconDone v-if="state.message.type == 'success'"
                     class="text-white bg-green-500 p-[0.15rem] text-[13pt] rounded-full box-border"></IconDone>
                 <IconWarning v-else-if="state.message.type == 'warning'"
-                    class="text-yellow-400 bg-white text-[16pt] rounded-full box-border"></IconWarning>
+                    class="text-yellow-500 bg-white text-[16pt] rounded-full box-border"></IconWarning>
                 <IconError v-else-if="state.message.type == 'error'"
                     class="text-white bg-red-500 p-[0.20rem] text-[13pt] rounded-full box-border"></IconError>
-                <IconInfo v-else class="text-white bg-gray-400 p-[0.15rem] text-[13pt] rounded-full box-border">
+                <IconInfo v-else class="text-white bg-gray-500 p-[0.15rem] text-[13pt] rounded-full box-border">
                 </IconInfo>
             </div>
             <div class="alert text-[11pt]">{{ state.message.msg }}</div>
@@ -106,9 +106,5 @@ function clearData() {
 onMounted(() => {
     state.show = true
     closeBanner()
-})
-
-onUnmounted(() => {
-    clearData()
 })
 </script>
