@@ -8,7 +8,7 @@
                 </div>
                 <div class="text-[14pt]">{{ state.titleText }}</div>
             </div>
-            <div>
+            <div v-if="state.showMenu">
                 <span v-if="state.menuIcon" @click="handleAction" class="material-icons-round text-[14pt]">{{ state.menuIcon }}</span>
             </div>
         </div>

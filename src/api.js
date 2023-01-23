@@ -512,3 +512,52 @@ export function getFollowingList(userId, pageIndex, pageSize) {
         credentials: 'same-origin'
     })
 }
+
+/**
+ * mark一篇帖子
+ * @param {string} postId 帖子id
+ * @returns mark结果
+ */
+export function markAPost(postId){
+    return fetch(`${BASE_URL}/post/mark/${postId}`,{
+        method:'POST',
+        headers: {
+            'Authorization': TOKEN
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * unMark一篇帖子
+ * @param {string} postId 帖子id
+ * @returns unMark结果
+ */
+export function unMarkAPost(postId){
+    return fetch(`${BASE_URL}/post/mark/${postId}`,{
+        method:'DELETE',
+        headers: {
+            'Authorization': TOKEN
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'  
+    })
+}
+
+/**
+ * 查询用户mark帖子列表
+ * @param {int} pageIndex 当前页码
+ * @param {int} pageSize 每页大小
+ * @returns 返回用户mark帖子列表
+ */
+export function getMarkPostList(pageIndex,pageSize){
+    return fetch(`${BASE_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}`,{
+        method:'GET',
+        headers: {
+            'Authorization': TOKEN
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}

@@ -2,7 +2,7 @@
     <div class="card">
         <button type="button" class="btn menu">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
-            <PostMenus :user="state.post.user" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
+            <PostMenus :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
         <div class="user-info d-flex">
             <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user"
