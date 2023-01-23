@@ -19,26 +19,31 @@
                 <div class="text-[18pt] font-bold">{{ state.user.nickname }}</div>
                 <div class="">{{ state.user.remark }}</div>
                 <div class="flex flex-row gap-x-2 items-center">
-                    <!-- <calendar-three theme="outline" class="icon" size="16" fill="#333" :strokeWidth="3" /> -->
                     <IconCalendar class="text-[14pt]"></IconCalendar>
                     <div>{{ formattedDate }}</div>
                 </div>
                 <div v-if="state.user.verified == true" class="flex flex-row gap-x-2 items-center">
-                    <!-- <success theme="outline" size="18" class="icon" fill="#333" :strokeWidth="3" /> -->
                     <IconVerify class="text-[13pt]"></IconVerify>
                     <div>{{ state.user.verifiedInfo }}</div>
                 </div>
-                <div v-if="state.user.city != null" class="flex flex-row gap-x-2 items-center">
-                    <!-- <local-two theme="outline" size="16" class="icon" fill="#333" :strokeWidth="3" /> -->
+                <div v-if="state.user.city" class="flex flex-row gap-x-2 items-center">
                     <IconLocation class="text-[14pt]" title="所在城市"></IconLocation>
                     <div>{{ state.user.city }}</div>
                 </div>
+                <div v-if="state.user.email" class="flex flex-row gap-x-2 items-center">
+                    <IconEmail class="text-[12pt]" title="电子邮箱"></IconEmail>
+                    <div>{{ state.user.email }}</div>
+                </div>
+                <div v-if="state.user.website" class="flex flex-row gap-x-2 items-center">
+                    <IconWebsite class="text-[12pt]" title="个人网站"></IconWebsite>
+                    <a :href="state.user.website" class="hover:underline hover:decoration-blue-500 hover:text-blue-500">{{ state.user.website }}</a>
+                </div>
                 <div class="flex flex-row gap-x-6">
-                    <div @click="routeTo('followerList', state.user.nickname)" class="cursor-pointer hover:underline">订阅我的
-                        <span>{{ state.user.followingCount }}</span>
+                    <div @click="routeTo('followerList', state.user.nickname)" class="cursor-pointer hover:underline">
+                        <span>{{ followingCountText }}</span>
                     </div>
                     <div @click="routeTo('followingList', state.user.nickname)" class="cursor-pointer hover:underline">
-                        我的订阅 <span>{{ state.user.followerCount }}</span>
+                        <span>{{ followerCountText }}</span>
                     </div>
                 </div>
             </div>
@@ -76,6 +81,8 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import IconCalendar from '@/components/icons/IconCalendar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import IconLocation from '@/components/icons/IconLocation.vue'
+import IconWebsite from '@/components/icons/IconWebsite.vue'
+import IconEmail from '@/components/icons/IconEmail.vue'
 
 const props = defineProps(['user'])
 
@@ -94,6 +101,20 @@ const formattedDate = computed(() => {
 const bannerPic = computed(() => {
     const bannerUrl = state.user.bannerUrl
     return bannerUrl || '/src/assets/default-bg.jpg'
+})
+
+const followingCountText = computed(() => {
+    const { gender, followingCount } = state.user
+    if (isMyself.value == true) return `订阅我的 ${followingCount}`
+    if (gender == 'FEMALE') return `订阅她的 ${followingCount}`
+    return `订阅他的 ${followingCount}`
+})
+
+const followerCountText = computed(() => {
+    const { gender, followerCount } = state.user
+    if (isMyself.value == true) return `我的订阅 ${followerCount}`
+    if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
+    return `他的订阅 ${followerCount}`
 })
 
 const avatarPic = computed(() => {
@@ -152,6 +173,7 @@ async function unFollowAUser(userId) {
         state.loading = false
     }
 }
+
 function showSlide(urls, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
     store.showSlide(urls, idx)
