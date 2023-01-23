@@ -1,44 +1,46 @@
 <template>
     <div class="card">
+        <div id="card-mask" @click.self="routeToPost(state.post.id)"></div>
         <button type="button" class="btn menu">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
             <PostMenus :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
         <div class="user-info d-flex">
             <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user"
-                v-if="state.showUserInfoPop" class="user-info-pop"></UserInfoPop>
-            <a @mouseenter="state.showUserInfoPop = true" class="position-relative"
+                v-if="state.showUserInfoPop" class="user-info-pop z-[98]"></UserInfoPop>
+            <a @mouseenter="state.showUserInfoPop = true" class="z-[97] position-relative"
                 @click="routeToUser(state.post.user.nickname)">
                 <img class="avatar img-fluid" loading="lazy" :src="avatar">
                 <i class="bi bi-patch-check-fill verify" v-if="state.post.user.verified"></i>
             </a>
-            <div class="user-text">
-                <div @click="routeToUser(state.post.user.nickname)" class="nickname">{{ state.post.user.nickname }}</div>
+            <div class="user-text z-[97]">
+                <div @click="routeToUser(state.post.user.nickname)" class="nickname cursor-pointer">{{ state.post.user.nickname }}
+                </div>
                 <div class="post-time">{{ formattedTime }}</div>
             </div>
         </div>
 
-        <div class="m-card-body" @click="routeToPost(state.post.id)">
+        <div class="m-card-body">
             <p class="card-text" id="content">{{ state.post.content }}</p>
-            <RepostCard v-if="state.post.root" :post="state.post.root"></RepostCard>
+            <RepostCard v-if="state.post.root" :post="state.post.root" class="z-[96] relative"></RepostCard>
         </div>
-        <div class="card-pics container" :class="cardClass" v-if="hasPics">
+        <div class="card-pics container z-[96]" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
                 <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)"  class="pic img-fluid" :class="gridWrapperClass" :src="pic">
                 </div>
             </div>
         </div>
-        <div class="card-tags container" v-if="hasTags">
+        <div class="card-tags container z-[96]" v-if="hasTags">
             <div class="row row-cols-auto gx-3">
                 <div class="col" v-for="tag in state.post.tags">
                     <span class="badge bg-primary" id="badge"># {{ tag }}</span>
                 </div>
             </div>
         </div>
-        <div class="btn-group" role="group">
+        <div class="btn-group z-[96]" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
-                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{'m-active':isReposted}" />
+                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{ 'm-active': isReposted }" />
                 {{ state.post.repostCount }}
             </button>
             <button @click="routeToPost(state.post.id)" type="button" class="btn op op-review">
@@ -56,9 +58,20 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.m-active{
+#card-mask {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 96;
+    background-color: transparent;
+}
+
+.m-active {
     background-color: #d1e7dd;
 }
+
 .imgs-grid {
     display: grid;
     gap: 0.35rem;
@@ -148,7 +161,7 @@
 
 .card:hover {
     background-color: #F5F5F5;
-    cursor: pointer;
+    cursor: default;
 }
 
 .btn:active {
@@ -157,6 +170,7 @@
 }
 
 .btn {
+    z-index: 97;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
