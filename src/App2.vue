@@ -32,33 +32,10 @@ main {
 <script setup>
 import GlobalBanner from '@/components/tailwind/GlobalBanner.vue';
 import Auth from '@/components/tailwind/Auth.vue'
-import { onMounted, reactive } from 'vue'
-import { store } from '@/store'
-import { getCurUserInfo } from '@/api'
+import { reactive } from 'vue'
 
 const state = reactive({
     user: null,
 })
 
-async function curUser() {
-    try {
-        const token = localStorage.getItem('TOKEN')
-
-        const response = await getCurUserInfo()
-        if (!response.ok) throw new Error('Not Login!')
-        
-        if (token != null && token.trim() != "") {
-            self.location = 'index'
-            window.history.forward(1);
-        }
-
-    } catch (e) {
-        store.setErrorMsg(e.message)
-        console.error(e)
-    }
-}
-
-onMounted(() => {
-    curUser()
-})
 </script>
