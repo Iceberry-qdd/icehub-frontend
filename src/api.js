@@ -95,7 +95,7 @@ export function posting(data) {
  */
 export function likeAPost(postId) {
     return fetch(`${BASE_URL}/post/like/${postId}`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
             'Authorization': TOKEN,
         },
@@ -408,7 +408,7 @@ export function uploadUserAvatar(data) {
  */
 export function updateUserProfile(user) {
     return fetch(`${BASE_URL}/user`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
