@@ -1,8 +1,8 @@
 <template>
     <div>
         <div>
-            <div><img class=" w-[38rem] h-[18rem] object-cover object-center" :src="bannerPic" /></div>
-            <div><img class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
+            <div><img @click="showSlide([bannerPic],0)" class=" w-[38rem] h-[18rem] object-cover object-center" :src="bannerPic" /></div>
+            <div><img @click="showSlide([avatarPic],0)" class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
                     :src="avatarPic" /></div>
             <div v-if="!isMyself" class="flex w-fit flex-row gap-x-3 relative top-[-4rem] right-[-24rem]">
                 <div @click="toggleFollowState"
@@ -151,5 +151,9 @@ async function unFollowAUser(userId) {
     } finally {
         state.loading = false
     }
+}
+function showSlide(urls, idx) {
+    document.querySelector("body").setAttribute("style", "overflow:hidden")
+    store.showSlide(urls, idx)
 }
 </script>

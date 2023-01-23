@@ -3,7 +3,7 @@
         <GlobalBanner></GlobalBanner>
         <GlobalTipDialog></GlobalTipDialog>
         <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
-        <ImageSlide2></ImageSlide2>
+        <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
         <RepostPanel v-if="store.REPOST_POST"></RepostPanel>
         <div id="sidebar-l">
             <Brand></Brand>

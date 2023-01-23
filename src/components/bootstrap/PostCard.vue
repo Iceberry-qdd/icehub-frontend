@@ -24,9 +24,8 @@
         </div>
         <div class="card-pics container" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl">
-                    <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid"
-                        :class="gridWrapperClass" :src="pic">
+                <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
+                    <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)"  class="pic img-fluid" :class="gridWrapperClass" :src="pic">
                 </div>
             </div>
         </div>
