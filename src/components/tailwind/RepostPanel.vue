@@ -63,7 +63,7 @@ async function reposting() {
     state.loading = true
     try {
         state.data.parentId = state.parentPost.id
-        state.data.rootId = state.parentPost.root.id
+        state.data.rootId = state.parentPost.root ? state.parentPost.root.id : state.parentPost.id
         const response = await posting(state.data)
         if (!response.ok) throw new Error((await response.json()).error)
 

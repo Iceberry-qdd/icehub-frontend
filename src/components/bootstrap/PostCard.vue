@@ -379,7 +379,7 @@ const hasTags = computed(() => {
 
 const isLiked = computed(() => { return state.post.liked })
 
-const isReposted = computed(() => { return state.post.isReposted })
+const isReposted = computed(() => { return state.post.reposted })
 
 const likedIconTheme = computed(() => {
     return state.post.liked ? 'filled' : 'outline'

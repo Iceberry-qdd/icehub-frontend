@@ -356,7 +356,7 @@ const hasTags = computed(() => {
 
 const isLiked = computed(() => { return props.post.liked })
 
-const isReposted = computed(() => { return state.post.isReposted })
+const isReposted = computed(() => { return state.post.reposted })
 
 const formattedTime = computed(() => { return standardTime(state.post.createdTime) })
 
