@@ -12,11 +12,15 @@
 import { reactive } from 'vue'
 import { store } from '@/store.js'
 
+const emit = defineEmits(['dismissMenu'])
+
 const props = defineProps(['link'])
 
 const state = reactive({
     link: props.link
 })
+
+function dismiss() { emit('dismissMenu') }
 
 async function copyLink() {
     navigator.clipboard ? (await copyLinkV2()) : copyLinkV1()
@@ -35,6 +39,8 @@ function copyLinkV1() {
     } catch (e) {
         store.setErrorMsg(e.message)
         console.log(e)
+    }finally{
+        dismiss()
     }
 }
 
@@ -57,6 +63,8 @@ async function copyLinkV2() {
     } catch (e) {
         store.setErrorMsg('链接复制失败！')
         console.log(e)
+    }finally{
+        dismiss()
     }
 }
 
