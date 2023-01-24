@@ -7,13 +7,13 @@
         </button>
         <div class="user-info d-flex">
             <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user"
-                v-if="state.showUserInfoPop" class="user-info-pop z-[98]"></UserInfoPop>
-            <a @mouseenter="state.showUserInfoPop = true" class="z-[97] position-relative"
+                v-if="state.showUserInfoPop" class="user-info-pop z-index-98"></UserInfoPop>
+            <a @mouseenter="state.showUserInfoPop = true" class="z-index-97 position-relative"
                 @click="routeToUser(state.post.user.nickname)">
                 <img class="avatar img-fluid" loading="lazy" :src="avatar">
                 <i class="bi bi-patch-check-fill verify" v-if="state.post.user.verified"></i>
             </a>
-            <div class="user-text z-[97]">
+            <div class="user-text z-index-97">
                 <div @click="routeToUser(state.post.user.nickname)" class="nickname cursor-pointer">{{ state.post.user.nickname }}
                 </div>
                 <div class="post-time">{{ formattedTime }}</div>
@@ -22,23 +22,23 @@
 
         <div class="m-card-body">
             <p class="card-text" id="content">{{ state.post.content }}</p>
-            <RepostCard v-if="state.post.root" :post="state.post.root" class="z-[96] relative"></RepostCard>
+            <RepostCard v-if="state.post.root" :post="state.post.root" class="z-index-96 relative"></RepostCard>
         </div>
-        <div class="card-pics container z-[96]" :class="cardClass" v-if="hasPics">
+        <div class="card-pics container z-index-96" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
                 <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)"  class="pic img-fluid" :class="gridWrapperClass" :src="pic">
                 </div>
             </div>
         </div>
-        <div class="card-tags container z-[96]" v-if="hasTags">
+        <div class="card-tags container z-index-96" v-if="hasTags">
             <div class="row row-cols-auto gx-3">
                 <div class="col" v-for="tag in state.post.tags">
                     <span class="badge bg-primary" id="badge"># {{ tag }}</span>
                 </div>
             </div>
         </div>
-        <div class="btn-group z-[96]" role="group">
+        <div class="btn-group z-index-96" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{ 'm-active': isReposted }" />
                 {{ state.post.repostCount }}
@@ -57,6 +57,18 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
+
+.z-index-96{
+    z-index: 96 !important;
+}
+
+.z-index-97{
+    z-index: 97 !important;
+}
+
+.z-index-98{
+    z-index: 98 !important;
+}
 
 #card-mask {
     position: absolute;
