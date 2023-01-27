@@ -187,11 +187,11 @@
 
 <script setup>
 import Header from '@/components/tailwind/Header.vue'
-import { reactive, computed, watch, ref } from 'vue';
-import { store } from '@/store.js';
+import { reactive, computed, watch, ref, onUnmounted} from 'vue'
+import { store } from '@/store.js'
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/api.js'
-import router from '@/route';
-import IconLoading from '@/components/icons/IconLoading.vue';
+import router from '@/route'
+import IconLoading from '@/components/icons/IconLoading.vue'
 
 const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),
@@ -209,8 +209,8 @@ const state = reactive({
         website: JSON.parse(localStorage.getItem("CUR_USER")).website,
         remark: JSON.parse(localStorage.getItem("CUR_USER")).remark
     },
-    newAvatar: store.CROPPED_IMAGE.avatar,
-    newBanner: store.CROPPED_IMAGE.banner,
+    newAvatar: null,
+    newBanner: null,
     isLoading: false,
     isUsernameExisted: false,
     headerConfig: {
@@ -293,7 +293,10 @@ async function submitProfile() {
 
 async function uploadAvatar() {
     try {
-        const data = state.newAvatar.split(',')[1]
+        const data = {
+            type: state.newAvatar.split(',')[0].replace('data:', '').replace(';base64', ''),
+            data: state.newAvatar.split(',')[1],
+        }
         const response = await uploadUserAvatar(data)
         if (!response.ok) throw new Error((await response.json()).error)
 
@@ -306,7 +309,10 @@ async function uploadAvatar() {
 
 async function uploadBanner() {
     try {
-        const data = state.newBanner.split(',')[1]
+        const data = {
+            type: state.newBanner.split(',')[0].replace('data:', '').replace(';base64', ''),
+            data: state.newBanner.split(',')[1],
+        }
         const response = await uploadUserBanner(data)
         if (!response.ok) throw new Error((await response.json()).error)
 
@@ -400,5 +406,9 @@ const isWebsiteValid = computed(() => {
     }
 
     return { 'class': 'is-invalid', 'msg': '暂不支持您输入的网站！' }
+})
+
+onUnmounted(() => {
+    store.clearCroppedImage()
 })
 </script>

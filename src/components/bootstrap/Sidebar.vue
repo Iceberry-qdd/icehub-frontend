@@ -16,8 +16,8 @@
 
 <style scoped>
 img {
-    max-width: 1.6rem;
-    height: auto;
+    width: 1.6rem;
+    height: 1.6rem;
 }
 
 .avatar {

@@ -27,7 +27,6 @@ async function copyLink() {
 }
 
 function copyLinkV1() {
-    console.log('V1')
     try {
         const el = document.createElement('input')
         el.setAttribute('value', state.link)

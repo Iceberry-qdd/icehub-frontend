@@ -5,7 +5,8 @@
         <div @click.self="dismiss"
             class="dialog fixed flex flex-row justify-center items-center w-screen h-screen bg-[#00000066] z-[107]">
             <div class="cursor-pointer absolute bottom-[5%] flex fex-row gap-0 dialog-card rounded-full">
-                <div class="hover:bg-gray-300 py-2 px-4 rounded-l-full" @click="getClippedPic">确定</div>
+                <div class="hover:bg-gray-300 py-2 px-4 rounded-l-full" @click="isGif ? getGif() : getClippedPic()">确定
+                </div>
                 <div class="hover:bg-gray-300 py-2 px-4 rounded-r-full" @click="dismiss">取消</div>
             </div>
             <div
@@ -13,9 +14,10 @@
                 <span v-if="state.img == null" @click="choosePics"
                     class="material-icons-round rotate-[-90deg] text-[30pt]">logout</span>
                 <div v-if="state.img == null">选择本地图片</div>
-                <canvas @mousemove="moveMask($event)" @mousedown="state.isMouseDown = true"
+                <canvas v-if="!isGif" @mousemove="moveMask($event)" @mousedown="state.isMouseDown = true"
                     @mouseup="state.isMouseDown = false" @mouseleave="state.isMouseLeave == true" id="canvas"
                     class="relative max-w-full max-h-full cursor-move" width="0" height="0"></canvas>
+                <img v-if="isGif" id="gif-preview" :src="state.imgSrc" class="relative max-w-full max-h-full cursor-move" />
             </div>
         </div>
     </div>
@@ -30,18 +32,19 @@
 </style>
 
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed,ref,getCurrentInstance } from 'vue'
 import { store } from '@/store.js'
 
 const state = reactive({
     img: null,
+    imgSrc:null,
     canvasParams: { width: 0, height: 0 },
     ctx: null,
     clipParams: { startX: 0, startY: 0 },
     isMouseDown: false,
     isMouseLeave: false,
     banner: null,
-    bannerImageType: 'image/png'
+    imageType: 'image/png'
 })
 
 const clipMaskWidth = computed(() => {
@@ -49,7 +52,7 @@ const clipMaskWidth = computed(() => {
         case 'banner':
             return state.img.width
         case 'avatar':
-            return state.img.width > state.img.height ? state.img.height : state.img.width
+            return Math.min(state.img.width, state.img.height)
         default:
             return state.img.height
     }
@@ -75,16 +78,19 @@ function dismiss() {
 function choosePics() {
     const imgFileSelector = document.getElementById("imgFile")
     imgFileSelector.click()
-    const imgs = imgFileSelector.files;
+    const imgs = imgFileSelector.files
 
     if (imgs.length == 0) return
 
     loadImage(imgFileSelector.files[0])
-    drawImage()
 }
 
+const isGif = computed(() => {
+    return state.imageType == 'image/gif'
+})
+
 function loadImage(file) {
-    state.bannerImageType = file.type
+    state.imageType = file.type
     const reader = new FileReader()
     let result = new Image()
 
@@ -100,9 +106,11 @@ function loadImage(file) {
 
         result.src = image.src
         result.crossOrigin = image.crossOrigin
+        state.imgSrc = image.src
     }
 
     state.img = result
+    if (!isGif.value) { drawImage() }
 }
 
 function drawImage() {
@@ -131,14 +139,6 @@ function drawMask(ctx, startX, startY) {
 
     ctx.globalCompositeOperation = 'source-atop';
     ctx.clearRect(startX, startY, cWidth, cHeight)
-
-    // ctx.globalCompositeOperation = 'source-over';
-    // ctx.fillStyle = '#3b82f6';
-    // let size = 12; // 自定义像素点大小
-    // ctx.fillRect(0, 0, size, size);
-    // ctx.fillRect(0, cHeight - size, size, size);
-    // ctx.fillRect(cWidth - size, 0, size, size);
-    // ctx.fillRect(cWidth - size, cHeight - size, size, size);
 
     ctx.globalCompositeOperation = 'destination-over';
     ctx.drawImage(state.img, 0, 0)
@@ -176,6 +176,7 @@ function moveMask(e) {
 }
 
 function getClippedPic() {
+    console.log('a')
     const data = state.ctx.getImageData(state.clipParams.startX, state.clipParams.startY, clipMaskWidth.value, clipMaskHeight.value)
 
     const shadowCanvas = document.createElement('canvas', { id: 'shadow-canvas' })
@@ -184,9 +185,15 @@ function getClippedPic() {
     shadowCanvas.height = data.height
     ctx.putImageData(data, 0, 0)
 
-    const base64ImageData = shadowCanvas.toDataURL(state.bannerImageType)
+    const base64ImageData = shadowCanvas.toDataURL(state.imageType)
     store.setCroppedImageData(base64ImageData)
 
+    dismiss()
+}
+
+function getGif() {
+    const data = state.img.src
+    store.setCroppedImageData(data)
     dismiss()
 }
 

@@ -130,7 +130,7 @@ export function login(nickname, password) {
     return fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         body: JSON.stringify({
-            'username': nickname,
+            'nickname': nickname,
             'password': password
         }),
         headers: {
@@ -375,9 +375,9 @@ export function uploadUserBanner(data) {
         method: 'POST',
         headers: {
             'Authorization': TOKEN,
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
         },
-        body: data,
+        body: JSON.stringify(data),
         redirect: 'follow',
         credentials: 'same-origin'
     })
@@ -393,9 +393,9 @@ export function uploadUserAvatar(data) {
         method: 'POST',
         headers: {
             'Authorization': TOKEN,
-            'Content-Type': 'text/plain'
+            'Content-Type': 'application/json'
         },
-        body: data,
+        body: JSON.stringify(data),
         redirect: 'follow',
         credentials: 'same-origin'
     })
@@ -518,9 +518,9 @@ export function getFollowingList(userId, pageIndex, pageSize) {
  * @param {string} postId 帖子id
  * @returns mark结果
  */
-export function markAPost(postId){
-    return fetch(`${BASE_URL}/post/mark/${postId}`,{
-        method:'POST',
+export function markAPost(postId) {
+    return fetch(`${BASE_URL}/post/mark/${postId}`, {
+        method: 'POST',
         headers: {
             'Authorization': TOKEN
         },
@@ -534,9 +534,9 @@ export function markAPost(postId){
  * @param {string} postId 帖子id
  * @returns unMark结果
  */
-export function unMarkAPost(postId){
-    return fetch(`${BASE_URL}/post/mark/${postId}`,{
-        method:'DELETE',
+export function unMarkAPost(postId) {
+    return fetch(`${BASE_URL}/post/mark/${postId}`, {
+        method: 'DELETE',
         headers: {
             'Authorization': TOKEN
         },
@@ -551,9 +551,9 @@ export function unMarkAPost(postId){
  * @param {int} pageSize 每页大小
  * @returns 返回用户mark帖子列表
  */
-export function getMarkPostList(pageIndex,pageSize){
-    return fetch(`${BASE_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}`,{
-        method:'GET',
+export function getMarkPostList(pageIndex, pageSize) {
+    return fetch(`${BASE_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+        method: 'GET',
         headers: {
             'Authorization': TOKEN
         },

@@ -67,6 +67,13 @@ export const store = reactive({
     setCroppedImageData(data) {
         this.CROPPED_IMAGE[this.CROPPED_IMAGE.mode] = data
     },
+    setCroppedImage(mode, data) {
+        this.CROPPED_IMAGE.mode = mode
+        this.CROPPED_IMAGE[this.CROPPED_IMAGE.mode] = data
+    },
+    clearCroppedImage() {
+        this.CROPPED_IMAGE = { mode: '', banner: '', avatar: '', picture: '' }
+    },
 
     IS_SUBMIT_PROFILE: false,
     submitProfile() {
