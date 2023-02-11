@@ -39,7 +39,7 @@
                             </div>
                         </div>
                     </div>
-                    <video-two theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <video-two theme="outline" size="18" fill="#333" :strokeWidth="3" v-if="!hasImage" />
                     <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
                     <!-- <source-code theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
                     <preview-open theme="outline" size="18" fill="#333" :strokeWidth="3" />

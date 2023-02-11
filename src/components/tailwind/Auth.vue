@@ -73,10 +73,10 @@
 </style>
 
 <script setup>
-import { getPublicKey, login, register } from '@/api';
+import { getPublicKey, login, register } from '@/api'
 import { store } from '@/store'
-import { JSEncrypt } from 'jsencrypt';
-import { reactive } from 'vue';
+import { JSEncrypt } from 'jsencrypt'
+import { reactive } from 'vue'
 
 const state = reactive({
     nickname: "",
@@ -155,13 +155,12 @@ async function tryRegister() {
         const encryptedPK = encodePwd(state.publicKey, state.password)
         const response = await register(state.nickname, encryptedPK)
         if (!response.ok) throw new Error((await response.json()).error)
-        state.store.setSuccessMsg("注册成功！");
+        store.setSuccessMsg("注册成功！");
         state.password = ''
         state.rePassword = ''
         state.loginPannel = true
     } catch (e) {
-        //state.loginFailed = true
-        state.store.setErrorMsg(e.message)
+        store.setErrorMsg(e.message)
         console.error(e)
     } finally {
         state.loading = false
