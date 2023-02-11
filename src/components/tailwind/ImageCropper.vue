@@ -32,7 +32,7 @@
 </style>
 
 <script setup>
-import { reactive, computed,ref,getCurrentInstance } from 'vue'
+import { reactive, computed } from 'vue'
 import { store } from '@/store.js'
 
 const state = reactive({

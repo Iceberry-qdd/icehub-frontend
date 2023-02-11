@@ -12,15 +12,36 @@
             </div>
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
-                    <input v-show="false" @change="choosePics" type="file" id="imgFile" name="imgFile" multiple="true"
-                        accept="image/*" />
-                    <!-- <span title="添加图片" @click="choosePics"
-                        :class="[state.imgList.length > 0 ? 'text-[#0d6efd]' : 'text-black']"
-                        class="material-icons-round">photo_library</span> -->
-                    <add-picture @click="choosePics" theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <input v-show="false" type="file" id="imgFile" @change="clickFileSelector" name="imgFile"
+                        multiple="true" accept="image/*" />
+                    <div class="relative flex-col">
+                        <div class="flex" @click="preChoosePics">
+                            <add-picture theme="outline" size="18" fill="#333" :strokeWidth="3"
+                                :class="[hasImage ? 'bg-blue-200' : '']" />
+                        </div>
+                        <div v-if="state.showImagePanel == true" id="imagePanel"
+                            class="z-[99] absolute top-[2.5rem] min-w-max min-h-max bg-white rounded-[6px] p-3 shadow-md ring-1 ring-gray-200">
+                            <div class="grid grid-cols-3 grid-rows-1 gap-2">
+                                <div class="relative" v-for="(item, key) in state.imgList" :key="key" :index="key">
+                                    <img class="max-w-[5rem] min-w-[5rem] h-[5rem] rounded-[8px] cursor-default object-cover"
+                                        :src="loadImage(item)" />
+                                    <div @click="deleteImg(item, key)"
+                                        class="absolute w-[1.25rem] h-[1.25rem] top-0 right-0 rounded-tr-[8px] rounded-[4px] bg-[#000000BB] cursor-pointer">
+                                        <div class="flex w-full h-full justify-center items-center">
+                                            <IconError class="text-gray-300 text-[10pt]"></IconError>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div @click="choosePics" v-if="state.imgList.length < 9"
+                                    class="flex justify-center items-center max-w-[5rem] min-w-[5rem] h-[5rem] hover:bg-zinc-200 rounded-[8px] cursor-pointer active:bg-zinc-300">
+                                    <IconAdd class="text-gray-500"></IconAdd>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <video-two theme="outline" size="18" fill="#333" :strokeWidth="3" />
                     <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
-                    <source-code theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <!-- <source-code theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
                     <preview-open theme="outline" size="18" fill="#333" :strokeWidth="3" />
                     <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" />
                     <m-time theme="outline" size="18" fill="#333" :strokeWidth="3" />
@@ -64,24 +85,30 @@
 </style>
 
 <script setup>
-import { reactive } from 'vue';
+import { computed, reactive } from 'vue';
 import { uploadFiles, posting } from '@/api.js'
 import { store } from '@/store.js'
-import { VideoTwo, AddPicture, SourceCode, PreviewOpen, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
-import IconLoading from '@/components/icons/IconLoading.vue';
+import { VideoTwo, AddPicture, PreviewOpen, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
+import IconLoading from '@/components/icons/IconLoading.vue'
+import IconAdd from '@/components/icons/IconAdd.vue'
+import IconError from '@/components/icons/IconError.vue'
 
 const state = reactive({
     content: "",
     imgList: [],
-    imgUrls: [],
     isLoading: false,
     result: "",
+    showImagePanel: false,
     data: {
-        "content": "",
-        "top": false,
-        "attachmentsUrl": [],
-        "type":"NORMAL"
+        content: "",
+        top: false,
+        attachmentsUrl: [],
+        type: "NORMAL"
     }
+})
+
+const hasImage = computed(() => {
+    return state.imgList.length > 0
 })
 
 function resize() {
@@ -124,12 +151,41 @@ async function submitPost() {
     }
 }
 
+function clickFileSelector() {
+    const imgFileSelector = document.getElementById("imgFile")
+    imgFileSelector.click()
+    const imgs = Array.of(...imgFileSelector.files)
+
+    if (imgs.length == 0) return
+    state.imgList.push(...imgs)
+
+    if (state.imgList.length > 9) { store.setWarningMsg('最多仅支持上传9张图片！') }
+
+    while (state.imgList.length > 9) { state.imgList.pop() }
+}
+
+function preChoosePics() {
+    if (state.imgList.length > 0 || state.showImagePanel == true) {
+        const lastState = state.showImagePanel
+        state.showImagePanel = !lastState
+        return
+    }
+    choosePics()
+}
+
 function choosePics() {
     const imgFileSelector = document.getElementById("imgFile")
     imgFileSelector.click()
-    const imgs = imgFileSelector.files;
-
-    if (imgs.length == 0) return
-    state.imgList = imgFileSelector.files;
 }
+
+function loadImage(file) {
+    let URL = window.URL || window.webkitURL
+    let imgUrl = URL.createObjectURL(file)
+    return imgUrl
+}
+
+function deleteImg(item) {
+    state.imgList.splice(state.imgList.indexOf(item), 1)
+}
+
 </script>
