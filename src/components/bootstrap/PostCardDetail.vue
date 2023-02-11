@@ -44,7 +44,7 @@
                 {{ props.post.reviewCount }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
-                <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" />
+                <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" :class="isLiked?'liked':''" />
                 {{ props.post.likeCount }}
             </button>
         </div>
@@ -171,6 +171,7 @@
 
 .liked {
     color: red;
+    background-color: #fecaca;
 }
 
 .nickname {
