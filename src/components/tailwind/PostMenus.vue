@@ -40,7 +40,7 @@ const state = reactive({
 
 function dismiss() { emit('dismissMenu') }
 
-const generateLink = computed(() => { return window.location.href })
+const generateLink = computed(() => { return window.location.href.replace(/index|profile.*/, `post/${state.post.id}`) })
 
 const isMySelf = computed(() => {
     return state.user.id == state.curUser.id
