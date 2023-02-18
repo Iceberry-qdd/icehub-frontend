@@ -4,22 +4,25 @@
             <img :src="bannerPic" class="w-full h-[6rem] object-cover rounded-t-[8px]" />
         </div>
         <div>
-            <img @click="routeToProfile" :src="avatarPic" class="w-[3.5rem] h-[3.5rem] rounded-[8px] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white" />
+            <img @click="routeToProfile" :src="avatarPic"
+                class="w-[3.5rem] h-[3.5rem] rounded-[8px] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white" />
             <div class="absolute top-[8rem] ml-[0.95rem] flex flex-row gap-x-1 items-center">
-                <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline">{{ state.user.nickname }}</div>
+                <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline cursor-pointer">{{
+                    state.user.nickname
+                }}</div>
                 <i class="bi bi-patch-check-fill verify text-[10pt] text-blue-500" v-if="state.user.verified"></i>
             </div>
             <div class="absolute top-[9.8rem] ml-[0.95rem] text-[11pt]">{{ brief }}</div>
         </div>
         <div class="text-[11pt] flex flex-row gap-x-2 absolute right-3 top-[6.25rem]">
-            <div @click="routeToFollowerList" class="hover:underline">{{ followingCountText }}</div>
+            <div @click="routeToFollowerList" class="hover:underline cursor-pointer">{{ followingCountText }}</div>
             <span>|</span>
-            <div @click="routeToFollowingList" class="hover:underline">{{ followerCountText }}</div>
+            <div @click="routeToFollowingList" class="hover:underline cursor-pointer">{{ followerCountText }}</div>
         </div>
         <div>
             <div v-if="!isCurUser" @click="toggleFollowState"
                 :class="{ 'bg-gray-300': state.user.following, 'bg-blue-500': !state.user.following, 'text-black': state.user.following, 'text-white': !state.user.following }"
-                class="absolute bottom-3 right-3  text-[11pt] px-5 py-[0.3rem] rounded-full">
+                class="absolute bottom-3 right-3  text-[11pt] px-5 py-[0.3rem] rounded-full cursor-pointer">
                 <div v-if="!state.loading"> {{ state.user.following ? '已订阅' : '订阅' }}</div>
                 <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
             </div>
@@ -52,16 +55,15 @@ const state = reactive({
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const bannerPic = computed(() => {
-    const bannerUrl = state.user.bannerUrl
-    return bannerUrl || '/src/assets/default-bg.jpg'
+    const { previewUrl, originUrl } = state.user.bannerUrl || [null, null]
+    const defaultUrl = '/src/assets/default-bg.jpg'
+    return previewUrl || originUrl || defaultUrl
 })
 
 const avatarPic = computed(() => {
-    if (!state.user.avatarUrl) {
-        return `https://api.multiavatar.com/${state.user.nickname}.svg`
-    } else {
-        return state.user.avatarUrl
-    }
+    const { previewUrl, originUrl } = state.user.avatarUrl || [null, null]
+    const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
+    return previewUrl || originUrl || defaultUrl
 })
 
 const brief = computed(() => {
@@ -95,15 +97,15 @@ function toggleFollowState() {
     }
 }
 
-function routeToProfile(){
+function routeToProfile() {
     router.push({ name: 'profile', params: { nickname: state.user.nickname } })
 }
 
-function routeToFollowingList(){
+function routeToFollowingList() {
     router.push({ name: 'followingList', params: { nickname: state.user.nickname } })
 }
 
-function routeToFollowerList(){
+function routeToFollowerList() {
     router.push({ name: 'followerList', params: { nickname: state.user.nickname } })
 }
 

@@ -6,11 +6,12 @@
         </button>
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(props.post.user.id)">
-                <img @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="defaultAvatar">
+                <img @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="avatarUrl">
                 <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
             </a>
             <div class="user-text">
-                <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline">{{ props.post.user.nickname }}</div>
+                <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline">
+                    {{ props.post.user.nickname }}</div>
                 <div class="post-time">发布于 {{ formattedTime }}</div>
             </div>
         </div>
@@ -21,9 +22,15 @@
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in props.post.attachmentsUrl">
-                    <img loading="lazy" @click="showSlide(post.attachmentsUrl, idx)" class="pic img-fluid"
-                        :class="gridWrapperClass" :src="pic">
+                <div class="col wrapper relative" :class="gridWrapperClass"
+                    v-for="(pic, idx) in props.post.attachmentsUrl" :key="idx" :index="idx">
+                    <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic m-pic img-fluid"
+                        :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
+                    <div @click="playAnimateImage(idx)"
+                        v-if="pic.contentType == 'image/gif' && state.showOriginUrl[idx] == false"
+                        class="absolute flex justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
+                        <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,7 +43,8 @@
         </div>
         <div class="btn-group" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
-                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{ 'm-active': isReposted }" />
+                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
+                    :class="{ 'm-active': isReposted }" />
                 {{ props.post.repostCount }}
             </button>
             <button type="button" class="btn op op-review" @click="toggleReviewPanel">
@@ -44,7 +52,8 @@
                 {{ props.post.reviewCount }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
-                <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" :class="isLiked?'liked':''" />
+                <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3"
+                    :class="isLiked ? 'liked' : ''" />
                 {{ props.post.likeCount }}
             </button>
         </div>
@@ -53,6 +62,14 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
+
+.btn-group {
+    display: flex;
+}
+
+.gif {
+    color: white;
+}
 
 .repostCard {
     margin-left: 4rem;
@@ -129,17 +146,16 @@
     min-height: fit-content;
 }
 
-.img-wrapper-h-grid-2 {
+/* .img-wrapper-h-grid-2 {
     height: 160px;
 }
 
 .img-wrapper-h-grid-3 {
     height: 120px;
-}
+} */
 
 .wrapper:hover img {
     transform: scale(1.2);
-
 }
 
 .btn:active {
@@ -236,7 +252,7 @@
     /* margin-left: 4rem; */
     margin-bottom: 0.5rem;
     margin-top: 0.5rem;
-    display: flex;
+    /* display: flex; */
 }
 
 .card-tags {
@@ -251,7 +267,7 @@
 </style>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive, onMounted } from 'vue'
 import { likeAPost, dislikeAPost } from '@/api.js'
 import router from '@/route.js';
 import { store } from '@/store.js'
@@ -259,11 +275,13 @@ import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import { standardTime } from '@/utils/formatUtils.js'
 import RepostCard from '@/components/tailwind/RepostCard.vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue'
+import IconGif from '@/components/icons/IconGif.vue'
 
 const props = defineProps(['post'])
 
 const state = reactive({
     reaction: [false, props.post.liked, false],
+    showOriginUrl: [false, false, false, false, false, false, false, false, false],
     post: props.post,
     isShowMenu: false
 })
@@ -340,12 +358,10 @@ function showSlide(urls, idx) {
     store.showSlide(urls, idx)
 }
 
-const defaultAvatar = computed(() => {
-    if (props.post.user.avatarUrl == null) {
-        return `https://api.multiavatar.com/${props.post.user.nickname}.svg`
-    } else {
-        return props.post.user.avatarUrl
-    }
+const avatarUrl = computed(() => {
+    const { previewUrl, originUrl } = props.post.user.avatarUrl || [null, null]
+    const defaultUrl = `https://api.multiavatar.com/${props.post.user.nickname}.svg`
+    return previewUrl || originUrl || defaultUrl
 })
 
 const hasPics = computed(() => {
@@ -362,4 +378,22 @@ const isReposted = computed(() => { return state.post.reposted })
 
 const formattedTime = computed(() => { return standardTime(state.post.createdTime) })
 
+function getImageUrl(image, idx) {
+    const { originUrl, previewUrl } = image || [null, null]
+    if (state.showOriginUrl[idx] == true) { return originUrl }
+    return previewUrl || originUrl
+}
+
+function resizePicture() {
+    const picturesCount = state.post.attachmentsUrl.length
+    if (picturesCount == 1) return
+    const pics = document.querySelectorAll('.m-pic')
+    pics.forEach(pic => { pic.style.height = pic.clientWidth + 'px' })
+}
+
+function playAnimateImage(idx) { state.showOriginUrl[idx] = true }
+
+onMounted(() => {
+    resizePicture()
+})
 </script>

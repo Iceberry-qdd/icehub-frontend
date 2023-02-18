@@ -23,7 +23,8 @@
                     class="focus:outline-none overflow-y-hidden tracking-wide resize-none text-lg leading-6 text-justify min-w-full max-w-full min-h-fit bg-transparent"
                     maxlength="512" placeholder="写点什么吧~" id="review-input" name="review"></textarea>
             </div>
-            <RepostCard v-if="state.parentPost" class="ml-[3rem] cursor-default pointer-events-none" :post="state.parentPost"></RepostCard>
+            <RepostCard v-if="state.parentPost" class="ml-[3rem] cursor-default pointer-events-none"
+                :post="state.parentPost"></RepostCard>
         </div>
     </div>
 </template>
@@ -84,11 +85,9 @@ async function reposting() {
 }
 
 const avatar = computed(() => {
-    if (state.curUser.avatarUrl == null) {
-        return `https://api.multiavatar.com/${state.curUser.nickname}.svg`
-    } else {
-        return state.curUser.avatarUrl
-    }
+    const { previewUrl, originUrl } = state.curUser.avatarUrl || [null, null]
+    const defaultUrl = `https://api.multiavatar.com/${state.curUser.nickname}.svg`
+    return previewUrl || originUrl || defaultUrl
 })
 
 function dismiss() {

@@ -161,14 +161,11 @@ async function getUser(nickname) {
 function getCurUserAvatar() {
     try {
         const { avatarUrl, nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
-
-        if (!avatarUrl) {
-            return `https://api.multiavatar.com/${nickname}.svg`
-        } else {
-            return avatarUrl
-        }
+        const { previewUrl, originUrl } = avatarUrl || [null, null]
+        const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
+        return previewUrl || originUrl || defaultUrl
     } catch (e) {
-        store.setErrorMsg(e.message)
+        store.setErrorMsg("无法获取登录用户信息！")
         console.log(e.message)
     }
 }

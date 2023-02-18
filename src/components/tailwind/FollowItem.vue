@@ -66,11 +66,9 @@ function routeToUserProfile() {
 }
 
 function avatarUrl(avatarUrl, nickname) {
-    if (avatarUrl == null) {
-        return `https://api.multiavatar.com/${nickname}.svg`
-    } else {
-        return avatarUrl
-    }
+    const {previewUrl,originUrl} = avatarUrl || [null,null]
+    const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
+    return previewUrl||originUrl||defaultUrl
 }
 
 function brief(remark) {

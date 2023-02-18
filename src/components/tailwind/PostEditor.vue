@@ -86,7 +86,7 @@
 
 <script setup>
 import { computed, reactive } from 'vue';
-import { uploadFiles, posting } from '@/api.js'
+import { uploadImages, posting } from '@/api.js'
 import { store } from '@/store.js'
 import { VideoTwo, AddPicture, PreviewOpen, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
@@ -119,7 +119,13 @@ function resize() {
 
 async function submitPost() {
     const imgFileSelector = document.getElementById("imgFile")
-    state.imgList = imgFileSelector.files;
+    state.imgList = Array.of(...imgFileSelector.files)
+    let filesInfo = []
+    // const imgListCopy = Array.of(...imgFileSelector.files)
+    state.imgList.forEach(item=>{
+        const fileInfo = { hidden:"false",altText:"",contentType:item.type}
+        filesInfo.push(fileInfo)
+    })
 
     try {
         if (state.content.length == 0) throw new Error("文字内容不能为空！")
@@ -128,7 +134,7 @@ async function submitPost() {
         state.data.content = state.content
 
         if (state.imgList.length > 0) {
-            const response = await uploadFiles(state.imgList)
+            const response = await uploadImages(state.imgList,filesInfo)
             //if (!response.ok) throw new Error(response)
             state.data.attachmentsUrl = JSON.parse(response)
         }

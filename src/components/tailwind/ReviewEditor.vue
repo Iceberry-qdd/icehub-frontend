@@ -82,17 +82,16 @@ async function submitReview() {
 }
 
 const avatar = computed(() => {
-    const avatar = (JSON.parse(localStorage.getItem("CUR_USER"))).avatarUrl
-    const nickname = (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
-
     try {
-        if (!avatar || avatar == '') {
-            return `https://api.multiavatar.com/${nickname}.svg`
-        } else {
-            return avatar
-        }
+        const avatar = (JSON.parse(localStorage.getItem("CUR_USER"))).avatarUrl
+        const nickname = (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
+
+        const { previewUrl, originUrl } = avatar || [null, null]
+        const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
+        return previewUrl || originUrl || defaultUrl
     } catch (e) {
-        return ''
+        store.setErrorMsg('无法获取登录用户信息！')
+        console.log(e)
     }
 })
 

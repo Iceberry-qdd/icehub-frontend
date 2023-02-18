@@ -187,7 +187,7 @@
 
 <script setup>
 import Header from '@/components/tailwind/Header.vue'
-import { reactive, computed, watch, ref, onUnmounted} from 'vue'
+import { reactive, computed, watch, ref, onUnmounted } from 'vue'
 import { store } from '@/store.js'
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/api.js'
 import router from '@/route'
@@ -324,15 +324,17 @@ async function uploadBanner() {
 }
 
 const bannerPic = computed(() => {
-    const bannerUrl = state.user.bannerUrl
+    const { previewUrl, originUrl } = state.user.bannerUrl || [null, null]
+    const defaultUrl = '/src/assets/default-bg.jpg'
     const clippedUrl = store.CROPPED_IMAGE.banner
-    return clippedUrl || bannerUrl || '/src/assets/default-bg.jpg'
+    return clippedUrl || previewUrl || originUrl || defaultUrl
 })
 
 const avatarPic = computed(() => {
-    const avatarUrl = state.user.avatarUrl
+    const { previewUrl, originUrl } = state.user.avatarUrl || [null, null]
+    const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
     const clippedUrl = store.CROPPED_IMAGE.avatar
-    return clippedUrl || avatarUrl || `https://api.multiavatar.com/${state.user.nickname}.svg`
+    return clippedUrl || previewUrl || originUrl || defaultUrl
 })
 
 

@@ -25,7 +25,7 @@
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleMenu">
                     <!-- <i class="bi bi-arrow-return-right"></i> -->
                     <!-- <share theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
-                    <more-two theme="outline" size="20" fill="#333" :strokeWidth="3"/>
+                    <more-two theme="outline" size="20" fill="#333" :strokeWidth="3" />
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1"
                     @click="toggleReviewPanel">
@@ -164,11 +164,9 @@ const likedIconColor = computed(() => {
 })
 
 const avatar = computed(() => {
-    if (props.review.user.avatarUrl == null) {
-        return `https://api.multiavatar.com/${props.review.user.nickname}.svg`
-    } else {
-        return props.review.user.avatarUrl
-    }
+    const { previewUrl, originUrl } = props.review.user.avatarUrl || [null, null]
+    const defaultUrl = `https://api.multiavatar.com/${props.review.user.nickname}.svg`
+    return previewUrl || originUrl || defaultUrl
 })
 
 onMounted(() => {

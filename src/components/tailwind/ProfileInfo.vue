@@ -1,8 +1,10 @@
 <template>
     <div>
         <div>
-            <div><img @click="showSlide([bannerPic],0)" class=" w-[38rem] h-[18rem] object-cover object-center" :src="bannerPic" /></div>
-            <div><img @click="showSlide([avatarPic],0)" class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
+            <div><img @click="showSlide([bannerPic], 0)" class=" w-[38rem] h-[18rem] object-cover object-center"
+                    :src="bannerPic" /></div>
+            <div><img @click="showSlide([avatarPic], 0)"
+                    class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
                     :src="avatarPic" /></div>
             <div v-if="!isMyself" class="flex w-fit flex-row gap-x-3 relative top-[-4rem] right-[-24rem]">
                 <div @click="toggleFollowState"
@@ -15,7 +17,8 @@
                     class="bg-white px-5 py-[0.325rem] rounded-full border-[1px] border-gray-300 font-bold cursor-pointer">
                     私信</div>
             </div>
-            <div class="relative flex flex-col gap-y-1 pl-[1rem]" :class="{ 'top-[-4rem]': !isMyself, 'top-[-1.5rem]': isMyself }">
+            <div class="relative flex flex-col gap-y-1 pl-[1rem]"
+                :class="{ 'top-[-4rem]': !isMyself, 'top-[-1.5rem]': isMyself }">
                 <div class="text-[18pt] font-bold">{{ state.user.nickname }}</div>
                 <div class="">{{ state.user.remark }}</div>
                 <div class="flex flex-row gap-x-2 items-center">
@@ -36,7 +39,10 @@
                 </div>
                 <div v-if="state.user.website" class="flex flex-row gap-x-2 items-center">
                     <IconWebsite class="text-[12pt]" title="个人网站"></IconWebsite>
-                    <a :href="state.user.website" class="hover:underline hover:decoration-blue-500 hover:text-blue-500">{{ state.user.website }}</a>
+                    <a :href="state.user.website"
+                        class="hover:underline hover:decoration-blue-500 hover:text-blue-500">{{
+                            state.user.website
+                        }}</a>
                 </div>
                 <div class="flex flex-row gap-x-6">
                     <div @click="routeTo('followerList', state.user.nickname)" class="cursor-pointer hover:underline">
@@ -99,8 +105,9 @@ const formattedDate = computed(() => {
 })
 
 const bannerPic = computed(() => {
-    const bannerUrl = state.user.bannerUrl
-    return bannerUrl || '/src/assets/default-bg.jpg'
+    const { previewUrl, originUrl } = state.user.bannerUrl || [null, null]
+    const defaultUrl = '/src/assets/default-bg.jpg'
+    return previewUrl || originUrl || defaultUrl
 })
 
 const followingCountText = computed(() => {
@@ -118,11 +125,9 @@ const followerCountText = computed(() => {
 })
 
 const avatarPic = computed(() => {
-    if (!state.user.avatarUrl) {
-        return `https://api.multiavatar.com/${state.user.nickname}.svg`
-    } else {
-        return props.user.avatarUrl
-    }
+    const { previewUrl, originUrl } = state.user.avatarUrl || [null, null]
+    const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
+    return previewUrl || originUrl || defaultUrl
 })
 
 const isMyself = computed(() => { return state.user.id == state.curUser.id })

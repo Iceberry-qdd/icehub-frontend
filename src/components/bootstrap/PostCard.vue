@@ -14,7 +14,8 @@
                 <i class="bi bi-patch-check-fill verify" v-if="state.post.user.verified"></i>
             </a>
             <div class="user-text z-index-97">
-                <div @click="routeToUser(state.post.user.nickname)" class="nickname cursor-pointer">{{ state.post.user.nickname }}
+                <div @click="routeToUser(state.post.user.nickname)" class="nickname cursor-pointer">
+                    {{ state.post.user.nickname }}
                 </div>
                 <div class="post-time">{{ formattedTime }}</div>
             </div>
@@ -26,8 +27,15 @@
         </div>
         <div class="card-pics container z-index-96" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
-                    <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)"  class="pic img-fluid" :class="gridWrapperClass" :src="pic">
+                <div class="col wrapper relative" :class="gridWrapperClass"
+                    v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
+                    <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic img-fluid"
+                        :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
+                    <div @click="playAnimateImage(idx)"
+                        v-if="pic.contentType == 'image/gif' && state.showOriginUrl[idx] == false"
+                        class="absolute flex justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
+                        <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
+                    </div>
                 </div>
             </div>
         </div>
@@ -40,7 +48,8 @@
         </div>
         <div class="btn-group z-index-96" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
-                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3" :class="{ 'm-active': isReposted }" />
+                <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
+                    :class="{ 'm-active': isReposted }" />
                 {{ state.post.repostCount }}
             </button>
             <button @click="routeToPost(state.post.id)" type="button" class="btn op op-review">
@@ -48,7 +57,8 @@
                 {{ state.post.reviewCount }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
-                <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" :class="isLiked?'liked':''" />
+                <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3"
+                    :class="isLiked ? 'liked' : ''" />
                 {{ state.post.likeCount }}
             </button>
         </div>
@@ -58,15 +68,19 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.z-index-96{
+.gif {
+    color: white;
+}
+
+.z-index-96 {
     z-index: 96 !important;
 }
 
-.z-index-97{
+.z-index-97 {
     z-index: 97 !important;
 }
 
-.z-index-98{
+.z-index-98 {
     z-index: 98 !important;
 }
 
@@ -131,7 +145,8 @@
     gap: 0.3rem;
 }
 
-.container,.row {
+.container,
+.row {
     --bs-gutter-x: 0;
     --bs-gutter-y: 0;
     /* width: 80%; */
@@ -159,13 +174,13 @@
     min-height: fit-content;
 }
 
-.img-wrapper-h-grid-2 {
+/* .img-wrapper-h-grid-2 {
     height: 160px;
 }
 
 .img-wrapper-h-grid-3 {
     height: 120px;
-}
+} */
 
 .wrapper:hover img {
     transform: scale(1.2);
@@ -273,10 +288,9 @@
     display: block;
 }
 
-.card-pics-2,
-.card-pics-3 {
+/* .card-pics-2,.card-pics-3 {
     display: flex;
-}
+} */
 
 .card-tags {
     margin: 0 0 0.5rem 2.8rem;
@@ -289,7 +303,7 @@
 </style>
 
 <script setup>
-import { computed, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
 import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/api'
 import router from '@/route';
@@ -298,11 +312,13 @@ import { humanizedTime } from '@/utils/formatUtils.js'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import RepostCard from '@/components/tailwind/RepostCard.vue'
+import IconGif from '@/components/icons/IconGif.vue'
 
 const props = defineProps(['post'])
 
 const state = reactive({
     post: props.post,
+    showOriginUrl: [false, false, false, false, false, false, false, false, false],
     reaction: [false, props.post.liked, false],
     showUserInfoPop: false,
     isShowMenu: false
@@ -318,8 +334,8 @@ const cardClass = computed(() => {
 const gridWrapperClass = computed(() => {
     const picturesCount = state.post.attachmentsUrl.length
     if (picturesCount == 1) return 'img-wrapper-h-grid-1'
-    else if (picturesCount == 2 || picturesCount == 4) return 'img-wrapper-h-grid-2'
-    else return 'img-wrapper-h-grid-3'
+    else if (picturesCount == 2 || picturesCount == 4) return 'img-wrapper-h-grid-2 m-pic'
+    else return 'img-wrapper-h-grid-3 m-pic'
 })
 
 const gridTemplateClass = computed(() => {
@@ -328,6 +344,12 @@ const gridTemplateClass = computed(() => {
     else if (picturesCount == 2 || picturesCount == 4) return 'imgs-grid-2'
     else return 'imgs-grid-3'
 })
+
+function getImageUrl(image, idx) {
+    const { originUrl, previewUrl } = image || [null, null]
+    if (state.showOriginUrl[idx] == true) { return originUrl }
+    return previewUrl || originUrl
+}
 
 function routeToPost(postId) {
     store.setSelectPost(state.post)
@@ -383,17 +405,17 @@ async function toggleLike() {
 
 function repostIt() { store.repost(state.post) }
 
-function showSlide(urls, idx) {
+function showSlide(images, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
+
+    const urls = images.map(item => { return item.originUrl })
     store.showSlide(urls, idx)
 }
 
 const avatar = computed(() => {
-    if (state.post.user.avatarUrl == null) {
-        return `https://api.multiavatar.com/${state.post.user.nickname}.svg`
-    } else {
-        return state.post.user.avatarUrl
-    }
+    const avatarUrl = getImageUrl(state.post.user.avatarUrl)
+    const defaultUrl = `https://api.multiavatar.com/${state.post.user.nickname}.svg`
+    return avatarUrl || defaultUrl
 })
 
 const hasPics = computed(() => {
@@ -418,6 +440,19 @@ const likedIconColor = computed(() => {
 
 const formattedTime = computed(() => {
     return humanizedTime(state.post.createdTime)
+})
+
+function resizePicture() {
+    const picturesCount = state.post.attachmentsUrl.length
+    if (picturesCount == 1) return
+    const pics = document.querySelectorAll('.m-pic')
+    pics.forEach(pic => { pic.style.height = pic.clientWidth + 'px' })
+}
+
+function playAnimateImage(idx) { state.showOriginUrl[idx] = true }
+
+onMounted(() => {
+    resizePicture()
 })
 
 </script>
