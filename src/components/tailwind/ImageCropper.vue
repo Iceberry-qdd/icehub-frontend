@@ -176,7 +176,6 @@ function moveMask(e) {
 }
 
 function getClippedPic() {
-    console.log('a')
     const data = state.ctx.getImageData(state.clipParams.startX, state.clipParams.startY, clipMaskWidth.value, clipMaskHeight.value)
 
     const shadowCanvas = document.createElement('canvas', { id: 'shadow-canvas' })
