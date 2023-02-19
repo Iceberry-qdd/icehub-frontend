@@ -1,29 +1,42 @@
 export function humanizedTime(timestamps) {
-    let now = new Date()
-    let postTime = new Date(Number.parseInt(timestamps))
+    const now = new Date()
+    const postTime = new Date(Number.parseInt(timestamps))
+    const timeDiff = now - postTime
 
-    if (postTime.getFullYear() != now.getFullYear()) {
-        return `${postTime.getFullYear()}-${postTime.getMonth() + 1}-${postTime.getDate()}`
+    const oneSecond = 1000
+    const oneMinute = oneSecond * 60
+    const oneHour = oneMinute * 60
+    const oneDay = oneHour * 24
+    const oneWeek = oneDay * 7
+    const oneMonth = oneDay * 30
+    const oneYear = oneMonth * 24
+
+    if (timeDiff < oneMinute) {
+        return `${Number.parseInt(timeDiff / oneSecond)}秒前`
     }
 
-    if (postTime.getMonth() != now.getMonth()) {
-        return `${postTime.getMonth() + 1}月${postTime.getDate()}日`
+    if (timeDiff < oneHour) {
+        return `${Number.parseInt(timeDiff / oneMinute)}分钟前`
     }
 
-    if (postTime.getDate() != now.getDate()) {
-        return `${now.getDate() - postTime.getDate()}天前`
+    if (timeDiff < oneDay) {
+        return `${Number.parseInt(timeDiff / oneHour)}小时前`
     }
 
-    if (postTime.getHours() != now.getHours()) {
-        return `${now.getHours() - postTime.getHours()}小时前`
+    if (timeDiff < oneWeek) {
+        return `${Number.parseInt(timeDiff / oneDay)}天前`
     }
 
-    if (postTime.getMinutes() != now.getMinutes()) {
-        return `${now.getMinutes() - postTime.getMinutes()}分钟前`
+    if (timeDiff < oneMonth) {
+        return `${Number.parseInt(timeDiff / oneWeek)}周前`
     }
 
-    if (postTime.getSeconds() != now.getSeconds()) {
-        return `${now.getSeconds() - postTime.getSeconds()}秒前`
+    if (timeDiff < oneYear) {
+        return `${Number.parseInt(timeDiff / oneMonth)}月前`
+    }
+
+    if (timeDiff > oneYear) {
+        return `${Number.parseInt(timeDiff - oneYear)}年前`
     }
     return postTime
 }
