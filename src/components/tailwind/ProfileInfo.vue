@@ -1,9 +1,9 @@
 <template>
     <div>
         <div>
-            <div><img @click="showSlide([bannerPic], 0)" class=" w-[38rem] h-[18rem] object-cover object-center"
+            <div><img @click="showSlide([state.user.bannerUrl], 0)" class=" w-[38rem] h-[18rem] object-cover object-center"
                     :src="bannerPic" /></div>
-            <div><img @click="showSlide([avatarPic], 0)"
+            <div><img @click="showSlide([state.user.avatarUrl], 0)"
                     class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
                     :src="avatarPic" /></div>
             <div v-if="!isMyself" class="flex w-fit flex-row gap-x-3 relative top-[-4rem] right-[-24rem]">
@@ -179,8 +179,10 @@ async function unFollowAUser(userId) {
     }
 }
 
-function showSlide(urls, idx) {
+function showSlide(images, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
+
+    const urls = images.map(item => { return item.originUrl })
     store.showSlide(urls, idx)
 }
 </script>
