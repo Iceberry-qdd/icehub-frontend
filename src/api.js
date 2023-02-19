@@ -36,20 +36,25 @@ export function getUserTimeline(pageIndex, pageSize) {
 }
 
 /**
- * 上传文件
- * @param {object[]} files 待上传文件数组
+ * 上传图片
+ * @param {object[]} files 待上传图片数组
+ * @param {array} filesInfo 图片数组描述信息
  * @returns Promise<any>
  */
-export function uploadFiles(files) {
+export function uploadImages(files, filesInfo) {
     return new Promise((resolve, reject) => {
         let formData = new FormData()
         for (let i = 0; i < files.length; i++) {
             formData.append('files', files[i], files[i].name)
         }
 
+        const filesInfoStr = JSON.stringify(filesInfo)
+
+        formData.append('filesInfo', new Blob([filesInfoStr], { type: 'application/json' }))
+
         const xhr = new XMLHttpRequest()
         xhr.withCredentials = true;
-        xhr.open('POST', `${BASE_URL}/object/upload`, true)
+        xhr.open('POST', `${BASE_URL}/object/upload/image`, true)
         xhr.setRequestHeader('Authorization', TOKEN)
         xhr.onload = function () {
             if (xhr.status === 201) resolve(xhr.response)
@@ -371,13 +376,17 @@ export function getUserPosts(uid, pageIndex, pageSize) {
  * @returns 用户的新banner图信息
  */
 export function uploadUserBanner(data) {
-    return fetch(`${BASE_URL}/object/upload/banner`, {
+    let formData = new FormData()
+    const fileInfo = JSON.stringify({ hidden: false, altText: '', contentType: '' })
+    const image = JSON.stringify(data)
+    formData.append('file', new Blob([image], { type: 'application/json' }))
+    formData.append('fileInfo', new Blob([fileInfo], { type: 'application/json' }))
+    return fetch(`${BASE_URL}/object/upload/image/banner`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
+            'Authorization': TOKEN
         },
-        body: JSON.stringify(data),
+        body: formData,
         redirect: 'follow',
         credentials: 'same-origin'
     })
@@ -389,13 +398,17 @@ export function uploadUserBanner(data) {
  * @returns 用户的新avatar图信息
  */
 export function uploadUserAvatar(data) {
-    return fetch(`${BASE_URL}/object/upload/avatar`, {
+    let formData = new FormData()
+    const fileInfo = JSON.stringify({ hidden: false, altText: '', contentType: '' })
+    const image = JSON.stringify(data)
+    formData.append('file', new Blob([image], { type: 'application/json' }))
+    formData.append('fileInfo', new Blob([fileInfo], { type: 'application/json' }))
+    return fetch(`${BASE_URL}/object/upload/image/avatar`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
+            'Authorization': TOKEN
         },
-        body: JSON.stringify(data),
+        body: formData,
         redirect: 'follow',
         credentials: 'same-origin'
     })
