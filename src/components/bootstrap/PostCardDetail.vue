@@ -7,11 +7,12 @@
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(props.post.user.id)">
                 <img @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="avatarUrl">
-                <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
             </a>
             <div class="user-text">
-                <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline">
-                    {{ props.post.user.nickname }}</div>
+                <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline flex flex-row items-center gap-1">
+                    <div>{{ props.post.user.nickname }}</div>
+                    <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
+                </div>
                 <div class="post-time">发布于 {{ formattedTime }}</div>
             </div>
         </div>
@@ -196,9 +197,7 @@
 }
 
 .verify {
-    position: absolute;
-    left: 40px;
-    top: 34px;
+    font-size: 11pt !important;
     color: #0d6efd;
 }
 

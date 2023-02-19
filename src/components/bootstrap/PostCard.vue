@@ -11,11 +11,12 @@
             <a @mouseenter="state.showUserInfoPop = true" class="z-index-97 position-relative"
                 @click="routeToUser(state.post.user.nickname)">
                 <img class="avatar img-fluid" loading="lazy" :src="avatar">
-                <i class="bi bi-patch-check-fill verify" v-if="state.post.user.verified"></i>
+                
             </a>
             <div class="user-text z-index-97">
-                <div @click="routeToUser(state.post.user.nickname)" class="nickname cursor-pointer">
-                    {{ state.post.user.nickname }}
+                <div @click="routeToUser(state.post.user.nickname)" class="nickname cursor-pointer flex flex-row items-center gap-1">
+                    <div>{{ state.post.user.nickname }}</div>
+                    <i class="bi bi-patch-check-fill verify mb-1" v-if="state.post.user.verified"></i>
                 </div>
                 <div class="post-time">{{ formattedTime }}</div>
             </div>
@@ -227,9 +228,7 @@
 }
 
 .verify {
-    position: absolute;
-    left: 32px;
-    top: 28px;
+    font-size: 10pt !important;
     color: #0d6efd;
 }
 
