@@ -2,23 +2,29 @@
     <div class="card">
         <div id="card-mask" @click.self="routeToPost(state.post.id)"></div>
         <button type="button" class="btn menu">
-            <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
+            <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2"
+                class="z-index-96" />
             <PostMenus :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
         <div class="user-info d-flex">
-            <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user"
-                v-if="state.showUserInfoPop" class="user-info-pop z-index-98"></UserInfoPop>
+            <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user" v-if="state.showUserInfoPop"
+                class="user-info-pop z-index-98"></UserInfoPop>
             <a @mouseenter="state.showUserInfoPop = true" class="z-index-97 position-relative"
                 @click="routeToUser(state.post.user.nickname)">
                 <img class="avatar img-fluid" loading="lazy" :src="avatar">
-                
+
             </a>
             <div class="user-text z-index-97">
-                <div @click="routeToUser(state.post.user.nickname)" class="nickname cursor-pointer flex flex-row items-center gap-1">
+                <div @click="routeToUser(state.post.user.nickname)"
+                    class="nickname cursor-pointer flex flex-row items-center gap-1">
                     <div>{{ state.post.user.nickname }}</div>
                     <i class="bi bi-patch-check-fill verify mb-1" v-if="state.post.user.verified"></i>
                 </div>
-                <div class="post-time">{{ formattedTime }}</div>
+                <div class="post-time">
+                    <div>{{ formattedTime }}</div>
+                    <div v-if="state.post.status != 'PUBLIC'">•</div>
+                    <div v-if="state.post.status != 'PUBLIC'">{{ postStatus }}</div>
+                </div>
             </div>
         </div>
 
@@ -28,8 +34,8 @@
         </div>
         <div class="card-pics container z-index-96" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper relative" :class="gridWrapperClass"
-                    v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
+                <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl"
+                    :key="idx" :index="idx">
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic img-fluid"
                         :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
                     <div @click="playAnimateImage(idx)"
@@ -276,6 +282,9 @@
 .post-time {
     color: darkgrey;
     font-size: small;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
 }
 
 .card-pics {
@@ -302,7 +311,7 @@
 </style>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
 import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/api'
 import router from '@/route';
@@ -449,6 +458,19 @@ function resizePicture() {
 }
 
 function playAnimateImage(idx) { state.showOriginUrl[idx] = true }
+
+const postStatus = computed(() => {
+    const status = state.post.status
+    const statusMap = new Map([
+        ['PUBLIC', '公开'],
+        ['NOT_TIMELINE', '公共时间线上隐藏'],
+        ['ONLY_FOLLOWER', '订阅者可见'],
+        ['ONLY_CO_FOLLOWER', '互相订阅者可见'],
+        ['ONLY_SPECIFIED', '指定用户可见'],
+        ['ONLY_SELF', '仅自己可见']
+    ])
+    return statusMap.get(status)
+})
 
 onMounted(() => {
     resizePicture()

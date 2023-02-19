@@ -103,7 +103,8 @@ const state = reactive({
         content: "",
         top: false,
         attachmentsUrl: [],
-        type: "NORMAL"
+        type: "NORMAL",
+        status:'PUBLIC'
     }
 })
 
@@ -121,7 +122,6 @@ async function submitPost() {
     const imgFileSelector = document.getElementById("imgFile")
     state.imgList = Array.of(...imgFileSelector.files)
     let filesInfo = []
-    // const imgListCopy = Array.of(...imgFileSelector.files)
     state.imgList.forEach(item=>{
         const fileInfo = { hidden:"false",altText:"",contentType:item.type}
         filesInfo.push(fileInfo)

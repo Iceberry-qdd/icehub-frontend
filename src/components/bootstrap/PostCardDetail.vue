@@ -13,7 +13,11 @@
                     <div>{{ props.post.user.nickname }}</div>
                     <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
                 </div>
-                <div class="post-time">发布于 {{ formattedTime }}</div>
+                <div class="post-time">
+                    <div>发布于 {{ formattedTime }}</div>
+                    <div v-if="state.post.status != 'PUBLIC'">•</div>
+                    <div v-if="state.post.status != 'PUBLIC'">{{ postStatus }}</div>
+                </div>
             </div>
         </div>
 
@@ -245,6 +249,9 @@
 .post-time {
     color: darkgrey;
     font-size: small;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
 }
 
 .card-pics {
@@ -392,6 +399,19 @@ function resizePicture() {
 }
 
 function playAnimateImage(idx) { state.showOriginUrl[idx] = true }
+
+const postStatus = computed(() => {
+    const status = state.post.status
+    const statusMap = new Map([
+        ['PUBLIC', '公开'],
+        ['NOT_TIMELINE', '公共时间线上隐藏'],
+        ['ONLY_FOLLOWER', '订阅者可见'],
+        ['ONLY_CO_FOLLOWER', '互相订阅者可见'],
+        ['ONLY_SPECIFIED', '指定用户可见'],
+        ['ONLY_SELF', '仅自己可见']
+    ])
+    return statusMap.get(status)
+})
 
 onMounted(() => {
     resizePicture()
