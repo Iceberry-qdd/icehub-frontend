@@ -574,3 +574,21 @@ export function getMarkPostList(pageIndex, pageSize) {
         credentials: 'same-origin'
     })
 }
+
+/**
+ * 更改帖子内容
+ * @param {object} post 新的post对象
+ * @return 返回新的帖子对象
+ */
+export function updatePost(post) {
+    return fetch(`${BASE_URL}/post/`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(post),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
