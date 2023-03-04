@@ -9,7 +9,7 @@
                 class="flex flex-row gap-4 justify-left items-center py-2 px-4 text-start hover:bg-gray-100 active:bg-gray-200"
                 v-for="action in state.actions" :key="action.id" :index="action.id">
                 <IconDone v-if="action.code == state.post.status"></IconDone>
-                <IconDone v-else class="text-white"></IconDone>
+                <IconDone v-else class="text-transparent"></IconDone>
                 <div>{{ action.name }}</div>
             </div>
         </div>
@@ -47,7 +47,7 @@ const state = reactive({
         { id: 2, name: '公共时间线内隐藏', code: 'NOT_TIMELINE' },
         { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER' },
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER' },
-        { id: 5, name: '指定用户可见', code: 'ONLY_SPECIFIED' },
+        // { id: 5, name: '指定用户可见', code: 'ONLY_SPECIFIED' },
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF' },
     ],
     post: props.post,

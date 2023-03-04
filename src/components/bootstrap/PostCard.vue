@@ -36,6 +36,9 @@
             <div class="imgs-grid" :class="gridTemplateClass">
                 <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl"
                     :key="idx" :index="idx">
+                    <div v-if="pic.hidden==true" class="absolute w-full h-full flex flex-row justify-center items-center z-[99]">
+                        <div class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">敏感内容</div>
+                    </div>
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic img-fluid"
                         :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
                     <div @click="playAnimateImage(idx)"
@@ -75,6 +78,12 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
+.black-80-bg{
+    background-color: #000000AA !important;
+}
+.white-text{
+    color: white !important;
+}
 .gif {
     color: white;
 }
