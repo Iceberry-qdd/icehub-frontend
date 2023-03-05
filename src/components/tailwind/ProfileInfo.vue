@@ -107,7 +107,7 @@ const formattedDate = computed(() => {
 const bannerPic = computed(() => {
     const { previewUrl, originUrl } = state.user.bannerUrl || [null, null]
     const defaultUrl = '/src/assets/default-bg.jpg'
-    return previewUrl || originUrl || defaultUrl
+    return originUrl || previewUrl || defaultUrl // TODO 头像和背景图的原图与缩略图显示关系
 })
 
 const followingCountText = computed(() => {

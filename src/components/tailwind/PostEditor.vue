@@ -16,9 +16,9 @@
                 </div>
 
                 <textarea v-model="state.data.imagesInfo[state.imageEditIndex].altText" @keydown="resize"
-                    class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
+                    class="p-3 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
                     maxlength="512" rows="2" placeholder="简述此图片的内容" id="post-input" name="post"></textarea>
-                <div @click="state.showImageEditPanel=false" class="cursor-pointer bg-blue-500 w-fit text-[12pt] mt-1 mb-2 mr-0 ml-2 text-white font-bold px-4 py-1 rounded-full">确定</div>
+                <div @click="state.showImageEditPanel=false" class="cursor-pointer bg-blue-500 w-fit text-[11pt] mt-1 mb-3 mr-0 ml-3 text-white font-bold px-4 py-1 rounded-full">确定</div>
             </div>
 
         </div>
@@ -190,14 +190,6 @@ function resize() {
 }
 
 async function submitPost() {
-    // const imgFileSelector = document.getElementById("imgFile")
-    // state.imgList = Array.of(...imgFileSelector.files)
-    // let filesInfo = []
-    // state.imgList.forEach(item => {
-    //     const fileInfo = state.data.imagesInfo[]
-    //     filesInfo.push(fileInfo)
-    // })
-
     try {
         if (state.content.length == 0) throw new Error("文字内容不能为空！")
 
