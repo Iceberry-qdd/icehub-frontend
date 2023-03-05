@@ -8,9 +8,12 @@
         </div>
         <div class="px-2 break-all text-[11pt]">{{ state.post.content }}</div>
         <div class="flex relative flex-col gap-y-1">
+            <div v-if="isCoverHidden" class="absolute w-full h-full flex flex-row justify-center items-center z-[99]">
+                <div class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">敏感内容</div>
+            </div>
             <img loading="lazy" v-if="state.post.attachmentsUrl.length > 0" :src="getCoverImageUrl(state.post.attachmentsUrl[0])"
                 class=" rounded-b-[8px] w-full h-[15rem] object-cover" />
-            <div v-if="isGifCover"
+            <div v-if="isGifCover && !isCoverHidden"
                 class="absolute flex justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
                 <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
             </div>
@@ -19,6 +22,12 @@
 </template>
 
 <style scoped>
+.black-80-bg{
+    background-color: #000000AA !important;
+}
+.white-text{
+    color: white !important;
+}
 .m-bg-white {
     background-color: white !important;
 }
@@ -53,6 +62,11 @@ const avatar = computed(() => {
 function getCoverImageUrl(attachment) {
     return attachment.previewUrl || attachment.originUrl
 }
+
+const isCoverHidden = computed(() => {
+    if (!state.post.attachmentsUrl[0]) return false
+    else return state.post.attachmentsUrl[0].hidden
+})
 
 const isGifCover = computed(() => {
     if (!state.post.attachmentsUrl[0]) return false

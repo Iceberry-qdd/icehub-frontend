@@ -37,7 +37,7 @@
                 <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl"
                     :key="idx" :index="idx">
                     <div v-if="pic.hidden==true" class="absolute w-full h-full flex flex-row justify-center items-center z-[99]">
-                        <div class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">敏感内容</div>
+                        <div @click="getImageUrlIgnoreNSFW(idx)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">敏感内容</div>
                     </div>
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic img-fluid"
                         :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
@@ -322,7 +322,7 @@
 <script setup>
 import { computed, onMounted, reactive } from 'vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
-import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/api'
+import { likeAPost, dislikeAPost, getUserInfoByNickname,getImageUrlIgnoreHidden } from '@/api'
 import router from '@/route';
 import { store } from '@/store'
 import { humanizedTime } from '@/utils/formatUtils.js'
@@ -480,6 +480,20 @@ const postStatus = computed(() => {
     ])
     return statusMap.get(status)
 })
+
+async function getImageUrlIgnoreNSFW(imageIndex){
+    const postId = state.post.id
+    try{
+        const response = await getImageUrlIgnoreHidden(postId,imageIndex)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = await response.json()
+        state.post.attachmentsUrl[imageIndex]=result
+    } catch (e) {
+        store.setErrorMsg(e.message)
+        console.error(e)
+    }
+}
 
 onMounted(() => {
     resizePicture()

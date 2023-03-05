@@ -592,3 +592,21 @@ export function updatePost(post) {
         credentials: 'same-origin'
     })
 }
+
+/**
+ * 查询给定图片的完整链接，忽略hidden警告
+ * @param {string} postId 帖子id
+ * @param {int} imageIndex 图片下标
+ * @returns 该图片的完整链接
+ */
+export function getImageUrlIgnoreHidden(postId,imageIndex){
+    return fetch(`${BASE_URL}/post/attachment?pid=${postId}&attrId=${imageIndex}&ih=true`,{
+        method:'GET',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
