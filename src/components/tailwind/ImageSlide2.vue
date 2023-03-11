@@ -11,8 +11,11 @@
             </div>
         </div>
         <div class="flex absolute flex-col w-screen h-screen items-center justify-center">
-            <img v-show="index == state.activeIndex" class=" max-h-screen max-w-screen" :src="url"
-                v-for="(url, index) in state.imgs" :key="index" :index="index" />
+            <div v-for="(url, index) in state.imgs" :key="index" :index="index" >
+                <img v-show="index == state.activeIndex && url.originUrl" class=" max-h-screen max-w-screen" :src="url.originUrl"  />
+                <img v-show="index == state.activeIndex && !url.originUrl && url.previewUrl" class=" min-h-[25rem] min-w-[25rem] max-h-screen max-w-screen" :src="url.previewUrl"  />
+
+            </div>
         </div>
         <div @click="state.activeIndex++" v-show="state.activeIndex < state.imgs.length - 1"
             class="cursor_pointer fixed right-0 h-full w-[15%] z-[105] bg-transparent text-transparent hover:text-white hover:bg-gradient-to-l hover:from-black hover:to-transparent">

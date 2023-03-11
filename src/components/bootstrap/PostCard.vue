@@ -424,9 +424,7 @@ function repostIt() { store.repost(state.post) }
 
 function showSlide(images, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
-
-    const urls = images.map(item => { return item.originUrl })
-    store.showSlide(urls, idx)
+    store.showSlide(images, idx)
 }
 
 const avatar = computed(() => {
