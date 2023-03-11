@@ -20,7 +20,6 @@
                     maxlength="512" rows="2" placeholder="简述此图片的内容" id="post-input" name="post"></textarea>
                 <div @click="state.showImageEditPanel=false" class="cursor-pointer bg-blue-500 w-fit text-[11pt] mt-1 mb-3 mr-0 ml-3 text-white font-bold px-4 py-1 rounded-full">确定</div>
             </div>
-
         </div>
 
         <div v-if="state.isLoading"
@@ -195,6 +194,11 @@ async function submitPost() {
 
         state.isLoading = true
         state.data.content = state.content
+        for(let i = 0;i<9;i++){
+            if(state.imgList.length <= i) break
+            const mediaType = state.imgList[i].type
+            state.data.imagesInfo[i].contentType = mediaType
+        }
 
         if (state.imgList.length > 0) {
             const response = await uploadImages(state.imgList, state.data.imagesInfo)
