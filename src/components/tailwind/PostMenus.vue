@@ -9,10 +9,10 @@
                 class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200"></BookmarkAction>
             <FollowingAction v-if="!isMySelf" @dismissMenu="dismiss" :user="state.post.user"
                 class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200"></FollowingAction>
-            <div class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">对此内容不感兴趣</div>
+            <div v-if="!isMySelf" class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">对此内容不感兴趣</div>
             <div v-if="isAdmin" class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">管理员选项</div>
-            <div class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">屏蔽 {{ state.user.nickname }} 的所有内容</div>
-            <div class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">举报此内容</div>
+            <div v-if="!isMySelf" class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">屏蔽 {{ state.user.nickname }} 的所有内容</div>
+            <div v-if="!isMySelf" class="py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">举报此内容</div>
             <VisibilityAction @dismissMenu="dismiss" :post="state.post" v-if="isMySelf"></VisibilityAction>
             <div v-if="isMySelf" class="py-2 px-4 w-full text-start hover:bg-gray-100 text-red-500 rounded-b-[8px] active:bg-gray-200">删除此内容</div>
         </div>
@@ -48,6 +48,6 @@ const isMySelf = computed(() => {
 })
 
 const isAdmin=computed(()=>{
-    return state.user.verified == true
+    return state.curUser.verified == true
 })
 </script>
