@@ -3,22 +3,22 @@
         <div v-if="state.showImageEditPanel == true" id="imageEditPanel"
             class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
             <div class="w-[25%] h-fit bg-white rounded-[8px] overflow-y-auto">
-                <div id="imgWrapper"
-                    class="relative flex flex-row justify-center items-center w-full">
-                    <div v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'true'"
-                        class="absolute h-full w-full bg-white/5 backdrop-blur-xl"></div>
+                <div id="imgWrapper" class="relative flex flex-row justify-center items-center w-full">
+                    <div v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'true'" class="absolute h-full w-full bg-white/5 backdrop-blur-xl"></div>
                     <img :src="loadImage(state.imgList[state.imageEditIndex])" class="max-w-full max-h-full object-cover" />
                     <div class="absolute bottom-0 right-0 flex flex-row gap-2 p-2">
-                        <IconFlag @click="toggleHiddenFlag" v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'false'" class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlag>
+                        <IconFlagOn @click="toggleHiddenFlag"  v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'false'" class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOn>
                         <IconFlagOff @click="toggleHiddenFlag" v-else class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOff>
-                        <IconMagic class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconMagic>
+                        <IconAltOn @click="toggleAltFlag" v-if="state.showAltEditor[state.imageEditIndex] == true" class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOn>
+                        <IconAltOff @click="toggleAltFlag" v-else  class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOff>
                     </div>
                 </div>
 
-                <textarea v-model="state.data.imagesInfo[state.imageEditIndex].altText" @keydown="resize"
+                <textarea v-if="state.showAltEditor[state.imageEditIndex] == true"
+                    v-model="state.data.imagesInfo[state.imageEditIndex].altText" @keydown="resize"
                     class="p-3 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
-                    maxlength="512" rows="2" placeholder="简述此图片的内容" id="post-input" name="post"></textarea>
-                <div @click="state.showImageEditPanel=false" class="cursor-pointer bg-blue-500 w-fit text-[11pt] mt-1 mb-3 mr-0 ml-3 text-white font-bold px-4 py-1 rounded-full">确定</div>
+                    maxlength="50" rows="2" placeholder="简述此图片的内容" id="post-input" name="post"></textarea>
+                <div @click="dismissImageEditPanel" class="cursor-pointer bg-blue-500 w-fit text-[11pt] mt-3 mb-3 mr-0 ml-3 text-white font-bold px-4 py-1 rounded-full">确定</div>
             </div>
         </div>
 
@@ -82,7 +82,7 @@
                         </div>
                         <div v-if="state.showVisibilityPanel == true"
                             class="z-[99] absolute top-[2.5rem] min-w-max min-h-max bg-white rounded-[6px] shadow-md ring-1 ring-gray-200">
-                            <div @click="{state.data.status = action.code;state.showVisibilityPanel = false}"
+                            <div @click="{ state.data.status = action.code; state.showVisibilityPanel = false }"
                                 class="flex flex-row justify-left items-center gap-x-2 hover:bg-gray-100 active:bg-gray-200 pl-4 pr-5 py-[0.65rem] cursor-pointer"
                                 v-for="action in state.visibilityActions" :key="action.id" :index="action.id">
                                 <IconDone v-if="state.data.status == action.code"></IconDone>
@@ -137,7 +137,9 @@ import IconAdd from '@/components/icons/IconAdd.vue'
 import IconError from '@/components/icons/IconError.vue'
 import IconDone from '@/components/icons/IconDone.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
-import IconFlag from '@/components/icons/IconFlag.vue'
+import IconAltOn from '@/components/icons/IconAltOn.vue'
+import IconAltOff from '@/components/icons/IconAltOff.vue'
+import IconFlagOn from '@/components/icons/IconFlagOn.vue'
 import IconFlagOff from '@/components/icons/IconFlagOff.vue'
 
 const state = reactive({
@@ -175,7 +177,8 @@ const state = reactive({
     ],
     showVisibilityPanel: false,
     showImageEditPanel: false,
-    imageEditIndex: 0
+    imageEditIndex: 0,
+    showAltEditor: [false, false, false, false, false, false, false, false, false]
 })
 
 const hasImage = computed(() => {
@@ -194,8 +197,8 @@ async function submitPost() {
 
         state.isLoading = true
         state.data.content = state.content
-        for(let i = 0;i<9;i++){
-            if(state.imgList.length <= i) break
+        for (let i = 0; i < 9; i++) {
+            if (state.imgList.length <= i) break
             const mediaType = state.imgList[i].type
             state.data.imagesInfo[i].contentType = mediaType
         }
@@ -272,12 +275,24 @@ function toggleHiddenFlag() {
     state.data.imagesInfo[index].hidden = lastState == 'false' ? 'true' : 'false'
 }
 
-watch(()=>state.showImageEditPanel,(newVal,oldVal)=>{
-    if(newVal == true){
+function toggleAltFlag() {
+    const index = state.imageEditIndex
+    const lastState = state.showAltEditor[index]
+    state.showAltEditor[index] = !lastState
+}
+
+watch(() => state.showImageEditPanel, (newVal, oldVal) => {
+    if (newVal == true) {
         document.querySelector("body").setAttribute("style", "overflow:hidden")
-    }else{
+    } else {
         document.querySelector("body").removeAttribute("style")
     }
 })
+
+function dismissImageEditPanel() {
+    state.showImageEditPanel = false
+    const index = state.imageEditIndex
+    if (state.showAltEditor[index] == false) { state.data.imagesInfo[index].altText = '' }
+}
 
 </script>

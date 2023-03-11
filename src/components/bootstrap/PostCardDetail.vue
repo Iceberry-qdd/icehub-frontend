@@ -2,7 +2,7 @@
     <div class="card">
         <button type="button" class="btn menu">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
-            <PostMenus :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
+            <PostMenus id="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
         <div class="user-info d-flex">
             <a class="position-relative" @click="showUserProfile(props.post.user.id)">
@@ -27,15 +27,15 @@
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper relative" :class="gridWrapperClass"
-                    v-for="(pic, idx) in props.post.attachmentsUrl" :key="idx" :index="idx">
-                    <div v-if="pic.hidden==true" class="absolute w-full h-full flex flex-row justify-center items-center z-[99]">
+                <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in props.post.attachmentsUrl" :key="idx" :index="idx">
+                    <IconAltOn @click="showSlide(state.post.attachmentsUrl, idx)" v-show="pic.altText" class="absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer"></IconAltOn>
+                    <div class="absolute w-full h-full flex flex-row justify-center items-center z-[99]" :class="[pic.hidden==true?'flex':'hidden']">
                         <div @click="getImageUrlIgnoreNSFW(idx)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">敏感内容</div>
                     </div>
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic m-pic img-fluid"
                         :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
                     <div @click="playAnimateImage(idx)"
-                        v-if="pic.contentType == 'image/gif' && state.showOriginUrl[idx] == false"
+                        :class="[pic.contentType == 'image/gif' && state.showOriginUrl[idx] == false?'flex':'hidden']"
                         class="absolute flex justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
                         <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
                     </div>
@@ -70,6 +70,26 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
+
+.pdg-1{
+    padding: 0.25rem;
+}
+
+.btm-1{
+    bottom: 0.3rem;
+}
+
+.rgt-1{
+    right: 0.3rem;
+}
+
+.z-index-100{
+    z-index: 100 !important;
+}
+
+#post-menus{
+    z-index: 102;
+}
 .black-80-bg{
     background-color: #000000AA !important;
 }
@@ -291,6 +311,7 @@ import { standardTime } from '@/utils/formatUtils.js'
 import RepostCard from '@/components/tailwind/RepostCard.vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue'
 import IconGif from '@/components/icons/IconGif.vue'
+import IconAltOn from '@/components/icons/IconAltOn.vue'
 
 const props = defineProps(['post'])
 
