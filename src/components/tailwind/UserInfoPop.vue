@@ -55,14 +55,16 @@ const state = reactive({
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const bannerPic = computed(() => {
-    const { previewUrl, originUrl } = state.user.bannerUrl || [null, null]
     const defaultUrl = '/src/assets/default-bg.jpg'
+    const { previewUrl, originUrl, contentType } = state.user.bannerUrl || [null, null, null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
 const avatarPic = computed(() => {
-    const { previewUrl, originUrl } = state.user.avatarUrl || [null, null]
     const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
+    const { previewUrl, originUrl, contentType } = state.user.avatarUrl || [null, null, null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 

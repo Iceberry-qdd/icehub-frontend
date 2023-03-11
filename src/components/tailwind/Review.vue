@@ -164,8 +164,9 @@ const likedIconColor = computed(() => {
 })
 
 const avatar = computed(() => {
-    const { previewUrl, originUrl } = props.review.user.avatarUrl || [null, null]
     const defaultUrl = `https://api.multiavatar.com/${props.review.user.nickname}.svg`
+    const { previewUrl, originUrl,contentType } = props.review.user.avatarUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 

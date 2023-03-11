@@ -40,7 +40,8 @@ const props = defineProps(['post', 'parent'])
 
 const state = reactive({
     content: '',
-    loading: false
+    loading: false,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
 })
 
 const replyTo = computed(() => {
@@ -82,17 +83,10 @@ async function submitReview() {
 }
 
 const avatar = computed(() => {
-    try {
-        const avatar = (JSON.parse(localStorage.getItem("CUR_USER"))).avatarUrl
-        const nickname = (JSON.parse(localStorage.getItem("CUR_USER"))).nickname
-
-        const { previewUrl, originUrl } = avatar || [null, null]
-        const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
-        return previewUrl || originUrl || defaultUrl
-    } catch (e) {
-        store.setErrorMsg('无法获取登录用户信息！')
-        console.log(e)
-    }
+    const defaultUrl = `https://api.multiavatar.com/${state.curUser.nickname}.svg`
+    const { previewUrl, originUrl,contentType } = state.curUser.avatarUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    return previewUrl || originUrl || defaultUrl
 })
 
 function resize() {

@@ -427,10 +427,12 @@ function showSlide(images, idx) {
     store.showSlide(images, idx)
 }
 
+
 const avatar = computed(() => {
-    const avatarUrl = getImageUrl(state.post.user.avatarUrl)
     const defaultUrl = `https://api.multiavatar.com/${state.post.user.nickname}.svg`
-    return avatarUrl || defaultUrl
+    const { previewUrl, originUrl,contentType } = state.post.user.avatarUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    return previewUrl || originUrl || defaultUrl
 })
 
 const hasPics = computed(() => {

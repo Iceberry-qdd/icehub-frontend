@@ -85,8 +85,9 @@ async function reposting() {
 }
 
 const avatar = computed(() => {
-    const { previewUrl, originUrl } = state.curUser.avatarUrl || [null, null]
     const defaultUrl = `https://api.multiavatar.com/${state.curUser.nickname}.svg`
+    const { previewUrl, originUrl,contentType } = state.curUser.avatarUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 

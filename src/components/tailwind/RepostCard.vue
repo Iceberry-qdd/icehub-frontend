@@ -53,9 +53,11 @@ function routeToUserProfile() {
     router.push({ name: 'postDetail', params: { id: state.post.id } })
 }
 
+
 const avatar = computed(() => {
-    const { previewUrl, originUrl } = state.post.user.avatarUrl || [null, null]
     const defaultUrl = `https://api.multiavatar.com/${state.post.user.nickname}.svg`
+    const { previewUrl, originUrl,contentType } = state.post.user.avatarUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 

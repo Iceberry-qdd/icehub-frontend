@@ -105,9 +105,10 @@ const formattedDate = computed(() => {
 })
 
 const bannerPic = computed(() => {
-    const { previewUrl, originUrl } = state.user.bannerUrl || [null, null]
     const defaultUrl = '/src/assets/default-bg.jpg'
-    return originUrl || previewUrl || defaultUrl // TODO 头像和背景图的原图与缩略图显示关系
+    const { previewUrl, originUrl,contentType } = state.user.bannerUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    return previewUrl || originUrl || defaultUrl
 })
 
 const followingCountText = computed(() => {
@@ -125,8 +126,9 @@ const followerCountText = computed(() => {
 })
 
 const avatarPic = computed(() => {
-    const { previewUrl, originUrl } = state.user.avatarUrl || [null, null]
     const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
+    const { previewUrl, originUrl,contentType } = state.user.avatarUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 

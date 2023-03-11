@@ -374,8 +374,9 @@ function showSlide(images, idx) {
 }
 
 const avatarUrl = computed(() => {
-    const { previewUrl, originUrl } = props.post.user.avatarUrl || [null, null]
     const defaultUrl = `https://api.multiavatar.com/${props.post.user.nickname}.svg`
+    const { previewUrl, originUrl,contentType } = props.post.user.avatarUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
