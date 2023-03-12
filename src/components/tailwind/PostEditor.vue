@@ -38,38 +38,39 @@
                         multiple="true" accept="image/*" />
                     <div class="relative flex-col">
                         <div class="flex" @click="preChoosePics">
-                            <add-picture theme="outline" size="18" fill="#333" :strokeWidth="3"
-                                :class="[hasImage ? 'bg-blue-200' : '']" />
+                            <add-picture theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[hasImage ? 'bg-blue-200' : '']" />
                         </div>
-                        <div v-if="state.showImagePanel == true" id="imagePanel"
+                        <Transition name="fade">
+                            <div v-if="state.showImagePanel == true" id="imagePanel"
                             class="z-[99] absolute top-[2.5rem] min-w-max min-h-max bg-white rounded-[6px] p-3 shadow-md ring-1 ring-gray-200">
-                            <div class="grid grid-cols-3 grid-rows-1 gap-2">
-                                <div class="relative" v-for="(item, key) in state.imgList" :key="key" :index="key">
-                                    <div v-if="state.data.imagesInfo[key].hidden == 'true'"
-                                        class="absolute h-full w-full rounded-[8px] bg-white/5 backdrop-blur-xl"></div>
-                                    <img class="max-w-[5rem] min-w-[5rem] h-[5rem] rounded-[8px] cursor-default object-cover"
-                                        :src="loadImage(item)" />
-                                    <div
-                                        class="absolute w-full h-full rounded-[8px] top-0 left-0 bg-transparent cursor-pointer">
-                                        <div @click="editImage(key)"
-                                            class="flex h-full w-full justify-center items-center rounded-[8px] hover:bg-[#00000066] hover:text-white text-transparent">
-                                            <IconMagic class="text-[16pt]" />
+                                <div class="grid grid-cols-3 grid-rows-1 gap-2">
+                                    <div class="relative" v-for="(item, key) in state.imgList" :key="key" :index="key">
+                                        <div v-if="state.data.imagesInfo[key].hidden == 'true'"
+                                            class="absolute h-full w-full rounded-[8px] bg-white/5 backdrop-blur-xl"></div>
+                                        <img class="max-w-[5rem] min-w-[5rem] h-[5rem] rounded-[8px] cursor-default object-cover"
+                                            :src="loadImage(item)" />
+                                        <div
+                                            class="absolute w-full h-full rounded-[8px] top-0 left-0 bg-transparent cursor-pointer">
+                                            <div @click="editImage(key)"
+                                                class="flex h-full w-full justify-center items-center rounded-[8px] hover:bg-[#00000066] hover:text-white text-transparent">
+                                                <IconMagic class="text-[16pt]" />
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div @click="deleteImg(item, key)"
-                                        class="absolute w-[1.25rem] h-[1.25rem] top-0 right-0 rounded-tr-[8px] rounded-[4px] bg-[#000000BB] cursor-pointer">
-                                        <div class="flex w-full h-full justify-center items-center">
-                                            <IconError class="text-gray-300 text-[10pt]"></IconError>
+                                        <div @click="deleteImg(item, key)"
+                                            class="absolute w-[1.25rem] h-[1.25rem] top-0 right-0 rounded-tr-[8px] rounded-[4px] bg-[#000000BB] cursor-pointer">
+                                            <div class="flex w-full h-full justify-center items-center">
+                                                <IconError class="text-gray-300 text-[10pt]"></IconError>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div @click="choosePics" v-if="state.imgList.length < 9"
-                                    class="flex justify-center items-center max-w-[5rem] min-w-[5rem] h-[5rem] hover:bg-zinc-200 rounded-[8px] cursor-pointer active:bg-zinc-300">
-                                    <IconAdd class="text-gray-500"></IconAdd>
+                                    <div @click="choosePics" v-if="state.imgList.length < 9"
+                                        class="flex justify-center items-center max-w-[5rem] min-w-[5rem] h-[5rem] hover:bg-zinc-200 rounded-[8px] cursor-pointer active:bg-zinc-300">
+                                        <IconAdd class="text-gray-500"></IconAdd>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Transition>
                     </div>
                     <video-two theme="outline" size="18" fill="#333" :strokeWidth="3" v-if="!hasImage" />
                     <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
@@ -80,16 +81,18 @@
                             <preview-close v-else theme="outline" size="18" fill="#333" :strokeWidth="3"
                                 class="bg-blue-200" />
                         </div>
-                        <div v-if="state.showVisibilityPanel == true"
+                        <Transition name="fade">
+                            <div v-if="state.showVisibilityPanel == true"
                             class="z-[99] absolute top-[2.5rem] min-w-max min-h-max bg-white rounded-[6px] shadow-md ring-1 ring-gray-200">
-                            <div @click="{ state.data.status = action.code; state.showVisibilityPanel = false }"
-                                class="flex flex-row justify-left items-center gap-x-2 hover:bg-gray-100 active:bg-gray-200 pl-4 pr-5 py-[0.65rem] cursor-pointer"
-                                v-for="action in state.visibilityActions" :key="action.id" :index="action.id">
-                                <IconDone v-if="state.data.status == action.code"></IconDone>
-                                <IconDone v-else class="text-transparent"></IconDone>
-                                <div>{{ action.name }}</div>
+                                <div @click="{ state.data.status = action.code; state.showVisibilityPanel = false }"
+                                    class="flex flex-row justify-left items-center gap-x-2 hover:bg-gray-100 active:bg-gray-200 pl-4 pr-5 py-[0.65rem] cursor-pointer"
+                                    v-for="action in state.visibilityActions" :key="action.id" :index="action.id">
+                                    <IconDone v-if="state.data.status == action.code"></IconDone>
+                                    <IconDone v-else class="text-transparent"></IconDone>
+                                    <div>{{ action.name }}</div>
+                                </div>
                             </div>
-                        </div>
+                        </Transition>
                     </div>
                     <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" />
                     <m-time theme="outline" size="18" fill="#333" :strokeWidth="3" />
@@ -111,6 +114,23 @@
 </template>
 
 <style scoped>
+
+.fade-enter-active{
+    transition: opacity 0.15s ease-in-out;
+}
+
+.fade-leave-active{
+    transition: opacity 0.15s ease-in-out;
+}
+
+.fade-enter-from{
+    opacity: 0;
+}
+
+.fade-leave-to{
+    opacity: 0;
+}
+
 .material-icons-round {
     font-size: 14pt;
     cursor: pointer;
