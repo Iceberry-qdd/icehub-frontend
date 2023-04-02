@@ -8,7 +8,7 @@
                 <span v-else class="material-icons-round">{{ menu.icon }}</span>{{ menu.name }}
             </div>
 
-            <span class="badge bg-primary rounded-pill" v-if="menu.badgeCount > 0">{{ menu.badgeCount }}</span>
+            <span class="badge rounded-pill" v-if="menu.badgeCount > 0">{{ menu.badgeCount }}</span>
         </li>
 
     </ul>
@@ -73,8 +73,8 @@ li:hover {
 }
 
 .badge {
-    background-color: #3b82f6 !important;
-    color: white;
+    background-color: #cfe2ff !important;
+    color: black;
     border-radius: 4rem !important;
     width: 2rem;
     height: 1.4rem;
@@ -85,7 +85,7 @@ li:hover {
 .list-group {
     width: 14%;
     position: fixed;
-    left: 12%;
+    left: 10%;
 }
 
 .list-group-item {
@@ -175,22 +175,16 @@ function getCurUserNickname() {
     return nickname || ''
 }
 
+function getUrlPagePath() {
+    const path = window.document.location.pathname
+    const pageName = path.split('/')[1]
+    return pageName || 'index'
+}
+
 onMounted(() => {
-    const url = $route.path //FIXME 此处当页面刷新时，不生效，永远指向'/'
-    let menuId = 0
-
-    for (const menu of state.menus) {
-        if (url == '/' && menu.routeTo == '/index') {
-            menuId = menu.id
-            break
-        }
-
-        if (url.startsWith(menu.routeTo)) {
-            menuId = menu.id
-            break
-        }
-    }
-
+    const pageName = getUrlPagePath()
+    const menuItem = state.menus.filter(menu => menu.routeTo == '/' + pageName)
+    const menuId = menuItem.length < 0 ? 1 : menuItem[0].id
     activeMenu(menuId)
 })
 
