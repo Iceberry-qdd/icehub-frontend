@@ -9,11 +9,10 @@
                 <a href="#">
                     <img class="avatar" :src="user.avatar" width="60" height="60">
                 </a>
-                <i class="bi bi-patch-check-fill verify" v-if="user.verified"></i>
             </div>
 
             <div class="info d-flex flex-column justify-content-start">
-                <div class="nickname">{{user.nickname}}</div>
+                <div class="nickname">{{user.nickname}} <i class="bi bi-patch-check-fill verify" v-if="user.verified"></i></div>
                 <div class="brief">{{user.brief}}</div>
             </div>
 
@@ -26,15 +25,16 @@
 @import url("bootstrap/dist/css/bootstrap.css");
 
 .userCard:hover{
-    background-color: #f5f5f5;
+    background-color: #cfe2ffAA;
 }
 
 .userCard:active{
-    background-color: #e9ecef;
+    background-color: #cfe2ff55;
 }
 .card-header{
-    background-color: white;
-    
+    background-color: #cfe2ff11;
+    font-size: 14pt;
+    font-weight: bold;
 }
 
 .nickname{
@@ -58,39 +58,31 @@
 }
 
 .card {
-    margin-bottom: 0.5rem;
-    /* padding: 0.4rem 0.4rem 1rem 0.8rem !important; */
-    padding: 0.4rem 0rem 0rem 0rem !important;
+    margin: 1rem 0rem 0rem 1rem !important;
+    padding: 0.5rem 0rem 1rem 0rem !important;
     position: fixed;
-    /* left: 68.6%;
-    top: 5rem; */
-    /* width: 20rem; */
+    background-color: #cfe2ff77;
+    padding: 1rem 0rem 0 1rem;
+    border-radius: 12px;
 }
 
 .userCard {
-    padding: 0.8rem 0.8rem 0.8rem 0.8rem;
+    padding: 0.8rem 0.4rem;
+    margin: 0 0.8rem;
+    border-radius: 8px;
     column-gap: 1rem;
 }
 
 .verify {
-    position: absolute;
-    left: 64px;
-    top: 60px;
     color: #0d6efd;
 }
 
 .bi {
-    font-size: 1.0rem;
-    margin-right: 0.3rem;
-}
-
-.card {
-    margin-bottom: 0.5rem;
-    padding: 1rem 1rem 0 1rem;
+    font-size: 11pt;
 }
 
 .avatar {
-    border-radius: 16%;
+    border-radius: 8px;
 }
 </style>
 
@@ -109,8 +101,8 @@ export default {
                 { 
                     "avatar":"https://api.multiavatar.com/Iceberryss.svg",
                     "verified":true,
-                    "nickname":"Iceberry新一轮较强冷空气将影响中国中东部大部地区，继续带来大风降温天气。受冷空气影响",
-                    "brief":"国家剧团作家，做有《家有儿女》等,新一轮较强冷空气将影响中国中东部大部地区，继续带来大风降温天气。受冷空气影响"
+                    "nickname":"Kotlin developer",
+                    "brief":"Orginize develop mettings."
                 },
                 { 
                     "avatar":"https://api.multiavatar.com/Iceberrys.svg",
