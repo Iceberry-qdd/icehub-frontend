@@ -10,7 +10,11 @@
             <Sidebar id="menu"></Sidebar>
         </div>
         <div id="main">
-            <router-view></router-view>
+            <router-view v-slot="{Component}">
+                <keep-alive :max="16">
+                    <component :is="Component"/>
+                </keep-alive>
+            </router-view>
         </div>
         <div id="sidebar-r">
             <RecommendUserCard></RecommendUserCard>
@@ -20,7 +24,7 @@
 
 <style scoped>
 #menu {
-    margin-top: 6rem;
+    margin: 6rem 0rem 0 0;
 }
 
 #container {
@@ -36,8 +40,6 @@
 }
 
 #main {
-    /* border-left: 1px solid #EEEEEE;
-    border-right: 1px solid #EEEEEE; */
     flex-basis: 50%;
 }
 
