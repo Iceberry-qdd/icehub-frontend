@@ -11,7 +11,7 @@
         </div>
         <div id="main">
             <router-view v-slot="{Component}">
-                <keep-alive :max="16" :include="['Index','Explore','Bookmark','Profile']">
+                <keep-alive :max="16" :include="['Index','Explore','Bookmark']">
                     <component :is="Component"/>
                 </keep-alive>
             </router-view>
@@ -55,12 +55,13 @@ import Sidebar from '@/components/bootstrap/Sidebar.vue'
 import RecommendUserCard from '@/components/bootstrap/RecommendUserCard.vue'
 import GlobalTipDialog from '@/components/tailwind/GlobalTipDialog.vue'
 import Brand from '@/components/tailwind/Brand.vue'
-import { onMounted, reactive } from 'vue'
+import { onMounted, onUnmounted, reactive, watch } from 'vue'
 import { getCurUserInfo } from '@/api'
 import { store } from '@/store'
 import ImageSlide2 from '@/components/tailwind/ImageSlide2.vue'
 import ImageCropper from '@/components/tailwind/ImageCropper.vue'
-import RepostPanel from './components/tailwind/RepostPanel.vue'
+import RepostPanel from '@/components/tailwind/RepostPanel.vue'
+import { ws } from './websocket.js'
 
 const state = reactive({
     user: null,
@@ -86,14 +87,30 @@ async function curUser() {
         localStorage.removeItem('TOKEN')
         localStorage.removeItem('CUR_USER')
         setTimeout(() => {
-            self.location = `${window.document.location.host}:${window.document.location.port}/auth.html` // TODO 此跳转在有二级页面时不正确
+            top.location = `http://${window.document.location.host}/auth.html`
         }, 3000)
-        window.history.forward(1);
     }
 }
 
+function disconnectToWs() {
+    if (state.user == null) return
+    ws.disconnectWebsocket()
+}
+
+watch(()=>state.user,(newVal,oldVal)=>{
+    if(newVal!=null && newVal != oldVal){
+        ws.initWebsocket()
+        const token = localStorage.getItem('TOKEN')
+        ws.connectWebsocket(token)
+    }
+})
+
 onMounted(() => {
     curUser()
+})
+
+onUnmounted(() => {
+    disconnectToWs()
 })
 
 </script>

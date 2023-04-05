@@ -401,6 +401,7 @@ import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import RepostCard from '@/components/tailwind/RepostCard.vue'
 import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
+import { ws, MsgPack } from '../../websocket.js'
 
 const props = defineProps(['post'])
 
@@ -410,7 +411,8 @@ const state = reactive({
     reaction: [false, props.post.liked, false],
     showUserInfoPop: false,
     isShowMenu: false,
-    showAltText: [false, false, false, false, false, false, false, false, false]
+    showAltText: [false, false, false, false, false, false, false, false, false],
+    user: JSON.parse(localStorage.getItem("CUR_USER")),
 })
 
 const cardClass = computed(() => {
@@ -475,6 +477,8 @@ async function toggleLike() {
             const lastCount = state.post.likeCount
             state.post.likeCount = lastCount + 1
             state.post.liked = true
+
+            ws.sendToQueue(new MsgPack(state.post.id,state.user.id,'POST_LIKE',state.post.user.id))
         } else {
             const response = await dislikeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)

@@ -108,11 +108,12 @@ li:hover {
 </style>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, watch } from 'vue'
 import router from '@/route.js'
 import { store } from '@/store'
 import { getUserInfoByNickname } from '@/api.js'
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router'
+import { ws } from '../../websocket.js'
 
 const $route = useRoute()
 
@@ -127,7 +128,8 @@ const state = reactive({
         { id: 7, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: true, active: false },
         { id: 8, name: getCurUserNickname(), routeTo: '/profile', routeParams: { nickname: getCurUserNickname() }, icon: getCurUserAvatar(), badgeCount: 0, visible: true, active: false },
         { id: 9, name: '设置', routeTo: '/setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: true, active: false }
-    ]
+    ],
+    user: JSON.parse(localStorage.getItem("CUR_USER")),
 })
 
 async function routeTo(url, mid, nickname) {
@@ -140,7 +142,11 @@ async function routeTo(url, mid, nickname) {
     }
 }
 
-function activeMenu(menuId) {
+function activeMenu() {
+    const pageName = getUrlPagePath()
+    const menuItem = state.menus.filter(menu => menu.routeTo == '/' + pageName)
+    const menuId = menuItem.length <= 0 ? 1 : menuItem[0].id
+
     state.menus.forEach(menu => { menu.active = false })
     state.menus[menuId - 1].active = true
 }
@@ -181,11 +187,17 @@ function getUrlPagePath() {
     return pageName || 'index'
 }
 
+watch(() => ws.connectState, function (newVal, oldVal) {
+    if (newVal == 'CONNECTED') {
+        ws.subscribeTopic(`/queue/${state.user.id}/notify`, function (response) {
+            const msgPack = JSON.parse(response.body) //TODO 对消息类型进行判断和处理，更新UI
+            state.menus[2].badgeCount++
+        })
+    }
+})
+
 onMounted(() => {
-    const pageName = getUrlPagePath()
-    const menuItem = state.menus.filter(menu => menu.routeTo == '/' + pageName)
-    const menuId = menuItem.length <= 0 ? 1 : menuItem[0].id
-    activeMenu(menuId)
+    activeMenu()
 })
 
 </script>
