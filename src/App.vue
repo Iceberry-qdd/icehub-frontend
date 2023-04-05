@@ -11,7 +11,7 @@
         </div>
         <div id="main">
             <router-view v-slot="{Component}">
-                <keep-alive :max="16">
+                <keep-alive :max="16" :include="['Index','Explore','Bookmark','Profile']">
                     <component :is="Component"/>
                 </keep-alive>
             </router-view>
@@ -86,7 +86,7 @@ async function curUser() {
         localStorage.removeItem('TOKEN')
         localStorage.removeItem('CUR_USER')
         setTimeout(() => {
-            self.location = 'auth.html' // TODO 此跳转在有二级页面时不正确
+            self.location = `${window.document.location.host}:${window.document.location.port}/auth.html` // TODO 此跳转在有二级页面时不正确
         }, 3000)
         window.history.forward(1);
     }

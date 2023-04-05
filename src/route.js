@@ -11,9 +11,9 @@ const FollowerList = () => import('@/components/tailwind/FollowerList.vue')
 const FollowingList = () => import('@/components/tailwind/FollowingList.vue')
 
 const routes = [
-    { name: 'index', path: '/', component: Index, alias: ['/index', '/home'],meta:{keepAlive:true} },
-    { name: 'explore', path: '/explore', component: Explore,meta:{keepAlive:true} },
-    { name: 'bookmark', path: '/bookmark', component: Bookmark,meta:{keepAlive:true} },
+    { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
+    { name: 'explore', path: '/explore', component: Explore },
+    { name: 'bookmark', path: '/bookmark', component: Bookmark },
     { name: 'postDetail', path: '/post/:id', component: PostDetail },
     { name: 'profile', path: '/profile/:nickname', component: Profile },
     { name: 'profileEdit', path: '/profile/edit', component: ProfileEditor },
