@@ -184,7 +184,7 @@ function getUrlPagePath() {
 onMounted(() => {
     const pageName = getUrlPagePath()
     const menuItem = state.menus.filter(menu => menu.routeTo == '/' + pageName)
-    const menuId = menuItem.length < 0 ? 1 : menuItem[0].id
+    const menuId = menuItem.length <= 0 ? 1 : menuItem[0].id
     activeMenu(menuId)
 })
 
