@@ -32,10 +32,23 @@ main {
 <script setup>
 import GlobalBanner from '@/components/tailwind/GlobalBanner.vue';
 import Auth from '@/components/tailwind/Auth.vue'
-import { reactive } from 'vue'
+import { onMounted, onUnmounted, reactive } from 'vue'
 
 const state = reactive({
     user: null,
+})
+
+onMounted(() => {
+    history.pushState(null, null, document.URL)
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL)
+    })
+})
+
+onUnmounted(() => {
+    window.removeEventListener('popstate', function () {
+        history.pushState(null, null, document.URL)
+    })
 })
 
 </script>
