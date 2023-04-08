@@ -189,7 +189,7 @@ function getUrlPagePath() {
 
 watch(() => ws.connectState, function (newVal, oldVal) {
     if (newVal == 'CONNECTED') {
-        ws.subscribeTopic(`/queue/${state.user.id}/notify`, function (response) {
+        ws.subscribeTopic(`/queue/one/${state.user.id}/interactStatistic`, function (response) {
             const msgPack = JSON.parse(response.body) //TODO 对消息类型进行判断和处理，更新UI
             state.menus[2].badgeCount++
         })

@@ -21,7 +21,7 @@ export class MsgPack {
 }
 
 export const ws = reactive({
-    url:'http://192.168.0.103:8080/ws',
+    url: 'http://192.168.0.103:8080/ws',
     globalStompClient: null,
     reconnectCount: 0,
     connectState: 'DISCONNECT', // CONNECTED,MAX_TRY_RECONNECT,DISCONNECTED,CONNECTED_FAILED
@@ -32,7 +32,7 @@ export const ws = reactive({
     },
     connectWebsocket(token) {
         const that = this
-        this.globalStompClient.connect({TOKEN:token}, function (frame) {
+        this.globalStompClient.connect({ TOKEN: token }, function (frame) {
             console.log(`[Websocket]connected successful: ${frame}`)
             that.connectState = 'CONNECTED'
         }, function (error) {
@@ -85,7 +85,7 @@ export const ws = reactive({
      * @param {String} queuePath 订阅的queue路径
      * @param {function} fn 订阅回调函数
      */
-    subscribeQueue(queuePath,fn) {
+    subscribeQueue(queuePath, fn) {
         this.globalStompClient.subscribe(queuePath, fn)
     },
     /**
@@ -93,13 +93,22 @@ export const ws = reactive({
      * @param {MsgPack} msg 消息实体
      */
     sendToTopic(msg) {
-        this.globalStompClient.send('/app/sendAll', {}, JSON.stringify(msg))
+        this.globalStompClient.send('/app/send/public/notify', {}, JSON.stringify(msg))
     },
     /**
-     * 向queue发送消息
+     * 向单人queue发送消息
      * @param {MsgPack} msg 消息实体
      */
-    sendToQueue(msg) {
-        this.globalStompClient.send('/app/sendTo', {}, JSON.stringify(msg))
+    sendToOneQueue(msg, channelName) {
+        this.globalStompClient.send(`/app/send/one/${msg.to}/${channelName}`, {}, JSON.stringify(msg))
+    },
+    /**
+     * 向指定用户id的指定channel发送消息
+     * @param {string} receiverId 接收者id
+     * @param {string} channelName channel名字
+     * @param {MsgPack} msg 消息实体
+     */
+    sendToOnesChannel(receiverId, channelName, msg) {
+        this.globalStompClient.send(`/app/send/one/${receiverId}/${channelName}`, {}, JSON.stringify(msg))
     }
 })

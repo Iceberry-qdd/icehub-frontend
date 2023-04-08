@@ -1,28 +1,32 @@
 <template>
-    <div v-if="state.user" id="container">
-        <GlobalBanner></GlobalBanner>
-        <GlobalTipDialog></GlobalTipDialog>
-        <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
-        <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
-        <RepostPanel v-if="store.REPOST_POST"></RepostPanel>
-        <div id="sidebar-l">
-            <Brand></Brand>
-            <Sidebar id="menu"></Sidebar>
-        </div>
-        <div id="main">
-            <router-view v-slot="{Component}">
-                <keep-alive :max="16" :include="['Index','Explore','Bookmark']">
-                    <component :is="Component"/>
-                </keep-alive>
-            </router-view>
-        </div>
-        <div id="sidebar-r">
-            <RecommendUserCard></RecommendUserCard>
+    <div v-if="state.user" >
+        <GlobalNotifyBanner v-if="state.globalNotifyBannerMsg" @closeGlobalNotifyBanner="state.globalNotifyBannerMsg=''" id="global-notify-banner" :message="state.globalNotifyBannerMsg"></GlobalNotifyBanner>
+        <div id="container">
+            <GlobalBanner v-if="store.GLOBAL_MSG.length>0" @closeGlobalBanner="store.GLOBAL_MSG = []"></GlobalBanner>
+            <GlobalTipDialog></GlobalTipDialog>
+            <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
+            <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
+            <RepostPanel v-if="store.REPOST_POST"></RepostPanel>
+            <div id="sidebar-l">
+                <Brand></Brand>
+                <Sidebar id="menu"></Sidebar>
+            </div>
+            <div id="main">
+                <router-view v-slot="{ Component }">
+                    <keep-alive :max="16" :include="['Index', 'Explore', 'Bookmark']">
+                        <component :is="Component" />
+                    </keep-alive>
+                </router-view>
+            </div>
+            <div id="sidebar-r">
+                <RecommendUserCard></RecommendUserCard>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
+
 #menu {
     margin: 6rem 0rem 0 0;
 }
@@ -62,9 +66,11 @@ import ImageSlide2 from '@/components/tailwind/ImageSlide2.vue'
 import ImageCropper from '@/components/tailwind/ImageCropper.vue'
 import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 import { ws } from './websocket.js'
+import GlobalNotifyBanner from '@/components/tailwind/GlobalNotifyBanner.vue'
 
 const state = reactive({
     user: null,
+    globalNotifyBannerMsg:''
 })
 
 async function curUser() {
@@ -97,11 +103,20 @@ function disconnectToWs() {
     ws.disconnectWebsocket()
 }
 
-watch(()=>state.user,(newVal,oldVal)=>{
-    if(newVal!=null && newVal != oldVal){
+watch(() => state.user, (newVal, oldVal) => {
+    if (newVal != null && newVal != oldVal) {
         ws.initWebsocket()
         const token = localStorage.getItem('TOKEN')
         ws.connectWebsocket(token)
+    }
+})
+
+watch(() => ws.connectState, function (newVal, oldVal) {
+    if (newVal == 'CONNECTED') {
+        ws.subscribeTopic(`/topic/public/notify`, function (response) {
+            const msgPack = JSON.parse(response.body)
+            state.globalNotifyBannerMsg = msgPack.msg
+        })
     }
 })
 
