@@ -39,17 +39,19 @@ import RepostCard from '@/components/tailwind/RepostCard.vue'
 import { posting } from '@/api.js'
 import { store } from '@/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import { ws, MsgPack } from '@/websocket.js'
 
 const state = reactive({
     loading: false,
     parentPost: store.REPOST_POST,
     data: {
-        "content": null,
-        "top": false,
-        "attachmentsUrl": [],
-        "type": "REPOST",
-        "parentId": null,
-        "rootId": null
+        content: null,
+        top: false,
+        attachmentsUrl: [],
+        type: 'REPOST',
+        parentId: null,
+        rootId: null,
+        status:'PUBLIC' // TODO 由于没有帖子可见范围选项，默认为PUBLIC级别
     },
     curUser: JSON.parse(localStorage.getItem("CUR_USER"))
 })
@@ -74,6 +76,9 @@ async function reposting() {
         state.data.content = null
         dismiss()
         store.setSuccessMsg('转发成功')
+        // 发布通知
+        const receiverId=state.parentPost.root==null ? state.parentPost.user.id : state.parentPost.root.user.id
+        ws.sendToOneQueue(new MsgPack(result.id, state.curUser.id, 'REPOST', receiverId),'interact')
         // 发布完成后刷新页面
         setTimeout(() => { location.reload() }, 1500)
     } catch (e) {

@@ -3,8 +3,7 @@
         <div class="h-fit"><img :src="avatar" class="rounded-[6px] h-[2.5rem] w-[2.5rem] max-w-none" />
         </div>
         <div class="w-full">
-            <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span
-                    class="cursor-pointer  font-bold">@{{ replyTo }}</span>
+            <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
             </div>
             <textarea v-model="state.content" @keydown="resize" :disabled="state.loading"
                 :class="{ 'text-gray-400': state.loading }"
@@ -15,8 +14,7 @@
                     <add-picture theme="outline" size="20" fill="#333" :strokeWidth="3" />
                     <local-two theme="outline" size="20" class="icon" fill="#333" :strokeWidth="4" />
                 </div>
-                <div @click="submitReview"
-                    class="text-sm py-2 px-6 rounded-full text-white bg-[#0d6efd] cursor-pointer">
+                <div @click="submitReview" class="text-sm py-2 px-6 rounded-full text-white bg-[#0d6efd] cursor-pointer">
                     <span v-if="!state.loading">发布</span>
                     <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
                 </div>
@@ -25,9 +23,7 @@
     </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
 
 <script setup>
 import { reactive, computed } from 'vue'
@@ -35,6 +31,7 @@ import { reviewing } from '@/api'
 import { store } from '@/store'
 import { AddPicture, LocalTwo } from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import { ws, MsgPack } from '@/websocket.js'
 
 const props = defineProps(['post', 'parent'])
 
@@ -63,7 +60,7 @@ async function submitReview() {
     state.loading = true
     try {
         if (state.content.trim() == '') throw new Error('评论内容不能为空！')
-        if (!props.post && !props.parent) throw new Error('该评论非法！')
+        if (!props.post && !props.parent) throw new Error('该评论没有依赖的父级内容，非法评论！')
 
         const data = {
             'content': state.content,
@@ -72,6 +69,11 @@ async function submitReview() {
         }
         const response = await reviewing(data)
         if (!response.ok) throw new Error((await response.json()).error)
+        const result = await response.json()
+
+        const reviewId = result.id
+        const receiverId = data.parentId == null ? props.post.user.id : props.parent.user.id
+        ws.sendToOneQueue(new MsgPack(reviewId, state.curUser.id, 'REVIEW', receiverId), 'interact')
 
         location.reload()
     } catch (e) {
@@ -84,8 +86,8 @@ async function submitReview() {
 
 const avatar = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${state.curUser.nickname}.svg`
-    const { previewUrl, originUrl,contentType } = state.curUser.avatarUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const { previewUrl, originUrl, contentType } = state.curUser.avatarUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
