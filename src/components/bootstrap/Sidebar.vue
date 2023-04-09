@@ -142,11 +142,7 @@ async function routeTo(url, mid, nickname) {
     }
 }
 
-function activeMenu() {
-    const pageName = getUrlPagePath()
-    const menuItem = state.menus.filter(menu => menu.routeTo == '/' + pageName)
-    const menuId = menuItem.length <= 0 ? 1 : menuItem[0].id
-
+function activeMenu(menuId) {
     state.menus.forEach(menu => { menu.active = false })
     state.menus[menuId - 1].active = true
 }
@@ -197,7 +193,10 @@ watch(() => ws.connectState, function (newVal, oldVal) {
 })
 
 onMounted(() => {
-    activeMenu()
+    const pageName = getUrlPagePath()
+    const menuItem = state.menus.filter(menu => menu.routeTo == '/' + pageName)
+    const menuId = menuItem.length <= 0 ? 1 : menuItem[0].id
+    activeMenu(menuId)
 })
 
 </script>
