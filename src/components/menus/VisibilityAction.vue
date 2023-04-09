@@ -2,7 +2,7 @@
     <div @click="state.showSubActions = true"
         class="flex relative flex-row justify-between items-center py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">
         <div>更改可见范围</div>
-        <div class="material-icons-round cursor-pointer text-[11pt] rotate-180"> arrow_back_ios </div>
+        <div class="material-icons-round cursor-pointer text-10-pt rotate-180"> arrow_back_ios </div>
         <div v-if="state.showSubActions == true"
             class="absolute right-[-12.5rem] w-full rounded-[8px] shadow ring-1 ring-slate-900/5 bg-white">
             <div @click="updateVisibility(action.code)"
@@ -17,6 +17,10 @@
 </template>
 
 <style scoped>
+
+.text-10-pt{
+    font-size: 10pt !important;
+}
 .material-icons-round {
     font-family: 'Material Icons Round' !important;
     background-color: transparent;

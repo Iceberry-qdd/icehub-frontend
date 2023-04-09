@@ -22,11 +22,14 @@
             </div>
         </div>
 
-        <div v-if="state.isLoading"
-            class="flex flex-col justify-center items-center z-[102] fixed w-[38.46%] h-screen bg-[#00000066]">
-            <IconLoading class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
-        </div>
-        <div class="bg-white pl-2 pr-2 pt-2 pb-2">
+
+        <div class=" relative bg-white pl-2 pr-2 pt-2 pb-2">
+            <div v-if="state.isLoading" class="absolute left-1/2 -translate-x-1/2 z-[102] top-0 w-full h-full bg-white">
+                <div class="flex flex-col justify-center items-center gap-2 h-full">
+                    <IconLoading class="-ml-1 mr-3 h-6 w-6 text-[#6b7280]"></IconLoading>
+                    <div class="text-[11pt] text-[#6b7280]">帖子发布中...</div>
+                </div>
+            </div>
             <div>
                 <textarea v-model="state.content" @keydown="resize"
                     class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"

@@ -9,12 +9,13 @@
                 :class="{ 'text-gray-400': state.loading }"
                 class="focus:outline-none overflow-y-hidden tracking-wide resize-none text-lg leading-6 text-justify min-w-full max-w-full min-h-fit bg-transparent pr-2"
                 maxlength="512" placeholder="发布评论" id="review-input" name="review"></textarea>
-            <div class="flex flex-row justify-between mr-8 items-center" v-if="state.content.length > 0">
-                <div class="flex flex-row gap-x-2 items-center">
+            <div class="flex flex-row justify-between items-center" v-if="state.content.length > 0">
+                <div class="flex flex-row gap-x-2 items-center" v-if="!state.loading">
                     <add-picture theme="outline" size="20" fill="#333" :strokeWidth="3" />
                     <local-two theme="outline" size="20" class="icon" fill="#333" :strokeWidth="4" />
                 </div>
-                <div @click="submitReview" class="text-sm py-2 px-6 rounded-full text-white bg-[#0d6efd] cursor-pointer">
+                <div class="flex flex-row gap-x-2 items-center" v-else></div>
+                <div @click="submitReview" :class="[state.loading?'cursor-not-allowed bg-gray-400':'cursor-pointer bg-[#0d6efd]']" class="text-sm py-[0.4rem] px-6 rounded-full text-white">
                     <span v-if="!state.loading">发布</span>
                     <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
                 </div>
@@ -57,6 +58,10 @@ const replyTo = computed(() => {
 })
 
 async function submitReview() {
+    if(state.loading==true){
+        store.setWarningMsg('正在提交中，请勿重复提交')
+        return
+    }
     state.loading = true
     try {
         if (state.content.trim() == '') throw new Error('评论内容不能为空！')

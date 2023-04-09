@@ -12,7 +12,8 @@
                 </div>
 
                 <div @click="reposting"
-                    class="bg-blue-500 cursor-pointer text-white px-4 py-1 rounded-full text-[11pt] font-bold">
+                    :class="[state.loading?'cursor-not-allowed bg-gray-400':'bg-blue-500 cursor-pointer']"
+                    class="text-white px-5 py-1 rounded-full text-[11pt] font-bold">
                     <IconLoading v-if="state.loading" class="'h-5 w-5 text-white'"></IconLoading>
                     <span v-else>转发</span>
                 </div>
@@ -63,6 +64,10 @@ function resize() {
 }
 
 async function reposting() {
+    if(state.loading==true){
+        store.setWarningMsg('正在提交中，请勿重复提交')
+        return
+    }
     state.loading = true
     try {
         state.data.parentId = state.parentPost.id
