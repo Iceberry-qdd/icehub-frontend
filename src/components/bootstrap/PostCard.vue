@@ -478,7 +478,7 @@ async function toggleLike() {
             state.post.likeCount = lastCount + 1
             state.post.liked = true
 
-            ws.sendToQueue(new MsgPack(state.post.id,state.user.id,'POST_LIKE',state.post.user.id))
+            ws.sendToOneQueue(new MsgPack(state.post.id,state.user.id,'POST_LIKE',state.post.user.id),'interact')
         } else {
             const response = await dislikeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)

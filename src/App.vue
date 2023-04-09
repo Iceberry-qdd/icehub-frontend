@@ -1,8 +1,10 @@
 <template>
-    <div v-if="state.user" >
-        <GlobalNotifyBanner v-if="state.globalNotifyBannerMsg" @closeGlobalNotifyBanner="state.globalNotifyBannerMsg=''" id="global-notify-banner" :message="state.globalNotifyBannerMsg"></GlobalNotifyBanner>
-        <div id="container">
-            <GlobalBanner v-if="store.GLOBAL_MSG.length>0" @closeGlobalBanner="store.GLOBAL_MSG = []"></GlobalBanner>
+    <div v-if="state.user">
+        <GlobalNotifyBanner class="fixed" :class="{ 'top-0': isShowGlobalNotifyBannerMsg }" v-if="isShowGlobalNotifyBannerMsg"
+            @closeGlobalNotifyBanner="closeGlobalNotifyBannerMsg" id="global-notify-banner"
+            :message="state.globalNotifyBannerMsg"></GlobalNotifyBanner>
+        <div id="container" :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }">
+            <GlobalBanner v-if="store.GLOBAL_MSG.length > 0" @closeGlobalBanner="store.GLOBAL_MSG = []"></GlobalBanner>
             <GlobalTipDialog></GlobalTipDialog>
             <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
             <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
@@ -26,7 +28,6 @@
 </template>
 
 <style scoped>
-
 #menu {
     margin: 6rem 0rem 0 0;
 }
@@ -36,6 +37,10 @@
     flex-direction: row;
     flex-wrap: nowrap;
     min-height: 100vh;
+}
+
+.margin-top-10 {
+    margin-top: 2.5rem;
 }
 
 #sidebar-l {
@@ -59,7 +64,7 @@ import Sidebar from '@/components/bootstrap/Sidebar.vue'
 import RecommendUserCard from '@/components/bootstrap/RecommendUserCard.vue'
 import GlobalTipDialog from '@/components/tailwind/GlobalTipDialog.vue'
 import Brand from '@/components/tailwind/Brand.vue'
-import { onMounted, onUnmounted, reactive, watch } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { getCurUserInfo } from '@/api'
 import { store } from '@/store'
 import ImageSlide2 from '@/components/tailwind/ImageSlide2.vue'
@@ -70,7 +75,7 @@ import GlobalNotifyBanner from '@/components/tailwind/GlobalNotifyBanner.vue'
 
 const state = reactive({
     user: null,
-    globalNotifyBannerMsg:''
+    globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG
 })
 
 async function curUser() {
@@ -98,6 +103,15 @@ async function curUser() {
     }
 }
 
+const isShowGlobalNotifyBannerMsg = computed(() => {
+    return state.globalNotifyBannerMsg.length > 0
+})
+
+function closeGlobalNotifyBannerMsg() {
+    state.globalNotifyBannerMsg = ''
+    store.GLOBAL_NOTIFY_BANNER_MSG = ''
+}
+
 function disconnectToWs() {
     if (state.user == null) return
     ws.disconnectWebsocket()
@@ -114,9 +128,13 @@ watch(() => state.user, (newVal, oldVal) => {
 watch(() => ws.connectState, function (newVal, oldVal) {
     if (newVal == 'CONNECTED') {
         ws.subscribeTopic(`/topic/public/notify`, function (response) {
-            const msgPack = JSON.parse(response.body)
-            state.globalNotifyBannerMsg = msgPack.msg
+            // const msgPack = JSON.parse(response.body)
+            const result = response.body
+            store.setGlobalNotifyBannerMsg(result)
+            state.globalNotifyBannerMsg = result
         })
+    } else if (newVal == 'CONNECTED_FAILED') {
+        ws.reconnectWebsocket()
     }
 })
 

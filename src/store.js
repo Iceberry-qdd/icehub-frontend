@@ -99,5 +99,10 @@ export const store = reactive({
     },
     clearRepost() {
         this.REPOST_POST = null
+    },
+
+    GLOBAL_NOTIFY_BANNER_MSG:'',
+    setGlobalNotifyBannerMsg(msg){
+        this.GLOBAL_NOTIFY_BANNER_MSG = msg
     }
 })
