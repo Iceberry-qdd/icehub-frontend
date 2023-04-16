@@ -9,6 +9,7 @@ const ProfileEditor = () => import('@/components/bootstrap/ProfileEditor.vue')
 const Follow = () => import('@/components/tailwind/Follow.vue')
 const FollowerList = () => import('@/components/tailwind/FollowerList.vue')
 const FollowingList = () => import('@/components/tailwind/FollowingList.vue')
+const Notify = () => import('@/components/tailwind/Notify.vue')
 
 const routes = [
     { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
@@ -24,7 +25,8 @@ const routes = [
             { name: 'followerList', path: '/follower/:nickname', component: FollowerList },
             { name: 'followingList', path: '/following/:nickname', component: FollowingList },
         ]
-    }
+    },
+    { name: 'notify', path: '/notify', component: Notify }
 ]
 
 const router = createRouter({
