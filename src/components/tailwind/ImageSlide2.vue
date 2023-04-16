@@ -17,7 +17,7 @@
             </div>
         </div>
         <div @mouseenter="state.showAlt = true" v-if="state.showAlt == false && state.imgs[state.activeIndex].altText" class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-[#000000BB] rounded-full p-2 cursor-pointer">
-            <IconAltOn ></IconAltOn>
+            <IconAltOn class="w-[1.2rem] h-[1.2rem]"></IconAltOn>
         </div>
         <div @mouseleave="state.showAlt = false" v-if="state.showAlt == true && state.imgs[state.activeIndex].altText" class="absolute bottom-3 left-1/2 -translate-x-1/2 text-white text-[11pt] leading-[1.5rem] text-justify break-words bg-[#000000AA] px-4 py-3 rounded-[8px]">
             {{ state.imgs[state.activeIndex].altText }}

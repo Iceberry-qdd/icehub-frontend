@@ -37,7 +37,7 @@
         <div class="card-pics container z-index-96" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
                 <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
-                    <IconAltOn @mouseenter="state.showAltText[idx]=true" v-show="pic.altText && state.showAltText[idx]==false" class="absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer"></IconAltOn>
+                    <IconAltOn @mouseenter="state.showAltText[idx]=true" v-show="pic.altText && state.showAltText[idx]==false" class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer"></IconAltOn>
                     <Transition name="alt">
                         <div @mouseleave="state.showAltText[idx]=false" v-show="pic.altText && state.showAltText[idx]==true" class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
                             {{ pic.altText }}
@@ -84,6 +84,11 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
+
+.alt-icon{
+    widows: 1.6rem;
+    height: 1.6rem;
+}
 
 .fade-enter-active{
     transition: opacity 0.1s ease-in-out;

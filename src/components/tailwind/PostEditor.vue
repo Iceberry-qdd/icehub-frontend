@@ -7,10 +7,10 @@
                     <div v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'true'" class="absolute h-full w-full bg-white/5 backdrop-blur-xl"></div>
                     <img :src="loadImage(state.imgList[state.imageEditIndex])" class="max-w-full max-h-full object-cover" />
                     <div class="absolute bottom-0 right-0 flex flex-row gap-2 p-2">
-                        <IconFlagOn @click="toggleHiddenFlag"  v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'false'" class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOn>
-                        <IconFlagOff @click="toggleHiddenFlag" v-else class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOff>
-                        <IconAltOn @click="toggleAltFlag" v-if="state.showAltEditor[state.imageEditIndex] == true" class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOn>
-                        <IconAltOff @click="toggleAltFlag" v-else  class="text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOff>
+                        <IconFlagOn @click="toggleHiddenFlag"  v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'false'" class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOn>
+                        <IconFlagOff @click="toggleHiddenFlag" v-else class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOff>
+                        <IconAltOn @click="toggleAltFlag" v-if="state.showAltEditor[state.imageEditIndex] == true" class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOn>
+                        <IconAltOff @click="toggleAltFlag" v-else  class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOff>
                     </div>
                 </div>
 
