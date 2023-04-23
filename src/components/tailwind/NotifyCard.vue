@@ -1,28 +1,50 @@
 <template>
-    <div v-if="state.from != null" class="notify-card notify-POST_LIKE-card" :class="`${state.status}`">
+    <div v-if="state.from != null" class="notify-card" :class="`${state.status}`">
         <div>
-            <Like v-if="state.type == 'POST_LIKE'" theme="filled" size="20" fill="red" strokeWidth="3" class="icon bg-[#fecaca]" />
-            <message v-else-if="state.type == 'POST_REVIEW'" theme="filled" size="19" fill="#f97316" :strokeWidth="3" class="icon bg-[#fed7aa]" />
-            <share v-else-if="state.type == 'POST_REPOST'" theme="filled" size="19" fill="#198754" :strokeWidth="3" class="icon bg-[#d1e7dd]" />
-            <span v-else-if="state.type == 'SYS_NOTIFY'" class="material-icons-round icon bg-[#bfdbfe] text-[#3b82f6]">notifications</span>
-            <people-plus-one v-else-if="state.type == 'USER_FOLLOW'" theme="filled" size="19" fill="#8b5cf6" :strokeWidth="3" class="icon icon-user-followed bg-[#ddd6fe]" />
-            <at-sign v-else-if="state.type == 'AT_SIGN'" theme="outline" size="19" fill="#ec4899" :strokeWidth="3" class="icon bg-[#fecdd3]" />
+            <Like v-if="state.type == 'POST_LIKE'" theme="filled" size="20" fill="red" strokeWidth="3" class="icon bg-[#fecaca] hover:bg-[#fecaca]" />
+            <message v-else-if="state.type == 'POST_REVIEW'" theme="filled" size="19" fill="#f97316" :strokeWidth="3" class="icon bg-[#fed7aa] hover:bg-[#fed7aa]" />
+            <share v-else-if="state.type == 'POST_REPOST'" theme="filled" size="19" fill="#198754" :strokeWidth="3" class="icon bg-[#d1e7dd] hover:bg-[#d1e7dd]" />
+            <span v-else-if="state.type == 'SYS_NOTIFY'" class="material-icons-round icon p-[0.2rem] bg-[#bfdbfe] text-[#3b82f6]">notifications</span>
+            <people-plus-one v-else-if="state.type == 'USER_FOLLOW'" theme="filled" size="19" fill="#8b5cf6" :strokeWidth="3" class="icon icon-user-followed bg-[#ddd6fe] hover:bg-[#ddd6fe]" />
+            <at-sign v-else-if="state.type == 'AT_SIGN'" theme="outline" size="19" fill="#ec4899" :strokeWidth="3" class="icon bg-[#fecdd3] hover:bg-[#fecdd3]" />
         </div>
         <div class="w-full -translate-y-1">
             <div class="brief">
                 <div class="event-text">{{ brief }}</div>
                 <div class="time">{{ formattedTime }}</div>
             </div>
-            <div class="content">{{ content }}</div>
+            <div class="content">
+                <div v-if="state.type == 'POST_REVIEW'" class="py-1">{{ state.content.content }}</div>
+                <div v-if="state.type == 'POST_REPOST'" class="py-2">{{ state.content.content }}</div>
+                <RepostCard v-if="state.type == 'POST_LIKE'" :post="state.content"></RepostCard>
+                <RepostCard v-if="state.type == 'POST_REPOST'" :post="state.content.parent"></RepostCard>
+                <UserProfileCard v-if="state.type == 'USER_FOLLOW'" :user="state.content"></UserProfileCard>
+                <div v-if="state.type == 'SYS_NOTIFY'">{{ state.content }}</div>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
+.notify-card:not(.UNREAD):hover{
+    background-color: #f5f5f5;
+}
+
 .icon {
     display: block;
     width: 2rem;
     height: 2rem;
+}
+
+.i-icon:hover{
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 99rem;
+}
+
+.material-icons-round.icon:hover {
+    padding: 0.2rem !important;
+    background-color: #bfdbfe;
 }
 
 .UNREAD {
@@ -70,6 +92,8 @@ import { Like, Message, Share, PeoplePlusOne, AtSign } from '@icon-park/vue-next
 import { getUserInfoById } from '@/api'
 import { humanizedTime } from '@/utils/formatUtils.js'
 import { store } from '@/store'
+import RepostCard from '@/components/tailwind/RepostCard.vue'
+import UserProfileCard from '@/components/tailwind/UserProfileCard.vue'
 
 const props = defineProps(['message'])
 
