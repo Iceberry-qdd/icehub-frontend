@@ -6,10 +6,10 @@
 
         <div id="container">
             <div id="notify-cards">
-                <NotifyCard v-for="(msg,index) in state.message" :key="index" :message="msg"></NotifyCard>
+                <NotifyCard v-for="(msg,index) in state.message" :key="index" :message="msg" @click="routeTo(msg)"></NotifyCard>
             </div>
             <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
-                <IconLoading v-if="hasMore" class="h-5 w-5 text-slate-500"></IconLoading>
+                <IconLoading v-if="hasMore || state.loading == true" class="h-5 w-5 text-slate-500"></IconLoading>
                 <span v-else>没有更多了</span>
             </div>
         </div>
@@ -92,6 +92,9 @@ import Header from '@/components/tailwind/Header.vue'
 import { computed, onMounted, onUnmounted, reactive } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import NotifyCard from '@/components/tailwind/NotifyCard.vue'
+import {getUsersNotifyList} from '@/api.js'
+import { store } from '@/store'
+import router from '@/route'
 
 const state = reactive({
     headerConfig: {
@@ -101,24 +104,11 @@ const state = reactive({
         menuIcon: 'create',
         menuAction: { action: 'route', param: '/profile/edit' }
     },
-    message: [
-        { id: 1, type: 'POST_LIKE', content: '3b3ccc6e-c0ae-40e9-a8f7-04806e8a72c3', from: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', timestamp: 1681036009006, status: 'UNREAD' },
-        { id: 2, type: 'POST_REVIEW', content: '820fa7e9-bde4-40fe-95e9-ac380eec1c03', from: '765f8c26-752d-428f-9528-e44ff07a0856', timestamp: 1681036009006, status: 'UNREAD' },
-        { id: 3, type: 'POST_REPOST', content: 'f336e522-ed21-4919-8498-8b6f555331a0', from: '765f8c26-752d-428f-9528-e44ff07a0856', timestamp: 1681036009006, status: 'UNREAD' },
-        { id: 4, type: 'SYS_NOTIFY', content: '您的等级已经提升为2级，快来戳详情>>', from: null, timestamp: 1681036009006, status: 'UNREAD' },
-        { id: 12, type: 'USER_FOLLOW', content: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', from: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', timestamp: 1681036009006, status: 'READ' },
-        { id: 14, type: 'AT_SIGN', content: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', from: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', timestamp: 1681036009006, status: 'READ' },
-        { id: 5, type: 'POST_LIKE', content: '1459f060-d8f3-4988-93d3-f6988e9e7143', from: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', timestamp: 1681036009006, status: 'READ' },
-        { id: 6, type: 'POST_LIKE', content: '02816b44-1106-47dd-afa6-2932041dd911', from: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', timestamp: 1681036009006, status: 'READ' },
-        { id: 7, type: 'POST_LIKE', content: 'e1dad992-1453-486f-8da8-21b2b41ecd98', from: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', timestamp: 1681036009006, status: 'READ' },
-        { id: 8, type: 'POST_REVIEW', content: '820fa7e9-bde4-40fe-95e9-ac380eec1c03', from: '765f8c26-752d-428f-9528-e44ff07a0856', timestamp: 1681036009006, status: 'READ' },
-        { id: 9, type: 'POST_LIKE', content: '02816b44-1106-47dd-afa6-2932041dd911', from: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', timestamp: 1681036009006, status: 'READ' },
-        { id: 10, type: 'SYS_NOTIFY', content: '您的等级已经提升为1级，快来戳详情>>', from: null, timestamp: 1681036009006, status: 'READ' },
-        { id: 11, type: 'POST_LIKE', content: '1459f060-d8f3-4988-93d3-f6988e9e7143', from: '29ee97d9-a1c6-4b4b-b103-5a8268afbeaf', timestamp: 1681036009006, status: 'READ' }
-    ],
+    message: [],
     pageIndex: 1,
     pageSize: 10,
     totalPages: 0,
+    loading:false
 })
 
 const hasMore = computed(() => {
@@ -135,16 +125,58 @@ function fetchNewList() {
     if (scrollTop + clientHeight >= scrollHeight) {
         setTimeout(() => {
             state.pageIndex++
-            fetchNewNotify()
+            fetchNotify()
         }, 1000)
     }
 }
 
-async function fetchNewNotify(){
-    
+async function fetchNotify(){
+    state.loading=true
+    try{
+        const response = await getUsersNotifyList(state.pageIndex,state.pageSize)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const { content, totalPages } = await response.json()
+        state.message.push(...content)
+        state.totalPages = totalPages
+    } catch (e) {
+        store.setErrorMsg("无法获取消息列表！")
+        console.error(e)
+    }finally{
+        state.loading = false
+    }
+}
+
+function routeTo(message){
+    let contentId = message.content.id
+    switch (message.type) {
+        case 'POST_LIKE':
+            contentId = message.content.id
+            router.push({ name: 'postDetail', params: { id: contentId }})
+            break
+        case 'REVIEW':
+            contentId = message.content.postId
+            router.push({ name: 'postDetail', params: { id: contentId }})
+            break
+        case 'REVIEW_LIKE':
+            contentId = message.content.postId
+            router.push({ name: 'postDetail', params: { id: contentId }})
+            break
+        case 'REPOST':
+            contentId = message.content.id
+            router.push({ name: 'postDetail', params: { id: contentId }})
+            break
+        case 'USER_FOLLOW':
+            contentId = message.content.nickname
+            router.push({ name: 'profile', params: { nickname: contentId } })
+            return
+        default:
+            break
+    }
 }
 
 onMounted(()=>{
+    fetchNotify()
     window.addEventListener('scroll', fetchNewList)
 })
 

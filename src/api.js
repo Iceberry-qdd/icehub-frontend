@@ -610,3 +610,38 @@ export function getImageUrlIgnoreHidden(postId,imageIndex){
         credentials: 'same-origin'
     })
 }
+
+/**
+ * 分页查询给定用户的消息列表
+ * @param {number} pageIndex 分页页码
+ * @param {number} pageSize 分页页大小
+ * @returns 该用户的消息列表
+ */
+export function getUsersNotifyList(pageIndex, pageSize){
+    return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}`,{
+        method: 'GET',
+        headers:{
+            'Authorization': TOKEN
+        },
+        redirect:'follow',
+        credentials:'same-origin'
+    })
+}
+
+/**
+ * 批量设置消息为已读状态
+ * @param {List<string>} notifyIds 待设为已读的消息id
+ * @returns 设置为已读的结果
+ */
+export function markNotifiesRead(notifyIds){
+    return fetch(`${BASE_URL}/notify/read/multiple`,{
+        method:'POST',
+        headers:{
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify(notifyIds),
+        redirect:'follow',
+        credentials:'same-origin'
+    })
+}

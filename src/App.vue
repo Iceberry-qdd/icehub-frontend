@@ -15,7 +15,7 @@
             </div>
             <div id="main">
                 <router-view v-slot="{ Component }">
-                    <keep-alive :max="16" :include="['Index', 'Explore', 'Bookmark']">
+                    <keep-alive :max="16" :include="['Index', 'Explore', 'Bookmark','Notify']">
                         <component :is="Component" />
                     </keep-alive>
                 </router-view>
@@ -127,7 +127,7 @@ watch(() => state.user, (newVal, oldVal) => {
 
 watch(() => ws.connectState, function (newVal, oldVal) {
     if (newVal == 'CONNECTED') {
-        ws.subscribeTopic(`/topic/public/notify`, function (response) {
+        ws.subscribeTopic(`/topic/public.notify`, function (response) {
             // const msgPack = JSON.parse(response.body)
             const result = response.body
             store.setGlobalNotifyBannerMsg(result)
