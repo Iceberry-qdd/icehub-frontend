@@ -645,3 +645,19 @@ export function markNotifiesRead(notifyIds){
         credentials:'same-origin'
     })
 }
+
+/**
+ * 设置消息状态为已读
+ * @param {string} notifyId 待设为已读的消息id
+ * @returns 设置为已读的结果
+ */
+export function markNotifyRead(notifyId){
+    return fetch(`${BASE_URL}/notify/read/${notifyId}`,{
+        method:'POST',
+        headers:{
+            'Authorization': TOKEN
+        },
+        redirect:'follow',
+        credentials:'same-origin'
+    })
+}

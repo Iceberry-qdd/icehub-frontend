@@ -101,7 +101,7 @@ const state = reactive({
 const formattedDate = computed(() => {
     const timestamps = state.user.createdTime
     const date = new Date(Number.parseInt(timestamps))
-    return `${date.getFullYear()}年${date.getMonth()}月${date.getDate()}日`
+    return `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`
 })
 
 const bannerPic = computed(() => {
