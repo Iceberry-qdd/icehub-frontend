@@ -6,7 +6,7 @@
 
         <div id="container">
             <div id="notify-cards">
-                <NotifyCard v-for="(msg,index) in state.message" :key="index" :message="msg" @click="routeTo(msg)"></NotifyCard>
+                <NotifyCard v-for="(msg,index) in state.messages" :key="index" :message="msg" @click="AckMsgAndRouteTo(msg)"></NotifyCard>
             </div>
             <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
                 <IconLoading v-if="hasMore || state.loading == true" class="h-5 w-5 text-slate-500"></IconLoading>
@@ -92,7 +92,7 @@ import Header from '@/components/tailwind/Header.vue'
 import { computed, onMounted, onUnmounted, reactive } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import NotifyCard from '@/components/tailwind/NotifyCard.vue'
-import {getUsersNotifyList} from '@/api.js'
+import {getUsersNotifyList,markNotifyRead} from '@/api.js'
 import { store } from '@/store'
 import router from '@/route'
 
@@ -101,10 +101,10 @@ const state = reactive({
         title: '消息',
         goBack: false,
         showMenu: false,
-        menuIcon: 'create',
+        menuIcon: 'cleaning_services',
         menuAction: { action: 'route', param: '/profile/edit' }
     },
-    message: [],
+    messages: [],
     pageIndex: 1,
     pageSize: 10,
     totalPages: 0,
@@ -137,7 +137,7 @@ async function fetchNotify(){
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
-        state.message.push(...content)
+        state.messages.push(...content)
         state.totalPages = totalPages
     } catch (e) {
         store.setErrorMsg("无法获取消息列表！")
@@ -147,8 +147,28 @@ async function fetchNotify(){
     }
 }
 
-function routeTo(message){
+async function ackMessage(messageId){
+    try{
+        const response = await markNotifyRead(messageId)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = await response.json()
+        if(result==false){throw new Error("无法设置消息状态！")}
+        state.messages.filter(message=>message.id == messageId)[0].read = true
+        return true
+    }catch(e){
+        store.setErrorMsg("无法设置消息状态！")
+        console.error(e)
+        return false
+    }
+}
+
+async function AckMsgAndRouteTo(message){
     let contentId = message.content.id
+    let isAck = false
+    if(!message.read){ isAck = await ackMessage(message.id) }
+    if(!isAck && !message.read) return
+
     switch (message.type) {
         case 'POST_LIKE':
             contentId = message.content.id

@@ -1,25 +1,45 @@
 <template>
-    <div v-if="state.from != null" class="notify-card" :class="`${state.status}`">
+    <div v-if="state.from != null" class="notify-card" :class="postStatus">
         <div>
-            <Like v-if="state.type == 'POST_LIKE'" theme="filled" size="20" fill="red" strokeWidth="3" class="icon bg-[#fecaca] hover:bg-[#fecaca]" />
-            <message v-else-if="state.type == 'POST_REVIEW'" theme="filled" size="19" fill="#f97316" :strokeWidth="3" class="icon bg-[#fed7aa] hover:bg-[#fed7aa]" />
-            <share v-else-if="state.type == 'POST_REPOST'" theme="filled" size="19" fill="#198754" :strokeWidth="3" class="icon bg-[#d1e7dd] hover:bg-[#d1e7dd]" />
+            <Like v-if="state.type == 'POST_LIKE' || state.type == 'REVIEW_LIKE'" theme="filled" size="20" fill="red" strokeWidth="3" class="icon bg-[#fecaca] hover:bg-[#fecaca]" />
+            <message v-else-if="state.type == 'REVIEW' || state.type == 'REVIEW_REPLY'" theme="filled" size="19" fill="#f97316" :strokeWidth="3" class="icon bg-[#fed7aa] hover:bg-[#fed7aa]" />
+            <share v-else-if="state.type == 'REPOST'" theme="filled" size="19" fill="#198754" :strokeWidth="3" class="icon bg-[#d1e7dd] hover:bg-[#d1e7dd]" />
             <span v-else-if="state.type == 'SYS_NOTIFY'" class="material-icons-round icon p-[0.2rem] bg-[#bfdbfe] text-[#3b82f6]">notifications</span>
             <people-plus-one v-else-if="state.type == 'USER_FOLLOW'" theme="filled" size="19" fill="#8b5cf6" :strokeWidth="3" class="icon icon-user-followed bg-[#ddd6fe] hover:bg-[#ddd6fe]" />
             <at-sign v-else-if="state.type == 'AT_SIGN'" theme="outline" size="19" fill="#ec4899" :strokeWidth="3" class="icon bg-[#fecdd3] hover:bg-[#fecdd3]" />
         </div>
-        <div class="w-full -translate-y-1">
+        <div class="w-full translate-y-1">
             <div class="brief">
                 <div class="event-text">{{ brief }}</div>
                 <div class="time">{{ formattedTime }}</div>
             </div>
-            <div class="content">
-                <div v-if="state.type == 'POST_REVIEW'" class="py-1">{{ state.content.content }}</div>
-                <div v-if="state.type == 'POST_REPOST'" class="py-2">{{ state.content.content }}</div>
+            <!-- <div v-if="state.type == 'REVIEW'" class="py-1">{{ state.content.content }}</div>
+                <div v-if="state.type == 'REPOST'" class="py-2">{{ state.content.content }}</div>
                 <RepostCard v-if="state.type == 'POST_LIKE'" :post="state.content"></RepostCard>
-                <RepostCard v-if="state.type == 'POST_REPOST'" :post="state.content.parent"></RepostCard>
+                <RepostCard v-if="state.type == 'REPOST'" :post="state.content.parent"></RepostCard>
                 <UserProfileCard v-if="state.type == 'USER_FOLLOW'" :user="state.content"></UserProfileCard>
-                <div v-if="state.type == 'SYS_NOTIFY'">{{ state.content }}</div>
+                <div v-if="state.type == 'SYS_NOTIFY'">{{ state.content }}</div> -->
+            <div class="content" v-if="state.type == 'REVIEW'">
+                <div class="py-1">{{ state.content.content }}</div>
+            </div>
+            <div class="content" v-if="state.type == 'REPOST'">
+                <div class="py-2">{{ state.content.content }}</div>
+                <RepostCard :post="state.content.parent"></RepostCard>
+            </div>
+            <div class="content" v-if="state.type == 'POST_LIKE'">
+                <RepostCard :post="state.content"></RepostCard>
+            </div>
+            <div class="content" v-if="state.type == 'REVIEW_LIKE'">
+                <div class="py-1">{{ state.content.content }}</div>
+            </div>
+            <div class="content" v-if="state.type == 'USER_FOLLOW'">
+                <UserProfileCard :user="state.content"></UserProfileCard>
+            </div>
+            <div class="content" v-if="state.type == 'AT_SIGN'">
+                
+            </div>
+            <div class="content" v-if="state.type == 'SYS_NOTIFY'">
+            
             </div>
         </div>
     </div>
@@ -87,11 +107,9 @@
 </style>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, reactive,watch } from 'vue'
 import { Like, Message, Share, PeoplePlusOne, AtSign } from '@icon-park/vue-next'
-import { getUserInfoById } from '@/api'
 import { humanizedTime } from '@/utils/formatUtils.js'
-import { store } from '@/store'
 import RepostCard from '@/components/tailwind/RepostCard.vue'
 import UserProfileCard from '@/components/tailwind/UserProfileCard.vue'
 
@@ -100,38 +118,24 @@ const props = defineProps(['message'])
 const state = reactive({
     type: props.message.type, // POST_LIKE, POST_REVIEW, POST_REPOST, SYS_NOTIFY, USER_FOLLOW AT_SIGN
     content: props.message.content,
-    from: null,
-    to: JSON.parse(localStorage.getItem("CUR_USER")),
-    timestamp: props.message.timestamp,
-    status: props.message.status
+    from: props.message.from,
+    to: props.message.to,
+    timestamps: props.message.timestamps,
+    read: props.message.read
 })
-
-async function getUserInfo() {
-    if (state.type == 'SYS_NOTIFY'){
-        state.from = 'SYSTEM'
-        return
-    }
-
-    try {
-        const fromId = props.message.from
-        const response = await getUserInfoById(fromId)
-        if (!response.ok) throw new Error((await response.json()).error)
-
-        state.from = await response.json()
-    } catch (e) {
-        store.setErrorMsg('无法获取用户信息！')
-        console.error(e)
-    }
-}
 
 const brief = computed(() => {
     const fromName = state.from.nickname || null
     switch (state.type) {
         case 'POST_LIKE':
             return `${fromName} 赞了您的帖子`
-        case 'POST_REVIEW':
+        case 'REVIEW':
             return `${fromName} 评论了您的帖子`
-        case 'POST_REPOST':
+        case 'REVIEW_LIKE':
+            return `${fromName} 赞了您的评论`
+        case 'REVIEW_REPLY':
+            return `${fromName} 回复了您的评论`
+        case 'REPOST':
             return `${fromName} 转发了您的帖子`
         case 'SYS_NOTIFY':
             return `系统消息`
@@ -145,14 +149,14 @@ const brief = computed(() => {
 })
 
 const formattedTime = computed(() => {
-    return humanizedTime(state.timestamp)
+    return humanizedTime(state.timestamps)
 })
 
-const content=computed(()=>{
-    return state.content
+const postStatus = computed(()=>{
+    return state.read?'READ':'UNREAD'
 })
 
-onMounted(() => {
-    getUserInfo()
+watch(()=>props.message.read,function(newVal,oldVal){
+    state.read = newVal
 })
 </script>
