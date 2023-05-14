@@ -29,6 +29,8 @@ export const ws = reactive({
     initWebsocket() {
         let socket = new SockJS(this.url, null, { timeout: 15000 })
         this.globalStompClient = Stomp.over(socket)
+        this.globalStompClient.heartbeat.outgoing = 0
+        this.globalStompClient.heartbeat.incoming = 0
     },
     connectWebsocket(token) {
         const that = this
@@ -77,30 +79,30 @@ export const ws = reactive({
      * @param {String} topicPath 订阅的topic路径
      * @param {function} fn 订阅回调函数
      */
-    subscribeTopic(topicPath, fn) {
-        this.globalStompClient.subscribe(topicPath, fn)
+    subscribeTopic(topicPath, fn,headers) {
+        this.globalStompClient.subscribe(topicPath, fn,headers)
     },
     /**
      * 订阅queue信息
      * @param {String} queuePath 订阅的queue路径
      * @param {function} fn 订阅回调函数
      */
-    subscribeQueue(queuePath, fn) {
-        this.globalStompClient.subscribe(queuePath, fn)
+    subscribeQueue(queuePath, fn,headers) {
+        this.globalStompClient.subscribe(queuePath, fn,headers)
     },
     /**
      * 向topic发送消息
      * @param {MsgPack} msg 消息实体
      */
     sendToTopic(msg) {
-        this.globalStompClient.send('/app/send/public/notify', {}, JSON.stringify(msg))
+        this.globalStompClient.send('/app/send/public.notify', {}, JSON.stringify(msg))
     },
     /**
      * 向单人queue发送消息
      * @param {MsgPack} msg 消息实体
      */
     sendToOneQueue(msg, channelName) {
-        this.globalStompClient.send(`/app/send/one/${msg.to}/${channelName}`, {}, JSON.stringify(msg))
+        this.globalStompClient.send(`/app/send/one.${msg.to}.${channelName}`, {}, JSON.stringify(msg))
     },
     /**
      * 向指定用户id的指定channel发送消息
@@ -109,6 +111,6 @@ export const ws = reactive({
      * @param {MsgPack} msg 消息实体
      */
     sendToOnesChannel(receiverId, channelName, msg) {
-        this.globalStompClient.send(`/app/send/one/${receiverId}/${channelName}`, {}, JSON.stringify(msg))
+        this.globalStompClient.send(`/app/send/one.${receiverId}.${channelName}`, {}, JSON.stringify(msg))
     }
 })

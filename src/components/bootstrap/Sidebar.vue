@@ -1,6 +1,6 @@
 <template>
     <ul class="list-group">
-        <li v-for="menu in state.menus" :key="menu.id"
+        <li v-for="menu in state.menus.filter(menu=>menu.visible==true)" :key="menu.id"
             @click="routeTo(menu.routeTo, menu.id, menu.routeParams.nickname || null)" :class="{ active: menu.active }"
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
@@ -122,9 +122,9 @@ const state = reactive({
         { id: 1, name: '主页', routeTo: '/index', routeParams: {}, icon: 'home', badgeCount: 12, visible: true, active: true },
         { id: 2, name: '探索', routeTo: '/explore', routeParams: {}, icon: 'explore', badgeCount: 1, visible: true, active: false },
         { id: 3, name: '消息', routeTo: '/notify', routeParams: {}, icon: 'notifications', badgeCount: 0, visible: true, active: false },
-        { id: 4, name: '书签', routeTo: '/bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: false, active: false },
-        { id: 5, name: '勋章', routeTo: '/badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: true, active: false },
-        { id: 6, name: '活动', routeTo: '/activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: true, active: false },
+        { id: 4, name: '书签', routeTo: '/bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: true, active: false },
+        { id: 5, name: '勋章', routeTo: '/badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: false, active: false },
+        { id: 6, name: '活动', routeTo: '/activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible:false, active: false },
         { id: 7, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: true, active: false },
         { id: 8, name: getCurUserNickname(), routeTo: '/profile', routeParams: { nickname: getCurUserNickname() }, icon: getCurUserAvatar(), badgeCount: 0, visible: true, active: false },
         { id: 9, name: '设置', routeTo: '/setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: true, active: false }
