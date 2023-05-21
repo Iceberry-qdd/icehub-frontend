@@ -7,7 +7,7 @@
         <div class="userCard list-group-item d-flex align-items-center" v-for="user in users">
             <div class="avatar">
                 <a href="#">
-                    <img class="avatar" :src="user.avatar" width="60" height="60">
+                    <img class="avatar" :src="user.avatar" width="54" height="54">
                 </a>
             </div>
 
@@ -67,7 +67,7 @@
 }
 
 .userCard {
-    padding: 0.8rem 0.4rem;
+    padding: 0.4rem 0.4rem;
     margin: 0 0.8rem;
     border-radius: 8px;
     column-gap: 1rem;

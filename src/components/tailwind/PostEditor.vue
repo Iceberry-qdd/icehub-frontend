@@ -7,17 +7,25 @@
                     <div v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'true'" class="absolute h-full w-full bg-white/5 backdrop-blur-xl"></div>
                     <img :src="loadImage(state.imgList[state.imageEditIndex])" class="max-w-full max-h-full object-cover" />
                     <div class="absolute bottom-0 right-0 flex flex-row gap-2 p-2">
-                        <IconFlagOn @click="toggleHiddenFlag"  v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'false'" class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOn>
-                        <IconFlagOff @click="toggleHiddenFlag" v-else class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOff>
-                        <IconAltOn @click="toggleAltFlag" v-if="state.showAltEditor[state.imageEditIndex] == true" class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOn>
-                        <IconAltOff @click="toggleAltFlag" v-else  class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOff>
+                        <button v-if="state.data.imagesInfo[state.imageEditIndex].hidden == 'false'" title="标记为敏感内容">
+                            <IconFlagOn @click="toggleHiddenFlag" class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOn>
+                        </button>
+                        <button v-else title="标记为敏感内容">
+                            <IconFlagOff @click="toggleHiddenFlag" class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[15pt] rounded-full cursor-pointer"></IconFlagOff>
+                        </button>
+                        <button v-if="state.showAltEditor[state.imageEditIndex] == true" title="添加描述文字">
+                            <IconAltOn @click="toggleAltFlag" class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOn>
+                        </button>
+                        <button v-else title="添加描述文字">
+                            <IconAltOff @click="toggleAltFlag" class="w-[1.2rem] h-[1.2rem] text-white bg-[#000000BB] p-[0.3rem] box-content text-[11pt] rounded-full cursor-pointer"></IconAltOff>
+                        </button>
                     </div>
                 </div>
 
                 <textarea v-if="state.showAltEditor[state.imageEditIndex] == true"
                     v-model="state.data.imagesInfo[state.imageEditIndex].altText" @keydown="resize"
                     class="p-3 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
-                    maxlength="50" rows="2" placeholder="简述此图片的内容" id="post-input" name="post"></textarea>
+                    maxlength="512" rows="2" placeholder="简述此图片的内容" id="post-input" name="post"></textarea>
                 <div @click="dismissImageEditPanel" class="cursor-pointer bg-blue-500 w-fit text-[11pt] mt-3 mb-3 mr-0 ml-3 text-white font-bold px-4 py-1 rounded-full">确定</div>
             </div>
         </div>
@@ -31,9 +39,10 @@
                 </div>
             </div>
             <div>
-                <textarea v-model="state.content" @keydown="resize"
+                <VueShowdown v-if="state.showMarkdown==true" :markdown="state.content" class="min-h-[6rem]"></VueShowdown>
+                <textarea v-else v-model="state.content" @keydown="resize"
                     class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
-                    maxlength="512" rows="3" placeholder="发布帖子" id="post-input" name="post"></textarea>
+                    maxlength="25000" rows="3" placeholder="发布帖子" id="post-input" name="post"></textarea>
             </div>
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
@@ -41,7 +50,7 @@
                         multiple="true" accept="image/*" />
                     <div class="relative flex-col">
                         <div class="flex" @click="preChoosePics">
-                            <add-picture theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[hasImage ? 'bg-blue-200' : '']" />
+                            <add-picture v-tooltip="'添加图片'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[hasImage ? 'bg-blue-200' : '']" />
                         </div>
                         <Transition name="fade">
                             <div v-if="state.showImagePanel == true" id="imagePanel"
@@ -75,13 +84,13 @@
                             </div>
                         </Transition>
                     </div>
-                    <video-two theme="outline" size="18" fill="#333" :strokeWidth="3" v-if="!hasImage" />
-                    <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
+                    <video-two v-tooltip="'添加视频'" theme="outline" size="18" fill="#333" :strokeWidth="3" v-if="!hasImage" />
+                    <!-- <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i> -->
                     <div class="relative flex-col">
                         <div class="flex" @click="state.showVisibilityPanel = !state.showVisibilityPanel">
-                            <preview-open v-if="state.data.status == 'PUBLIC'" theme="outline" size="18" fill="#333"
+                            <preview-open v-tooltip="'帖子可见范围'" v-if="state.data.status == 'PUBLIC'" theme="outline" size="18" fill="#333"
                                 :strokeWidth="3" />
-                            <preview-close v-else theme="outline" size="18" fill="#333" :strokeWidth="3"
+                            <preview-close v-tooltip="'帖子可见范围'" v-else theme="outline" size="18" fill="#333" :strokeWidth="3"
                                 class="bg-blue-200" />
                         </div>
                         <Transition name="fade">
@@ -97,12 +106,23 @@
                             </div>
                         </Transition>
                     </div>
-                    <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" />
-                    <m-time theme="outline" size="18" fill="#333" :strokeWidth="3" />
-                    <grinning-face-with-open-mouth theme="outline" size="18" fill="#333" :strokeWidth="3" />
-                    <!-- <i class="cursor-pointer bi bi-camera-video-fill" title="添加视频"></i>
-                    <i class="cursor-pointer bi bi-markdown-fill" title="使用markdown格式"></i>
-                    <i class="cursor-pointer bi bi-code-slash" title="添加代码片段"></i>
+                    <!-- <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
+                    <m-time v-tooltip="'定时发送'" theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                    <div class="relative flex-col">
+                        <div class="flex" @click="state.showEmojiPanel=!state.showEmojiPanel">
+                            <grinning-face-with-open-mouth v-tooltip="'表情面板'" theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                        </div>
+                        <Transition name="fade">
+                            <EmojiPanel v-if="state.showEmojiPanel" @emojiName="insertEmoji" class="z-[99] absolute top-[2.5rem] min-w-max min-h-max"></EmojiPanel>
+                        </Transition>
+                    </div>
+
+                    <!-- <i class="cursor-pointer bi bi-camera-video-fill" title="添加视频"></i> -->
+                    <button @click="state.showMarkdown=!state.showMarkdown">
+                        <i class="cursor-pointer bi bi-markdown-fill" title="预览markdown"></i>
+                    </button>
+
+                    <!-- <i class="cursor-pointer bi bi-code-slash" title="添加代码片段"></i>
                     <i class="cursor-pointer bi bi-arrow-up-square-fill" title="在个人主页置顶"></i>
                     <i class="cursor-pointer bi bi-emoji-smile" title="添加表情"></i> -->
                 </div>
@@ -151,7 +171,7 @@
 </style>
 
 <script setup>
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, watch } from 'vue'
 import { uploadImages, posting } from '@/api.js'
 import { store } from '@/store.js'
 import { VideoTwo, AddPicture, PreviewOpen, PreviewClose, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
@@ -164,6 +184,8 @@ import IconAltOn from '@/components/icons/IconAltOn.vue'
 import IconAltOff from '@/components/icons/IconAltOff.vue'
 import IconFlagOn from '@/components/icons/IconFlagOn.vue'
 import IconFlagOff from '@/components/icons/IconFlagOff.vue'
+import EmojiPanel from '@/components/menus/EmojiPanel.vue'
+import { VueShowdown } from 'vue-showdown'
 
 const state = reactive({
     content: "",
@@ -201,7 +223,9 @@ const state = reactive({
     showVisibilityPanel: false,
     showImageEditPanel: false,
     imageEditIndex: 0,
-    showAltEditor: [false, false, false, false, false, false, false, false, false]
+    showEmojiPanel:false,
+    showAltEditor: [false, false, false, false, false, false, false, false, false],
+    showMarkdown:false
 })
 
 const hasImage = computed(() => {
@@ -316,6 +340,13 @@ function dismissImageEditPanel() {
     state.showImageEditPanel = false
     const index = state.imageEditIndex
     if (state.showAltEditor[index] == false) { state.data.imagesInfo[index].altText = '' }
+}
+
+function insertEmoji(name){
+    const emojiName=` :${name[0]}: `
+    // console.log(emojiName)
+    state.content=state.content.concat(emojiName)
+    state.showEmojiPanel=false
 }
 
 </script>

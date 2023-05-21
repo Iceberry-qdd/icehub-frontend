@@ -1,10 +1,14 @@
 <template>
     <div v-if="state.user">
-        <Header v-if="state.user" :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
-            :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
-            :menuAction="state.headerConfig.menuAction"></Header>
+        <Header v-if="state.user" 
+            :title="state.headerConfig.title"
+            :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu"
+            :menuIcon="state.headerConfig.menuIcon"
+            :menuAction="state.headerConfig.menuAction"
+            :iconTooltip="state.headerConfig.iconTooltip"></Header>
         <ProfileInfo :user="state.user"></ProfileInfo>
-        <PostsTimeline :posts="state.posts" :curPageIndex="state.pageIndex" :totalPages="state.totalPages"></PostsTimeline>
+        <PostsTimeline :isLoading="state.isPostLoading" :posts="state.posts" :curPageIndex="state.pageIndex" :totalPages="state.totalPages"></PostsTimeline>
     </div>
 </template>
 
@@ -38,11 +42,14 @@ const state = reactive({
         goBack: !isCurUser.value,
         showMenu: isCurUser.value,
         menuIcon: isCurUser.value ? 'create' : '',
-        menuAction: { action: 'route', param: '/profile/edit' }
-    }
+        menuAction: { action: 'route', param: '/profile/edit' },
+        iconTooltip:'编辑个人资料'
+    },
+    isPostLoading:false
 })
 
 async function getPosts() {
+    state.isPostLoading = true
     try {
         const response = await getUserPosts(state.user.id, state.pageIndex, state.pageSize)
         if (!response.ok) throw new Error((await response.json()).error)
@@ -53,6 +60,8 @@ async function getPosts() {
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
+    }finally{
+        state.isPostLoading = false
     }
 }
 

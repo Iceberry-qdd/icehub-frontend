@@ -1,8 +1,12 @@
 <template>
     <div>
-        <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
-            :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
-            :menuAction="state.headerConfig.menuAction"></Header>
+        <Header
+        :title="state.headerConfig.title"
+        :goBack="state.headerConfig.goBack"
+        :showMenu="state.headerConfig.showMenu"
+        :menuIcon="state.headerConfig.menuIcon"
+        :menuAction="state.headerConfig.menuAction"
+        :iconTooltip="state.headerConfig.iconTooltip"></Header>
         <div v-if="state.isLoading == true" class="loading">
             <IconLoading :class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
             <div>正在提交...</div>
@@ -218,7 +222,8 @@ const state = reactive({
         goBack: true,
         showMenu: true,
         menuIcon: 'done',
-        menuAction: { action: 'submit', param: true }
+        menuAction: { action: 'submit', param: true },
+        iconTooltip: '提交资料'
     }
 })
 

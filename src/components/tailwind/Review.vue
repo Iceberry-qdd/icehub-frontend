@@ -4,13 +4,13 @@
             <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
                 <div class="flex flex-row items-center gap-x-4">
                     <div class="w-[2.5rem] h-[2.5rem]">
-                        <a href="as"><img :src="avatar" class="rounded-[6px]" /></a>
+                        <a @click="routeToUser(props.review.user.nickname)"><img :src="avatar" class="rounded-[6px]" /></a>
                         <i v-if="props.review.user.verified"
                             class="bi bi-patch-check-fill verify relative text-[10pt] left-[30px] bottom-[12px] text-blue-500"></i>
                     </div>
                     <div>
-                        <div class="text-[12pt] font-bold">{{ props.review.user.nickname }}</div>
-                        <div class="text-[11pt]"> 回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
+                        <div @click="routeToUser(props.review.user.nickname)" class="text-[12pt] font-bold cursor-pointer hover:underline">{{ props.review.user.nickname }}</div>
+                        <div @click="routeToUser(replyTo)" class="text-[11pt]"> 回复 <span class="cursor-pointer hover:underline font-bold">@{{ replyTo }}</span>
                         </div>
                     </div>
                 </div>
@@ -62,6 +62,7 @@ import { humanizedTime } from '@/utils/formatUtils.js'
 import ReviewEditor from '@/components/tailwind/ReviewEditor.vue'
 import { store } from '@/store'
 import { Like, Message, MoreTwo } from '@icon-park/vue-next'
+import router from '@/route'
 
 const props = defineProps(['review', 'post'])
 
@@ -176,4 +177,7 @@ onMounted(() => {
     }
 })
 
+function routeToUser(nickname) {
+    router.push({ name: 'profile', params: { nickname: nickname } })
+}
 </script>

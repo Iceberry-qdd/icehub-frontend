@@ -14,6 +14,7 @@
         </Transition>
         <PostEditor @get-data="getData"></PostEditor>
         <PostsTimeline
+            :isLoading="state.isLoading"
             :posts="state.posts"
             :curPageIndex="state.pageIdx"
             :totalPages="state.totalPages"></PostsTimeline>
@@ -74,6 +75,7 @@ import { store } from '@/store.js'
 import PostEditor from '@/components/tailwind/PostEditor.vue'
 import { computed, onMounted, onUnmounted, reactive } from 'vue'
 import GlobalRefresh from '@/components/tailwind/GlobalRefresh.vue'
+import IconLoading from '@/components/icons/IconLoading.vue'
 
 const state = reactive({
     posts: [],
@@ -87,10 +89,12 @@ const state = reactive({
         menuIcon: null,
         menuAction: { action: 'route', param: '' }
     },
-    isShowGlobalRefresh:true
+    isShowGlobalRefresh:true,
+    isLoading:false
 })
 
 async function getData(pageIdx, pageSize) {
+    state.isLoading=true
     try {
         const response = await getUserTimeline(pageIdx, pageSize)
         if (!response.ok) throw new Error((await response.json()).error)
@@ -101,6 +105,8 @@ async function getData(pageIdx, pageSize) {
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
+    }finally{
+        state.isLoading=false
     }
 }
 

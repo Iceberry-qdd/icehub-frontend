@@ -1,6 +1,21 @@
 html,body {
     margin: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif, 'Segoe UI' !important;
+    font-family:'Apple Color Emoji', system-ui, -apple-system, BlinkMacSystemFont, sans-serif, 'Segoe UI' !important;
+}
+
+html::-webkit-scrollbar{
+    width: 6px !important;
+    height: 100% !important;
+    -webkit-appearance: none;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+html::-webkit-scrollbar-thumb{
+    width: 6px !important;
+    -webkit-appearance: none;
+    background: #00000077;
+    border-radius: 9999px; 
 }
 
 img,li,.userCard {

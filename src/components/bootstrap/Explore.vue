@@ -1,8 +1,16 @@
 <template>
-    <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
-        :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
-        :menuAction="state.headerConfig.menuAction"></Header>
-    <PostsTimeline :posts="state.posts" :curPageIndex="state.pageIdx" :totalPages="state.totalPages"></PostsTimeline>
+    <Header
+        :title="state.headerConfig.title"
+        :goBack="state.headerConfig.goBack"
+        :showMenu="state.headerConfig.showMenu"
+        :menuIcon="state.headerConfig.menuIcon"
+        :menuAction="state.headerConfig.menuAction"
+        :iconTooltip="state.headerConfig.iconTooltip"></Header>
+    <PostsTimeline
+        :isLoading="state.isLoading"
+        :posts="state.posts"
+        :curPageIndex="state.pageIdx"
+        :totalPages="state.totalPages"></PostsTimeline>
 </template>
 
 <style scoped>
@@ -24,13 +32,16 @@ const state = reactive({
     headerConfig: {
         title: '探索',
         goBack: false,
-        showMenu: false,
-        menuIcon: null,
-        menuAction: { action: 'route', param: '' }
-    }
+        showMenu: true,
+        menuIcon: 'search',
+        menuAction: { action: 'route', param: '' },
+        iconTooltip: '搜索'
+    },
+    isLoading:false
 })
 
 async function getData(pageIdx, pageSize) {
+    state.isLoading = true
     try {
         const response = await getTimeline(pageIdx, pageSize)
         if (!response.ok) throw new Error((await response.json()).error)
@@ -41,6 +52,8 @@ async function getData(pageIdx, pageSize) {
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
+    }finally{
+        state.isLoading = false
     }
 }
 
