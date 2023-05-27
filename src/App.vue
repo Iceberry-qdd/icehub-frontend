@@ -72,6 +72,7 @@ import ImageCropper from '@/components/tailwind/ImageCropper.vue'
 import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 import { ws } from './websocket.js'
 import GlobalNotifyBanner from '@/components/tailwind/GlobalNotifyBanner.vue'
+import {renderMath} from '@/katexConfig.js'
 
 const state = reactive({
     user: null,
@@ -140,6 +141,7 @@ watch(() => ws.connectState, function (newVal, oldVal) {
 
 onMounted(() => {
     curUser()
+    document.addEventListener("DOMContentLoaded",renderMath)
 })
 
 onUnmounted(() => {

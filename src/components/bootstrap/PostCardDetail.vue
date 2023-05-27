@@ -22,7 +22,10 @@
         </div>
 
         <div class="m-card-body">
-            <p class="card-text" id="content">{{ props.post.content }}</p>
+            <p class="card-text" id="content">
+                <VueShowdown tag="markdown" v-if="state.post.type=='MARKDOWN'" :markdown="state.post.content"></VueShowdown>
+                <div v-else>{{ state.post.content }}</div>
+            </p>
             <RepostCard v-if="state.post.root" :post="state.post.root" class="repostCard"></RepostCard>
         </div>
         <div class="card-pics container" v-if="hasPics">
@@ -354,6 +357,7 @@ import RepostCard from '@/components/tailwind/RepostCard.vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue'
 import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
+import { VueShowdown } from 'vue-showdown'
 
 const props = defineProps(['post'])
 

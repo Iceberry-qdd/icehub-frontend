@@ -1,6 +1,6 @@
 <template>
-    <div class="card">
-        <div id="card-mask" @click.self="routeToPost(state.post.id)"></div>
+    <div class="card" :class="[state.post.type=='MARKDOWN'?'card-mkd':'']">
+        <div ref="cardMask" id="card-mask" @click.self="routeToPost(state.post.id)" :class="[state.shrinkContent?'card-mask-mkd-shrink':'card-mask']"></div>
         <button type="button" class="btn menu">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" class="z-index-96" />
             <Transition name="fade">
@@ -30,10 +30,15 @@
             </div>
         </div>
 
-        <div class="m-card-body">
-            <p class="card-text" id="content">{{ state.post.content }}</p>
+        <div class="m-card-body" :style="{'margin-left':state.post.type=='MARKDOWN'?'0':'3.5rem'}">
+            <p class="card-text" id="content" :class="[state.shrinkContent?'max-height-50vh':'']">
+                <VueShowdown tag="markdown" v-if="state.post.type=='MARKDOWN'" :markdown="state.post.content"></VueShowdown>
+                <div v-else>{{ state.post.content }}</div>
+            </p>
             <RepostCard v-if="state.post.root" :post="state.post.root" class="z-index-96 relative"></RepostCard>
+            <div class="absolute -bottom-[10rem] expand-btn">展开</div>
         </div>
+
         <div class="card-pics container z-index-96" :class="cardClass" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
                 <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
@@ -63,7 +68,8 @@
                 </div>
             </div>
         </div>
-        <div class="btn-group z-index-96" role="group">
+
+        <div class="btn-group z-index-96" :class="[state.post.type=='MARKDOWN'?'btn-group-mkd':'btn-group-umkd']" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
                     :class="{ 'm-active': isReposted }" />
@@ -122,6 +128,9 @@
     translate: 0 100%;
 }
 
+.expand-btn{
+    z-index: 97;
+}
 .altTextContainer::-webkit-scrollbar{
     display: none;
     width: 0 !important;
@@ -175,7 +184,7 @@
     z-index: 100 !important;
 }
 
-#card-mask {
+.card-mask {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -183,6 +192,16 @@
     right: 0;
     z-index: 96;
     background-color: transparent;
+}
+
+.card-mask-mkd-shrink {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 96;
+    background: linear-gradient(0deg, white 15%, transparent 50%);
 }
 
 .m-active {
@@ -212,8 +231,12 @@
     z-index: 103;
 }
 
-.btn-group {
+.btn-group-umkd {
     margin: 0 0.8rem 0 3.5rem;
+}
+
+.btn-group-mkd {
+    margin: 0 0.8rem 0 0rem;
 }
 
 .op-repost {
@@ -280,6 +303,11 @@
 .card:hover {
     background-color: #F5F5F5;
     cursor: default;
+}
+
+.card-mkd:hover {
+    background-color: transparent !important;
+    cursor: auto !important;
 }
 
 .btn:active {
@@ -353,7 +381,8 @@
 }
 
 .m-card-body {
-    margin-left: 3.5rem;
+    /* margin-left: 3.5rem; */
+    position: relative;
     padding: 0.5rem 0.8rem 0.5rem 0 !important;
 }
 
@@ -361,6 +390,8 @@
     text-align: justify;
     font-size: 11pt;
     word-break: break-all;
+    /* max-height: 95vh; */
+    overflow-y: hidden;
 }
 
 .post-time {
@@ -392,13 +423,17 @@
     border-radius: 4rem !important;
     background-color: cadetblue !important;
 }
+
+.max-height-50vh{
+    max-height: 50vh !important;
+}
 </style>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
 import { likeAPost, dislikeAPost, getUserInfoByNickname,getImageUrlIgnoreHidden } from '@/api'
-import router from '@/route';
+import router from '@/route'
 import { store } from '@/store'
 import { humanizedTime } from '@/utils/formatUtils.js'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
@@ -407,8 +442,10 @@ import RepostCard from '@/components/tailwind/RepostCard.vue'
 import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { ws, MsgPack } from '../../websocket.js'
+import { VueShowdown } from 'vue-showdown'
 
 const props = defineProps(['post'])
+const cardMask = ref()
 
 const state = reactive({
     post: props.post,
@@ -418,6 +455,7 @@ const state = reactive({
     isShowMenu: false,
     showAltText: [false, false, false, false, false, false, false, false, false],
     user: JSON.parse(localStorage.getItem("CUR_USER")),
+    shrinkContent:false
 })
 
 const cardClass = computed(() => {
@@ -483,7 +521,7 @@ async function toggleLike() {
             state.post.likeCount = lastCount + 1
             state.post.liked = true
 
-            ws.sendToOneQueue(new MsgPack(state.post.id,state.user.id,'POST_LIKE',state.post.user.id),'interact')
+            // ws.sendToOneQueue(new MsgPack(state.post.id,state.user.id,'POST_LIKE',state.post.user.id),'interact')
         } else {
             const response = await dislikeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)
@@ -576,8 +614,18 @@ async function getImageUrlIgnoreNSFW(imageIndex){
     }
 }
 
+function setSuitableHeight(){
+    if(state.post.type=='MARKDOWN' && cardMask.value.clientHeight>window.innerHeight/2){
+        state.shrinkContent=true
+        console.log(cardMask.value.clientHeight)
+        console.log(window.innerHeight)
+    }
+ 
+}
+
 onMounted(() => {
     resizePicture()
+    setSuitableHeight()
 })
 
 </script>

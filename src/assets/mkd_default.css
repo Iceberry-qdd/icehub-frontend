@@ -1,0 +1,97 @@
+markdown{
+    display: block;
+    font-size: 11pt;
+}
+
+markdown h1{
+    font-size: 24pt;
+    font-weight: bold;
+    padding: 1rem 0;
+}
+
+markdown h2{
+    font-size: 22pt;
+    font-weight: bold;
+    padding: 0.75rem 0;
+}
+
+markdown h3{
+    font-size: 20pt;
+    font-weight: bold;
+    padding: 0.5rem 0;
+}
+
+markdown h4{
+    font-size: 18pt;
+    font-weight: bold;
+    padding: 0.25rem 0;
+}
+
+markdown h5{
+    font-size: 16pt;
+    font-weight: bold;
+    padding: 0 0;
+}
+
+markdown h6{
+    font-size: 14pt;
+    font-weight: bold;
+    padding: 0 0;
+}
+
+markdown ul{
+    list-style: disc;
+    margin: 0 0 0 2rem;
+    padding: 0;
+}
+
+markdown ol{
+    list-style: decimal;
+    margin: 0 0 0 2rem;
+    padding: 0;
+}
+
+markdown blockquote{
+    padding: 0.25rem 0.25rem 0.25rem 1rem;
+    border-left: 4px solid #EEEEEE;
+}
+
+markdown a{
+    color:dodgerblue;
+    text-decoration: underline;
+}
+
+markdown p code{
+    background-color: #EEEEEE;
+    font-size:10pt;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+
+markdown pre{
+    background-color: #f6f8fa;
+    font-size:10pt;
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+markdown table{
+    min-width: fit-content;
+    max-width: 100%;
+}
+
+markdown tbody{
+    display: table-row-group;
+}
+
+markdown thead{
+    display: table-header-group;
+    background-color: #f6f8fa;
+}
+
+markdown tr th,markdown tr td{
+    border: 1px solid #EEEEEE;
+    padding: 0.5rem 1rem;
+    display: table-cell;
+    vertical-align: middle;
+}

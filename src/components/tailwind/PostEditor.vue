@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div>
-                <VueShowdown v-if="state.showMarkdown==true" :markdown="state.content" class="min-h-[6rem]"></VueShowdown>
+                <VueShowdown tag="markdown" v-if="state.showMarkdown==true" :markdown="state.content" class="min-h-[6rem]"></VueShowdown>
                 <textarea v-else v-model="state.content" @keydown="resize"
                     class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
                     maxlength="25000" rows="3" placeholder="发布帖子" id="post-input" name="post"></textarea>
@@ -115,6 +115,7 @@ import EmojiPanel from '@/components/menus/EmojiPanel.vue'
 import { VueShowdown } from 'vue-showdown'
 import VisibilityForPostEditorAction from '../menus/VisibilityForPostEditorAction.vue'
 import ImagePickerAction from '../menus/ImagePickerAction.vue'
+import { renderMath } from '../../katexConfig.js'
 
 const state = reactive({
     content: "",
@@ -229,4 +230,10 @@ function pickVisibility(args){
     state.data.status = args[0]
     state.showVisibilityPanel=false
 }
+
+watch(()=>state.showMarkdown,(newVal)=>{
+    if(newVal==true){
+        renderMath()
+    }
+})
 </script>
