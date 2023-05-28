@@ -31,12 +31,11 @@
         </div>
 
         <div class="m-card-body" :style="{'margin-left':state.post.type=='MARKDOWN'?'0':'3.5rem'}">
+            <div v-if="state.shrinkContent" class="expand-btn" @click="state.shrinkContent=false">展开</div>
             <p class="card-text" id="content" :class="[state.shrinkContent?'max-height-50vh':'']">
-                <VueShowdown tag="markdown" v-if="state.post.type=='MARKDOWN'" :markdown="state.post.content"></VueShowdown>
-                <div v-else>{{ state.post.content }}</div>
+                <VueShowdown tag="markdown" :markdown="state.post.content"></VueShowdown>
             </p>
             <RepostCard v-if="state.post.root" :post="state.post.root" class="z-index-96 relative"></RepostCard>
-            <div class="absolute -bottom-[10rem] expand-btn">展开</div>
         </div>
 
         <div class="card-pics container z-index-96" :class="cardClass" v-if="hasPics">
@@ -128,8 +127,17 @@
     translate: 0 100%;
 }
 
-.expand-btn{
-    z-index: 97;
+.m-card-body .expand-btn{
+    z-index: 96;
+    position: absolute;
+    left: 50%;
+    top: calc(100% - 50px) ;
+    translate: -50% -100%;
+    padding: 0.25rem 1rem;
+    border-radius: 9999px;
+    background-color: #cfe2ffAA;
+    font-size: 11pt;
+    cursor: pointer;
 }
 .altTextContainer::-webkit-scrollbar{
     display: none;
@@ -381,8 +389,6 @@
 }
 
 .m-card-body {
-    /* margin-left: 3.5rem; */
-    position: relative;
     padding: 0.5rem 0.8rem 0.5rem 0 !important;
 }
 
@@ -617,10 +623,7 @@ async function getImageUrlIgnoreNSFW(imageIndex){
 function setSuitableHeight(){
     if(state.post.type=='MARKDOWN' && cardMask.value.clientHeight>window.innerHeight/2){
         state.shrinkContent=true
-        console.log(cardMask.value.clientHeight)
-        console.log(window.innerHeight)
     }
- 
 }
 
 onMounted(() => {

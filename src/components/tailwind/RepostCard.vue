@@ -1,12 +1,16 @@
 <template>
-    <div @click="routeToUserProfile"
+    <div @click="routeToUserProfile" ref="repostCard"
         class="border-[1px] m-bg-white border-gray-300 rounded-[8px] flex flex-col gap-y-1 pt-2 cursor-pointer">
         <div class="flex flex-row items-center px-2 gap-x-2 text-[11pt]">
             <img :src="avatar" class="w-[1.5rem] h-[1.5rem] rounded-[4px]" />
             <div class="font-bold">{{ state.post.user.nickname }}</div>
             <div class="text-gray-400 top-[1px]">发布于 {{ formattedTime }}</div>
         </div>
-        <div class="px-2 break-all text-[11pt]">{{ state.post.content }}</div>
+
+        <div class="relative px-2 break-all text-[11pt]" :class="[state.shrinkContent?'max-h-[50vh] overflow-hidden':'']">
+            <div v-if="state.shrinkContent" class="shrink-mask relative top-0 bottom-0 left-0 right-0 bg-slate-400"></div>
+            <VueShowdown tag="markdown" :markdown="state.post.content"></VueShowdown>
+        </div>
         <div class="flex relative flex-col gap-y-1">
             <div v-if="isCoverHidden" class="absolute w-full h-full flex flex-row justify-center items-center z-[99]">
                 <div class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">敏感内容</div>
@@ -31,18 +35,28 @@
 .m-bg-white {
     background-color: white !important;
 }
+
+.shrink-mask{
+    width: 100%;
+    height: 50vh;
+    background: linear-gradient(0deg, white 6%, transparent 50%);
+    position: absolute;
+}
 </style>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive,onMounted,ref } from 'vue'
 import { humanizedTime } from '@/utils/formatUtils.js'
 import router from '@/route.js'
 import IconGif from '@/components/icons/IconGif.vue'
+import { VueShowdown } from 'vue-showdown'
 
 const props = defineProps(['post'])
+const repostCard = ref()
 
 const state = reactive({
-    post: props.post
+    post: props.post,
+    shrinkContent:false
 })
 
 const formattedTime = computed(() => {
@@ -73,5 +87,18 @@ const isCoverHidden = computed(() => {
 const isGifCover = computed(() => {
     if (!state.post.attachmentsUrl[0]) return false
     else return state.post.attachmentsUrl[0].contentType == 'image/gif'
+})
+
+function setSuitableHeight(){
+    if(state.post.type=='MARKDOWN' && repostCard.value.clientHeight>window.innerHeight/2){
+        state.shrinkContent=true
+        console.log(repostCard.value.clientHeight)
+        console.log(window.innerHeight)
+
+    }
+}
+
+onMounted(()=>{
+    setSuitableHeight()
 })
 </script>

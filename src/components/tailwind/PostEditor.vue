@@ -53,8 +53,10 @@
                         </Transition>
                     </div>
 
-                    <button @click="state.showMarkdown=!state.showMarkdown">
-                        <i class="cursor-pointer bi bi-markdown-fill" title="预览markdown"></i>
+                    <button @click="state.showMarkdown=!state.showMarkdown"
+                        :class="[state.showMarkdown?'bg-[#bfdbfe]':'bg-transparent']"
+                        class="hover:bg-gray-300 p-1 w-[30px] h-[31px] rounded-full" >
+                        <i class="cursor-pointer bi bi-markdown-fill " title="启用markdown格式并预览"></i>
                     </button>
 
                     <!-- <i class="cursor-pointer bi bi-code-slash" title="添加代码片段"></i>
@@ -162,6 +164,7 @@ async function submitPost() {
         if (state.content.length == 0) throw new Error("文字内容不能为空！")
 
         state.isLoading = true
+        state.data.type = state.showMarkdown==true?'MARKDOWN':'NORMAL'
         state.data.content = state.content
         for (let i = 0; i < 9; i++) {
             if (state.imgList.length <= i) break

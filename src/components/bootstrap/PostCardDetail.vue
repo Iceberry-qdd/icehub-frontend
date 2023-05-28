@@ -23,8 +23,7 @@
 
         <div class="m-card-body">
             <p class="card-text" id="content">
-                <VueShowdown tag="markdown" v-if="state.post.type=='MARKDOWN'" :markdown="state.post.content"></VueShowdown>
-                <div v-else>{{ state.post.content }}</div>
+                <VueShowdown tag="markdown" :markdown="state.post.content"></VueShowdown>
             </p>
             <RepostCard v-if="state.post.root" :post="state.post.root" class="repostCard"></RepostCard>
         </div>
