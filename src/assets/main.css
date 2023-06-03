@@ -1,9 +1,9 @@
 html,body {
     margin: 0;
-    font-family:'Apple Color Emoji', system-ui, -apple-system, BlinkMacSystemFont, sans-serif, 'Segoe UI' !important;
+    font-family: 'Apple Color Emoji', system-ui, -apple-system, BlinkMacSystemFont, sans-serif, 'Segoe UI' !important;
 }
 
-html::-webkit-scrollbar{
+html::-webkit-scrollbar {
     width: 6px !important;
     height: 100% !important;
     -webkit-appearance: none;
@@ -11,11 +11,11 @@ html::-webkit-scrollbar{
     border-radius: 9999px;
 }
 
-html::-webkit-scrollbar-thumb{
+html::-webkit-scrollbar-thumb {
     width: 6px !important;
     -webkit-appearance: none;
     background: #00000077;
-    border-radius: 9999px; 
+    border-radius: 9999px;
 }
 
 img,li,.userCard {
@@ -38,17 +38,21 @@ img,li,.userCard {
     padding: 0.5rem;
 }
 
-.i-icon{
+.i-icon {
     padding: 0.4rem;
     background-color: transparent;
     border-radius: 99rem;
 }
 
-.i-icon:hover{
+.i-icon:hover {
     cursor: pointer;
     padding: 0.4rem;
     background-color: #d3d3d5;
     border-radius: 99rem;
+}
+
+.katex {
+    font: normal 1.1em KaTeX_Main, Times New Roman, serif !important;
 }
 
 @tailwind base;

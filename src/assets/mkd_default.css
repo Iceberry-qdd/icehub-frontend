@@ -95,3 +95,10 @@ markdown tr th,markdown tr td{
     display: table-cell;
     vertical-align: middle;
 }
+
+markdown atsign{
+    color:white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    cursor: pointer;
+}

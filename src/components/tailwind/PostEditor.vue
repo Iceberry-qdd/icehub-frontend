@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div>
-                <VueShowdown tag="markdown" v-if="state.showMarkdown==true" :markdown="state.content" class="min-h-[6rem]"></VueShowdown>
+                <VueShowdown tag="markdown" :extensions="['exts']" v-if="state.showMarkdown==true" :markdown="state.content" class="min-h-[6rem]"></VueShowdown>
                 <textarea v-else v-model="state.content" @keydown="resize"
                     class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
                     maxlength="25000" rows="3" placeholder="发布帖子" id="post-input" name="post"></textarea>
@@ -26,7 +26,7 @@
                         </Transition>
                     </div>
 
-                    <video-two v-tooltip="'添加视频'" theme="outline" size="18" fill="#333" :strokeWidth="3" v-if="!hasImage" />
+                    <!-- <video-two v-tooltip="'添加视频'" theme="outline" size="18" fill="#333" :strokeWidth="3" v-if="!hasImage" /> -->
 
                     <div class="relative flex-col">
                         <div class="flex" @click="state.showVisibilityPanel = !state.showVisibilityPanel">

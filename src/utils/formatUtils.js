@@ -59,3 +59,7 @@ export function guid() {
         return v.toString(16)
     })
 }
+
+export function calcBgColor(string) {
+    return '#' + (string.charCodeAt(0).toString(16)).padEnd(6, '0')
+}

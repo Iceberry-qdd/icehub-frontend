@@ -33,7 +33,7 @@
         <div class="m-card-body" :style="{'margin-left':state.post.type=='MARKDOWN'?'0':'3.5rem'}">
             <div v-if="state.shrinkContent" class="expand-btn" @click="state.shrinkContent=false">展开</div>
             <p class="card-text" id="content" :class="[state.shrinkContent?'max-height-50vh':'']">
-                <VueShowdown tag="markdown" :markdown="state.post.content"></VueShowdown>
+                <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
             <RepostCard v-if="state.post.root" :post="state.post.root" class="z-index-96 relative"></RepostCard>
         </div>

@@ -9,7 +9,7 @@
 
         <div class="relative px-2 break-all text-[11pt]" :class="[state.shrinkContent?'max-h-[50vh] overflow-hidden':'']">
             <div v-if="state.shrinkContent" class="shrink-mask relative top-0 bottom-0 left-0 right-0 bg-slate-400"></div>
-            <VueShowdown tag="markdown" :markdown="state.post.content"></VueShowdown>
+            <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
         </div>
         <div class="flex relative flex-col gap-y-1">
             <div v-if="isCoverHidden" class="absolute w-full h-full flex flex-row justify-center items-center z-[99]">

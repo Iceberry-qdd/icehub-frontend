@@ -23,7 +23,7 @@
 
         <div class="m-card-body">
             <p class="card-text" id="content">
-                <VueShowdown tag="markdown" :markdown="state.post.content"></VueShowdown>
+                <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
             <RepostCard v-if="state.post.root" :post="state.post.root" class="repostCard"></RepostCard>
         </div>
