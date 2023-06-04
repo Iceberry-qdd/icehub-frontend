@@ -3,7 +3,7 @@
         class="panel overflow-y-scroll overflow-x-hidden min-h-[8rem] px-1 pr-[1px] max-h-[18rem] bg-white rounded-[6px] shadow-md ring-1 ring-gray-200">
         <div class="category sticky z-[99] top-0 py-2 px-2 grid gap-1 grid-cols-7 bg-white border-b-[1px]"
             v-if="state.historyEmojis.length > 0">
-            <button v-for="(emoji, index) in state.historyEmojis" :key="index" :title="categoryZh[emoji.category]"
+            <button v-for="(emoji, index) in state.historyEmojis" :key="index" :title="emoji.short_name"
                 @click="chooseEmoji(emoji)"
                 class="flex aria-selected justify-center items-center w-[2rem] h-[2rem] p-1 border border-transparent rounded-[8px] cursor-pointer hover:bg-[#f1f3f4] focus:bg-[#cfe2ff]">
                 <span :style="{ backgroundPosition: calcSpriteSheet(emoji.sheet_x, emoji.sheet_y) }"

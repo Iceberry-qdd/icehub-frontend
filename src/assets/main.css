@@ -52,7 +52,7 @@ img,li,.userCard {
 }
 
 .katex {
-    font: normal 1.1em KaTeX_Main, Times New Roman, serif !important;
+    font: normal 1.1em KaTeX_Math, Times New Roman, serif !important;
 }
 
 @tailwind base;

@@ -1,6 +1,6 @@
 markdown{
     display: block;
-    font-size: 11pt;
+    font-size: 12pt;
 }
 
 markdown h1{
@@ -49,6 +49,13 @@ markdown ol{
     list-style: decimal;
     margin: 0 0 0 2rem;
     padding: 0;
+}
+
+markdown p{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    margin: 0.25rem 0;
 }
 
 markdown blockquote{
@@ -101,4 +108,8 @@ markdown atsign{
     padding: 0.25rem 0.5rem;
     border-radius: 9999px;
     cursor: pointer;
+}
+
+markdown .emoji span{
+    display: inline-block;
 }
