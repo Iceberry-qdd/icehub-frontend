@@ -50,8 +50,12 @@
                     {{ props.reply.likeCount }}
                 </button>
             </div>
-            <div class="text-[11pt] text-[#0d6efd] cursor-pointer hover:underline ml-[4rem]"
-                @click="fetchMoreReply" v-if="showMoreReplyButton">加载更多回复</div>
+            <div class="text-[11pt] text-[#0d6efd] hover:underline ml-[4rem]"
+                :class="[state.isLoading?'pointer-events-none':'cursor-pointer']"
+                v-if="showMoreReplyButton">
+                <IconLoading v-if="state.isLoading==true" class="h-5 w-5 text-slate-500"></IconLoading>
+                <span @click="fetchMoreReply" v-else>加载更多回复</span>
+            </div>
 
         </div>
     </div>
@@ -93,6 +97,7 @@ import { store } from '@/store'
 import { Like, Message, MoreTwo } from '@icon-park/vue-next'
 import router from '@/route'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
+import IconLoading from '@/components/icons/IconLoading.vue'
 
 const props = defineProps(['review', 'tieSub', 'reply', 'totalReplyCount', 'fetchedReplyCount', 'index'])
 const emit = defineEmits(['fetchMoreReply'])
@@ -100,7 +105,8 @@ const emit = defineEmits(['fetchMoreReply'])
 const state = reactive({
     review: props.review,
     tieSub: props.tieSub,
-    showUserInfoPop: false
+    showUserInfoPop: false,
+    isLoading:false
 })
 
 const formattedTime = computed(() => {
@@ -121,6 +127,7 @@ const replyTo = computed(() => {
 })
 
 function fetchMoreReply(){
+    state.isLoading=true
     emit('fetchMoreReply')
 }
 

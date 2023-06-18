@@ -19,7 +19,7 @@
             </Review>
         </div>
         <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
-            <IconLoading v-if="hasMore" class="h-5 w-5 text-slate-500"></IconLoading>
+            <IconLoading v-if="state.isLoading==true" class="h-5 w-5 text-slate-500"></IconLoading>
             <span v-else>没有更多了</span>
         </div>
     </div>
@@ -56,7 +56,8 @@ const state = reactive({
         showMenu: false,
         menuIcon: null,
         menuAction: { action: 'route', param: '' }
-    }
+    },
+    isLoading:false
 })
 
 const hasMore = computed(() => {
@@ -77,6 +78,7 @@ async function getPost(id) {
 
 async function getReviews(postId, pageIndex, pageSize) {
     try {
+        state.isLoading=true
         const response = await getPostReviews(postId, pageIndex, pageSize)
         if (!response.ok) throw new Error((await response.json()).error)
 
@@ -86,6 +88,8 @@ async function getReviews(postId, pageIndex, pageSize) {
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
+    }finally{
+        state.isLoading=false
     }
 }
 
