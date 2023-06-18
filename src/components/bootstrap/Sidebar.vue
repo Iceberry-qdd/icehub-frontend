@@ -111,7 +111,7 @@ li:hover {
 import { reactive, onMounted, watch } from 'vue'
 import router from '@/route.js'
 import { store } from '@/store'
-import { getUserInfoByNickname } from '@/api.js'
+import { getUserInfoByNickname,queryCurUserUnreadNotifyCount } from '@/api.js'
 import { useRoute } from 'vue-router'
 import { ws } from '../../websocket.js'
 
@@ -160,6 +160,23 @@ async function getUser(nickname) {
     }
 }
 
+async function getUnreadNotifyCount(){
+    try{
+        const response = await queryCurUserUnreadNotifyCount()
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const {unreadCount,readCount} = await response.json()
+        store.setUnreadMsgCount(unreadCount)
+    }catch(e){
+        store.setErrorMsg(e.message)
+        console.error(e) 
+    }
+}
+
+watch(()=>store.UNREAD_MSG_COUNT,(newVal,oldVal)=>{
+    state.menus.filter(item=>item.name == '消息')[0].badgeCount = newVal
+})
+
 function getCurUserAvatar() {
     try {
         const { avatarUrl, nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
@@ -197,6 +214,7 @@ onMounted(() => {
     const menuItem = state.menus.filter(menu => menu.routeTo == '/' + pageName)
     const menuId = menuItem.length <= 0 ? 1 : menuItem[0].id
     activeMenu(menuId)
+    getUnreadNotifyCount(state.user.id)
 })
 
 </script>

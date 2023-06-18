@@ -155,6 +155,8 @@ async function ackMessage(messageId){
         const result = await response.json()
         if(result==false){throw new Error("无法设置消息状态！")}
         state.messages.filter(message=>message.id == messageId)[0].read = true
+        const lastUnreadCount = store.UNREAD_MSG_COUNT
+        store.setUnreadMsgCount(lastUnreadCount - 1)
         return true
     }catch(e){
         store.setErrorMsg("无法设置消息状态！")
