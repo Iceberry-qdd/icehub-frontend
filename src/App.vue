@@ -9,6 +9,7 @@
             <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
             <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
             <RepostPanel v-if="store.REPOST_POST"></RepostPanel>
+            <ReviewPanel v-if="store.REVIEW_PANEL_DATA"></ReviewPanel>
             <div id="sidebar-l">
                 <Brand></Brand>
                 <Sidebar id="menu"></Sidebar>
@@ -72,7 +73,7 @@ import ImageCropper from '@/components/tailwind/ImageCropper.vue'
 import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 import { ws } from './websocket.js'
 import GlobalNotifyBanner from '@/components/tailwind/GlobalNotifyBanner.vue'
-import {renderMath} from '@/katexConfig.js'
+import ReviewPanel from './components/tailwind/ReviewPanel.vue'
 
 const state = reactive({
     user: null,

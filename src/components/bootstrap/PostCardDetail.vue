@@ -5,7 +5,15 @@
             <PostMenus id="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
         <div class="user-info d-flex">
-            <a class="position-relative" @click="showUserProfile(props.post.user.id)">
+            <Transition name="fade">
+                <UserInfoPop
+                    @mouseleave="state.showUserInfoPop = false"
+                    :user="state.post.user"
+                    v-if="state.showUserInfoPop"
+                    class="user-info-pop">
+                </UserInfoPop>
+            </Transition>
+            <a @mouseenter="state.showUserInfoPop = true" class="position-relative" @click="showUserProfile(props.post.user.id)">
                 <img @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="avatarUrl">
             </a>
             <div class="user-text">
@@ -31,7 +39,7 @@
             <div class="imgs-grid" :class="gridTemplateClass">
                 <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in props.post.attachmentsUrl" :key="idx" :index="idx">
                     <IconAltOn @mouseenter="state.showAltText[idx]=true" v-show="pic.altText && state.showAltText[idx]==false" class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer"></IconAltOn>
-                    <Transition name="fade">
+                    <Transition name="fade-translate">
                         <div @mouseleave="state.showAltText[idx]=false" v-show="pic.altText && state.showAltText[idx]==true" class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
                             {{ pic.altText }}
                         </div>
@@ -84,18 +92,33 @@
 }
 
 .fade-enter-active{
-    transition: translate 0.3s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
 }
 
 .fade-leave-active{
-    transition: translate 0.3s ease-in-out;
+    transition: opacity 0.1s ease-in-out;
 }
 
 .fade-enter-from{
-    translate: 0 100%;
+    opacity: 0;
 }
 
 .fade-leave-to{
+    opacity: 0;
+}
+.fade-translate-enter-active{
+    transition: translate 0.3s ease-in-out;
+}
+
+.fade-translate-leave-active{
+    transition: translate 0.3s ease-in-out;
+}
+
+.fade-translate-enter-from{
+    translate: 0 100%;
+}
+
+.fade-translate-leave-to{
     translate: 0 100%;
 }
 
@@ -219,6 +242,11 @@
     transition: transform 400ms;
 }
 
+.user-info-pop {
+    position: absolute;
+    top: 1rem;
+    z-index: 103;
+}
 .img-wrapper-h-grid-1 {
     max-height: 90vh;
     min-height: fit-content;
@@ -357,6 +385,7 @@ import PostMenus from '@/components/tailwind/PostMenus.vue'
 import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { VueShowdown } from 'vue-showdown'
+import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 
 const props = defineProps(['post'])
 
@@ -365,7 +394,8 @@ const state = reactive({
     showOriginUrl: [false, false, false, false, false, false, false, false, false],
     post: props.post,
     isShowMenu: false,
-    showAltText: [false, false, false, false, false, false, false, false, false]
+    showAltText: [false, false, false, false, false, false, false, false, false],
+    showUserInfoPop: false
 })
 
 const likedIconTheme = computed(() => {

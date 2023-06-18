@@ -1,9 +1,13 @@
 <template>
-    <div class="flex flex-row gap-x-[1rem] py-[1rem] px-[1.5rem] border-b-[1px] border-gray-200">
-        <div class="h-fit"><img :src="avatar" class="rounded-[6px] h-[2.5rem] w-[2.5rem] max-w-none" />
-        </div>
+    <div class="flex relative flex-row gap-x-[1rem] py-[1rem] px-[1.5rem]"
+        :class="[props.fromReviewPanel?'':'border-gray-100 border-b-[1px]']">
+        <div v-if="props.tieLocation == 'mid'" class="timeline-mid absolute w-1 h-full top-0 left-[2.6rem] bg-gray-200 z-0"></div>
+        <div v-if="props.tieLocation == 'top'" class="timeline-top absolute w-1 top-[2.5rem] left-[2.6rem] bg-gray-200 z-0"></div>
+        <div v-if="props.tieLocation == 'bottom'" class="timeline-bottom absolute w-1 h-[2.5rem] top-0 left-[2.6rem] bg-gray-200 -z-0"></div>
+        <div class="h-fit z-10"><img :src="avatar" class="rounded-[6px] h-[2.5rem] w-[2.5rem] max-w-none cursor-default" /></div>
         <div class="w-full">
-            <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
+            <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span class="cursor-pointer  font-bold">@{{
+                replyTo }}</span>
             </div>
             <textarea v-model="state.content" @keydown="resize" :disabled="state.loading"
                 :class="{ 'text-gray-400': state.loading }"
@@ -15,7 +19,9 @@
                     <local-two theme="outline" size="20" class="icon" fill="#333" :strokeWidth="4" />
                 </div>
                 <div class="flex flex-row gap-x-2 items-center" v-else></div>
-                <div @click="submitReview" :class="[state.loading?'cursor-not-allowed bg-gray-400':'cursor-pointer bg-[#0d6efd]']" class="text-sm py-[0.4rem] px-6 rounded-full text-white">
+                <div @click="submitReview"
+                    :class="[state.loading ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-[#0d6efd]']"
+                    class="text-sm py-[0.4rem] px-6 rounded-full text-white">
                     <span v-if="!state.loading">发布</span>
                     <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
                 </div>
@@ -34,7 +40,7 @@ import { AddPicture, LocalTwo } from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/websocket.js'
 
-const props = defineProps(['post', 'parent'])
+const props = defineProps(['post', 'parent','tieLocation','fromReviewPanel'])
 
 const state = reactive({
     content: '',
@@ -58,7 +64,7 @@ const replyTo = computed(() => {
 })
 
 async function submitReview() {
-    if(state.loading==true){
+    if (state.loading == true) {
         store.setWarningMsg('正在提交中，请勿重复提交')
         return
     }
@@ -69,7 +75,7 @@ async function submitReview() {
 
         const data = {
             'content': state.content,
-            'postId': props.post ? props.post.id : null,
+            'postId': props.post ? props.post.id : props.parent.postId,
             'parentId': props.parent ? props.parent.id : null
         }
         const response = await reviewing(data)
@@ -78,7 +84,7 @@ async function submitReview() {
 
         const reviewId = result.id
         const receiverId = data.parentId == null ? props.post.user.id : props.parent.user.id
-        ws.sendToOneQueue(new MsgPack(reviewId, state.curUser.id, 'REVIEW', receiverId), 'interact')
+        // ws.sendToOneQueue(new MsgPack(reviewId, state.curUser.id, 'REVIEW', receiverId), 'interact')
 
         location.reload()
     } catch (e) {

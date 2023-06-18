@@ -235,7 +235,7 @@
 
 .user-info-pop {
     position: absolute;
-    top: 4.5rem;
+    top: 1rem;
     z-index: 103;
 }
 

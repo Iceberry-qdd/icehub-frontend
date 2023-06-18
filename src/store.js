@@ -101,8 +101,16 @@ export const store = reactive({
         this.REPOST_POST = null
     },
 
-    GLOBAL_NOTIFY_BANNER_MSG:'',
-    setGlobalNotifyBannerMsg(msg){
+    GLOBAL_NOTIFY_BANNER_MSG: '',
+    setGlobalNotifyBannerMsg(msg) {
         this.GLOBAL_NOTIFY_BANNER_MSG = msg
+    },
+
+    REVIEW_PANEL_DATA: null,
+    setReviewPanelData(review) {
+        this.REVIEW_PANEL_DATA = review
+    },
+    clearReviewPanel() {
+        this.REVIEW_PANEL_DATA = null
     }
 })

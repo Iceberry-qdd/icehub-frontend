@@ -1,12 +1,22 @@
 <template>
     <div>
-        <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
-            :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
-            :menuAction="state.headerConfig.menuAction"></Header>
+        <Header
+            :title="state.headerConfig.title"
+            :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu"
+            :menuIcon="state.headerConfig.menuIcon"
+            :menuAction="state.headerConfig.menuAction">
+        </Header>
         <PostCardDetail v-if="state.post" :post="state.post"></PostCardDetail>
-        <ReviewEditor v-if="store.SHOW_REVIEW_PANEL" :post="state.post"></ReviewEditor>
+        <ReviewEditor  :post="state.post"></ReviewEditor>
         <div v-if="state.reviews.length > 0">
-            <Review v-for="(review, index) in state.reviews" :review="review" :post="state.post" :key="review.id" :index="index"></Review>
+            <Review 
+                v-for="(review, index) in state.reviews"
+                :review="review"
+                :post="state.post"
+                :key="review.id"
+                :index="index">
+            </Review>
         </div>
         <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
             <IconLoading v-if="hasMore" class="h-5 w-5 text-slate-500"></IconLoading>
