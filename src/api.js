@@ -661,3 +661,18 @@ export function markNotifyRead(notifyId){
         credentials:'same-origin'
     })
 }
+
+/**
+ * 查询当前用户未读消息数量
+ * @returns 用户帖子统计值
+ */
+export function queryCurUserUnreadNotifyCount(){
+    return fetch(`${BASE_URL}/notify/user/statistic`,{
+        method:'GET',
+        headers:{
+            'Authorization': TOKEN
+        },
+        redirect:'follow',
+        credentials:'same-origin'
+    })
+}

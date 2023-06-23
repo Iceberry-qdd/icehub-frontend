@@ -112,5 +112,10 @@ export const store = reactive({
     },
     clearReviewPanel() {
         this.REVIEW_PANEL_DATA = null
+    },
+
+    UNREAD_MSG_COUNT:0,
+    setUnreadMsgCount(count){
+        this.UNREAD_MSG_COUNT = count
     }
 })
