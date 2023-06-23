@@ -1,9 +1,9 @@
 <template>
     <div class="flex relative flex-row gap-x-[1rem] py-[1rem] px-[1.5rem]"
         :class="[props.fromReviewPanel?'':'border-gray-100 border-b-[1px]']">
-        <div v-if="props.tieLocation == 'mid'" class="timeline-mid absolute w-1 h-full top-0 left-[2.6rem] bg-gray-200 z-0"></div>
-        <div v-if="props.tieLocation == 'top'" class="timeline-top absolute w-1 top-[2.5rem] left-[2.6rem] bg-gray-200 z-0"></div>
-        <div v-if="props.tieLocation == 'bottom'" class="timeline-bottom absolute w-1 h-[2.5rem] top-0 left-[2.6rem] bg-gray-200 -z-0"></div>
+        <div v-if="props.tieLocation == 'mid'" class="timeline-mid absolute w-[0.15rem] h-full top-0 left-[2.7rem] bg-gray-200 z-0"></div>
+        <div v-if="props.tieLocation == 'top'" class="timeline-top absolute w-[0.15rem] top-[2.5rem] left-[2.7rem] bg-gray-200 z-0"></div>
+        <div v-if="props.tieLocation == 'bottom'" class="timeline-bottom absolute w-[0.15rem] h-[2.5rem] top-0 left-[2.7rem] bg-gray-200 -z-0"></div>
         <div class="h-fit z-10"><img :src="avatar" class="rounded-[6px] h-[2.5rem] w-[2.5rem] max-w-none cursor-default" /></div>
         <div class="w-full">
             <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span class="cursor-pointer  font-bold">@{{

@@ -1,9 +1,10 @@
 <template>
     <div>
-        <div class="flex relative flex-col gap-y-4 px-[1rem] py-[1rem] border-gray-100 border-b-[1px] hover:bg-[#f5f5f5] cursor-pointer">
-            <div v-if="state.tieSub == 'mid'" class="timeline-mid absolute w-1 h-full top-0 left-[2.6rem] bg-gray-200 z-0"></div>
-            <div v-if="state.tieSub == 'top'" class="timeline-top absolute w-1 top-[2.5rem] left-[2.6rem] bg-gray-200 z-0"></div>
-            <div v-if="state.tieSub == 'bottom'" class="timeline-bottom absolute w-1 h-[2.5rem] top-0 left-[2.6rem] bg-gray-200 z-0"></div>
+        <div class=" flex relative flex-col gap-y-4 px-[1rem] py-[1rem] border-gray-100 border-b-[1px] hover:bg-[#f5f5f5] cursor-pointer">
+            <div v-if="state.tieSub == 'mid'" class="timeline-mid absolute w-[0.15rem] h-full top-0 left-[2.7rem] bg-gray-200 z-0"></div>
+            <div v-if="state.tieSub == 'top'" class="timeline-top absolute w-[0.15rem] top-[2.5rem] left-[2.7rem] bg-gray-200 z-0"></div>
+            <div v-if="state.tieSub == 'bottom'" class="timeline-bottom absolute w-[0.15rem] h-[2.5rem] top-0 left-[2.7rem] bg-gray-200 z-0"></div>
+            <div class="absolute left-0 top-0 w-full h-full z-10 bg-transparent" @click.self="routeToReplyDetail(review.id)"></div>
             <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
                 <div class="flex relative flex-row items-center gap-x-4">
                     <Transition name="fade">
@@ -19,13 +20,13 @@
                             <img :src="avatar" class="rounded-[6px]" />
                         </a>
                     </div>
-                    <div>
+                    <div class="z-20">
                         <div @click="routeToUser(props.review.user.nickname)"
                             class="text-[12pt] font-bold cursor-pointer hover:underline">
                             {{ props.review.user.nickname }}
                             <i v-if="props.review.user.verified" class="bi bi-patch-check-fill verify relative text-[10pt] text-blue-500"></i>
                         </div>
-                        <div @click="routeToUser(replyTo)" class="text-[11pt]"> 回复 
+                        <div v-if="props.post != null" @click="routeToUser(replyTo)" class="text-[11pt]"> 回复 
                             <span class="cursor-pointer hover:underline font-bold">@{{ replyTo }}</span>
                         </div>
                     </div>
@@ -35,7 +36,7 @@
                 </div>
             </div>
             <div class="pl-[4rem] text-[12pt]"> {{ props.review.content }} </div>
-            <div class="flex flex-row justify-between pl-[4rem]">
+            <div class="flex flex-row justify-between pl-[4rem] z-20">
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleMenu">
                     <more-two theme="outline" size="20" fill="#333" :strokeWidth="3" />
                 </button>
@@ -206,6 +207,10 @@ const likedIconColor = computed(() => {
 const hasReply = computed(() => {
     return state.replies.length > 0
 })
+
+function routeToReplyDetail(reviewId) {
+    router.push({ name: 'replyDetail', params: { id: reviewId } })
+}
 
 const avatar = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${props.review.user.nickname}.svg`

@@ -1,25 +1,27 @@
 <template>
     <div>
         <div class="flex relative flex-col gap-y-4 px-[1rem] py-[1rem] border-gray-100 border-b-[1px]">
-            <div v-if="state.tieSub == 'mid'" class="timeline-mid absolute w-1 h-full top-0 left-[2.6rem] bg-gray-200 z-0"></div>
-            <div v-if="state.tieSub == 'top'" class="timeline-top absolute w-1 top-[2.5rem] left-[2.6rem] bg-gray-200 z-0"></div>
-            <div v-if="state.tieSub == 'bottom'" class="timeline-bottom absolute w-1 h-[2.5rem] top-0 left-[2.6rem] bg-gray-200 z-0"></div>
+            <div v-if="state.tieSub == 'mid'"
+                class="timeline-mid absolute w-[0.15rem] h-full top-0 left-[2.7rem] bg-gray-200 z-0"></div>
+            <div v-if="state.tieSub == 'top'"
+                class="timeline-top absolute w-[0.15rem] top-[2.5rem] left-[2.7rem] bg-gray-200 z-0"></div>
+            <div v-if="state.tieSub == 'bottom'"
+                class="timeline-bottom absolute w-[0.15rem] h-[2.5rem] top-0 left-[2.7rem] bg-gray-200 z-0"></div>
+            <div class="absolute left-0 top-0 w-full h-full z-10 bg-transparent"
+                @click.self="routeToReplyDetail(props.reply.id)"></div>
             <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
                 <div class="flex relative flex-row items-center gap-x-4">
                     <Transition name="fade">
-                            <UserInfoPop
-                                @mouseleave="state.showUserInfoPop = false"
-                                :user="props.reply.user"
-                                v-if="state.showUserInfoPop"
-                                class="user-info-pop z-[99] absolute top-0 shadow-lg">
-                            </UserInfoPop>
-                        </Transition>
+                        <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="props.reply.user"
+                            v-if="state.showUserInfoPop" class="user-info-pop z-[99] absolute top-0 shadow-lg">
+                        </UserInfoPop>
+                    </Transition>
                     <div class="w-[2.5rem] h-[2.5rem] relative z-10">
                         <a @mouseenter="state.showUserInfoPop = true" @click="routeToUser(props.reply.user.nickname)">
                             <img :src="avatar" class="rounded-[6px]" />
                         </a>
                     </div>
-                    <div>
+                    <div class="z-20">
                         <div @click="routeToUser(props.reply.user.nickname)"
                             class="text-[12pt] font-bold cursor-pointer hover:underline">{{ props.reply.user.nickname }}
                             <i v-if="props.reply.user.verified"
@@ -35,7 +37,7 @@
                 </div>
             </div>
             <div class="pl-[4rem] text-[12pt]"> {{ props.reply.content }} </div>
-            <div class="flex flex-row justify-between pl-[4rem]">
+            <div class="flex flex-row justify-between pl-[4rem] z-20">
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleMenu">
                     <more-two theme="outline" size="20" fill="#333" :strokeWidth="3" />
                 </button>
@@ -50,10 +52,9 @@
                     {{ props.reply.likeCount }}
                 </button>
             </div>
-            <div class="text-[11pt] text-[#0d6efd] hover:underline ml-[4rem]"
-                :class="[state.isLoading?'pointer-events-none':'cursor-pointer']"
-                v-if="showMoreReplyButton">
-                <IconLoading v-if="state.isLoading==true" class="h-5 w-5 text-slate-500"></IconLoading>
+            <div class="text-[11pt] text-[#0d6efd] hover:underline ml-[4rem] z-20"
+                :class="[state.isLoading ? 'pointer-events-none' : 'cursor-pointer']" v-if="showMoreReplyButton">
+                <IconLoading v-if="state.isLoading == true" class="h-5 w-5 text-slate-500"></IconLoading>
                 <span @click="fetchMoreReply" v-else>加载更多回复</span>
             </div>
 
@@ -71,19 +72,19 @@
     height: calc(100% - 2.5rem);
 }
 
-.fade-enter-active{
+.fade-enter-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-leave-active{
+.fade-leave-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-enter-from{
+.fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to{
+.fade-leave-to {
     opacity: 0;
 }
 </style>
@@ -106,7 +107,7 @@ const state = reactive({
     review: props.review,
     tieSub: props.tieSub,
     showUserInfoPop: false,
-    isLoading:false
+    isLoading: false
 })
 
 const formattedTime = computed(() => {
@@ -126,8 +127,8 @@ const replyTo = computed(() => {
     }
 })
 
-function fetchMoreReply(){
-    state.isLoading=true
+function fetchMoreReply() {
+    state.isLoading = true
     emit('fetchMoreReply')
 }
 
@@ -189,5 +190,9 @@ const avatar = computed(() => {
 
 function routeToUser(nickname) {
     router.push({ name: 'profile', params: { nickname: nickname } })
+}
+
+function routeToReplyDetail(replyId) {
+    router.push({ name: 'replyDetail', params: { id: replyId } })
 }
 </script>

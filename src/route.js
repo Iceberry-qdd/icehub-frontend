@@ -10,6 +10,7 @@ const Follow = () => import('@/components/tailwind/Follow.vue')
 const FollowerList = () => import('@/components/tailwind/FollowerList.vue')
 const FollowingList = () => import('@/components/tailwind/FollowingList.vue')
 const Notify = () => import('@/components/tailwind/Notify.vue')
+const ReplyDetail = () => import('@/components/tailwind/ReplyDetail.vue')
 
 const routes = [
     { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
@@ -26,7 +27,8 @@ const routes = [
             { name: 'followingList', path: '/following/:nickname', component: FollowingList },
         ]
     },
-    { name: 'notify', path: '/notify', component: Notify }
+    { name: 'notify', path: '/notify', component: Notify },
+    { name: 'replyDetail', path: '/reply/:id', component: ReplyDetail }
 ]
 
 const router = createRouter({
