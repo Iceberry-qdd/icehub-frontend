@@ -49,6 +49,7 @@ const state = reactive({
     reviews: [],
     pageIndex: 1,
     pageSize: 10,
+    lastTimestamp:new Date().getTime(),
     totalPages: 0,
     headerConfig: {
         title: '帖子详情',
@@ -76,15 +77,19 @@ async function getPost(id) {
     }
 }
 
-async function getReviews(postId, pageIndex, pageSize) {
+async function getReviews() {
     try {
         state.isLoading=true
-        const response = await getPostReviews(postId, pageIndex, pageSize)
+        const postId = state.post.id
+        const response = await getPostReviews(postId, state.pageIndex, state.pageSize,state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.reviews.push(...content)
         state.totalPages = totalPages
+        if(content.length>1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -102,8 +107,7 @@ function fetchNewReview() {
 
     if (scrollTop + clientHeight >= scrollHeight) {
         setTimeout(() => {
-            state.pageIndex++
-            getReviews(state.post.id, state.pageIndex, state.pageSize)
+            getReviews()
         }, 1000)
     }
 }
@@ -112,7 +116,7 @@ onMounted(async () => {
     const postId = $route.params.id
     if (!state.post) { await getPost(postId) }
 
-    await getReviews(postId, state.pageIndex, state.pageSize)
+    await getReviews()
     window.addEventListener('scroll', fetchNewReview)
 })
 

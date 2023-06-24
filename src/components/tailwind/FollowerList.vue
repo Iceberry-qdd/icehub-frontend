@@ -28,25 +28,29 @@ const state = reactive({
     pageIndex: 1,
     pageSize: 10,
     totalPages: 0,
-    nickname: null
+    nickname: null,
+    lastTimestamp:new Date().getTime()
 })
 
 const hasMore = computed(() => {
     return state.pageIndex < state.totalPages
 })
 
-async function getFollower(nickname, pageIndex, pageSize) {
+async function getFollower() {
     try {
-        const response = await getUserInfoByNickname(nickname)
+        const response = await getUserInfoByNickname(state.nickname)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { id } = await response.json()
-        const response2 = await getFollowerList(id, pageIndex, pageSize)
+        const response2 = await getFollowerList(id, state.pageIndex, state.pageSize,state.lastTimestamp)
         if (!response2.ok) throw new Error((await response2.json()).error)
 
         const { content, totalPages } = await response2.json()
         state.followerList.push(...content)
         state.totalPages = totalPages
+        if(content.length>1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -62,8 +66,7 @@ function fetchNewList() {
 
     if (scrollTop + clientHeight >= scrollHeight) {
         setTimeout(() => {
-            state.pageIndex++
-            getFollower(state.nickname, state.pageIndex, state.pageSize)
+            getFollower()
         }, 1000)
     }
 }
@@ -71,7 +74,7 @@ function fetchNewList() {
 onMounted(() => {
     const nickname = $route.params.nickname
     state.nickname = nickname
-    getFollower(nickname, state.pageIndex, state.pageSize)
+    getFollower()
     window.addEventListener('scroll', fetchNewList)
 })
 

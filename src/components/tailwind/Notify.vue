@@ -107,6 +107,7 @@ const state = reactive({
     messages: [],
     pageIndex: 1,
     pageSize: 10,
+    lastTimestamp:new Date().getTime(),
     totalPages: 0,
     loading:false
 })
@@ -124,7 +125,6 @@ function fetchNewList() {
 
     if (scrollTop + clientHeight >= scrollHeight) {
         setTimeout(() => {
-            state.pageIndex++
             fetchNotify()
         }, 1000)
     }
@@ -133,12 +133,16 @@ function fetchNewList() {
 async function fetchNotify(){
     state.loading=true
     try{
-        const response = await getUsersNotifyList(state.pageIndex,state.pageSize)
+        const response = await getUsersNotifyList(state.pageIndex,state.pageSize,state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.messages.push(...content)
         state.totalPages = totalPages
+
+        if(content.length>1) {
+            state.lastTimestamp = content.slice(-1)[0].timestamps
+        }
     } catch (e) {
         store.setErrorMsg("无法获取消息列表！")
         console.error(e)

@@ -36,6 +36,7 @@ const state = reactive({
     posts: [],
     pageIndex: 1,
     pageSize: 10,
+    lastTimestamp:new Date().getTime(),
     totalPages: 0,
     headerConfig: {
         title: $route.params.nickname,
@@ -51,12 +52,15 @@ const state = reactive({
 async function getPosts() {
     state.isPostLoading = true
     try {
-        const response = await getUserPosts(state.user.id, state.pageIndex, state.pageSize)
+        const response = await getUserPosts(state.user.id, state.pageIndex, state.pageSize,state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
+        if(content.length>1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -87,8 +91,7 @@ function fetchNewPost() {
 
     if (scrollTop + clientHeight >= scrollHeight) {
         setTimeout(() => {
-            state.pageIndex++
-            getPosts(state.pageIndex, state.pageSize)
+            getPosts()
         }, 1000)
     }
 }

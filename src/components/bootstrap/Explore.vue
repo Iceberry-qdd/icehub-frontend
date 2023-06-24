@@ -28,6 +28,7 @@ const state = reactive({
     posts: [],
     pageIdx: 1,
     pageSize: 10,
+    lastTimestamp:new Date().getTime(),
     totalPages: 0,
     headerConfig: {
         title: '探索',
@@ -40,15 +41,18 @@ const state = reactive({
     isLoading:false
 })
 
-async function getData(pageIdx, pageSize) {
+async function getData() {
     state.isLoading = true
     try {
-        const response = await getTimeline(pageIdx, pageSize)
+        const response = await getTimeline(state.pageIdx, state.pageSize,state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
+        if(content.length>1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -66,14 +70,13 @@ function fetchNewPost() {
 
     if (scrollTop + clientHeight >= scrollHeight) {
         setTimeout(() => {
-            state.pageIdx++
-            getData(state.pageIdx, state.pageSize)
+            getData()
         }, 1000)
     }
 }
 
 onMounted(() => {
-    getData(state.pageIdx, state.pageSize)
+    getData()
     window.addEventListener('scroll', fetchNewPost)
 })
 

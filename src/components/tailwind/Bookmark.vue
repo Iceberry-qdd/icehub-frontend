@@ -35,6 +35,7 @@ const state = reactive({
     isLoading: false,
     pageIndex: 1,
     pageSize: 10,
+    lastTimestamp:new Date().getTime(),
     totalPages: 0
 })
 
@@ -45,12 +46,15 @@ const hasMore = computed(() => {
 async function getPostList() {
     state.isLoading = true
     try {
-        const response = await getMarkPostList(state.pageIndex, state.pageSize)
+        const response = await getMarkPostList(state.pageIndex, state.pageSize,state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
+        if(content.length>1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -68,8 +72,7 @@ function fetchNewPost() {
 
     if (scrollTop + clientHeight >= scrollHeight) {
         setTimeout(() => {
-            state.pageIndex++
-            getPostList(state.pageIndex, state.pageSize)
+            getPostList()
         }, 1000)
     }
 }

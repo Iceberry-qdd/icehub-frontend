@@ -110,8 +110,9 @@ const state = reactive({
     showPanel: false,
     replies: [],
     totalReplyCount: 0,
-    pageIndex: 0,
+    pageIndex: 1,
     pageSize: 2,
+    lastTimestamp:new Date().getTime(),
     tieSub: props.tieSub,
     showUserInfoPop: false
 })
@@ -141,15 +142,14 @@ async function toggleReviewPanel() {
 
 async function getReply() {
     try {
-        state.pageIndex++;
-        const response = await getSubReviewById(props.review.id, state.pageIndex, state.pageSize)
+        const response = await getSubReviewById(props.review.id, state.pageIndex, state.pageSize,state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
         const { content, totalCount } = await response.json()
-        const newReplies = content.filter(item => {
-            return !state.replies.find(it => it.id == item.id)
-        })
-        state.replies.push(...newReplies)
+        state.replies.push(...content)
         state.totalReplyCount = totalCount
+        if(content.length>1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
         if (hasReply.value) { state.tieSub = 'top' }
     } catch (e) {
         store.setErrorMsg(e.message)
@@ -159,7 +159,6 @@ async function getReply() {
 
 function fetchMoreReply() {
     state.pageSize = 10
-    state.pageIndex = 0
     getReply()
 }
 

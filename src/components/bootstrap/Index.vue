@@ -75,13 +75,13 @@ import { store } from '@/store.js'
 import PostEditor from '@/components/tailwind/PostEditor.vue'
 import { computed, onMounted, onUnmounted, reactive } from 'vue'
 import GlobalRefresh from '@/components/tailwind/GlobalRefresh.vue'
-import IconLoading from '@/components/icons/IconLoading.vue'
 
 const state = reactive({
     posts: [],
     pageIdx: 1,
     pageSize: 10,
     totalPages: 0,
+    lastTimestamp:new Date().getTime(),
     headerConfig: {
         title: '主页',
         goBack: false,
@@ -93,15 +93,18 @@ const state = reactive({
     isLoading:false
 })
 
-async function getData(pageIdx, pageSize) {
+async function getData() {
     state.isLoading=true
     try {
-        const response = await getUserTimeline(pageIdx, pageSize)
+        const response = await getUserTimeline(state.pageIdx, state.pageSize,state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
+        if(content.length>1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -119,8 +122,7 @@ function fetchNewPost() {
 
     if (scrollTop + clientHeight >= scrollHeight) {
         setTimeout(() => {
-            state.pageIdx++
-            getData(state.pageIdx, state.pageSize)
+            getData()
         }, 1000)
     }
 }
@@ -130,7 +132,7 @@ const isShowGlobalNotifyBannerMsg = computed(() => {
 })
 
 onMounted(() => {
-    getData(state.pageIdx, state.pageSize)
+    getData()
     window.addEventListener('scroll', fetchNewPost)
 })
 

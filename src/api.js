@@ -5,10 +5,11 @@ const TOKEN = localStorage.getItem('TOKEN')
  * 拉取公共时间线上的帖子
  * @param {int} pageIndex 页数
  * @param {int} pageSize 每页条数
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns Promise<any>
  */
-export function getTimeline(pageIndex, pageSize) {
-    return fetch(`${BASE_URL}/timeline/public?pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+export function getTimeline(pageIndex, pageSize,lastTimestamp) {
+    return fetch(`${BASE_URL}/timeline/public?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -22,10 +23,11 @@ export function getTimeline(pageIndex, pageSize) {
  * 拉取用户时间线上的帖子
  * @param {int} pageIndex 页数
  * @param {int} pageSize 每页条数
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns Promise<any>
  */
-export function getUserTimeline(pageIndex, pageSize) {
-    return fetch(`${BASE_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+export function getUserTimeline(pageIndex, pageSize,lastTimestamp) {
+    return fetch(`${BASE_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -249,11 +251,12 @@ export function getPostById(id) {
  * 根据帖子id获取评论信息
  * @param {string} postId 帖子id
  * @param {string} pageIndex 评论页数
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @param {string} pageSize 评论每页条数
  * @returns 该帖子的评论信息
  */
-export function getPostReviews(postId, pageIndex, pageSize) {
-    return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+export function getPostReviews(postId, pageIndex, pageSize,lastTimestamp) {
+    return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -302,10 +305,11 @@ export function getReviewById(id) {
  * @param {string} id 评论id
  * @param {string} pageIndex 评论页数
  * @param {string} pageSize 评论每页条数
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 该帖子的子评论
  */
-export function getSubReviewById(id, pageIndex, pageSize) {
-    return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+export function getSubReviewById(id, pageIndex, pageSize,lastTimestamp) {
+    return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -352,19 +356,16 @@ export function dislikeAReview(reviewId) {
  * @param {string} uid 用户id
  * @param {string} pageIndex 当前页码
  * @param {string} pageSize 每页数量
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 用户的帖子信息
  */
-export function getUserPosts(uid, pageIndex, pageSize) {
-    return fetch(`${BASE_URL}/post?uid=${uid}`, {
-        method: 'POST',
+export function getUserPosts(uid, pageIndex, pageSize,lastTimestamp) {
+    return fetch(`${BASE_URL}/post?uid=${uid}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET',
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            'pageIndex': pageIndex,
-            'pageSize': pageSize
-        }),
         redirect: 'follow',
         credentials: 'same-origin'
     })
@@ -485,19 +486,16 @@ export function unFollowUser(userId) {
  * @param {string} userId 待查询用户id
  * @param {int} pageIndex 分页页码
  * @param {int} pageSize 分页页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注者列表
  */
-export function getFollowerList(userId, pageIndex, pageSize) {
-    return fetch(`${BASE_URL}/user/follow/list?uid=${userId}`, {
-        method: 'POST',
+export function getFollowerList(userId, pageIndex, pageSize,lastTimestamp) {
+    return fetch(`${BASE_URL}/user/follow/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET',
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            'pageIndex': pageIndex,
-            'pageSize': pageSize
-        }),
         redirect: 'follow',
         credentials: 'same-origin'
     })
@@ -508,19 +506,16 @@ export function getFollowerList(userId, pageIndex, pageSize) {
  * @param {string} userId 待查询用户id
  * @param {int} pageIndex 分页页码
  * @param {int} pageSize 分页页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注用户列表
  */
-export function getFollowingList(userId, pageIndex, pageSize) {
-    return fetch(`${BASE_URL}/user/follow/list?fid=${userId}`, {
-        method: 'POST',
+export function getFollowingList(userId, pageIndex, pageSize,lastTimestamp) {
+    return fetch(`${BASE_URL}/user/follow/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET',
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            'pageIndex': pageIndex,
-            'pageSize': pageSize
-        }),
         redirect: 'follow',
         credentials: 'same-origin'
     })
@@ -554,7 +549,7 @@ export function unMarkAPost(postId) {
             'Authorization': TOKEN
         },
         redirect: 'follow',
-        credentials: 'same-origin'  
+        credentials: 'same-origin'
     })
 }
 
@@ -562,10 +557,11 @@ export function unMarkAPost(postId) {
  * 查询用户mark帖子列表
  * @param {int} pageIndex 当前页码
  * @param {int} pageSize 每页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 返回用户mark帖子列表
  */
-export function getMarkPostList(pageIndex, pageSize) {
-    return fetch(`${BASE_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+export function getMarkPostList(pageIndex, pageSize,lastTimestamp) {
+    return fetch(`${BASE_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN
@@ -599,9 +595,9 @@ export function updatePost(post) {
  * @param {int} imageIndex 图片下标
  * @returns 该图片的完整链接
  */
-export function getImageUrlIgnoreHidden(postId,imageIndex){
-    return fetch(`${BASE_URL}/post/attachment?pid=${postId}&attrId=${imageIndex}&ih=true`,{
-        method:'GET',
+export function getImageUrlIgnoreHidden(postId, imageIndex) {
+    return fetch(`${BASE_URL}/post/attachment?pid=${postId}&attrId=${imageIndex}&ih=true`, {
+        method: 'GET',
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
@@ -615,10 +611,11 @@ export function getImageUrlIgnoreHidden(postId,imageIndex){
  * 分页查询给定用户的消息列表
  * @param {number} pageIndex 分页页码
  * @param {number} pageSize 分页页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 该用户的消息列表
  */
-export function getUsersNotifyList(pageIndex, pageSize){
-    return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}`,{
+export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp){
+    return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`,{
         method: 'GET',
         headers:{
             'Authorization': TOKEN
