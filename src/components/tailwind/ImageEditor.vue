@@ -1,11 +1,11 @@
 <template>
     <div id="imageEditPanel"
         class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
-        <div class="w-[25%] h-fit bg-white rounded-[8px] overflow-y-auto">
+        <div class="w-[25%] h-fit max-h-[95vh] bg-white rounded-[8px] overflow-y-auto">
             <div id="imgWrapper" class="relative flex flex-row justify-center items-center w-full">
                 <div v-if="state.imageInfo.hidden == 'true'"
                     class="absolute h-full w-full bg-white/5 backdrop-blur-xl"></div>
-                <img :src="state.image" class="max-w-full max-h-full object-cover" />
+                <img :src="state.image" class="max-w-full max-h-[90vh] object-cover" />
                 <div class="absolute bottom-0 right-0 flex flex-row gap-2 p-2">
                     <button v-if="state.imageInfo.hidden == 'false'" title="标记为敏感内容">
                         <IconFlagOn @click="toggleHiddenFlag"

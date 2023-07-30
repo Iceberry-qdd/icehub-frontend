@@ -48,7 +48,7 @@
                         </div>
                     </Transition>
                     <div class="absolute w-full h-full flex-row justify-center items-center z-[99]" :class="[pic.hidden==true?'flex':'hidden']">
-                        <div @click="getImageUrlIgnoreNSFW(idx)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">敏感内容</div>
+                        <div @click="getImageUrlIgnoreNSFW(idx)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
                     </div>
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic img-fluid"
                         :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">

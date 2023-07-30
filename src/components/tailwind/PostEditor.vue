@@ -8,7 +8,7 @@
                 </div>
             </div>
             <div>
-                <VueShowdown tag="markdown" :extensions="['exts']" v-if="state.showMarkdown==true" :markdown="state.content" class="min-h-[6rem]"></VueShowdown>
+                <VueShowdown tag="markdown" :extensions="['exts']" v-if="state.showMarkdownPanel==true" :markdown="state.content" class="min-h-[6rem]"></VueShowdown>
                 <textarea v-else v-model="state.content" @keydown="resize"
                     class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
                     maxlength="25000" rows="3" placeholder="发布帖子" id="post-input" name="post"></textarea>
@@ -53,8 +53,8 @@
                         </Transition>
                     </div>
 
-                    <button @click="state.showMarkdown=!state.showMarkdown"
-                        :class="[state.showMarkdown?'bg-[#bfdbfe]':'bg-transparent']"
+                    <button @click="state.showMarkdownPanel=!state.showMarkdownPanel"
+                        :class="[state.showMarkdownPanel?'bg-[#bfdbfe]':'bg-transparent']"
                         class="hover:bg-gray-300 p-1 w-[30px] h-[31px] rounded-full" >
                         <i class="cursor-pointer bi bi-markdown-fill " title="启用markdown格式并预览"></i>
                     </button>
@@ -146,7 +146,7 @@ const state = reactive({
     },
     showVisibilityPanel: false,
     showEmojiPanel:false,
-    showMarkdown:false
+    showMarkdownPanel:false,
 })
 
 const hasImage = computed(() => {
@@ -164,7 +164,7 @@ async function submitPost() {
         if (state.content.length == 0) throw new Error("文字内容不能为空！")
 
         state.isLoading = true
-        state.data.type = state.showMarkdown==true?'MARKDOWN':'NORMAL'
+        state.data.type = state.showMarkdownPanel==true?'MARKDOWN':'NORMAL'
         state.data.content = state.content
         for (let i = 0; i < 9; i++) {
             if (state.imgList.length <= i) break
@@ -234,7 +234,7 @@ function pickVisibility(args){
     state.showVisibilityPanel=false
 }
 
-watch(()=>state.showMarkdown,(newVal)=>{
+watch(()=>state.showMarkdownPanel,(newVal)=>{
     if(newVal==true){
         renderMath()
     }

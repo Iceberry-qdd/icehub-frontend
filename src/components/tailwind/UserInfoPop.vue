@@ -7,9 +7,8 @@
             <img @click="routeToProfile" :src="avatarPic"
                 class="w-[3.5rem] h-[3.5rem] rounded-[8px] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white" />
             <div class="absolute top-[8rem] ml-[0.95rem] flex flex-row gap-x-1 items-center">
-                <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline cursor-pointer">{{
-                    state.user.nickname
-                }}</div>
+                <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline cursor-pointer">
+                {{ state.user.nickname }}</div>
                 <i class="bi bi-patch-check-fill verify text-[10pt] text-blue-500" v-if="state.user.verified"></i>
             </div>
             <div class="absolute top-[9.8rem] ml-[0.95rem] text-[11pt]">{{ brief }}</div>
@@ -121,7 +120,7 @@ async function followAUser(userId) {
         if (result == false) throw new Error('关注失败！')
         state.user.following = result
     } catch (e) {
-        store.setErrorMsg(e.message)
+        store.setErrorMsg('关注失败！')
         console.error(e)
     } finally {
         state.loading = false
@@ -138,7 +137,7 @@ async function unFollowAUser(userId) {
         if (result == false) throw new Error('取消关注失败！')
         state.user.following = !result
     } catch (e) {
-        store.setErrorMsg(e.message)
+        store.setErrorMsg('取消关注失败！')
         console.error(e)
     } finally {
         state.loading = false

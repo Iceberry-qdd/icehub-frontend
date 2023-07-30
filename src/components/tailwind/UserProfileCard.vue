@@ -11,8 +11,8 @@
             <div class="text-[11pt] max-w-[85%] break-all brief">{{ state.user.remark }}</div>
             <div class="flex flex-row w-full mt-[1rem]">
                 <div class="w-1/3 flex flex-col gap-1 justify-center items-center"><div class="font-bold">{{ state.user.postCount }}</div><div>帖子</div></div>
-                <div class="w-1/3 flex flex-col gap-1 justify-center items-center"><div class="font-bold">{{ state.user.followerCount }}</div><div>订阅他的</div></div>
-                <div class="w-1/3 flex flex-col gap-1 justify-center items-center"><div class="font-bold">{{ state.user.followingCount }}</div><div>他的订阅</div></div>
+                <div class="w-1/3 flex flex-col gap-1 justify-center items-center"><div class="font-bold">{{ state.user.followingCount }}</div><div>订阅他的</div></div>
+                <div class="w-1/3 flex flex-col gap-1 justify-center items-center"><div class="font-bold">{{ state.user.followerCount }}</div><div>他的订阅</div></div>
             </div>
         </div>
     </div>

@@ -13,7 +13,7 @@
         </div>
         <div class="flex relative flex-col gap-y-1">
             <div v-if="isCoverHidden" class="absolute w-full h-full flex flex-row justify-center items-center z-[99]">
-                <div class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">敏感内容</div>
+                <div class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
             </div>
             <img loading="lazy" v-if="state.post.attachmentsUrl.length > 0" :src="getCoverImageUrl(state.post.attachmentsUrl[0])"
                 class=" rounded-b-[8px] w-full h-[15rem] object-cover" />
@@ -92,9 +92,6 @@ const isGifCover = computed(() => {
 function setSuitableHeight(){
     if(state.post.type=='MARKDOWN' && repostCard.value.clientHeight>window.innerHeight/2){
         state.shrinkContent=true
-        console.log(repostCard.value.clientHeight)
-        console.log(window.innerHeight)
-
     }
 }
 

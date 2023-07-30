@@ -6,8 +6,8 @@
         <div v-if="props.tieLocation == 'bottom'" class="timeline-bottom absolute w-[0.15rem] h-[2.5rem] top-0 left-[2.7rem] bg-gray-200 -z-0"></div>
         <div class="h-fit z-10"><img :src="avatar" class="rounded-[6px] h-[2.5rem] w-[2.5rem] max-w-none cursor-default" /></div>
         <div class="w-full">
-            <div v-if="state.content.length > 0" class="text-[11pt] mb-2"> 回复 <span class="cursor-pointer  font-bold">@{{
-                replyTo }}</span>
+            <div v-if="state.content.length > 0" class="text-[11pt] mb-2">
+                回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
             </div>
             <textarea v-model="state.content" @keydown="resize" :disabled="state.loading"
                 :class="{ 'text-gray-400': state.loading }"
@@ -17,6 +17,14 @@
                 <div class="flex flex-row gap-x-2 items-center" v-if="!state.loading">
                     <add-picture theme="outline" size="20" fill="#333" :strokeWidth="3" />
                     <local-two theme="outline" size="20" class="icon" fill="#333" :strokeWidth="4" />
+                    <div class="relative flex-col">
+                        <div class="flex" @click="state.showEmojiPanel=!state.showEmojiPanel">
+                            <grinning-face-with-open-mouth v-tooltip="'表情面板'" theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                        </div>
+                        <Transition name="fade">
+                            <EmojiPanel v-if="state.showEmojiPanel" @emojiName="insertEmoji" class="z-[99] absolute top-[2.5rem] min-w-max min-h-max"></EmojiPanel>
+                        </Transition>
+                    </div>
                 </div>
                 <div class="flex flex-row gap-x-2 items-center" v-else></div>
                 <div @click="submitReview"
@@ -36,16 +44,18 @@
 import { reactive, computed } from 'vue'
 import { reviewing } from '@/api'
 import { store } from '@/store'
-import { AddPicture, LocalTwo } from '@icon-park/vue-next'
+import { AddPicture, LocalTwo,GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/websocket.js'
+import EmojiPanel from '@/components/menus/EmojiPanel.vue'
 
 const props = defineProps(['post', 'parent','tieLocation','fromReviewPanel'])
 
 const state = reactive({
     content: '',
     loading: false,
-    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    showEmojiPanel:false
 })
 
 const replyTo = computed(() => {
@@ -108,4 +118,9 @@ function resize() {
     //FIXME 当删除内容时无法自动调整大小
 }
 
+function insertEmoji(name){
+    const emojiName=` :${name[0]}: `
+    state.content=state.content.concat(emojiName)
+    state.showEmojiPanel=false
+}
 </script>

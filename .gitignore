@@ -26,3 +26,8 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+src/components/bootstrap/ImageSlide.vue.txt
+src/components/bootstrap/UserProfileOffCanvas.vue.txt
+src/components/bootstrap/UserProfileOffCanvas.vue.old
+src/components/bootstrap/GlobalBanner.vue.old
+src/components/bootstrap/ImageSlide.vue.old

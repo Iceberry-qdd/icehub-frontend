@@ -157,7 +157,7 @@ async function followAUser(userId) {
         if (result == false) throw new Error('关注失败！')
         state.user.following = result
     } catch (e) {
-        store.setErrorMsg(e.message)
+        store.setErrorMsg('订阅失败！')
         console.error(e)
     } finally {
         state.loading = false
@@ -174,7 +174,7 @@ async function unFollowAUser(userId) {
         if (result == false) throw new Error('取消关注失败！')
         state.user.following = !result
     } catch (e) {
-        store.setErrorMsg(e.message)
+        store.setErrorMsg('取消订阅失败！')
         console.error(e)
     } finally {
         state.loading = false
