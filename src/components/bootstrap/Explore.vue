@@ -1,16 +1,21 @@
 <template>
-    <Header
-        :title="state.headerConfig.title"
-        :goBack="state.headerConfig.goBack"
-        :showMenu="state.headerConfig.showMenu"
-        :menuIcon="state.headerConfig.menuIcon"
-        :menuAction="state.headerConfig.menuAction"
-        :iconTooltip="state.headerConfig.iconTooltip"></Header>
-    <PostsTimeline
-        :isLoading="state.isLoading"
-        :posts="state.posts"
-        :curPageIndex="state.pageIdx"
-        :totalPages="state.totalPages"></PostsTimeline>
+    <div id="explore">
+        <Header
+            v-if="state.headerConfig.width != 0"
+            :width="state.headerConfig.width"
+            :title="state.headerConfig.title"
+            :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu"
+            :menuIcon="state.headerConfig.menuIcon"
+            :menuAction="state.headerConfig.menuAction"
+            :iconTooltip="state.headerConfig.iconTooltip"></Header>
+        <PostsTimeline
+            :isLoading="state.isLoading"
+            :posts="state.posts"
+            :curPageIndex="state.pageIdx"
+            :totalPages="state.totalPages"></PostsTimeline>
+    </div>
+
 </template>
 
 <style scoped>
@@ -36,7 +41,8 @@ const state = reactive({
         showMenu: true,
         menuIcon: 'search',
         menuAction: { action: 'route', param: '' },
-        iconTooltip: '搜索'
+        iconTooltip: '搜索',
+        width: 0
     },
     isLoading:false
 })
@@ -76,6 +82,9 @@ function fetchNewPost() {
 }
 
 onMounted(() => {
+    const explore = document.getElementById('explore')
+    state.headerConfig.width = window.getComputedStyle(explore).width.replace('px','') - 3
+
     getData()
     window.addEventListener('scroll', fetchNewPost)
 })

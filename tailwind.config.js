@@ -5,6 +5,7 @@ module.exports = {
         "./index.html",
         "./src/**/tailwind/*.{vue,js,ts,jsx,tsx}",
         "./src/**/menus/*.{vue,js,ts,jsx,tsx}",
+        "./src/**/setting/*.{vue,js,ts,jsx,tsx}",
     ],
     theme: {
         extend: {},

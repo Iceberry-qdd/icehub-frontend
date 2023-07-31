@@ -47,7 +47,7 @@ import { store } from '@/store'
 import { AddPicture, LocalTwo,GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/websocket.js'
-import EmojiPanel from '@/components/menus/EmojiPanel.vue'
+import EmojiPanel from '@/components/tailwind/menus/EmojiPanel.vue'
 
 const props = defineProps(['post', 'parent','tieLocation','fromReviewPanel'])
 

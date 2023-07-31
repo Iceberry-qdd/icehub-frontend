@@ -1,6 +1,8 @@
 <template>
-    <div v-if="state.user">
-        <Header v-if="state.user" 
+    <div v-if="state.user" id="profile">
+        <Header
+            v-if="state.user && state.headerConfig.width != 0"
+            :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu"
@@ -44,7 +46,8 @@ const state = reactive({
         showMenu: isCurUser.value,
         menuIcon: isCurUser.value ? 'create' : '',
         menuAction: { action: 'route', param: '/profile/edit' },
-        iconTooltip:'编辑个人资料'
+        iconTooltip:'编辑个人资料',
+        width: 0
     },
     isPostLoading:false
 })
@@ -102,6 +105,9 @@ onMounted(async () => {
     await getUser(nickname)
     await getPosts()
     window.addEventListener('scroll', fetchNewPost)
+
+    const profile = document.getElementById('profile')
+    state.headerConfig.width = window.getComputedStyle(profile).width.replace('px','')
 })
 
 onUnmounted(() => {

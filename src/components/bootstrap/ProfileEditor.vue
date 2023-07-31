@@ -1,12 +1,14 @@
 <template>
-    <div>
+    <div id="profile-editor">
         <Header
-        :title="state.headerConfig.title"
-        :goBack="state.headerConfig.goBack"
-        :showMenu="state.headerConfig.showMenu"
-        :menuIcon="state.headerConfig.menuIcon"
-        :menuAction="state.headerConfig.menuAction"
-        :iconTooltip="state.headerConfig.iconTooltip"></Header>
+            v-if="state.headerConfig.width != 0"
+            :width="state.headerConfig.width"
+            :title="state.headerConfig.title"
+            :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu"
+            :menuIcon="state.headerConfig.menuIcon"
+            :menuAction="state.headerConfig.menuAction"
+            :iconTooltip="state.headerConfig.iconTooltip"></Header>
         <div v-if="state.isLoading == true" class="loading">
             <IconLoading :class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
             <div>正在提交...</div>
@@ -191,7 +193,7 @@
 
 <script setup>
 import Header from '@/components/tailwind/Header.vue'
-import { reactive, computed, watch, ref, onUnmounted } from 'vue'
+import { reactive, computed, watch, ref, onUnmounted, onMounted } from 'vue'
 import { store } from '@/store.js'
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/api.js'
 import router from '@/route'
@@ -223,7 +225,8 @@ const state = reactive({
         showMenu: true,
         menuIcon: 'done',
         menuAction: { action: 'submit', param: true },
-        iconTooltip: '提交资料'
+        iconTooltip: '提交资料',
+        width: 0
     }
 })
 
@@ -418,5 +421,10 @@ const isWebsiteValid = computed(() => {
 
 onUnmounted(() => {
     store.clearCroppedImage()
+})
+
+onMounted(() => {
+    const profileEditor = document.getElementById('profile-editor')
+    state.headerConfig.width = window.getComputedStyle(profileEditor).width.replace('px','')
 })
 </script>

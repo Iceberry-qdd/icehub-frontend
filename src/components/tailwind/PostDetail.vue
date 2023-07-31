@@ -1,6 +1,8 @@
 <template>
-    <div>
+    <div id="post-detail">
         <Header
+            v-if="state.headerConfig.width != 0"
+            :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu"
@@ -56,7 +58,8 @@ const state = reactive({
         goBack: true,
         showMenu: false,
         menuIcon: null,
-        menuAction: { action: 'route', param: '' }
+        menuAction: { action: 'route', param: '' },
+        width: 0
     },
     isLoading:false
 })
@@ -113,6 +116,9 @@ function fetchNewReview() {
 }
 
 onMounted(async () => {
+    const postDetail = document.getElementById('post-detail')
+    state.headerConfig.width = window.getComputedStyle(postDetail).width.replace('px','')
+
     const postId = $route.params.id
     if (!state.post) { await getPost(postId) }
 

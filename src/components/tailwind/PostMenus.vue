@@ -24,10 +24,10 @@
 
 <script setup>
 import { reactive, computed } from 'vue'
-import BookmarkAction from '@/components/menus/BookmarkAction.vue'
-import FollowingAction from '@/components/menus/FollowingAction.vue'
-import LinkCopyAction from '../menus/LinkCopyAction.vue'
-import VisibilityAction from '@/components/menus/VisibilityAction.vue'
+import BookmarkAction from '@/components/tailwind/menus/BookmarkAction.vue'
+import FollowingAction from '@/components/tailwind/menus/FollowingAction.vue'
+import LinkCopyAction from '../tailwind/menus/LinkCopyAction.vue'
+import VisibilityAction from '@/components/tailwind/menus/VisibilityAction.vue'
 
 const emit = defineEmits(['dismissMenu'])
 

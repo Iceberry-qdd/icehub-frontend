@@ -11,6 +11,13 @@ const FollowerList = () => import('@/components/tailwind/FollowerList.vue')
 const FollowingList = () => import('@/components/tailwind/FollowingList.vue')
 const Notify = () => import('@/components/tailwind/Notify.vue')
 const ReplyDetail = () => import('@/components/tailwind/ReplyDetail.vue')
+const Setting = () => import('@/components/tailwind/setting/Setting.vue')
+const SettingAccountSafe = () => import('@/components/tailwind/setting/AccountSafe.vue')
+const SettingNotifyMsg = () => import('@/components/tailwind/setting/NotifyMsg.vue')
+const SettingDataPrivacy = () => import('@/components/tailwind/setting/DataPrivacy.vue')
+const SettingDisplayTheme = () => import('@/components/tailwind/setting/DisplayTheme.vue')
+const SettingHelpFeedback = () => import('@/components/tailwind/setting/HelpFeedback.vue')
+const SettingAbout = () => import('@/components/tailwind/setting/About.vue')
 
 const routes = [
     { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
@@ -28,7 +35,20 @@ const routes = [
         ]
     },
     { name: 'notify', path: '/notify', component: Notify },
-    { name: 'replyDetail', path: '/reply/:id', component: ReplyDetail }
+    { name: 'replyDetail', path: '/reply/:id', component: ReplyDetail },
+    {
+        path: '/',
+        component: Setting,
+        name: 'setting',
+        children:[
+            {name:'accountSafe', path:'/setting/account&safe', component: SettingAccountSafe, alias: ['/setting']},
+            {name:'notifyMsg', path:'/setting/notify&msg', component: SettingNotifyMsg},
+            {name:'dataPrivacy', path:'/setting/data&privacy', component: SettingDataPrivacy},
+            {name:'displayTheme', path:'/setting/display&theme', component: SettingDisplayTheme},
+            {name:'helpFeedback', path:'/setting/help&feedback', component: SettingHelpFeedback},
+            {name:'about', path:'/setting/about', component: SettingAbout}
+        ]
+    }
 ]
 
 const router = createRouter({

@@ -1,7 +1,12 @@
 <template>
-    <div>
-        <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
-            :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
+    <div id="bookmark">
+        <Header
+            v-if="state.headerConfig.width != 0"
+            :width="state.headerConfig.width"
+            :title="state.headerConfig.title"
+            :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu"
+            :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"></Header>
         <PostCard v-for="(post, index) in state.posts" :post="post" :key="post.id" :index="index"></PostCard>
         <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
@@ -29,7 +34,8 @@ const state = reactive({
         goBack: false,
         showMenu: false,
         menuIcon: 'create',
-        menuAction: { action: 'route', param: '/profile/edit' }
+        menuAction: { action: 'route', param: '/profile/edit' },
+        width: 0
     },
     posts: [],
     isLoading: false,
@@ -78,6 +84,9 @@ function fetchNewPost() {
 }
 
 onMounted(() => {
+    const bookmark = document.getElementById('bookmark')
+    state.headerConfig.width = window.getComputedStyle(bookmark).width.replace('px','')
+    
     getPostList()
     window.addEventListener('scroll', fetchNewPost)
 })

@@ -10,18 +10,18 @@
             <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
             <RepostPanel v-if="store.REPOST_POST"></RepostPanel>
             <ReviewPanel v-if="store.REVIEW_PANEL_DATA"></ReviewPanel>
-            <div id="sidebar-l">
+            <div id="sidebar-l" :style="{'flex-basis':state.basis[0]+'%'}" v-if="state.basis[0]>0">
                 <Brand></Brand>
                 <Sidebar id="menu"></Sidebar>
             </div>
-            <div id="main">
+            <div id="main" :style="{'flex-basis':state.basis[1]+'%'}" v-if="state.basis[1]>0">
                 <router-view v-slot="{ Component }">
                     <keep-alive :max="16" :include="['Index', 'Explore', 'Bookmark','Notify']">
                         <component :is="Component" />
                     </keep-alive>
                 </router-view>
             </div>
-            <div id="sidebar-r">
+            <div id="sidebar-r" :style="{'flex-basis':state.basis[2]+'%'}" v-if="state.basis[2]>0">
                 <RecommendUserCard></RecommendUserCard>
             </div>
         </div>
@@ -45,16 +45,10 @@
 }
 
 #sidebar-l {
-    flex-basis: 40%;
     border-right: 1px solid #EEEEEE;
 }
 
-#main {
-    flex-basis: 50%;
-}
-
 #sidebar-r {
-    flex-basis: 40%;
     border-left: 1px solid #EEEEEE;
 }
 </style>
@@ -74,10 +68,14 @@ import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 import { ws } from './websocket.js'
 import GlobalNotifyBanner from '@/components/tailwind/GlobalNotifyBanner.vue'
 import ReviewPanel from './components/tailwind/ReviewPanel.vue'
+import { useRoute } from 'vue-router'
+
+const $route = useRoute()
 
 const state = reactive({
     user: null,
-    globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG
+    globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG,
+    basis: [40,50,40]
 })
 
 async function curUser() {
@@ -137,6 +135,14 @@ watch(() => ws.connectState, function (newVal, oldVal) {
         })
     } else if (newVal == 'CONNECTED_FAILED') {
         ws.reconnectWebsocket()
+    }
+})
+
+watch(() => $route.path, function(newVal, oldVal){
+    if(newVal.startsWith('/setting')){
+        state.basis = [40,90,0]
+    }else{
+        state.basis = [40,50,40]
     }
 })
 

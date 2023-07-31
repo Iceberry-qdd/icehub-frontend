@@ -45,7 +45,7 @@ import { computed, reactive, watch } from 'vue'
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconError from '@/components/icons/IconError.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
-import ImageEditor from '../tailwind/ImageEditor.vue'
+import ImageEditor from '@/components/tailwind/ImageEditor.vue'
 
 const props = defineProps(['imgList', 'imagesInfo'])
 const state = reactive({

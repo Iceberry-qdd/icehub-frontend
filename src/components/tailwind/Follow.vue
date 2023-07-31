@@ -1,13 +1,21 @@
 <template>
-    <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
-        :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
-        :menuAction="state.headerConfig.menuAction"></Header>
-    <div class="flex flex-row text-center h-[3rem] items-center">
+    <div id="follow">
+        <Header
+            v-if="state.headerConfig.width != 0"
+            :width="state.headerConfig.width"
+            :title="state.headerConfig.title"
+            :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu"
+            :menuIcon="state.headerConfig.menuIcon"
+            :menuAction="state.headerConfig.menuAction"></Header>
+        <div class="flex flex-row text-center h-[3rem] items-center">
         <div v-for="(menu, index) in state.menus" :index="index" :key="menu.id" :class="{ active: menu.isActive }"
             @click="routeTo(menu.routeTo, menu.id)"
             class=" basis-full cursor-pointer h-full w-full flex items-center justify-center">{{ menu.name }}</div>
+        </div>
+        <router-view></router-view>
     </div>
-    <router-view></router-view>
+
 </template>
 
 <style scoped>
@@ -40,7 +48,8 @@ const state = reactive({
         goBack: true,
         showMenu: false,
         menuIcon: null,
-        menuAction: { action: 'route', param: '' }
+        menuAction: { action: 'route', param: '' },
+        width: 0
     }
 })
 
@@ -79,6 +88,9 @@ async function getUserInfo(nickname) {
 }
 
 onMounted(() => {
+    const follow = document.getElementById('follow')
+    state.headerConfig.width = window.getComputedStyle(follow).width.replace('px','')
+
     const username = $route.params.nickname
     getUserInfo(username)
 })

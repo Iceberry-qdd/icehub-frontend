@@ -1,7 +1,12 @@
 <template>
-    <div>
-        <Header :title="state.headerConfig.title" :goBack="state.headerConfig.goBack"
-            :showMenu="state.headerConfig.showMenu" :menuIcon="state.headerConfig.menuIcon"
+    <div id="notify">
+        <Header
+            v-if="state.headerConfig.width != 0"
+            :width="state.headerConfig.width"
+            :title="state.headerConfig.title"
+            :goBack="state.headerConfig.goBack"
+            :showMenu="state.headerConfig.showMenu"
+            :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"></Header>
 
         <div id="container">
@@ -102,7 +107,8 @@ const state = reactive({
         goBack: false,
         showMenu: false,
         menuIcon: 'cleaning_services',
-        menuAction: { action: 'route', param: '/profile/edit' }
+        menuAction: { action: 'route', param: '/profile/edit' },
+        width: 0
     },
     messages: [],
     pageIndex: 1,
@@ -202,6 +208,9 @@ async function AckMsgAndRouteTo(message){
 }
 
 onMounted(()=>{
+    const notify = document.getElementById('notify')
+    state.headerConfig.width = window.getComputedStyle(notify).width.replace('px','') - 3
+
     fetchNotify()
     window.addEventListener('scroll', fetchNewList)
 })

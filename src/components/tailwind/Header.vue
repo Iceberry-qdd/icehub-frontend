@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem]">
+        <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem]" :class="[!state.noBorder ? 'border-btm' : '']" :style="{'width':state.width + 'px'}">
             <div v-tooltip:full="'返回'" class="text-[15pt] h-full flex flex-row items-center">
                 <div @click="routeBackTo" v-if="state.backArrow"
                     class="material-icons-round cursor-pointer text-[14pt] mr-[0.5rem]">
                     arrow_back_ios
                 </div>
-                <div class="text-[14pt]">{{ state.titleText }}</div>
+                <div class="text-[14pt] font-bold">{{ state.titleText }}</div>
             </div>
             <div v-tooltip:quarter="state.iconTooltip" v-if="state.showMenu">
                 <span v-if="state.menuIcon" @click="handleAction" class="material-icons-round text-[14pt]">{{ state.menuIcon }}</span>
@@ -22,9 +22,11 @@
     background-color: rgb(255 255 255 / 84%);
     backdrop-filter: blur(25px);
     z-index: 104;
-    width: 38.45%;
     height: 56px;
     position: fixed;
+}
+
+.border-btm{
     border-bottom: 1px solid #EEEEEE;
 }
 
@@ -39,7 +41,7 @@ import { reactive } from 'vue';
 import router from '@/route';
 import { store } from '@/store';
 
-const props = defineProps(['title', 'goBack', 'showMenu', 'menuIcon', 'menuAction','iconTooltip'])
+const props = defineProps(['title', 'goBack', 'showMenu', 'menuIcon', 'menuAction','iconTooltip','width','noBorder'])
 
 const state = reactive({
     backArrow: props.goBack,
@@ -48,10 +50,12 @@ const state = reactive({
     showMenu: props.showMenu,
     menuAction: props.menuAction,
     iconTooltip: props.iconTooltip,
+    width: props.width,
     routeUrl: '/',
     editIcon: '',
     url: window.location.href,
-    submit: false
+    submit: false,
+    noBorder: props.noBorder != null ? props.noBorder : false
 })
 
 

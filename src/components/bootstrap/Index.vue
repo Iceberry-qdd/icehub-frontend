@@ -1,6 +1,8 @@
 <template>
-    <div class="position-relative">
+    <div class="position-relative" id="index">
         <Header
+            v-if="state.headerConfig.width != 0"
+            :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu"
@@ -87,7 +89,8 @@ const state = reactive({
         goBack: false,
         showMenu: false,
         menuIcon: null,
-        menuAction: { action: 'route', param: '' }
+        menuAction: { action: 'route', param: '' },
+        width: 0
     },
     isShowGlobalRefresh:true,
     isLoading:false
@@ -132,6 +135,9 @@ const isShowGlobalNotifyBannerMsg = computed(() => {
 })
 
 onMounted(() => {
+    const index = document.getElementById('index')
+    state.headerConfig.width = window.getComputedStyle(index).width.replace('px','') -3
+
     getData()
     window.addEventListener('scroll', fetchNewPost)
 })
