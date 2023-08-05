@@ -1,5 +1,5 @@
 <template>
-    <div v-if="state.user" id="profile">
+    <div v-if="state.user" id="profile" @wheel="toggleHeaderIcon">
         <Header
             v-if="state.user && state.headerConfig.width != 0"
             :width="state.headerConfig.width"
@@ -49,7 +49,8 @@ const state = reactive({
         iconTooltip:'编辑个人资料',
         width: 0
     },
-    isPostLoading:false
+    isPostLoading:false,
+    lastWheelDirection: 0
 })
 
 async function getPosts() {
@@ -99,12 +100,26 @@ function fetchNewPost() {
     }
 }
 
+function toggleHeaderIcon(event){
+    if(event.pageY > 718 && event.deltaY > 0 && state.lastWheelDirection <= 0){
+        state.lastWheelDirection = event.deltaY
+        state.headerConfig.menuIcon ='date_range'
+        state.headerConfig.iconTooltip='搜索帖子'
+    }else if(event.pageY < 718 && event.deltaY < 0 && state.lastWheelDirection > 0){
+        state.lastWheelDirection = event.deltaY
+        state.headerConfig.menuIcon = isCurUser.value ? 'create' : ''
+        state.headerConfig.iconTooltip='编辑个人资料'
+    }
+
+}
+
 onMounted(async () => {
     const nickname = $route.params.nickname
 
     await getUser(nickname)
     await getPosts()
     window.addEventListener('scroll', fetchNewPost)
+    window.addEventListener('wheel', toggleHeaderIcon)
 
     const profile = document.getElementById('profile')
     state.headerConfig.width = window.getComputedStyle(profile).width.replace('px','')
@@ -112,6 +127,7 @@ onMounted(async () => {
 
 onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewPost)
+    window.removeEventListener('wheel', toggleHeaderIcon)
     store.clearSelectUser()
 })
 </script>

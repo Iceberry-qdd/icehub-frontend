@@ -1,10 +1,10 @@
 <template>
-    <div @click="state.showSubActions = true"
+    <div @click="toggleSubAction"
         class="flex relative flex-row justify-between items-center py-2 px-4 w-full text-start hover:bg-gray-100 active:bg-gray-200">
         <div>更改可见范围</div>
         <div class="material-icons-round cursor-pointer text-10-pt rotate-180"> arrow_back_ios </div>
-        <div v-if="state.showSubActions == true"
-            class="absolute right-[-12.5rem] w-full rounded-[8px] shadow ring-1 ring-slate-900/5 bg-white">
+        <div v-if="state.showSubActions == true" @blur="toggleSubAction"
+            class="absolute right-[-11rem] w-full rounded-[8px] shadow ring-1 ring-slate-900/5 bg-white">
             <div @click="updateVisibility(action.code)"
                 class="flex flex-row gap-4 justify-left items-center py-2 px-4 text-start hover:bg-gray-100 active:bg-gray-200"
                 v-for="action in state.actions" :key="action.id" :index="action.id">
@@ -80,7 +80,13 @@ async function updatePostApi(newPost) {
 function dismiss() { emit('dismissMenu') }
 
 function updateVisibility(newStatus) {
+    if(state.post.status == newStatus) return
     state.post.status = newStatus
     updatePostApi(state.post)
+}
+
+function toggleSubAction(){
+    const lastState = state.showSubActions
+    state.showSubActions = !lastState
 }
 </script>

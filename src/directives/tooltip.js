@@ -1,14 +1,28 @@
+/**
+ * 
+ * @param {HTMLElement} el 切入元素
+ * @param {any} binding 
+ * @returns 
+ */
 export default function (el, binding) {
     if (binding.value == undefined) return
     const tipWords = binding.value.replace(/\\n/g, ''.replace(/\\r/g, ''))
     if (tipWords.trim().length == 0) return
-    var timeoutId = null
+
     el.onmouseover = function (ev) {
         const oEvent = ev || event
         const oFrom = oEvent.fromElement || oEvent.relatedTarget
         if (!this.contains(oFrom)) {
-            // console.log('鼠标移入')
-            timeoutId = setTimeout(() => { el.appendChild(element) }, 5000);
+
+            const tooltips = []
+            for (let i = 0; i < el.children.length; i++) {
+                if (el.children.item(i).classList.contains('m-tooltip')) {
+                    tooltips.push(el.children.item(i))
+                }
+            }
+
+            tooltips.forEach(it => { el.removeChild(it) })
+            el.appendChild(element)
         }
     }
 
@@ -16,9 +30,6 @@ export default function (el, binding) {
         var oEvent = ev || event
         var oTo = oEvent.toElement || oEvent.relatedTarget
         if (!this.contains(oTo)) {
-            // console.log('鼠标移出')
-            // console.log(timeoutId)
-            clearTimeout(timeoutId)
             try { el.removeChild(element) } catch (e) { }
         }
     }
