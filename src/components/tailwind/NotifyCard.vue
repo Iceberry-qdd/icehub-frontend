@@ -8,7 +8,10 @@
             <people-plus-one v-else-if="state.type == 'USER_FOLLOW'" theme="filled" size="19" fill="#8b5cf6" :strokeWidth="3" class="icon icon-user-followed bg-[#ddd6fe] hover:bg-[#ddd6fe]" />
             <at-sign v-else-if="state.type == 'AT_SIGN'" theme="outline" size="19" fill="#ec4899" :strokeWidth="3" class="icon bg-[#fecdd3] hover:bg-[#fecdd3]" />
         </div>
-        <div class="w-full translate-y-1">
+        <div class="w-full">
+            <div>
+                <img @click.self="routeToUserProfile(state.from)" class="w-[2rem] h-[2rem] mb-2 rounded-full z-[97] relative" :src="state.from.avatarUrl.originUrl"/>
+            </div>
             <div class="brief">
                 <div class="event-text">{{ brief }}</div>
                 <div class="time">{{ formattedTime }}</div>
@@ -104,6 +107,10 @@
     font-size: 10pt;
     color: #9ca3af;
 }
+
+.content{
+    font-size: 11pt;
+}
 </style>
 
 <script setup>
@@ -112,6 +119,8 @@ import { Like, Message, Share, PeoplePlusOne, AtSign } from '@icon-park/vue-next
 import { humanizedTime } from '@/utils/formatUtils.js'
 import RepostCard from '@/components/tailwind/RepostCard.vue'
 import UserProfileCard from '@/components/tailwind/UserProfileCard.vue'
+import { store } from '@/store'
+import router from '@/route'
 
 const props = defineProps(['message'])
 
@@ -155,6 +164,10 @@ const formattedTime = computed(() => {
 const postStatus = computed(()=>{
     return state.read?'READ':'UNREAD'
 })
+
+function routeToUserProfile(user){
+    router.push({ name: 'profile', params: { nickname: user.nickname }})
+}
 
 watch(()=>props.message.read,function(newVal,oldVal){
     state.read = newVal

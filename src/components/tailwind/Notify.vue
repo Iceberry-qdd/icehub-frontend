@@ -11,7 +11,10 @@
 
         <div id="container">
             <div id="notify-cards">
-                <NotifyCard v-for="(msg,index) in state.messages" :key="index" :message="msg" @click="AckMsgAndRouteTo(msg)"></NotifyCard>
+                <div v-for="(msg,index) in state.messages" :key="index" class="relative">
+                    <div class="absolute w-full h-full bg-transparent z-[96] cursor-pointer" @click.self="AckMsgAndRouteTo(msg)"></div>
+                    <NotifyCard :message="msg"></NotifyCard>
+                </div>
             </div>
             <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
                 <IconLoading v-if="hasMore || state.loading == true" class="h-5 w-5 text-slate-500"></IconLoading>
