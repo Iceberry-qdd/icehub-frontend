@@ -1,5 +1,5 @@
 <template>
-    <div class="z-[99] absolute top-[2.5rem] min-w-max min-h-max bg-white rounded-[6px] shadow-md ring-1 ring-gray-200">
+    <div class="z-[99] min-w-max min-h-max bg-white rounded-[6px] shadow-md ring-1 ring-gray-200">
         <div @click="pickedVisibility(action)"
             class="flex flex-row justify-left items-center gap-x-2 hover:bg-gray-100 active:bg-gray-200 pl-4 pr-5 py-[0.65rem] cursor-pointer"
             v-for="action in state.visibilityActions" :key="action.id" :index="action.id">
@@ -32,6 +32,6 @@ const state = reactive({
 })
 
 function pickedVisibility(action) {
-    emit('pickedVisibility', [action.code])
+    emit('pickedVisibility', [action.code,action.name])
 }
 </script>

@@ -1,13 +1,22 @@
 <template>
     <div @click.self="dismiss"
         class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
-        <div class="w-[40%] min-h-[20%] max-h-[60%] p-4 bg-white rounded-[8px] overflow-y-auto">
+        <div class="w-[40%] min-h-[38%] max-h-[60%] p-4 bg-white rounded-[8px] overflow-y-auto">
             <div class="flex flex-row justify-between items-center">
                 <div class="flex flex-row items-center gap-x-2">
                     <img :src="avatar" class="w-[2.5rem] h-[2.5rem] rounded-[8px]" />
-                    <div class="flex flex-col h-full justify-center">
+                    <div class="flex flex-row gap-4 h-full justify-center items-center">
                         <!-- <span class="text-[10pt] text-gray-500">转发</span> -->
                         <span class="text-[13pt] font-bold cursor-default">{{ state.curUser.nickname }}</span>
+                        <div class="relative text-[11pt] text-[#3b82f6] border-[#3b82f6] border-2 py-[0.1rem] px-2 rounded-full text-center min-w-[4rem] cursor-pointer hover:bg-[#cfe2ffAA]">
+                            <span @click="toggleVisibilityAction">{{ state.visibilityName }}</span>
+                            <VisibilityForPostEditorAction
+                                class="absolute top-[2rem] text-black"
+                                :visibility="state.data.status"
+                                v-if="state.showVisibilityPanel"
+                                @picked-visibility="pickVisibility">
+                            </VisibilityForPostEditorAction>
+                        </div>
                     </div>
                 </div>
 
@@ -41,6 +50,7 @@ import { posting } from '@/api.js'
 import { store } from '@/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/websocket.js'
+import VisibilityForPostEditorAction from '@/components/tailwind/menus/VisibilityForPostEditorAction.vue'
 
 const state = reactive({
     loading: false,
@@ -54,7 +64,9 @@ const state = reactive({
         rootId: null,
         status:'PUBLIC' // TODO 由于没有帖子可见范围选项，默认为PUBLIC级别
     },
-    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    showVisibilityPanel: false,
+    visibilityName:'公开'
 })
 
 function resize() {
@@ -104,6 +116,17 @@ const avatar = computed(() => {
 function dismiss() {
     store.clearRepost()
     document.querySelector("body").removeAttribute("style")
+}
+
+function pickVisibility(args){
+    state.data.status = args[0]
+    state.visibilityName = args[1]
+    state.showVisibilityPanel=false
+}
+
+function toggleVisibilityAction(){
+    const lastState = state.showVisibilityPanel
+    state.showVisibilityPanel = !lastState
 }
 
 onMounted(() => {

@@ -15,8 +15,7 @@
             </div>
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
-                    <input v-show="false" type="file" id="imgFile" @change="clickFileSelector" name="imgFile"
-                        multiple="true" accept="image/*" />
+                    <input v-show="false" type="file" id="imgFile" @change="clickFileSelector" name="imgFile" multiple="true" accept="image/*" />
                     <div class="relative flex-col">
                         <div class="flex" @click="preChoosePics">
                             <add-picture v-tooltip="'添加图片'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[hasImage ? 'bg-blue-200' : '']" />
@@ -36,7 +35,14 @@
                                 class="bg-blue-200" />
                         </div>
                         <Transition name="fade">
-                            <VisibilityForPostEditorAction :visibility="state.data.status" v-if="state.showVisibilityPanel" @picked-visibility="pickVisibility"></VisibilityForPostEditorAction>
+                            <VisibilityForPostEditorAction 
+                                class="absolute top-[2.5rem]"
+                                :visibility="state.data.status"
+                                v-if="state.showVisibilityPanel"
+                                @picked-visibility="pickVisibility">
+                            </VisibilityForPostEditorAction>
+                        </Transition>
+                    </div>
                         </Transition>
                     </div>
 
