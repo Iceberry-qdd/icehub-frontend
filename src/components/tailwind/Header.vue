@@ -60,8 +60,8 @@ const state = reactive({
 
 
 function handleAction() {
-    const action = state.menuAction.action
-    const param = state.menuAction.param
+    const action = props.menuAction.action
+    const param = props.menuAction.param
     switch (action) {
         case 'route':
             routeTo(param)
