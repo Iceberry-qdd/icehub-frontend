@@ -101,7 +101,7 @@ import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 
 const props = defineProps(['review', 'tieSub', 'reply', 'totalReplyCount', 'fetchedReplyCount', 'index'])
-const emit = defineEmits(['fetchMoreReply'])
+const emits = defineEmits(['fetchMoreReply'])
 
 const state = reactive({
     review: props.review,
@@ -129,7 +129,7 @@ const replyTo = computed(() => {
 
 function fetchMoreReply() {
     state.isLoading = true
-    emit('fetchMoreReply')
+    emits('fetchMoreReply')
 }
 
 async function toggleLike() {

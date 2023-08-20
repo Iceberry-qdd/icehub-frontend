@@ -19,7 +19,7 @@
 <script setup>
 import { reactive, computed } from 'vue'
 
-const emit = defineEmits(['closeGlobalRefresh'])
+const emits = defineEmits(['closeGlobalRefresh'])
 
 const state = reactive({
     userAvatars: [
@@ -31,7 +31,7 @@ const state = reactive({
 
 function dismiss() {
     state.userAvatars = []
-    emit('closeGlobalRefresh')
+    emits('closeGlobalRefresh')
 }
 
 const isShow = computed(() => { return state.userAvatars.length > 0 })

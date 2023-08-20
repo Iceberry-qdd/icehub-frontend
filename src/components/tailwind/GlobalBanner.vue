@@ -13,7 +13,7 @@ import GlobalBannerItem from '@/components/tailwind/GlobalBannerItem.vue'
 import { computed, reactive, watch } from 'vue'
 import { store } from '@/store.js'
 
-const emit = defineEmits(['closeGlobalBanner'])
+const emits = defineEmits(['closeGlobalBanner'])
 
 const state = reactive({
     messages: store.GLOBAL_MSG
@@ -22,6 +22,6 @@ const state = reactive({
 function dismissMessage() { state.messages.shift() }
 
 watch(() => state.messages.length, (newVal, oldVal) => {
-    if (newVal < 1) { emit('closeGlobalBanner') }
+    if (newVal < 1) { emits('closeGlobalBanner') }
 })
 </script>

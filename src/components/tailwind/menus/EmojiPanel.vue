@@ -51,7 +51,7 @@
 import { reactive } from 'vue'
 import emojiPack from 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/+esm'
 
-const emit = defineEmits(['emojiName'])
+const emits = defineEmits(['emojiName'])
 
 const categoryZh = {
     'Smileys & Emotion': '表情与角色',
@@ -81,7 +81,7 @@ function calcSpriteSheet(sheet_x, sheet_y) {
 
 function chooseEmoji(emoji) {
     storeEmojiToLocalStorage(emoji)
-    emit('emojiName', [emoji.short_name])
+    emits('emojiName', [emoji.short_name])
 }
 
 function storeEmojiToLocalStorage(emoji) {

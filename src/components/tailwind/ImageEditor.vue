@@ -52,7 +52,7 @@ import IconFlagOn from '@/components/icons/IconFlagOn.vue'
 import IconFlagOff from '@/components/icons/IconFlagOff.vue'
 
 const props = defineProps(['imageInfo','image','showAltText'])
-const emit = defineEmits(['closeImageEditor'])
+const emits = defineEmits(['closeImageEditor'])
 
 const state = reactive({
     imageInfo: props.imageInfo || [],
@@ -72,7 +72,7 @@ function toggleAltFlag() {
 }
 
 function dismissImageEditPanel(){
-    emit('closeImageEditor',{
+    emits('closeImageEditor',{
         showAltEditor:state.showAltEditor,
         imageInfo:state.imageInfo
     })

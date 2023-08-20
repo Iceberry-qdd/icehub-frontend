@@ -43,7 +43,7 @@ import { updatePost } from '@/api.js'
 import { store } from '@/store.js'
 
 const props = defineProps(['post'])
-const emit = defineEmits(['dismissMenu'])
+const emits = defineEmits(['dismissMenu'])
 
 const state = reactive({
     actions: [
@@ -77,7 +77,7 @@ async function updatePostApi(newPost) {
     }
 }
 
-function dismiss() { emit('dismissMenu') }
+function dismiss() { emits('dismissMenu') }
 
 function updateVisibility(newStatus) {
     if(state.post.status == newStatus) return

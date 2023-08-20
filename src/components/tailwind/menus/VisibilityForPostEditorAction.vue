@@ -16,7 +16,7 @@
 import { reactive } from 'vue'
 import IconDone from '@/components/icons/IconDone.vue'
 
-const emit = defineEmits(['pickedVisibility'])
+const emits = defineEmits(['pickedVisibility'])
 const props = defineProps(['visibility'])
 
 const state = reactive({
@@ -32,6 +32,6 @@ const state = reactive({
 })
 
 function pickedVisibility(action) {
-    emit('pickedVisibility', [action.code,action.name])
+    emits('pickedVisibility', [action.code,action.name])
 }
 </script>

@@ -12,7 +12,7 @@
 import { reactive } from 'vue'
 import { store } from '@/store.js'
 
-const emit = defineEmits(['dismissMenu'])
+const emits = defineEmits(['dismissMenu'])
 
 const props = defineProps(['link'])
 
@@ -20,7 +20,7 @@ const state = reactive({
     link: props.link
 })
 
-function dismiss() { emit('dismissMenu') }
+function dismiss() { emits('dismissMenu') }
 
 async function copyLink() {
     navigator.clipboard ? (await copyLinkV2()) : copyLinkV1()

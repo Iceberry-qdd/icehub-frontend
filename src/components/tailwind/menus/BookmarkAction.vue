@@ -13,7 +13,7 @@ import { reactive, computed } from 'vue'
 import { store } from '@/store.js'
 import { markAPost, unMarkAPost } from '@/api.js'
 
-const emit = defineEmits(['dismissMenu'])
+const emits = defineEmits(['dismissMenu'])
 
 const props = defineProps(['post'])
 
@@ -27,7 +27,7 @@ const bookMarkText = computed(() => {
     return marked ? "从书签中移除" : "加入书签"
 })
 
-function dismiss() { emit('dismissMenu') }
+function dismiss() { emits('dismissMenu') }
 
 function toggleMark() {
     const { marked, id } = state.post

@@ -13,7 +13,7 @@ import { reactive, computed } from 'vue'
 import { store } from '@/store.js'
 import { followUser, unFollowUser } from '@/api.js'
 
-const emit = defineEmits(['dismissMenu'])
+const emits = defineEmits(['dismissMenu'])
 
 const props = defineProps(['user'])
 
@@ -26,7 +26,7 @@ const followText = computed(() => {
     return following ? `不再订阅${nickname}` : `订阅${nickname}`
 })
 
-function dismiss() { emit('dismissMenu') }
+function dismiss() { emits('dismissMenu') }
 
 function toggleFollow() {
     const { following, id } = state.user
