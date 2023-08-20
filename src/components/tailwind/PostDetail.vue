@@ -10,7 +10,11 @@
             :menuAction="state.headerConfig.menuAction">
         </Header>
         <PostCardDetail v-if="state.post" :post="state.post"></PostCardDetail>
-        <ReviewEditor  :post="state.post"></ReviewEditor>
+        <ReviewEditor :post="state.post" v-if="allowReview"></ReviewEditor>
+        <div v-if="!allowReview" class="w-[96%] h-[3rem] translate-x-[2%] my-[2%] p-4 bg-[#e8f0ff] rounded-lg flex justify-left items-center gap-2 cursor-default">
+            <IconInfo class="bg-[#3b82f6] text-white rounded-full box-content p-[0.1rem]"></IconInfo>
+            <span class="text-[11pt] text-[#303133]">该帖子目前无法进行评论</span>
+        </div>
         <div v-if="state.reviews.length > 0">
             <Review 
                 v-for="(review, index) in state.reviews"
@@ -43,6 +47,7 @@ import Review from '@/components/tailwind/Review.vue'
 import ReviewEditor from '@/components/tailwind/ReviewEditor.vue'
 import { useRoute } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import IconInfo from '@/components/icons/IconInfo.vue'
 
 const $route = useRoute()
 
@@ -66,6 +71,10 @@ const state = reactive({
 
 const hasMore = computed(() => {
     return state.pageIndex < state.totalPages
+})
+
+const allowReview = computed(() => {
+    return state.post && !state.post.plan
 })
 
 async function getPost(id) {

@@ -1,12 +1,12 @@
 <template>
     <div class="card" :class="[state.post.type=='MARKDOWN'?'card-mkd':'']">
-        <div ref="cardMask" id="card-mask" @click.self="routeToPost(state.post.id)" :class="[state.shrinkContent?'card-mask-mkd-shrink':'card-mask']"></div>
+        <div ref="cardMask" id="card-mask" @click.self="routeToPost(state.post.id)" :class="cardMaskClass"></div>
         <button type="button" class="btn menu">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" class="z-index-96" />
-            <Transition name="fade">
-                <PostMenus :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
-            </Transition>
         </button>
+        <Transition name="fade">
+                <PostMenus class="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
+        </Transition>
         <div class="user-info d-flex">
             <Transition name="fade">
                 <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user" v-if="state.showUserInfoPop" class="user-info-pop z-index-98"></UserInfoPop>
@@ -23,7 +23,7 @@
                     <i class="bi bi-patch-check-fill verify mb-1" v-if="state.post.user.verified"></i>
                 </div>
                 <div class="post-time">
-                    <div>{{ formattedTime }}</div>
+                    <div>{{ state.post.plan ? `将于${formattedTime}发布` : formattedTime }}</div>
                     <div v-if="state.post.status != 'PUBLIC'">•</div>
                     <div v-if="state.post.status != 'PUBLIC'">{{ postStatus }}</div>
                 </div>
@@ -35,7 +35,7 @@
             <p class="card-text" id="content" :class="[state.shrinkContent?'max-height-50vh':'']">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
-            <RepostCard v-if="state.post.root" :post="state.post.root" class="z-index-96 relative"></RepostCard>
+            <RepostCard v-if="state.post.root && !state.post.plan" :post="state.post.root" class="z-index-96 relative"></RepostCard>
         </div>
 
         <div class="card-pics container z-index-96" :class="cardClass" v-if="hasPics">
@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <div class="btn-group z-index-96" :class="[state.post.type=='MARKDOWN'?'btn-group-mkd':'btn-group-umkd']" role="group">
+        <div v-if="!state.post.plan" class="btn-group z-index-96" :class="[state.post.type=='MARKDOWN'?'btn-group-mkd':'btn-group-umkd']" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
                     :class="{ 'm-active': isReposted }" />
@@ -89,6 +89,12 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
+
+.scheduled-card{
+    z-index: 98 !important;
+    background-color: #e5e7eb88 !important;
+    pointer-events: none;
+}
 
 .alt-icon{
     widows: 1.6rem;
@@ -296,14 +302,6 @@
     min-height: fit-content;
 }
 
-/* .img-wrapper-h-grid-2 {
-    height: 160px;
-}
-
-.img-wrapper-h-grid-3 {
-    height: 120px;
-} */
-
 .wrapper:hover img {
     transform: scale(1.2);
 }
@@ -362,9 +360,17 @@
     font-size: 12pt;
 }
 
-.menu {
+.btn.menu {
     position: absolute;
-    right: 1rem;
+    right: 3%;
+}
+
+.post-menus{
+    z-index: 99;
+    position: absolute;
+    height: auto;
+    right: 3%;
+    top: 1rem;
 }
 
 .bi {
@@ -376,6 +382,7 @@
     border-radius: 0 !important;
     border-bottom: 1px solid #EEEEEE;
     padding: 1rem 1rem 0 1rem;
+    position: relative;
 }
 
 .avatar {
@@ -416,10 +423,6 @@
 .card-pics-1 {
     display: block;
 }
-
-/* .card-pics-2,.card-pics-3 {
-    display: flex;
-} */
 
 .card-tags {
     margin: 0 0 0.5rem 2.8rem;
@@ -515,33 +518,33 @@ async function getUser(nickname) {
 }
 
 async function toggleLike() {
+    const LastLikedState = state.post.liked
+    const lastCount = state.post.likeCount
+
+    state.post.liked = !LastLikedState
+    state.post.likeCount = !LastLikedState ? lastCount + 1: lastCount - 1
+
     try {
+        if(state.post.plan) throw new Error('该帖子尚未发布，无法进行点赞操作')
         if (state.post.liked == false) {
             const response = await likeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error("点赞失败!")
-
-            const lastCount = state.post.likeCount
-            state.post.likeCount = lastCount + 1
-            state.post.liked = true
-
-            // ws.sendToOneQueue(new MsgPack(state.post.id,state.user.id,'POST_LIKE',state.post.user.id),'interact')
         } else {
             const response = await dislikeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error("取消点赞失败!")
-
-            const lastCount = state.post.likeCount
-            state.post.likeCount = lastCount - 1
-            state.post.liked = false
         }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
+
+        state.post.liked = LastLikedState
+        state.post.likeCount = lastCount
     }
 }
 
@@ -583,6 +586,12 @@ const likedIconColor = computed(() => {
 const formattedTime = computed(() => {
     return humanizedTime(state.post.createdTime)
 })
+
+const cardMaskClass = computed(() => ({
+    'scheduled-card': state.post.plan,
+    'card-mask-mkd-shrink': state.shrinkContent,
+    'card-mask': !state.shrinkContent
+}))
 
 function resizePicture() {
     const picturesCount = state.post.attachmentsUrl.length

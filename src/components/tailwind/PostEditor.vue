@@ -18,7 +18,7 @@
                     <input v-show="false" type="file" id="imgFile" @change="clickFileSelector" name="imgFile" multiple="true" accept="image/*" />
                     <div class="relative flex-col">
                         <div class="flex" @click="preChoosePics">
-                            <add-picture v-tooltip="'添加图片'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[hasImage ? 'bg-blue-200' : '']" />
+                            <add-picture v-tooltip="'添加图片'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[hasImage ? 'bg-blue-200' : '', state.showImagePanel ? 'bg-[#d3d3d5]' : '']" />
                         </div>
                         <Transition name="fade">
                             <ImagePickerAction v-if="state.showImagePanel == true" :imgList="state.imgList" :imagesInfo = 'state.data.imagesInfo'></ImagePickerAction>
@@ -30,7 +30,7 @@
                     <div class="relative flex-col">
                         <div class="flex" @click="state.showVisibilityPanel = !state.showVisibilityPanel">
                             <preview-open v-tooltip="'帖子可见范围'" v-if="state.data.status == 'PUBLIC'" theme="outline" size="18" fill="#333"
-                                :strokeWidth="3" />
+                                :strokeWidth="3" :class="[state.showVisibilityPanel ? 'bg-[#d3d3d5]' : '']" />
                             <preview-close v-tooltip="'帖子可见范围'" v-else theme="outline" size="18" fill="#333" :strokeWidth="3"
                                 class="bg-blue-200" />
                         </div>
@@ -43,16 +43,30 @@
                             </VisibilityForPostEditorAction>
                         </Transition>
                     </div>
+
+                    <div class="relative flex-col">
+                        <div class="flex" @click="state.showSchedulePanel = !state.showSchedulePanel">
+                            <m-time v-tooltip="'定时发送'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[state.showSchedulePanel ? 'bg-[#d3d3d5]' : '',state.data.createdTime ? 'bg-blue-200' : '']" />
+                        </div>
+                        <Transition name="fade">
+                            <DateTimePickerAction
+                            v-if="state.showSchedulePanel"
+                            :showDatePicker = 'true'
+                            :showTimePicker = 'true'
+                            :validDateTimeRange = 'getDateTimeRange(new Date(), 1, "YEAR")'
+                            :noteMsg = '"您仅可以安排未来一年内的帖子"'
+                            :curPickedTime = state.data.createdTime
+                            @closeWithClear = 'pickedTimeAndClose'
+                            @closeWithOk = 'pickedTimeAndClose'
+                            ></DateTimePickerAction>
                         </Transition>
                     </div>
 
                     <!-- <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
 
-                    <m-time v-tooltip="'定时发送'" theme="outline" size="18" fill="#333" :strokeWidth="3" />
-
                     <div class="relative flex-col">
                         <div class="flex" @click="state.showEmojiPanel=!state.showEmojiPanel">
-                            <grinning-face-with-open-mouth v-tooltip="'表情面板'" theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                            <grinning-face-with-open-mouth v-tooltip="'表情面板'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[state.showEmojiPanel ? 'bg-[#d3d3d5]' : '']" />
                         </div>
                         <Transition name="fade">
                             <EmojiPanel v-if="state.showEmojiPanel" @emojiName="insertEmoji" class="z-[99] absolute top-[2.5rem] min-w-max min-h-max"></EmojiPanel>
@@ -119,11 +133,13 @@ import { uploadImages, posting } from '@/api.js'
 import { store } from '@/store.js'
 import { VideoTwo, AddPicture, PreviewOpen, PreviewClose, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import EmojiPanel from '@/components/menus/EmojiPanel.vue'
+import EmojiPanel from '@/components/tailwind/menus/EmojiPanel.vue'
 import { VueShowdown } from 'vue-showdown'
-import VisibilityForPostEditorAction from '../menus/VisibilityForPostEditorAction.vue'
-import ImagePickerAction from '../menus/ImagePickerAction.vue'
+import VisibilityForPostEditorAction from '@/components/tailwind/menus/VisibilityForPostEditorAction.vue'
+import DateTimePickerAction from '@/components/tailwind/menus/DateTimePickerAction.vue'
+import ImagePickerAction from '../tailwind/menus/ImagePickerAction.vue'
 import { renderMath } from '../../katexConfig.js'
+import { getDateTimeRange } from '@/utils/formatUtils.js'
 
 const state = reactive({
     content: "",
@@ -137,7 +153,7 @@ const state = reactive({
         attachmentsUrl: [],
         type: "NORMAL",
         status: 'PUBLIC',
-        scheduledPostingTime: null,
+        createdTime: null,
         imagesInfo: [
             { hidden: "false", altText: "", contentType: "" },
             { hidden: "false", altText: "", contentType: "" },
@@ -151,8 +167,9 @@ const state = reactive({
         ]
     },
     showVisibilityPanel: false,
-    showEmojiPanel:false,
-    showMarkdownPanel:false,
+    showEmojiPanel: false,
+    showMarkdownPanel: false,
+    showSchedulePanel: true
 })
 
 const hasImage = computed(() => {
@@ -167,10 +184,11 @@ function resize() {
 
 async function submitPost() {
     try {
-        if (state.content.length == 0) throw new Error("文字内容不能为空！")
+        if(state.content.length == 0) throw new Error("文字内容不能为空！")
+        if(state.data.createdTime && Date.now() >= state.data.createdTime) throw new Error('您安排的预发布时间早于现在！')
 
         state.isLoading = true
-        state.data.type = state.showMarkdownPanel==true?'MARKDOWN':'NORMAL'
+        state.data.type = state.showMarkdownPanel == true ? 'MARKDOWN' : 'NORMAL'
         state.data.content = state.content
         for (let i = 0; i < 9; i++) {
             if (state.imgList.length <= i) break
@@ -229,19 +247,34 @@ function choosePics() {
     imgFileSelector.click()
 }
 
-function insertEmoji(name){
-    const emojiName=` :${name[0]}: `
-    state.content=state.content.concat(emojiName)
-    state.showEmojiPanel=false
+function insertEmoji(name) {
+    const emojiName = ` :${name[0]}: `
+    state.content = state.content.concat(emojiName)
 }
 
-function pickVisibility(args){
+function pickVisibility(args) {
     state.data.status = args[0]
-    state.showVisibilityPanel=false
+    state.showVisibilityPanel = false
 }
 
-watch(()=>state.showMarkdownPanel,(newVal)=>{
-    if(newVal==true){
+function pickedTimeAndClose(args) {
+    if (args && args.timestamps) {
+        if(Date.now() >= args.timestamps){
+            store.setWarningMsg('您安排的预发布时间不能早于现在！')
+            return
+        }
+
+        const time = new Date(args.timestamps)
+        console.log(time)
+        state.data.createdTime = args.timestamps
+    } else {
+        state.data.createdTime = null
+    }
+    state.showSchedulePanel = false
+}
+
+watch(() => state.showMarkdownPanel, (newVal) => {
+    if (newVal == true) {
         renderMath()
     }
 })

@@ -78,8 +78,10 @@ async function submitReview() {
         store.setWarningMsg('正在提交中，请勿重复提交')
         return
     }
+
     state.loading = true
     try {
+        if(state.post.plan) throw new Error('该帖子尚未发布，无法进行评论操作')
         if (state.content.trim() == '') throw new Error('评论内容不能为空！')
         if (!props.post && !props.parent) throw new Error('该评论没有依赖的父级内容，非法评论！')
 

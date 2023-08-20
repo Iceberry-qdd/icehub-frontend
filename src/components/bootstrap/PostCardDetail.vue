@@ -2,8 +2,8 @@
     <div class="card">
         <button type="button" class="btn menu">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
-            <PostMenus id="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         </button>
+        <PostMenus id="post-menus" class="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
         <div class="user-info d-flex">
             <Transition name="fade">
                 <UserInfoPop
@@ -13,16 +13,16 @@
                     class="user-info-pop">
                 </UserInfoPop>
             </Transition>
-            <a @mouseenter="state.showUserInfoPop = true" class="position-relative" @click="showUserProfile(props.post.user.id)">
+            <a @mouseenter="state.showUserInfoPop = true" class="position-relative" @click="showUserProfile(state.post.user.id)">
                 <img @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="avatarUrl">
             </a>
             <div class="user-text">
                 <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline flex flex-row items-center gap-1">
-                    <div>{{ props.post.user.nickname }}</div>
-                    <i class="bi bi-patch-check-fill verify" v-if="props.post.user.verified"></i>
+                    <div>{{ state.post.user.nickname }}</div>
+                    <i class="bi bi-patch-check-fill verify" v-if="state.post.user.verified"></i>
                 </div>
                 <div class="post-time">
-                    <div>发布于 {{ formattedTime }}</div>
+                    <div>{{ state.post.plan ? `将于${formattedTime}发布` : `发布于${formattedTime}` }}</div>
                     <div v-if="state.post.status != 'PUBLIC'">•</div>
                     <div v-if="state.post.status != 'PUBLIC'">{{ postStatus }}</div>
                 </div>
@@ -33,11 +33,11 @@
             <p class="card-text" id="content">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
-            <RepostCard v-if="state.post.root" :post="state.post.root" class="repostCard"></RepostCard>
+            <RepostCard v-if="state.post.root && !state.post.plan" :post="state.post.root" class="repostCard"></RepostCard>
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in props.post.attachmentsUrl" :key="idx" :index="idx">
+                <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
                     <IconAltOn @mouseenter="state.showAltText[idx]=true" v-show="pic.altText && state.showAltText[idx]==false" class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer"></IconAltOn>
                     <Transition name="fade-translate">
                         <div @mouseleave="state.showAltText[idx]=false" v-show="pic.altText && state.showAltText[idx]==true" class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
@@ -59,25 +59,25 @@
         </div>
         <div class="card-tags container" v-if="hasTags">
             <div class="row row-cols-auto gx-3">
-                <div class="col" v-for="tag in props.post.tags">
+                <div class="col" v-for="tag in state.post.tags">
                     <span class="badge bg-primary" id="badge"># {{ tag }}</span>
                 </div>
             </div>
         </div>
-        <div class="btn-group" role="group">
+        <div v-if="!state.post.plan" class="btn-group" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
                     :class="{ 'm-active': isReposted }" />
-                {{ props.post.repostCount }}
+                {{ state.post.repostCount }}
             </button>
             <button type="button" class="btn op op-review" @click="toggleReviewPanel">
                 <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
-                {{ props.post.reviewCount }}
+                {{ state.post.reviewCount }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
                 <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3"
                     :class="isLiked ? 'liked' : ''" />
-                {{ props.post.likeCount }}
+                {{ state.post.likeCount }}
             </button>
         </div>
     </div>
@@ -85,6 +85,12 @@
 
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
+
+.scheduled-card{
+    z-index: 98 !important;
+    background-color: #e5e7eb88 !important;
+    pointer-events: none;
+}
 
 .alt-icon{
     widows: 1.6rem;
@@ -310,10 +316,17 @@
     font-size: small;
 }
 
-.menu {
+.btn.menu {
     position: absolute;
-    right: 0.5rem;
-    top: 0.5rem;
+    right: 3%;
+}
+
+.post-menus{
+    z-index: 99;
+    position: absolute;
+    height: auto;
+    right: 3%;
+    top: 1rem;
 }
 
 .bi {
@@ -325,6 +338,7 @@
     border-radius: 0 !important;
     border-bottom: 1px solid #EEEEEE;
     padding: 1rem 1rem 0 1rem;
+    position: relative;
 }
 
 .avatar {
@@ -429,31 +443,32 @@ function showUserProfile(uid) { store.changeSelectUid(uid) }
 function repostIt() { store.repost(state.post) }
 
 async function toggleLike() {
+    const LastLikedState = state.post.liked
+    const lastCount = state.post.likeCount
+
+    state.post.liked = !LastLikedState
+    state.post.likeCount = !LastLikedState ? lastCount + 1: lastCount - 1
+
     try {
-        if (props.post.liked == false) {
-            const response = await likeAPost(props.post.id)
+        if (state.post.liked == false) {
+            const response = await likeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error("点赞失败!")
-
-            const lastCount = props.post.likeCount
-            props.post.likeCount = lastCount + 1
-            props.post.liked = true
         } else {
-            const response = await dislikeAPost(props.post.id)
+            const response = await dislikeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)
 
             const result = await response.text()
             if (result == false) throw new Error("取消点赞失败!")
-
-            const lastCount = props.post.likeCount
-            props.post.likeCount = lastCount - 1
-            props.post.liked = false
         }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
+
+        state.post.liked = LastLikedState
+        state.post.likeCount = lastCount
     }
 }
 
@@ -471,25 +486,31 @@ function showSlide(images, idx) {
 }
 
 const avatarUrl = computed(() => {
-    const defaultUrl = `https://api.multiavatar.com/${props.post.user.nickname}.svg`
-    const { previewUrl, originUrl,contentType } = props.post.user.avatarUrl || [null, null,null]
+    const defaultUrl = `https://api.multiavatar.com/${state.post.user.nickname}.svg`
+    const { previewUrl, originUrl,contentType } = state.post.user.avatarUrl || [null, null,null]
     if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
 const hasPics = computed(() => {
-    return props.post.attachmentsUrl.length != 0
+    return state.post.attachmentsUrl.length != 0
 })
 
 const hasTags = computed(() => {
-    return props.post.tags != undefined && props.post.tags.length != 0
+    return state.post.tags != undefined && state.post.tags.length != 0
 })
 
-const isLiked = computed(() => { return props.post.liked })
+const isLiked = computed(() => { return state.post.liked })
 
 const isReposted = computed(() => { return state.post.reposted })
 
 const formattedTime = computed(() => { return standardTime(state.post.createdTime) })
+
+const cardMaskClass = computed(() => ({
+    'scheduled-card': state.post.plan,
+    'card-mask-mkd-shrink': state.shrinkContent,
+    'card-mask': !state.shrinkContent
+}))
 
 function getImageUrl(image, idx) {
     const { originUrl, previewUrl } = image || [null, null]

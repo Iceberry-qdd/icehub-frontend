@@ -1,33 +1,39 @@
 <template>
     <div class="card-container ring-1 ring-slate-900/5">
+        <div v-if="props.noteMsg" class="w-full h-[2.5rem] p-3 bg-[#f1f3f4] rounded-lg flex justify-left items-center gap-2 cursor-default">
+            <IconInfo class="bg-[#cfe2ff] rounded-full box-content p-[0.1rem]"></IconInfo>
+            {{ props.noteMsg }}
+        </div>
             <div id="date-picker">
                 <div class="flex w-full flex-row flex-nowrap justify-between items-center">
-                    <div class="text-[11pt] text-[#409EFF] cursor-pointer">清除</div>
+                    <div class="text-[11pt] text-[#409EFF] cursor-pointer" @click = "closeAndClear">清除</div>
                     <div class="text-[11pt]">{{ formattedPickedDateTime }}</div>
-                    <div class="text-[11pt] text-[#409EFF] cursor-pointer">确定</div>
+                    <div class="text-[11pt] text-[#409EFF] cursor-pointer" @click = "closeAndOk">确定</div>
                 </div>
 
                 <div class="flex flex-row w-full h-[2rem] justify-between items-center">
                     <div
-                        @click="state.pickedYear--"
-                        :class="[isBeforeNow() ? 'm-disabled' : '']"
+                        @click="minusOneYear"
+                        :class="[canPickYearBefore ? '' : 'm-disabled']"
                         class="material-icons-round last-year">
                         keyboard_double_arrow_left
                     </div>
                     <div
-                        @click="minusOneMonth"
-                        :class="[isBeforeNow() ? 'm-disabled' : '']"
+                        @click="canPickMonthBefore ? minusOneMonth() : ''"
+                        :class="[canPickMonthBefore ? '' : 'm-disabled']"
                         class="material-icons-round last-month">
                         keyboard_arrow_left
                     </div>
                     <div class="text-[11pt] font-bold">{{ state.pickedYear }}</div>
                     <div
-                        @click="addOneMonth"
+                        @click="canPickMonthAfter ? addOneMonth() : ''"
+                        :class="[canPickMonthAfter ? '' : 'm-disabled']"
                         class="material-icons-round next-month">
                         keyboard_arrow_right
                     </div>
                     <div
-                        @click="state.pickedYear++"
+                        @click="addOneYear"
+                        :class="[canPickYearAfter ? '' : 'm-disabled']"
                         class="material-icons-round next-year">
                         keyboard_double_arrow_right
                     </div>
@@ -41,14 +47,19 @@
                         </div>
                     </div>
                     <div
-                        class="absolute flex justify-center items-center w-full -translate-x-[1rem] h-[calc(100%-2rem-0.75rem-0.5rem-11pt-2rem-1.25rem-16pt-2rem)] text-[96pt] text-[#EBEEF5] -z-[1]">
+                        class="absolute flex justify-center items-center w-full -translate-x-[1rem] h-[calc(100%-2rem-0.75rem-0.5rem-11pt-2rem-1.25rem-16pt-2rem-2.5rem)] text-[96pt] text-[#EBEEF5] -z-[1]">
                         {{ state.pickedMonth }}
                     </div>
                     <div class="grid grid-cols-7 gap-1 pt-2 cursor-pointer">
-                        <div v-for="i in 30"
-                            :class="[state.pickedDate == i ? 'bg-[#c6e2ff] hover:bg-[#c6e2ff]' : '']"
-                            @click="state.pickedDate = i"
-                            class="hover:bg-[#EBEEF5] rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center">
+                        <div
+                            v-for="i in startWeekOfPickedMonth - 1"
+                            class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center cursor-default">
+                        </div>
+
+                        <div v-for="i in daysCountOfPickedMonth"
+                            :class="[state.pickedDate == i ? 'bg-[#c6e2ff] hover:bg-[#c6e2ff]' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '':'m-disabled']"
+                            @click="canPickThisDay(i) ? state.pickedDate = i : ''"
+                            class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center">
                             {{ i }}
                         </div>
                     </div>
@@ -146,24 +157,32 @@
     color: #C0C4CC;
     cursor: not-allowed;
 }
+
+.m-disabled:hover{
+    background-color: transparent;
+}
 </style>
 
 <script setup>
 import { computed, reactive, onMounted } from 'vue'
+import IconInfo from '@/components/icons/IconInfo.vue'
+
+const props = defineProps(['showTimePicker','showDatePicker','validDateTimeRange','noteMsg', 'curPickedTime'])
+const emits = defineEmits(['closeWithOk','closeWithClear'])
 
 const state = reactive({
-    showTimePicker: true,
-    showDatePicker: true,
-    canPickBeforeNow: false,
-    weekNames: ['一','二','三','四','五','六','日'],
+    showTimePicker: props.showTimePicker,
+    showDatePicker: props.showDatePicker,
+    weekNames: ['一', '二', '三', '四', '五', '六', '日'],
     pickedYear: 1970,
     pickedMonth: 1,
     pickedDate: 1,
-    pickedHour: 0,
-    pickedMinute: 0
+    pickedHour: 8,
+    pickedMinute: 0,
+    validDateTimeRange: props.validDateTimeRange
 })
 
-const formattedPickedDateTime=computed(() => {
+const formattedPickedDateTime = computed(() => {
     const formattedYear = state.pickedYear
     const formattedMonth = state.pickedMonth < 10 ? `0${state.pickedMonth}` : state.pickedMonth
     const formattedDate = state.pickedDate < 10 ? `0${state.pickedDate}` : state.pickedDate
@@ -172,39 +191,102 @@ const formattedPickedDateTime=computed(() => {
     return `${formattedYear}-${formattedMonth}-${formattedDate} ${formattedHour}:${formattedMinute}`
 })
 
-/**
- * 判断给定时间戳是否在当前时间之前
- * 
- * @returns {boolean} 判断结果
- * @description 如果<code>state.canPickBeforeNow == true</code>, 则一律返回<code>false</code>
- */
-function isBeforeNow(){
-    if(state.canPickBeforeNow) return false
-    // console.log(`now=${Date.parse(new Date())} timestamps=${Date.parse(formattedPickedDateTime.value)}`)
-    return Date.parse(new Date()) >= Date.parse(formattedPickedDateTime.value)
+const canPickMonthBefore = computed(() => {
+    const pickedDate = new Date(state.pickedYear, state.pickedMonth - 1)
+    const leftRangeDate = new Date(state.validDateTimeRange[0].getFullYear(), state.validDateTimeRange[0].getMonth())
+    return pickedDate > leftRangeDate
+})
+
+const canPickMonthAfter = computed(() => {
+    const pickedDate = new Date(state.pickedYear, state.pickedMonth - 1)
+    const rightRangeDate = new Date(state.validDateTimeRange[1].getFullYear(), state.validDateTimeRange[1].getMonth())
+    return pickedDate < rightRangeDate
+})
+
+const canPickYearBefore = computed(() => {
+    const pickedDate = new Date(state.pickedYear - 1, state.pickedMonth - 1)
+    const leftRangeDate = new Date(state.validDateTimeRange[0].getFullYear(), state.validDateTimeRange[0].getMonth())
+    return pickedDate > leftRangeDate
+})
+
+const canPickYearAfter = computed(() => {
+    const pickedDate = new Date(state.pickedYear + 1, state.pickedMonth - 1)
+    const rightRangeDate = new Date(state.validDateTimeRange[1].getFullYear(), state.validDateTimeRange[1].getMonth())
+    return pickedDate < rightRangeDate
+})
+
+const daysCountOfPickedMonth = computed(() => {
+    return new Date(state.pickedYear, state.pickedMonth, 0).getDate()
+})
+
+const startWeekOfPickedMonth = computed(() =>{
+    const weekNo = new Date(state.pickedYear, state.pickedMonth - 1).getDay()
+    return weekNo == 0 ? 7 : weekNo
+})
+
+function canPickThisDay(day){
+    const pickedDate = new Date(state.pickedYear, state.pickedMonth - 1, day)
+    const leftRangeDate = new Date(state.validDateTimeRange[0].getFullYear(), state.validDateTimeRange[0].getMonth(), state.validDateTimeRange[0].getDate())
+    const rightRangeDate = new Date(state.validDateTimeRange[1].getFullYear(), state.validDateTimeRange[1].getMonth(), state.validDateTimeRange[1].getDate())
+    return pickedDate >= leftRangeDate && pickedDate <= rightRangeDate
 }
 
-function addOneMonth(){
-    if(state.pickedMonth == 12){
-        state.pickedYear++
-        state.pickedMonth = 1
-    }else{
-        state.pickedMonth++
+function chooseFirstValidDay(){
+    for(let i = 1; i <= daysCountOfPickedMonth.value; i++){
+        if(canPickThisDay(i)){
+            state.pickedDate = i
+            break
+        }
     }
 }
 
-function minusOneMonth(){
-    if(state.pickedMonth == 1){
+function addOneMonth() {
+    if (state.pickedMonth == 12) {
+        state.pickedYear++
+        state.pickedMonth = 1
+    } else {
+        state.pickedMonth++
+    }
+
+    chooseFirstValidDay()
+}
+
+function minusOneMonth() {
+    if (state.pickedMonth == 1) {
         state.pickedYear--
         state.pickedMonth = 12
-    }else{
+    } else {
         state.pickedMonth--
     }
 
+    chooseFirstValidDay()
+}
+
+function minusOneYear() {
+    if(!canPickYearBefore.value) return
+    state.pickedYear--
+
+    chooseFirstValidDay()
+}
+
+function addOneYear() {
+    if(!canPickYearAfter) return
+    state.pickedYear++
+
+    chooseFirstValidDay()
+}
+
+function closeAndClear(){
+    emits('closeWithClear')
+}
+
+function closeAndOk() {
+    const pickedTimestamps = new Date(state.pickedYear, state.pickedMonth - 1, state.pickedDate, state.pickedHour, state.pickedMinute).getTime()
+    emits('closeWithOk', { timestamps: pickedTimestamps })
 }
 
 onMounted(() => {
-    const now = new Date()
+    const now = props.curPickedTime ? new Date(props.curPickedTime) : new Date()
     state.pickedYear = now.getFullYear()
     state.pickedMonth = now.getMonth() + 1
     state.pickedDate = now.getDate()

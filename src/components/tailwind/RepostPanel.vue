@@ -62,7 +62,7 @@ const state = reactive({
         type: 'REPOST',
         parentId: null,
         rootId: null,
-        status:'PUBLIC' // TODO 由于没有帖子可见范围选项，默认为PUBLIC级别
+        status:'PUBLIC'
     },
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     showVisibilityPanel: false,
@@ -82,6 +82,7 @@ async function reposting() {
     }
     state.loading = true
     try {
+        if(state.parentPost.plan) throw new Error('该帖子尚未发布，无法进行转发操作')
         state.data.parentId = state.parentPost.id
         state.data.rootId = state.parentPost.root ? state.parentPost.root.id : state.parentPost.id
         const response = await posting(state.data)
@@ -95,7 +96,7 @@ async function reposting() {
         store.setSuccessMsg('转发成功')
         // 发布通知
         const receiverId=state.parentPost.root==null ? state.parentPost.user.id : state.parentPost.root.user.id
-        ws.sendToOneQueue(new MsgPack(result.id, state.curUser.id, 'REPOST', receiverId),'interact')
+        // ws.sendToOneQueue(new MsgPack(result.id, state.curUser.id, 'REPOST', receiverId),'interact')
         // 发布完成后刷新页面
         setTimeout(() => { location.reload() }, 1500)
     } catch (e) {

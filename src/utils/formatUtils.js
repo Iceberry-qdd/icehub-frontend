@@ -1,7 +1,7 @@
 export function humanizedTime(timestamps) {
     const now = new Date()
     const postTime = new Date(Number.parseInt(timestamps))
-    const timeDiff = now - postTime
+    const [timeDiff, suffix] = now < postTime ? [postTime - now,'后'] : [now - postTime,'前']
 
     const oneSecond = 1000
     const oneMinute = oneSecond * 60
@@ -12,31 +12,31 @@ export function humanizedTime(timestamps) {
     const oneYear = oneMonth * 24
 
     if (timeDiff < oneMinute) {
-        return `${Number.parseInt(timeDiff / oneSecond)}秒前`
+        return `${Number.parseInt(timeDiff / oneSecond)}秒${suffix}`
     }
 
     if (timeDiff < oneHour) {
-        return `${Number.parseInt(timeDiff / oneMinute)}分钟前`
+        return `${Number.parseInt(timeDiff / oneMinute)}分钟${suffix}`
     }
 
     if (timeDiff < oneDay) {
-        return `${Number.parseInt(timeDiff / oneHour)}小时前`
+        return `${Number.parseInt(timeDiff / oneHour)}小时${suffix}`
     }
 
     if (timeDiff < oneWeek) {
-        return `${Number.parseInt(timeDiff / oneDay)}天前`
+        return `${Number.parseInt(timeDiff / oneDay)}天${suffix}`
     }
 
     if (timeDiff < oneMonth) {
-        return `${Number.parseInt(timeDiff / oneWeek)}周前`
+        return `${Number.parseInt(timeDiff / oneWeek)}周${suffix}`
     }
 
     if (timeDiff < oneYear) {
-        return `${Number.parseInt(timeDiff / oneMonth)}月前`
+        return `${Number.parseInt(timeDiff / oneMonth)}月${suffix}`
     }
 
     if (timeDiff > oneYear) {
-        return `${Number.parseInt(timeDiff - oneYear)}年前`
+        return `${Number.parseInt(timeDiff - oneYear)}年${suffix}`
     }
     return postTime
 }
@@ -62,4 +62,37 @@ export function guid() {
 
 export function calcBgColor(string) {
     return '#' + (string.charCodeAt(0).toString(16)).padEnd(6, '0')
+}
+
+/**
+ * 返回一段时间范围，范围从[start, start + step.unit]
+ * @param {Date} start 日期范围开始
+ * @param {number} step 增加的步长
+ * @param {string} unit 增加的单位
+ */
+export function getDateTimeRange(start, step, unit){
+    let end = new Date(start)
+    switch (unit) {
+        case 'YEAR':
+            end.setFullYear(start.getFullYear() + step)
+            break
+        case 'MONTH':
+            end.setMonth(start.getMonth() + step)
+            break
+        case 'DAY':
+            end.setDate(start.getDate() + step)
+            break
+        case 'HOUR':
+            end.setHours(start.getHours() + step)
+            break
+        case 'MINUTE':
+            end.setMinutes(start.getMinutes() + step)
+            break
+        case 'SECOND':
+            end.setSeconds(start.setSeconds() + step)
+            break
+        default:
+            throw new Error(`Unspported time unit: ${unit}`)
+    }
+    return [start, end]
 }
