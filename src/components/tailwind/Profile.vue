@@ -22,10 +22,10 @@
 import Header from '@/components/tailwind/Header.vue'
 import ProfileInfo from '@/components/tailwind/ProfileInfo.vue'
 import PostsTimeline from '@/components/bootstrap/PostsTimeline.vue'
-import { reactive, onMounted, onUnmounted, computed } from 'vue';
-import { getUserPosts, getUserInfoByNickname } from '@/api';
-import { store } from '@/store';
-import { useRoute } from 'vue-router';
+import { reactive, onMounted, onUnmounted, computed } from 'vue'
+import { getUserPosts, getUserInfoByNickname } from '@/api'
+import { store } from '@/store'
+import { useRoute } from 'vue-router'
 
 const $route = useRoute()
 const user = JSON.parse(localStorage.getItem("CUR_USER"))
@@ -38,7 +38,7 @@ const state = reactive({
     posts: [],
     pageIndex: 1,
     pageSize: 10,
-    lastTimestamp:new Date().getTime(),
+    lastTimestamp: Date.now(),
     totalPages: 0,
     headerConfig: {
         title: $route.params.nickname,
@@ -46,29 +46,29 @@ const state = reactive({
         showMenu: isCurUser.value,
         menuIcon: isCurUser.value ? 'create' : '',
         menuAction: { action: 'route', param: '/profile/edit' },
-        iconTooltip:'编辑个人资料',
+        iconTooltip: '编辑个人资料',
         width: 0
     },
-    isPostLoading:false,
+    isPostLoading: false,
     lastWheelDirection: 0
 })
 
 async function getPosts() {
     state.isPostLoading = true
     try {
-        const response = await getUserPosts(state.user.id, state.pageIndex, state.pageSize,state.lastTimestamp)
+        const response = await getUserPosts(state.user.id, state.pageIndex, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
-        if(content.length>1) {
+        if(content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
-    }finally{
+    } finally {
         state.isPostLoading = false
     }
 }
@@ -103,26 +103,26 @@ function fetchNewPost() {
 function toggleHeaderIcon(event){
     if(event.pageY > 718 && event.deltaY > 0 && state.lastWheelDirection <= 0){
         state.lastWheelDirection = event.deltaY
-        state.headerConfig.menuIcon ='date_range'
-        state.headerConfig.iconTooltip='搜索帖子'
+        state.headerConfig.menuIcon = 'date_range'
+        state.headerConfig.iconTooltip = '搜索帖子'
     }else if(event.pageY < 718 && event.deltaY < 0 && state.lastWheelDirection > 0){
         state.lastWheelDirection = event.deltaY
         state.headerConfig.menuIcon = isCurUser.value ? 'create' : ''
-        state.headerConfig.iconTooltip='编辑个人资料'
+        state.headerConfig.iconTooltip = '编辑个人资料'
     }
-
 }
 
 onMounted(async () => {
     const nickname = $route.params.nickname
 
     await getUser(nickname)
+    state.lastTimestamp = state.user.lastPostAt || Date.now()
     await getPosts()
     window.addEventListener('scroll', fetchNewPost)
     window.addEventListener('wheel', toggleHeaderIcon)
 
     const profile = document.getElementById('profile')
-    state.headerConfig.width = window.getComputedStyle(profile).width.replace('px','')
+    state.headerConfig.width = window.getComputedStyle(profile).width.replace('px', '')
 })
 
 onUnmounted(() => {

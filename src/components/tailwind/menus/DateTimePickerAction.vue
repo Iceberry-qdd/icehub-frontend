@@ -4,90 +4,90 @@
             <IconInfo class="bg-[#cfe2ff] rounded-full box-content p-[0.1rem]"></IconInfo>
             {{ props.noteMsg }}
         </div>
-            <div id="date-picker">
-                <div class="flex w-full flex-row flex-nowrap justify-between items-center">
-                    <div class="text-[11pt] text-[#409EFF] cursor-pointer" @click = "closeAndClear">清除</div>
-                    <div class="text-[11pt]">{{ formattedPickedDateTime }}</div>
-                    <div class="text-[11pt] text-[#409EFF] cursor-pointer" @click = "closeAndOk">确定</div>
-                </div>
+        <div id="date-picker">
+            <div class="flex w-full flex-row flex-nowrap justify-between items-center">
+                <div class="text-[11pt] text-[#409EFF] cursor-pointer" @click="closeAndClear">清除</div>
+                <div class="text-[11pt]">{{ formattedPickedDateTime }}</div>
+                <div class="text-[11pt] text-[#409EFF] cursor-pointer" @click="closeAndOk">确定</div>
+            </div>
 
-                <div class="flex flex-row w-full h-[2rem] justify-between items-center">
+            <div class="flex flex-row w-full h-[2rem] justify-between items-center">
+                <div
+                    @click="minusOneYear"
+                    :class="[canPickYearBefore ? '' : 'm-disabled']"
+                    class="material-icons-round last-year">
+                    keyboard_double_arrow_left
+                </div>
+                <div
+                    @click="canPickMonthBefore ? minusOneMonth() : ''"
+                    :class="[canPickMonthBefore ? '' : 'm-disabled']"
+                    class="material-icons-round last-month">
+                    keyboard_arrow_left
+                </div>
+                <div class="text-[11pt] font-bold">{{ state.pickedYear }}</div>
+                <div
+                    @click="canPickMonthAfter ? addOneMonth() : ''"
+                    :class="[canPickMonthAfter ? '' : 'm-disabled']"
+                    class="material-icons-round next-month">
+                    keyboard_arrow_right
+                </div>
+                <div
+                    @click="addOneYear"
+                    :class="[canPickYearAfter ? '' : 'm-disabled']"
+                    class="material-icons-round next-year">
+                    keyboard_double_arrow_right
+                </div>
+            </div>
+            <div class="divide-y  cursor-default">
+                <div class="grid grid-cols-7 gap-1">
                     <div
-                        @click="minusOneYear"
-                        :class="[canPickYearBefore ? '' : 'm-disabled']"
-                        class="material-icons-round last-year">
-                        keyboard_double_arrow_left
-                    </div>
-                    <div
-                        @click="canPickMonthBefore ? minusOneMonth() : ''"
-                        :class="[canPickMonthBefore ? '' : 'm-disabled']"
-                        class="material-icons-round last-month">
-                        keyboard_arrow_left
-                    </div>
-                    <div class="text-[11pt] font-bold">{{ state.pickedYear }}</div>
-                    <div
-                        @click="canPickMonthAfter ? addOneMonth() : ''"
-                        :class="[canPickMonthAfter ? '' : 'm-disabled']"
-                        class="material-icons-round next-month">
-                        keyboard_arrow_right
-                    </div>
-                    <div
-                        @click="addOneYear"
-                        :class="[canPickYearAfter ? '' : 'm-disabled']"
-                        class="material-icons-round next-year">
-                        keyboard_double_arrow_right
+                        class="w-[2.5rem] h-[2.5rem] flex justify-center items-center"
+                        v-for="(week, index) in state.weekNames" :key="index">
+                        {{ week }}
                     </div>
                 </div>
-                <div class="divide-y  cursor-default">
-                    <div class="grid grid-cols-7 gap-1">
-                        <div
-                            class="w-[2.5rem] h-[2.5rem] flex justify-center items-center"
-                            v-for="(week,index) in state.weekNames" :key="index">
-                            {{ week }}
-                        </div>
-                    </div>
+                <div
+                    class="absolute flex justify-center items-center w-full -translate-x-[1rem] h-[calc(100%-2rem-0.75rem-0.5rem-11pt-2rem-1.25rem-16pt-2rem-2.5rem)] text-[96pt] text-[#EBEEF5] -z-[1]">
+                    {{ state.pickedMonth }}
+                </div>
+                <div class="grid grid-cols-7 gap-1 pt-2 cursor-pointer">
                     <div
-                        class="absolute flex justify-center items-center w-full -translate-x-[1rem] h-[calc(100%-2rem-0.75rem-0.5rem-11pt-2rem-1.25rem-16pt-2rem-2.5rem)] text-[96pt] text-[#EBEEF5] -z-[1]">
-                        {{ state.pickedMonth }}
+                        v-for="i in startWeekOfPickedMonth - 1"
+                        class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center cursor-default">
                     </div>
-                    <div class="grid grid-cols-7 gap-1 pt-2 cursor-pointer">
-                        <div
-                            v-for="i in startWeekOfPickedMonth - 1"
-                            class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center cursor-default">
-                        </div>
 
-                        <div v-for="i in daysCountOfPickedMonth"
-                            :class="[state.pickedDate == i ? 'bg-[#c6e2ff] hover:bg-[#c6e2ff]' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '':'m-disabled']"
-                            @click="canPickThisDay(i) ? state.pickedDate = i : ''"
-                            class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center">
-                            {{ i }}
-                        </div>
+                    <div v-for="i in daysCountOfPickedMonth"
+                        :class="[state.pickedDate == i ? 'bg-[#c6e2ff] hover:bg-[#c6e2ff]' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '' : 'm-disabled']"
+                        @click="canPickThisDay(i) ? state.pickedDate = i : ''"
+                        class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center">
+                        {{ i }}
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div id="time-picker">
-                <select
-                    v-model="state.pickedHour"
-                    class="px-4 py-[0.25rem] border-[1px] focus:ring-2 focus-visible:outline-none ring-offset-2 ring-blue-500 rounded-[6px]"
-                    required name="hour-picker"
-                    id="hour-picker">
-                    <option class="text-[11pt] font-normal" v-for="(hour, index) in 24" :value="index">{{ index < 10 ? '0' + index : index }}</option>
-                </select>
+        <div id="time-picker">
+            <select
+                v-model="state.pickedHour"
+                class="px-4 py-[0.25rem] border-[1px] focus:ring-2 focus-visible:outline-none ring-offset-2 ring-blue-500 rounded-[6px]"
+                required name="hour-picker"
+                id="hour-picker">
+                <option class="text-[11pt] font-normal" v-for="(hour, index) in 24" :value="index">{{ index < 10 ? '0' + index : index }}</option>
+            </select>
 
-                <div class="px-4">:</div>
+            <div class="px-4">:</div>
 
-                <select
-                    v-model="state.pickedMinute"
-                    class="px-4 py-[0.25rem] border-[1px] focus:ring-2 focus-visible:outline-none ring-offset-2 ring-blue-500 rounded-[6px]"
-                    required name="minute-picker"
-                    id="minute-picker">
-                    <option class="text-[11pt] font-normal" v-for="(minute, index) in 60" :value="index">{{ index < 10 ? '0' + index : index }}</option>
-                </select>
-            </div>
+            <select
+                v-model="state.pickedMinute"
+                class="px-4 py-[0.25rem] border-[1px] focus:ring-2 focus-visible:outline-none ring-offset-2 ring-blue-500 rounded-[6px]"
+                required name="minute-picker"
+                id="minute-picker">
+                <option class="text-[11pt] font-normal" v-for="(minute, index) in 60" :value="index">{{ index < 10 ? '0' + index : index }}</option>
+            </select>
+        </div>
 
-            <!-- 滚轮形式时间选择器，未实现 -->
-            <!-- <div class="w-[9.5rem]"></div>
+        <!-- 滚轮形式时间选择器，未实现 -->
+        <!-- <div class="w-[9.5rem]"></div>
             <div class="time-picker flex flex-row top-0 translate-x-[20.5rem] translate-y-[2.75rem] h-[calc(100%-2.75rem)] cursor-n-resize">
                 <div
                     class="overflow-y-scroll overflow-x-hidden  w-[3rem] h-full text-[10pt] flex flex-col divide-y">
@@ -104,7 +104,7 @@
 </template>
 
 <style scoped>
-.material-icons-round{
+.material-icons-round {
     cursor: pointer;
     border-radius: 8px;
     font-size: 15pt;
@@ -119,19 +119,19 @@
     justify-content: left;
     align-items: center;
     gap: 0.5rem;
-    color:#606266;
-    font-size:10pt;
+    color: #606266;
+    font-size: 10pt;
     top: 2.5rem;
     min-width: max-content;
     min-height: max-content;
     background-color: white;
-    border:1px solid #EEEEEE;
+    border: 1px solid #EEEEEE;
     border-radius: 6px;
     box-shadow: 1px 1px 4px 2px #00000011;
     padding: 1rem;
 }
 
-#time-picker{
+#time-picker {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -153,12 +153,12 @@
     /* Chrome Safari */
 }
 
-.m-disabled{
+.m-disabled {
     color: #C0C4CC;
     cursor: not-allowed;
 }
 
-.m-disabled:hover{
+.m-disabled:hover {
     background-color: transparent;
 }
 </style>
@@ -167,8 +167,8 @@
 import { computed, reactive, onMounted } from 'vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
 
-const props = defineProps(['showTimePicker','showDatePicker','validDateTimeRange','noteMsg', 'curPickedTime'])
-const emits = defineEmits(['closeWithOk','closeWithClear'])
+const props = defineProps(['showTimePicker', 'showDatePicker', 'validDateTimeRange', 'noteMsg', 'curPickedTime'])
+const emits = defineEmits(['closeWithOk', 'closeWithClear'])
 
 const state = reactive({
     showTimePicker: props.showTimePicker,
@@ -219,7 +219,7 @@ const daysCountOfPickedMonth = computed(() => {
     return new Date(state.pickedYear, state.pickedMonth, 0).getDate()
 })
 
-const startWeekOfPickedMonth = computed(() =>{
+const startWeekOfPickedMonth = computed(() => {
     const weekNo = new Date(state.pickedYear, state.pickedMonth - 1).getDay()
     return weekNo == 0 ? 7 : weekNo
 })
@@ -240,7 +240,7 @@ function chooseFirstValidDay(){
     }
 }
 
-function addOneMonth() {
+function addOneMonth(){
     if (state.pickedMonth == 12) {
         state.pickedYear++
         state.pickedMonth = 1
@@ -251,7 +251,7 @@ function addOneMonth() {
     chooseFirstValidDay()
 }
 
-function minusOneMonth() {
+function minusOneMonth(){
     if (state.pickedMonth == 1) {
         state.pickedYear--
         state.pickedMonth = 12
@@ -262,15 +262,15 @@ function minusOneMonth() {
     chooseFirstValidDay()
 }
 
-function minusOneYear() {
-    if(!canPickYearBefore.value) return
+function minusOneYear(){
+    if (!canPickYearBefore.value) return
     state.pickedYear--
 
     chooseFirstValidDay()
 }
 
-function addOneYear() {
-    if(!canPickYearAfter) return
+function addOneYear(){
+    if (!canPickYearAfter) return
     state.pickedYear++
 
     chooseFirstValidDay()
@@ -280,7 +280,7 @@ function closeAndClear(){
     emits('closeWithClear')
 }
 
-function closeAndOk() {
+function closeAndOk(){
     const pickedTimestamps = new Date(state.pickedYear, state.pickedMonth - 1, state.pickedDate, state.pickedHour, state.pickedMinute).getTime()
     emits('closeWithOk', { timestamps: pickedTimestamps })
 }
