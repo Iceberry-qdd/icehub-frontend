@@ -2,7 +2,7 @@
     <div v-if="state.user">
         <GlobalNotifyBanner class="fixed" :class="{ 'top-0': isShowGlobalNotifyBannerMsg }" v-if="isShowGlobalNotifyBannerMsg"
             @closeGlobalNotifyBanner="closeGlobalNotifyBannerMsg" id="global-notify-banner"
-            :message="state.globalNotifyBannerMsg"></GlobalNotifyBanner>
+            :message="store.GLOBAL_NOTIFY_BANNER_MSG"></GlobalNotifyBanner>
         <div id="container" :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }">
             <GlobalBanner v-if="store.GLOBAL_MSG.length > 0" @closeGlobalBanner="store.GLOBAL_MSG = []"></GlobalBanner>
             <GlobalTipDialog></GlobalTipDialog>
@@ -104,12 +104,12 @@ async function curUser() {
 }
 
 const isShowGlobalNotifyBannerMsg = computed(() => {
-    return state.globalNotifyBannerMsg.length > 0
+    return store.GLOBAL_NOTIFY_BANNER_MSG
 })
 
 function closeGlobalNotifyBannerMsg() {
     state.globalNotifyBannerMsg = ''
-    store.GLOBAL_NOTIFY_BANNER_MSG = ''
+    store.clearGlobalNotifyBannerMsg()
 }
 
 function disconnectToWs() {
@@ -126,15 +126,30 @@ watch(() => state.user, (newVal, oldVal) => {
 })
 
 watch(() => ws.connectState, function (newVal, oldVal) {
+    if(newVal == oldVal) return
     if (newVal == 'CONNECTED') {
-        ws.subscribeTopic(`/topic/public.notify`, function (response) {
-            // const msgPack = JSON.parse(response.body)
-            const result = response.body
+        ws.subscribeTopic(`/topic/public.notify`, function (message) {
+            const result = message.body
             store.setGlobalNotifyBannerMsg(result)
             state.globalNotifyBannerMsg = result
-        })
-    } else if (newVal == 'CONNECTED_FAILED') {
+        },{ack:'client'})
+    }
+    if (newVal == 'CONNECTED_FAILED') {
+        store.setGlobalNotifyBannerMsg({ type: 'SYS_NOTIFY_WARNING', msg: '您的网络连接似乎存在问题，正在尝试重新连接...' })
         ws.reconnectWebsocket()
+    }
+    if(newVal == 'MAX_TRY_RECONNECT'){
+        store.setGlobalNotifyBannerMsg({ type: 'SYS_NOTIFY_ERROR', msg: '您的网络连接存在问题，建议您刷新重试!' })
+        console.error('[Websocket]Reconnect count is over limit, connect failed!')
+    }
+    if(newVal == 'DISCONNECTED'){
+        console.warn('[Websocket]You have already actively disconnected, can not reconnect.')
+        store.setGlobalNotifyBannerMsg({ type: 'SYS_NOTIFY_ERROR', msg: '您已主动断开网络连接!' })
+    }
+    if(newVal == 'CONNECTED' && oldVal == 'CONNECTED_FAILED'){
+        console.warn('[Websocket]You have already connected, no need to reconnect.')
+        store.setGlobalNotifyBannerMsg({ type: 'SYS_NOTIFY_SUCCESS', msg: '网络连接已恢复正常!' })
+        setTimeout(function(){ store.clearGlobalNotifyBannerMsg() }, 2000)
     }
 })
 
@@ -148,7 +163,6 @@ watch(() => $route.path, function(newVal, oldVal){
 
 onMounted(() => {
     curUser()
-    document.addEventListener("DOMContentLoaded",renderMath)
 })
 
 onUnmounted(() => {

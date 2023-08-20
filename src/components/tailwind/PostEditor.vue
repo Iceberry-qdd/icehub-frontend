@@ -50,14 +50,14 @@
                         </div>
                         <Transition name="fade">
                             <DateTimePickerAction
-                            v-if="state.showSchedulePanel"
-                            :showDatePicker = 'true'
-                            :showTimePicker = 'true'
-                            :validDateTimeRange = 'getDateTimeRange(new Date(), 1, "YEAR")'
-                            :noteMsg = '"您仅可以安排未来一年内的帖子"'
-                            :curPickedTime = state.data.createdTime
-                            @closeWithClear = 'pickedTimeAndClose'
-                            @closeWithOk = 'pickedTimeAndClose'
+                                v-if="state.showSchedulePanel"
+                                :showDatePicker = 'true'
+                                :showTimePicker = 'true'
+                                :validDateTimeRange = 'getDateTimeRange(new Date(), 1, "YEAR")'
+                                :noteMsg = '"您仅可以安排未来一年内的帖子"'
+                                :curPickedTime = state.data.createdTime
+                                @closeWithClear = 'pickedTimeAndClose'
+                                @closeWithOk = 'pickedTimeAndClose'
                             ></DateTimePickerAction>
                         </Transition>
                     </div>
@@ -169,7 +169,7 @@ const state = reactive({
     showVisibilityPanel: false,
     showEmojiPanel: false,
     showMarkdownPanel: false,
-    showSchedulePanel: true
+    showSchedulePanel: false
 })
 
 const hasImage = computed(() => {

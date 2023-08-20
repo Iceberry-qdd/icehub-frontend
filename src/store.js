@@ -105,6 +105,9 @@ export const store = reactive({
     setGlobalNotifyBannerMsg(msg) {
         this.GLOBAL_NOTIFY_BANNER_MSG = msg
     },
+    clearGlobalNotifyBannerMsg(){
+        this.GLOBAL_NOTIFY_BANNER_MSG = ''
+    },
 
     REVIEW_PANEL_DATA: null,
     setReviewPanelData(review) {

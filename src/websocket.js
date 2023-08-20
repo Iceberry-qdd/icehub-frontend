@@ -21,7 +21,7 @@ export class MsgPack {
 }
 
 export const ws = reactive({
-    url: 'http://192.168.0.103:8080/ws',
+    url: 'http://icehub.com:8080/ws',
     globalStompClient: null,
     reconnectCount: 0,
     connectState: 'DISCONNECT', // CONNECTED,MAX_TRY_RECONNECT,DISCONNECTED,CONNECTED_FAILED
@@ -34,9 +34,11 @@ export const ws = reactive({
     },
     connectWebsocket(token) {
         const that = this
+        console.log(that.connectState)
         this.globalStompClient.connect({ TOKEN: token }, function (frame) {
             console.log(`[Websocket]connected successful: ${frame}`)
             that.connectState = 'CONNECTED'
+            that.reconnectCount = 0
         }, function (error) {
             console.error(`[Websocket]Can not connect to the websocket server: ${error}`)
             that.connectState = 'CONNECTED_FAILED'
@@ -44,28 +46,25 @@ export const ws = reactive({
     },
     reconnectWebsocket() {
         const that = this
-        if (this.reconnectCount > 10) {
-            this.connectState = 'MAX_TRY_RECONNECT'
-            console.error('[Websocket]Reconnect count is over limit, connect failed!')
-            return
-        }
 
-        if (this.connectState == 'CONNECTED') {
-            console.warn('[Websocket]You have already connected, no need to reconnect.')
-            return
-        }
-
-        if (this.connectState == 'DISCONNECTED') {
-            console.warn('[Websocket]You have already actively disconnected, can not reconnect.')
-            return
-        }
-
-        this.wsReconnect && clearTimeout(this.wsReconnect)
-        this.wsReconnect = setTimeout(function () {
-            console.log('[Websocket]Starting reconnect...')
+        const interval = setInterval(function(){
             that.reconnectCount++
+            if (that.reconnectCount > 10) {
+                that.connectState = 'MAX_TRY_RECONNECT'
+            }
+    
+            if (['CONNECTED', 'DISCONNECTED', 'MAX_TRY_RECONNECT'].includes(that.connectState)) {
+                clearTimeout(timeout)
+                clearInterval(interval)
+                return
+            }
+
+            console.log(`[Websocket]Starting reconnect, try ${that.reconnectCount} times...`)
+            that.initWebsocket()
             that.connectWebsocket()
-        }, 1000)
+        }, 5000)
+
+        const timeout = setTimeout(function(){ clearInterval(interval) }, 5000 * 11)
     },
     disconnectWebsocket() {
         if (this.globalStompClient != null) {
@@ -79,16 +78,16 @@ export const ws = reactive({
      * @param {String} topicPath 订阅的topic路径
      * @param {function} fn 订阅回调函数
      */
-    subscribeTopic(topicPath, fn,headers) {
-        this.globalStompClient.subscribe(topicPath, fn,headers)
+    subscribeTopic(topicPath, fn, headers) {
+        this.globalStompClient.subscribe(topicPath, fn, headers)
     },
     /**
      * 订阅queue信息
      * @param {String} queuePath 订阅的queue路径
      * @param {function} fn 订阅回调函数
      */
-    subscribeQueue(queuePath, fn,headers) {
-        this.globalStompClient.subscribe(queuePath, fn,headers)
+    subscribeQueue(queuePath, fn, headers) {
+        this.globalStompClient.subscribe(queuePath, fn, headers)
     },
     /**
      * 向topic发送消息
