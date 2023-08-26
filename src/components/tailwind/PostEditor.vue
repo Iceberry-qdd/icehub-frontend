@@ -94,20 +94,19 @@
 </template>
 
 <style scoped>
-
-.fade-enter-active{
+.fade-enter-active {
     transition: opacity 0.15s ease-in-out;
 }
 
-.fade-leave-active{
+.fade-leave-active {
     transition: opacity 0.15s ease-in-out;
 }
 
-.fade-enter-from{
+.fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to{
+.fade-leave-to {
     opacity: 0;
 }
 
@@ -140,6 +139,8 @@ import DateTimePickerAction from '@/components/tailwind/menus/DateTimePickerActi
 import ImagePickerAction from '../tailwind/menus/ImagePickerAction.vue'
 import { renderMath } from '../../katexConfig.js'
 import { getDateTimeRange } from '@/utils/formatUtils.js'
+
+const emits = defineEmits(['postingNew'])
 
 const state = reactive({
     content: "",
@@ -184,8 +185,8 @@ function resize() {
 
 async function submitPost() {
     try {
-        if(state.content.length == 0) throw new Error("文字内容不能为空！")
-        if(state.data.createdTime && Date.now() >= state.data.createdTime) throw new Error('您安排的预发布时间早于现在！')
+        if (state.content.length == 0) throw new Error("文字内容不能为空！")
+        if (state.data.createdTime && Date.now() >= state.data.createdTime) throw new Error('您安排的预发布时间早于现在！')
 
         state.isLoading = true
         state.data.type = state.showMarkdownPanel == true ? 'MARKDOWN' : 'NORMAL'
@@ -210,8 +211,7 @@ async function submitPost() {
         state.content = ""
         state.imgList = []
 
-        // 发布完成后刷新页面
-        location.reload()
+        emits('postingNew', { post: state.result })
     } catch (err) {
         store.setErrorMsg(err.message)
         console.error(err)
@@ -259,7 +259,7 @@ function pickVisibility(args) {
 
 function pickedTimeAndClose(args) {
     if (args && args.timestamps) {
-        if(Date.now() >= args.timestamps){
+        if (Date.now() >= args.timestamps) {
             store.setWarningMsg('您安排的预发布时间不能早于现在！')
             return
         }

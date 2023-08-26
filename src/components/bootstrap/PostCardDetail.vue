@@ -3,7 +3,9 @@
         <button type="button" class="btn menu">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
         </button>
-        <PostMenus id="post-menus" class="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
+        <Transition name="fade">
+            <PostMenus id="post-menus" class="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
+        </Transition>
         <div class="user-info d-flex">
             <Transition name="fade">
                 <UserInfoPop
@@ -327,6 +329,7 @@
     height: auto;
     right: 3%;
     top: 1rem;
+    cursor: pointer;
 }
 
 .bi {
@@ -390,7 +393,7 @@
 <script setup>
 import { computed, reactive, onMounted } from 'vue'
 import { likeAPost, dislikeAPost, getImageUrlIgnoreHidden } from '@/api.js'
-import router from '@/route.js';
+import router from '@/route.js'
 import { store } from '@/store.js'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import { standardTime } from '@/utils/formatUtils.js'
@@ -447,7 +450,7 @@ async function toggleLike() {
     const lastCount = state.post.likeCount
 
     state.post.liked = !LastLikedState
-    state.post.likeCount = !LastLikedState ? lastCount + 1: lastCount - 1
+    state.post.likeCount = !LastLikedState ? lastCount + 1 : lastCount - 1
 
     try {
         if (state.post.liked == false) {
@@ -487,8 +490,8 @@ function showSlide(images, idx) {
 
 const avatarUrl = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${state.post.user.nickname}.svg`
-    const { previewUrl, originUrl,contentType } = state.post.user.avatarUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const { previewUrl, originUrl, contentType } = state.post.user.avatarUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 

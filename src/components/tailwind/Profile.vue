@@ -1,5 +1,5 @@
 <template>
-    <div v-if="state.user" id="profile" @wheel="toggleHeaderIcon">
+    <div v-if="state.user" class="relative" id="profile" @wheel="toggleHeaderIcon">
         <Header
             v-if="state.user && state.headerConfig.width != 0"
             :width="state.headerConfig.width"

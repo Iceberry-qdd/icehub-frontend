@@ -1,5 +1,5 @@
 <template>
-    <div id="explore">
+    <div class="position-relative" id="explore">
         <Header
             v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
@@ -19,7 +19,9 @@
 </template>
 
 <style scoped>
-
+.position-relative {
+    position: relative;
+}
 </style>
 
 <script setup>
@@ -33,7 +35,7 @@ const state = reactive({
     posts: [],
     pageIdx: 1,
     pageSize: 10,
-    lastTimestamp:new Date().getTime(),
+    lastTimestamp: new Date().getTime(),
     totalPages: 0,
     headerConfig: {
         title: '探索',
@@ -44,25 +46,25 @@ const state = reactive({
         iconTooltip: '搜索',
         width: 0
     },
-    isLoading:false
+    isLoading: false
 })
 
 async function getData() {
     state.isLoading = true
     try {
-        const response = await getTimeline(state.pageIdx, state.pageSize,state.lastTimestamp)
+        const response = await getTimeline(state.pageIdx, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
-        if(content.length>1) {
+        if (content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
-    }finally{
+    } finally {
         state.isLoading = false
     }
 }
@@ -83,7 +85,7 @@ function fetchNewPost() {
 
 onMounted(() => {
     const explore = document.getElementById('explore')
-    state.headerConfig.width = window.getComputedStyle(explore).width.replace('px','') - 3
+    state.headerConfig.width = window.getComputedStyle(explore).width.replace('px', '') - 3
 
     getData()
     window.addEventListener('scroll', fetchNewPost)

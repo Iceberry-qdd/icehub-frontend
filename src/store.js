@@ -3,23 +3,24 @@ import { reactive } from 'vue'
 export const store = reactive({
     GLOBAL_MSG: [],
     setInfoMsg(msg) {
-        const count = this.GLOBAL_MSG.length
-        this.GLOBAL_MSG.push({ id: count, type: 'info', msg: msg })
+        this.GLOBAL_MSG.unshift({ id: Date.now(), type: 'info', msg: msg })
     },
     setSuccessMsg(msg) {
-        const count = this.GLOBAL_MSG.length
-        this.GLOBAL_MSG.push({ id: count, type: 'success', msg: msg })
+        this.GLOBAL_MSG.unshift({ id: Date.now(), type: 'success', msg: msg })
     },
     setWarningMsg(msg) {
-        const count = this.GLOBAL_MSG.length
-        this.GLOBAL_MSG.push({ id: count, type: 'warning', msg: msg })
+        this.GLOBAL_MSG.push({ id: Date.now(), type: 'warning', msg: msg })
     },
     setErrorMsg(msg) {
-        const count = this.GLOBAL_MSG.length
-        this.GLOBAL_MSG.push({ id: count, type: 'error', msg: msg })
+        this.GLOBAL_MSG.push({ id: Date.now(), type: 'error', msg: msg })
     },
-    dismissMsg() {
+    dismissMsg(messageId) {
         this.GLOBAL_MSG.shift()
+        const message = this.GLOBAL_MSG.find(it => it.id == messageId)
+        if (message == undefined) return
+
+        const index = this.GLOBAL_MSG.indexOf(message)
+        this.GLOBAL_MSG.splice(index, 1)
     },
 
     GLOBAL_SELECT_UID: null,
@@ -105,7 +106,7 @@ export const store = reactive({
     setGlobalNotifyBannerMsg(msg) {
         this.GLOBAL_NOTIFY_BANNER_MSG = msg
     },
-    clearGlobalNotifyBannerMsg(){
+    clearGlobalNotifyBannerMsg() {
         this.GLOBAL_NOTIFY_BANNER_MSG = ''
     },
 
@@ -117,8 +118,8 @@ export const store = reactive({
         this.REVIEW_PANEL_DATA = null
     },
 
-    UNREAD_MSG_COUNT:0,
-    setUnreadMsgCount(count){
+    UNREAD_MSG_COUNT: 0,
+    setUnreadMsgCount(count) {
         this.UNREAD_MSG_COUNT = count
     }
 })

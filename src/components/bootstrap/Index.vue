@@ -14,7 +14,7 @@
                 class="fixed z-[99] left-1/2 -translate-x-1/2"
                 :class="[isShowGlobalNotifyBannerMsg ? 'top-6.5-rem' : 'top-4-rem']"></GlobalRefresh>
         </Transition>
-        <PostEditor @get-data="getData"></PostEditor>
+        <PostEditor @get-data="getData" @postingNew="postingNew"></PostEditor>
         <PostsTimeline
             :isLoading="state.isLoading"
             :posts="state.posts"
@@ -83,7 +83,7 @@ const state = reactive({
     pageIdx: 1,
     pageSize: 10,
     totalPages: 0,
-    lastTimestamp:new Date().getTime(),
+    lastTimestamp: new Date().getTime(),
     headerConfig: {
         title: '主页',
         goBack: false,
@@ -92,27 +92,27 @@ const state = reactive({
         menuAction: { action: 'route', param: '' },
         width: 0
     },
-    isShowGlobalRefresh:true,
-    isLoading:false
+    isShowGlobalRefresh: true,
+    isLoading: false
 })
 
 async function getData() {
-    state.isLoading=true
+    state.isLoading = true
     try {
-        const response = await getUserTimeline(state.pageIdx, state.pageSize,state.lastTimestamp)
+        const response = await getUserTimeline(state.pageIdx, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
-        if(content.length>1) {
+        if (content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
-    }finally{
-        state.isLoading=false
+    } finally {
+        state.isLoading = false
     }
 }
 
@@ -130,13 +130,18 @@ function fetchNewPost() {
     }
 }
 
+function postingNew(args) {
+    const newPost = args.post
+    state.posts.unshift(newPost)
+}
+
 const isShowGlobalNotifyBannerMsg = computed(() => {
     return store.GLOBAL_NOTIFY_BANNER_MSG.length > 0
 })
 
 onMounted(() => {
     const index = document.getElementById('index')
-    state.headerConfig.width = window.getComputedStyle(index).width.replace('px','') -3
+    state.headerConfig.width = window.getComputedStyle(index).width.replace('px', '') - 3
 
     getData()
     window.addEventListener('scroll', fetchNewPost)

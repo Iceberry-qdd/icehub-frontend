@@ -4,7 +4,7 @@
             @closeGlobalNotifyBanner="closeGlobalNotifyBannerMsg" id="global-notify-banner"
             :message="store.GLOBAL_NOTIFY_BANNER_MSG"></GlobalNotifyBanner>
         <div id="container" :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }">
-            <GlobalBanner v-if="store.GLOBAL_MSG.length > 0" @closeGlobalBanner="store.GLOBAL_MSG = []"></GlobalBanner>
+            <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
             <GlobalTipDialog></GlobalTipDialog>
             <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
             <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>

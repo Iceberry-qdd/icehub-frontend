@@ -5,7 +5,14 @@
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" class="z-index-96" />
         </button>
         <Transition name="fade">
-                <PostMenus class="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
+                <PostMenus
+                    class="post-menus"
+                    :post="state.post"
+                    @dismissMenu="state.isShowMenu = false"
+                    @deletePost="deletePost"
+                    @deleteBookmark="deleteBookmark"
+                    v-if="state.isShowMenu">
+                </PostMenus>
         </Transition>
         <div class="user-info d-flex">
             <Transition name="fade">
@@ -371,6 +378,7 @@
     height: auto;
     right: 3%;
     top: 1rem;
+    cursor: pointer;
 }
 
 .bi {
@@ -441,7 +449,7 @@
 <script setup>
 import { computed, onMounted, reactive, ref } from 'vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
-import { likeAPost, dislikeAPost, getUserInfoByNickname,getImageUrlIgnoreHidden } from '@/api'
+import { likeAPost, dislikeAPost, getUserInfoByNickname, getImageUrlIgnoreHidden } from '@/api'
 import router from '@/route'
 import { store } from '@/store'
 import { humanizedTime } from '@/utils/formatUtils.js'
@@ -455,6 +463,7 @@ import { VueShowdown } from 'vue-showdown'
 
 const props = defineProps(['post'])
 const cardMask = ref()
+const emits = defineEmits(['deletePost', 'deleteBookmark'])
 
 const state = reactive({
     post: props.post,
@@ -464,7 +473,7 @@ const state = reactive({
     isShowMenu: false,
     showAltText: [false, false, false, false, false, false, false, false, false],
     user: JSON.parse(localStorage.getItem("CUR_USER")),
-    shrinkContent:false
+    shrinkContent: false
 })
 
 const cardClass = computed(() => {
@@ -522,10 +531,10 @@ async function toggleLike() {
     const lastCount = state.post.likeCount
 
     state.post.liked = !LastLikedState
-    state.post.likeCount = !LastLikedState ? lastCount + 1: lastCount - 1
+    state.post.likeCount = !LastLikedState ? lastCount + 1 : lastCount - 1
 
     try {
-        if(state.post.plan) throw new Error('该帖子尚未发布，无法进行点赞操作')
+        if (state.post.plan) throw new Error('该帖子尚未发布，无法进行点赞操作')
         if (state.post.liked == false) {
             const response = await likeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)
@@ -558,8 +567,8 @@ function showSlide(images, idx) {
 
 const avatar = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${state.post.user.nickname}.svg`
-    const { previewUrl, originUrl,contentType } = state.post.user.avatarUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const { previewUrl, originUrl, contentType } = state.post.user.avatarUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
@@ -615,24 +624,32 @@ const postStatus = computed(() => {
     return statusMap.get(status)
 })
 
-async function getImageUrlIgnoreNSFW(imageIndex){
+async function getImageUrlIgnoreNSFW(imageIndex) {
     const postId = state.post.id
-    try{
-        const response = await getImageUrlIgnoreHidden(postId,imageIndex)
+    try {
+        const response = await getImageUrlIgnoreHidden(postId, imageIndex)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
-        state.post.attachmentsUrl[imageIndex]=result
+        state.post.attachmentsUrl[imageIndex] = result
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
     }
 }
 
-function setSuitableHeight(){
-    if(state.post.type=='MARKDOWN' && cardMask.value.clientHeight>window.innerHeight/2){
-        state.shrinkContent=true
+function setSuitableHeight() {
+    if (state.post.type == 'MARKDOWN' && cardMask.value.clientHeight > window.innerHeight / 2) {
+        state.shrinkContent = true
     }
+}
+
+function deletePost(args) {
+    emits('deletePost', { postId: args.postId })
+}
+
+function deleteBookmark(args) {
+    emits('deleteBookmark', { postId: args.postId })
 }
 
 onMounted(() => {

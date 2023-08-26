@@ -8,7 +8,15 @@
             :showMenu="state.headerConfig.showMenu"
             :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"></Header>
-        <PostCard v-for="(post, index) in state.posts" :post="post" :key="post.id" :index="index"></PostCard>
+        <TransitionGroup name="posts">
+            <PostCard
+                v-for="(post, index) in state.posts"
+                :post="post"
+                :key="post.id"
+                :index="index"
+                @deleteBookmark="deleteBookmark">
+            </PostCard>
+        </TransitionGroup>
         <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
             <IconLoading v-if="hasMore || state.isLoading" class="h-5 w-5 text-slate-500"></IconLoading>
             <span v-else>没有更多了</span>
@@ -17,7 +25,20 @@
 </template>
 
 <style scoped>
+.posts-move,.posts-enter-active,.posts-leave-active{
+    transition: all 0.5s cubic-bezier(0.39, 0.58, 0.57, 1);
+}
 
+.posts-enter-from,.posts-leave-to{
+    opacity: 0;
+}
+
+.posts-leave-active {
+  position: absolute;
+  width: 100%;
+  height: fit-content;
+  z-index: 0;
+}
 </style>
 
 <script setup>
@@ -41,7 +62,7 @@ const state = reactive({
     isLoading: false,
     pageIndex: 1,
     pageSize: 10,
-    lastTimestamp:new Date().getTime(),
+    lastTimestamp: new Date().getTime(),
     totalPages: 0
 })
 
@@ -52,13 +73,13 @@ const hasMore = computed(() => {
 async function getPostList() {
     state.isLoading = true
     try {
-        const response = await getMarkPostList(state.pageIndex, state.pageSize,state.lastTimestamp)
+        const response = await getMarkPostList(state.pageIndex, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
-        if(content.length>1) {
+        if (content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
@@ -77,16 +98,25 @@ function fetchNewPost() {
     const scrollHeight = document.documentElement.scrollHeight
 
     if (scrollTop + clientHeight >= scrollHeight) {
-        setTimeout(() => {
-            getPostList()
-        }, 1000)
+        setTimeout(() => { getPostList() }, 1000)
     }
+}
+
+function deleteBookmark(args) {
+    const preDeletePost = state.posts.find(it => it.id == args.postId)
+    if (preDeletePost == undefined) {
+        store.setErrorMsg("移除书签失败，该帖子不存在！")
+        return
+    }
+
+    const index = state.posts.indexOf(preDeletePost)
+    state.posts.splice(index, 1)
 }
 
 onMounted(() => {
     const bookmark = document.getElementById('bookmark')
-    state.headerConfig.width = window.getComputedStyle(bookmark).width.replace('px','')
-    
+    state.headerConfig.width = window.getComputedStyle(bookmark).width.replace('px', '')
+
     getPostList()
     window.addEventListener('scroll', fetchNewPost)
 })
@@ -94,6 +124,4 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewPost)
 })
-
-
 </script>

@@ -13,7 +13,7 @@ import { reactive, computed } from 'vue'
 import { store } from '@/store.js'
 import { markAPost, unMarkAPost } from '@/api.js'
 
-const emits = defineEmits(['dismissMenu'])
+const emits = defineEmits(['dismissMenu', 'delete', 'deleteBookmark'])
 
 const props = defineProps(['post'])
 
@@ -31,7 +31,7 @@ function dismiss() { emits('dismissMenu') }
 
 function toggleMark() {
     const { marked, id } = state.post
-    marked==true ? unMarkIt(id) : markIt(id)
+    marked == true ? unMarkIt(id) : markIt(id)
 }
 
 async function markIt(postId) {
@@ -41,12 +41,12 @@ async function markIt(postId) {
 
         const result = await response.text()
         if (result == false) throw new Error("加入书签失败！")
-        state.post.marked =true
+        state.post.marked = true
         store.setSuccessMsg("已加入书签！")
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
-    }finally{
+    } finally {
         dismiss()
     }
 }
@@ -60,10 +60,11 @@ async function unMarkIt(postId) {
         if (result == false) throw new Error("移除失败！")
         state.post.marked = false
         store.setSuccessMsg("已移出书签！")
+        emits('deleteBookmark', { postId: state.post.id })
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
-    }finally{
+    } finally {
         dismiss()
     }
 }
