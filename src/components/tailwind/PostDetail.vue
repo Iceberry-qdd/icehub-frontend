@@ -11,7 +11,7 @@
         </Header>
         <PostCardDetail v-if="state.post" :post="state.post"></PostCardDetail>
         <ReviewEditor :post="state.post" v-if="allowReview"></ReviewEditor>
-        <div v-if="!allowReview" class="w-[96%] h-[3rem] translate-x-[2%] my-[2%] p-4 bg-[#e8f0ff] rounded-lg flex justify-left items-center gap-2 cursor-default">
+        <div v-if="!allowReview && state.post" class="w-[96%] h-[3rem] translate-x-[2%] my-[2%] p-4 bg-[#e8f0ff] rounded-lg flex justify-left items-center gap-2 cursor-default">
             <IconInfo class="bg-[#3b82f6] text-white rounded-full box-content p-[0.1rem]"></IconInfo>
             <span class="text-[11pt] text-[#303133]">该帖子目前无法进行评论</span>
         </div>

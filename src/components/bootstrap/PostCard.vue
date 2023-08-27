@@ -527,15 +527,15 @@ async function getUser(nickname) {
 }
 
 async function toggleLike() {
-    const LastLikedState = state.post.liked
+    const lastLikedState = state.post.liked
     const lastCount = state.post.likeCount
 
-    state.post.liked = !LastLikedState
-    state.post.likeCount = !LastLikedState ? lastCount + 1 : lastCount - 1
+    state.post.liked = !lastLikedState
+    state.post.likeCount = !lastLikedState ? lastCount + 1 : lastCount - 1
 
     try {
         if (state.post.plan) throw new Error('该帖子尚未发布，无法进行点赞操作')
-        if (state.post.liked == false) {
+        if (lastLikedState == false) {
             const response = await likeAPost(state.post.id)
             if (!response.ok) throw new Error((await response.json()).error)
 
@@ -552,7 +552,7 @@ async function toggleLike() {
         store.setErrorMsg(e.message)
         console.error(e)
 
-        state.post.liked = LastLikedState
+        state.post.liked = lastLikedState
         state.post.likeCount = lastCount
     }
 }

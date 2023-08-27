@@ -56,7 +56,6 @@ const state = reactive({
 })
 
 function closeBanner(args) {
-    const preDismissBanner = state.messages.find(it => it.id == args.bannerId)
-    store.dismissMsg(preDismissBanner)
+    store.dismissMsg(args.bannerId)
 }
 </script>

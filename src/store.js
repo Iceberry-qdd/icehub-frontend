@@ -15,7 +15,6 @@ export const store = reactive({
         this.GLOBAL_MSG.push({ id: Date.now(), type: 'error', msg: msg })
     },
     dismissMsg(messageId) {
-        this.GLOBAL_MSG.shift()
         const message = this.GLOBAL_MSG.find(it => it.id == messageId)
         if (message == undefined) return
 
