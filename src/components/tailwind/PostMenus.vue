@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div @mouseleave="dismiss"
+        <DeletePostDialogBox @dismissMenu="dismiss" @deletePost = "deletePost" :post="state.post" v-if="state.showDeleteDialogBox"></DeletePostDialogBox>
+        <div v-else @mouseleave="dismiss"
             class="flex flex-col min-w-[12rem] max-w-[18rem] bg-white rounded-[8px] shadow ring-1 ring-slate-900/5">
 
             <LinkCopyAction v-if="!isPlannedPost" @dismissMenu="dismiss" :link="generateLink"
@@ -24,7 +25,7 @@
 
             <VisibilityAction @dismissMenu="dismiss" :post="state.post" v-if="isMySelf && !isPlannedPost"></VisibilityAction>
 
-            <DeletePostAction v-if="isMySelf || isAdmin" :post="state.post" @deletePost="deletePost"
+            <DeletePostAction v-if="isMySelf || isAdmin" @showDeleteDialogBox = "state.showDeleteDialogBox = true"
                 class="py-2 px-4 w-full text-start hover:bg-gray-100 text-red-500 rounded-b-[8px] active:bg-gray-200">
             </DeletePostAction>
         </div>
@@ -41,6 +42,7 @@ import FollowingAction from '@/components/tailwind/menus/FollowingAction.vue'
 import LinkCopyAction from '@/components/tailwind/menus/LinkCopyAction.vue'
 import VisibilityAction from '@/components/tailwind/menus/VisibilityAction.vue'
 import DeletePostAction from '@/components/tailwind/menus/DeletePostAction.vue'
+import DeletePostDialogBox from '@/components/tailwind/menus/DeletePostDialogBox.vue'
 
 const emits = defineEmits(['dismissMenu', 'deletePost', 'deleteBookmark'])
 
@@ -49,7 +51,8 @@ const props = defineProps(['post'])
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     user: props.post.user,
-    post: props.post
+    post: props.post,
+    showDeleteDialogBox: false
 })
 
 function dismiss() { emits('dismissMenu') }
