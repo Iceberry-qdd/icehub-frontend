@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080"
+const BASE_URL = "http://icehub.com:8080"
 const TOKEN = localStorage.getItem('TOKEN')
 
 /**
@@ -8,7 +8,7 @@ const TOKEN = localStorage.getItem('TOKEN')
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns Promise<any>
  */
-export function getTimeline(pageIndex, pageSize,lastTimestamp) {
+export function getTimeline(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/timeline/public?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
@@ -26,7 +26,7 @@ export function getTimeline(pageIndex, pageSize,lastTimestamp) {
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns Promise<any>
  */
-export function getUserTimeline(pageIndex, pageSize,lastTimestamp) {
+export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
@@ -134,14 +134,12 @@ export function dislikeAPost(postId) {
  * @returns 登录结果
  */
 export function login(nickname, password) {
+    const authorizationHeader = `Basic ${btoa(`${encodeURIComponent(nickname)}:${password}`)}`
     return fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
-        body: JSON.stringify({
-            'nickname': nickname,
-            'password': password
-        }),
         headers: {
-            'Content-Type': "application/json"
+            'Content-Type': "application/json",
+            'Authorization': authorizationHeader
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -237,7 +235,7 @@ export function getUserInfoByNickname(nickname) {
  * @returns 帖子信息
  */
 export function getPostById(id) {
-    return fetch(`${BASE_URL}/post?pid=${id}`, {
+    return fetch(`${BASE_URL}/post/${id}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -255,7 +253,7 @@ export function getPostById(id) {
  * @param {string} pageSize 评论每页条数
  * @returns 该帖子的评论信息
  */
-export function getPostReviews(postId, pageIndex, pageSize,lastTimestamp) {
+export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
@@ -308,7 +306,7 @@ export function getReviewById(id) {
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 该帖子的子评论
  */
-export function getSubReviewById(id, pageIndex, pageSize,lastTimestamp) {
+export function getSubReviewById(id, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
@@ -359,7 +357,7 @@ export function dislikeAReview(reviewId) {
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 用户的帖子信息
  */
-export function getUserPosts(uid, pageIndex, pageSize,lastTimestamp) {
+export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/post?uid=${uid}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
@@ -489,7 +487,7 @@ export function unFollowUser(userId) {
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注者列表
  */
-export function getFollowerList(userId, pageIndex, pageSize,lastTimestamp) {
+export function getFollowerList(userId, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/user/follow/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
@@ -509,7 +507,7 @@ export function getFollowerList(userId, pageIndex, pageSize,lastTimestamp) {
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注用户列表
  */
-export function getFollowingList(userId, pageIndex, pageSize,lastTimestamp) {
+export function getFollowingList(userId, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/user/follow/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
@@ -560,7 +558,7 @@ export function unMarkAPost(postId) {
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 返回用户mark帖子列表
  */
-export function getMarkPostList(pageIndex, pageSize,lastTimestamp) {
+export function getMarkPostList(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
@@ -614,14 +612,14 @@ export function getImageUrlIgnoreHidden(postId, imageIndex) {
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 该用户的消息列表
  */
-export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp){
-    return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`,{
+export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
-        headers:{
+        headers: {
             'Authorization': TOKEN
         },
-        redirect:'follow',
-        credentials:'same-origin'
+        redirect: 'follow',
+        credentials: 'same-origin'
     })
 }
 
@@ -630,16 +628,16 @@ export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp){
  * @param {List<string>} notifyIds 待设为已读的消息id
  * @returns 设置为已读的结果
  */
-export function markNotifiesRead(notifyIds){
-    return fetch(`${BASE_URL}/notify/read/multiple`,{
-        method:'POST',
-        headers:{
+export function markNotifiesRead(notifyIds) {
+    return fetch(`${BASE_URL}/notify/read/multiple`, {
+        method: 'POST',
+        headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body:JSON.stringify(notifyIds),
-        redirect:'follow',
-        credentials:'same-origin'
+        body: JSON.stringify(notifyIds),
+        redirect: 'follow',
+        credentials: 'same-origin'
     })
 }
 
@@ -648,14 +646,14 @@ export function markNotifiesRead(notifyIds){
  * @param {string} notifyId 待设为已读的消息id
  * @returns 设置为已读的结果
  */
-export function markNotifyRead(notifyId){
-    return fetch(`${BASE_URL}/notify/read/${notifyId}`,{
-        method:'POST',
-        headers:{
+export function markNotifyRead(notifyId) {
+    return fetch(`${BASE_URL}/notify/read/${notifyId}`, {
+        method: 'POST',
+        headers: {
             'Authorization': TOKEN
         },
-        redirect:'follow',
-        credentials:'same-origin'
+        redirect: 'follow',
+        credentials: 'same-origin'
     })
 }
 
@@ -663,13 +661,29 @@ export function markNotifyRead(notifyId){
  * 查询当前用户未读消息数量
  * @returns 用户帖子统计值
  */
-export function queryCurUserUnreadNotifyCount(){
-    return fetch(`${BASE_URL}/notify/user/statistic`,{
-        method:'GET',
-        headers:{
+export function queryCurUserUnreadNotifyCount() {
+    return fetch(`${BASE_URL}/notify/user/statistic`, {
+        method: 'GET',
+        headers: {
             'Authorization': TOKEN
         },
-        redirect:'follow',
-        credentials:'same-origin'
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 删除一篇帖子
+ * @param {PostVO} postVO 待删除帖子
+ */
+export function deleteOnePost(postVO) {
+    return fetch(`${BASE_URL}/post/${postVO.id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
     })
 }

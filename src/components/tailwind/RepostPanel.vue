@@ -1,21 +1,22 @@
 <template>
     <div @click.self="dismiss"
         class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
-        <div class="w-[40%] min-h-[38%] max-h-[60%] p-4 bg-white rounded-[8px] overflow-y-auto">
+        <div class="flex flex-col flex-nowrap justify-between w-[40%] max-h-[60%] p-4 bg-white rounded-[8px] overflow-y-auto" :class="[state.showVisibilityPanel ? 'min-h-[38%]' : 'min-h-[28%]']">
             <div class="flex flex-row justify-between items-center">
                 <div class="flex flex-row items-center gap-x-2">
                     <img :src="avatar" class="w-[2.5rem] h-[2.5rem] rounded-[8px]" />
                     <div class="flex flex-row gap-4 h-full justify-center items-center">
                         <!-- <span class="text-[10pt] text-gray-500">转发</span> -->
                         <span class="text-[13pt] font-bold cursor-default">{{ state.curUser.nickname }}</span>
-                        <div class="relative text-[11pt] text-[#3b82f6] border-[#3b82f6] border-2 py-[0.1rem] px-2 rounded-full text-center min-w-[4rem] cursor-pointer hover:bg-[#cfe2ffAA]">
-                            <span @click="toggleVisibilityAction">{{ state.visibilityName }}</span>
+                        <div @click="toggleVisibilityAction" class="relative flex flex-row gap-x-1 items-center text-[11pt] text-[#3b82f6] border-[#3b82f6] border-2 py-[0.1rem] px-3 rounded-full min-w-[4rem] cursor-pointer hover:bg-[#cfe2ffAA]">
+                            <span>{{ state.visibilityName }}</span>
                             <VisibilityForPostEditorAction
                                 class="absolute top-[2rem] text-black"
                                 :visibility="state.data.status"
                                 v-if="state.showVisibilityPanel"
                                 @picked-visibility="pickVisibility">
                             </VisibilityForPostEditorAction>
+                            <span class="material-icons-round"> keyboard_arrow_down </span>
                         </div>
                     </div>
                 </div>
@@ -27,7 +28,7 @@
                     <span v-else>转发</span>
                 </div>
             </div>
-            <div class="pt-2 ml-[3rem]">
+            <div class="pt-2 ml-[3rem] grow">
                 <textarea v-model="state.data.content" @keydown="resize" :disabled="state.loading"
                     :class="{ 'text-gray-400': state.loading, 'cursor-not-allowed': state.loading }"
                     class="focus:outline-none overflow-y-hidden tracking-wide resize-none text-lg leading-6 text-justify min-w-full max-w-full min-h-fit bg-transparent"
@@ -40,7 +41,20 @@
 </template>
 
 <style scoped>
+.material-icons-round {
+    /* cursor: pointer; */
+    border-radius: 0;
+    font-size: 14pt;
+    padding: 0;
+    /* padding: 0.25rem; */
+}
 
+.material-icons-round:hover {
+    background-color: transparent;
+    font-size: 14pt;
+    padding: 0;
+    border-radius: 0;
+}
 </style>
 
 <script setup>

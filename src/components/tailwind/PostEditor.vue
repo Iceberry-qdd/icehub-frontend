@@ -165,7 +165,8 @@ const state = reactive({
             { hidden: "false", altText: "", contentType: "" },
             { hidden: "false", altText: "", contentType: "" },
             { hidden: "false", altText: "", contentType: "" }
-        ]
+        ],
+        userId: JSON.parse(localStorage.getItem("CUR_USER")).id
     },
     showVisibilityPanel: false,
     showEmojiPanel: false,
