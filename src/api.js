@@ -687,3 +687,25 @@ export function deleteOnePost(postVO) {
         credentials: 'same-origin'
     })
 }
+
+/**
+ * 创建黑名单
+ * @param {string} type 黑名单类型
+ * @param {string} contentId 内容id
+ */
+export function createOneBlacklist(type, contentId) {
+    const blacklist = {
+        type: type,
+        contentId: contentId
+    }
+    return fetch(`${BASE_URL}/blacklist`, {
+        method: 'POST',
+        body: JSON.stringify(blacklist),
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}

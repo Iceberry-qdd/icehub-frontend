@@ -1,5 +1,6 @@
 <template>
     <div v-if="state.user">
+        <ConfirmDialogBox v-if="store.CONFIRM_DIALOG_BOX.show"></ConfirmDialogBox>
         <GlobalNotifyBanner class="fixed" :class="{ 'top-0': isShowGlobalNotifyBannerMsg }" v-if="isShowGlobalNotifyBannerMsg"
             @closeGlobalNotifyBanner="closeGlobalNotifyBannerMsg" id="global-notify-banner"
             :message="store.GLOBAL_NOTIFY_BANNER_MSG"></GlobalNotifyBanner>
@@ -69,6 +70,7 @@ import { ws } from './websocket.js'
 import GlobalNotifyBanner from '@/components/tailwind/GlobalNotifyBanner.vue'
 import ReviewPanel from './components/tailwind/ReviewPanel.vue'
 import { useRoute } from 'vue-router'
+import ConfirmDialogBox from '@/components/tailwind/menus/ConfirmDialogBox.vue'
 
 const $route = useRoute()
 

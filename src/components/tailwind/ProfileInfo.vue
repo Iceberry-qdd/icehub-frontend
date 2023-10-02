@@ -1,8 +1,7 @@
 <template>
     <div>
         <div>
-            <div><img @click="showSlide([state.user.bannerUrl], 0)" class=" w-[38rem] h-[18rem] object-cover object-center"
-                    :src="bannerPic" /></div>
+            <div><img @click="showSlide([state.user.bannerUrl], 0)" class=" w-full max-h-[22rem] object-cover object-center" :src="bannerPic" /></div>
             <div><img @click="showSlide([state.user.avatarUrl], 0)"
                     class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
                     :src="avatarPic" /></div>
