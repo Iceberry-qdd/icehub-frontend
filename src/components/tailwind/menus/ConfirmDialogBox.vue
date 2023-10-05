@@ -1,16 +1,15 @@
 <template>
-    <div class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
+    <div id="confirmDialogBox" class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
         <div
-            class="flex flex-col flex-nowrap justify-evenly items-center gap-y-[0.5rem] w-[16rem] h-[8rem] p-4 bg-white rounded-[8px] overflow-y-auto">
+            class="flex flex-col flex-nowrap justify-between items-center gap-y-[1rem] w-[18rem] min-h-[8rem] max-h-[75%] p-6 bg-white rounded-[8px] overflow-y-auto">
             <div class="text-[11pt]">{{ title }}</div>
-            <IconLoading v-if="store.CONFIRM_DIALOG_BOX.loading.show" class="h-auto w-5" :style="loadingStyle">
-            </IconLoading>
+            <IconLoading v-if="props.ui.loading.show" class="h-auto w-5" :style="loadingStyle"></IconLoading>
             <div v-else class="flex flex-row flex-nowrap gap-x-[1rem]">
                 <div @click="confirm" class="text-[11pt] rounded-full px-4 py-[0.3rem] cursor-pointer" :style="confirmButtonStyle">
-                    {{ store.CONFIRM_DIALOG_BOX.confirmButton.text }}
+                    {{ props.ui.confirmButton.text }}
                 </div>
                 <div @click="cancel" class=" text-[11pt] rounded-full px-4 py-[0.3rem] cursor-pointer" :style="cancelButtonStyle">
-                    {{ store.CONFIRM_DIALOG_BOX.cancelButton.text }}
+                    {{ props.ui.cancelButton.text }}
                 </div>
             </div>
         </div>
@@ -20,43 +19,43 @@
 <style scoped></style>
 
 <script setup>
-import { computed, reactive, onUnmounted, watch } from 'vue'
+import { computed, reactive, onMounted, onUnmounted } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import { store } from '@/store'
+
+const props = defineProps(['ui'])
+const emits = defineEmits(['choice'])
 
 const title = computed(() => {
-    return store.CONFIRM_DIALOG_BOX.loading.show ? store.CONFIRM_DIALOG_BOX.loading.text : store.CONFIRM_DIALOG_BOX.title
+    return props.ui.loading.show ? props.ui.loading.text : props.ui.title
 })
 
 const loadingStyle = reactive({
-    color: store.CONFIRM_DIALOG_BOX.loading.color
+    color: props.ui.loading.color
 })
 
 const confirmButtonStyle = reactive({
-    color: store.CONFIRM_DIALOG_BOX.confirmButton.color,
-    backgroundColor: store.CONFIRM_DIALOG_BOX.confirmButton.bgColor
+    color: props.ui.confirmButton.color,
+    backgroundColor: props.ui.confirmButton.bgColor
 })
 
 const cancelButtonStyle = reactive({
-    color: store.CONFIRM_DIALOG_BOX.cancelButton.color,
-    backgroundColor: store.CONFIRM_DIALOG_BOX.cancelButton.bgColor
+    color: props.ui.cancelButton.color,
+    backgroundColor: props.ui.cancelButton.bgColor
 })
 
 function confirm() {
-    store.selectCDBConfirmButton()
+    emits('choice', { choice: 'confirm' })
 }
 
 function cancel() {
-    store.selectCDBCancelButton()
+    emits('choice', { choice: 'cancel' })
 }
 
-watch(() => store.CONFIRM_DIALOG_BOX.cancelButton.selected, (newVal, oldVal) => {
-    if (newVal == true && store.CONFIRM_DIALOG_BOX.show == true) {
-        store.dismissCDB()
-    }
+onMounted(() => {
+    document.querySelector("body").setAttribute("style", "overflow:hidden")
 })
 
-// onUnmounted(() => {
-//     store.resetCDB()
-// })
+onUnmounted(() => {
+    document.querySelector("body").removeAttribute("style")
+})
 </script>

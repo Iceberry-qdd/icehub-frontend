@@ -16,18 +16,22 @@
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
                     <input v-show="false" type="file" id="imgFile" @change="clickFileSelector" name="imgFile" multiple="true" accept="image/*" />
-                    <div class="relative flex-col">
+                    <div id= "imagePickerAction" class="relative flex-col">
                         <div class="flex" @click="preChoosePics">
                             <add-picture v-tooltip="'添加图片'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[hasImage ? 'bg-blue-200' : '', state.showImagePanel ? 'bg-[#d3d3d5]' : '']" />
                         </div>
                         <Transition name="fade">
-                            <ImagePickerAction v-if="state.showImagePanel == true" :imgList="state.imgList" :imagesInfo = 'state.data.imagesInfo'></ImagePickerAction>
+                            <ImagePickerAction
+                                v-if="state.showImagePanel == true"
+                                :imgList="state.imgList"
+                                :imagesInfo = 'state.data.imagesInfo'>
+                            </ImagePickerAction>
                         </Transition>
                     </div>
 
                     <!-- <video-two v-tooltip="'添加视频'" theme="outline" size="18" fill="#333" :strokeWidth="3" v-if="!hasImage" /> -->
 
-                    <div class="relative flex-col">
+                    <div id = "visibilityForPostEditorAction" class="relative flex-col">
                         <div class="flex" @click="state.showVisibilityPanel = !state.showVisibilityPanel">
                             <preview-open v-tooltip="'帖子可见范围'" v-if="state.data.status == 'PUBLIC'" theme="outline" size="18" fill="#333"
                                 :strokeWidth="3" :class="[state.showVisibilityPanel ? 'bg-[#d3d3d5]' : '']" />
@@ -39,12 +43,13 @@
                                 class="absolute top-[2.5rem]"
                                 :visibility="state.data.status"
                                 v-if="state.showVisibilityPanel"
+                                @dismissVisibilityForPostEditorAction="dismissVisibilityForPostEditorAction"
                                 @picked-visibility="pickVisibility">
                             </VisibilityForPostEditorAction>
                         </Transition>
                     </div>
 
-                    <div class="relative flex-col">
+                    <div id = "dateTimePickerAction" class="relative flex-col">
                         <div class="flex" @click="state.showSchedulePanel = !state.showSchedulePanel">
                             <m-time v-tooltip="'定时发送'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[state.showSchedulePanel ? 'bg-[#d3d3d5]' : '',state.data.createdTime ? 'bg-blue-200' : '']" />
                         </div>
@@ -64,12 +69,16 @@
 
                     <!-- <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
 
-                    <div class="relative flex-col">
+                    <div id="emojiPanel" class="relative flex-col">
                         <div class="flex" @click="state.showEmojiPanel=!state.showEmojiPanel">
                             <grinning-face-with-open-mouth v-tooltip="'表情面板'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[state.showEmojiPanel ? 'bg-[#d3d3d5]' : '']" />
                         </div>
                         <Transition name="fade">
-                            <EmojiPanel v-if="state.showEmojiPanel" @emojiName="insertEmoji" class="z-[99] absolute top-[2.5rem] min-w-max min-h-max"></EmojiPanel>
+                            <EmojiPanel
+                                @dismissEmojiPanel="dismissEmojiPanel"
+                                v-if="state.showEmojiPanel" @emojiName="insertEmoji"
+                                class="z-[99] absolute top-[2.5rem] min-w-max min-h-max">
+                            </EmojiPanel>
                         </Transition>
                     </div>
 
@@ -136,7 +145,7 @@ import EmojiPanel from '@/components/tailwind/menus/EmojiPanel.vue'
 import { VueShowdown } from 'vue-showdown'
 import VisibilityForPostEditorAction from '@/components/tailwind/menus/VisibilityForPostEditorAction.vue'
 import DateTimePickerAction from '@/components/tailwind/menus/DateTimePickerAction.vue'
-import ImagePickerAction from '../tailwind/menus/ImagePickerAction.vue'
+import ImagePickerAction from '@/components/tailwind/menus/ImagePickerAction.vue'
 import { renderMath } from '../../katexConfig.js'
 import { getDateTimeRange } from '@/utils/formatUtils.js'
 
@@ -266,12 +275,19 @@ function pickedTimeAndClose(args) {
         }
 
         const time = new Date(args.timestamps)
-        console.log(time)
         state.data.createdTime = args.timestamps
     } else {
         state.data.createdTime = null
     }
     state.showSchedulePanel = false
+}
+
+function dismissVisibilityForPostEditorAction(){
+    state.showVisibilityPanel = false
+}
+
+function dismissEmojiPanel(){
+    state.showEmojiPanel = false
 }
 
 watch(() => state.showMarkdownPanel, (newVal) => {

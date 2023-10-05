@@ -1,6 +1,5 @@
 <template>
-    <div id="imageEditPanel"
-        class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
+    <div class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
         <div class="w-[25%] h-fit max-h-[95vh] bg-white rounded-[8px] overflow-y-auto">
             <div id="imgWrapper" class="relative flex flex-row justify-center items-center w-full">
                 <div v-if="state.imageInfo.hidden == 'true'"

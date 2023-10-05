@@ -1,18 +1,15 @@
 <template>
-    <div class="card" :class="[state.post.type=='MARKDOWN'?'card-mkd':'']">
+    <div class="card" :class="[state.post.type == 'MARKDOWN' ? 'card-mkd' : '']">
         <div ref="cardMask" id="card-mask" @click.self="routeToPost(state.post.id)" :class="cardMaskClass"></div>
-        <button type="button" class="btn menu">
+        <button type="button" class="btn menu" :id="`pmb-${state.post.id}`">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" class="z-index-96" />
         </button>
         <Transition name="fade">
-                <PostMenus
-                    class="post-menus"
-                    :post="state.post"
-                    @dismissMenu="state.isShowMenu = false"
-                    @deletePost="deletePost"
-                    @deleteBookmark="deleteBookmark"
-                    v-if="state.isShowMenu">
-                </PostMenus>
+            <PostMenus
+                class="post-menus"
+                :post="state.post"
+                v-if="state.isShowMenu">
+            </PostMenus>
         </Transition>
         <div class="user-info d-flex">
             <Transition name="fade">
@@ -21,7 +18,6 @@
             <a @mouseenter="state.showUserInfoPop = true" class="z-index-97 position-relative"
                 @click="routeToUser(state.post.user.nickname)">
                 <img class="avatar img-fluid" loading="lazy" :src="avatar">
-
             </a>
             <div class="user-text z-index-97">
                 <div @click="routeToUser(state.post.user.nickname)"
@@ -37,36 +33,39 @@
             </div>
         </div>
 
-        <div class="m-card-body" :style="{'margin-left':state.post.type=='MARKDOWN'?'0':'3.5rem'}">
-            <div v-if="state.shrinkContent" class="expand-btn" @click="state.shrinkContent=false">展开</div>
-            <p class="card-text" id="content" :class="[state.shrinkContent?'max-height-50vh':'']">
+        <div class="m-card-body" :style="{ 'margin-left': state.post.type == 'MARKDOWN' ? '0' : '3.5rem' }">
+            <div v-if="state.shrinkContent" class="expand-btn" @click="state.shrinkContent = false">展开</div>
+            <p class="card-text" id="content" :class="[state.shrinkContent ? 'max-height-50vh' : '']">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
             <RepostCard v-if="state.post.root && !state.post.plan" :post="state.post.root" class="z-index-96 relative"></RepostCard>
         </div>
 
-        <div class="card-pics container z-index-96" :class="cardClass" v-if="hasPics">
+        <div class="card-pics container z-index-96" :class="cardClass" v-if = "hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
-                    <IconAltOn @mouseenter="state.showAltText[idx]=true" v-show="pic.altText && state.showAltText[idx]==false" class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer"></IconAltOn>
+                <div class="col wrapper relative" :class="gridWrapperClass" v-for = "(pic, idx) in state.post.attachmentsUrl" :key = "idx" :index = "idx">
+                    <IconAltOn @mouseenter="state.showAltText[idx] = true"
+                        v-show="pic.altText && state.showAltText[idx] == false"
+                        class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer">
+                    </IconAltOn>
                     <Transition name="alt">
-                        <div @mouseleave="state.showAltText[idx]=false" v-show="pic.altText && state.showAltText[idx]==true" class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
+                        <div @mouseleave="state.showAltText[idx] = false" v-show="pic.altText && state.showAltText[idx] == true"
+                            class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
                             {{ pic.altText }}
                         </div>
                     </Transition>
-                    <div class="absolute w-full h-full flex-row justify-center items-center z-[99]" :class="[pic.hidden==true?'flex':'hidden']">
+                    <div class="absolute w-full h-full flex-row justify-center items-center z-[99]" :class = "[pic.hidden == true ? 'flex' : 'hidden']">
                         <div @click="getImageUrlIgnoreNSFW(idx)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
                     </div>
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic img-fluid"
                         :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
-                    <div @click="playAnimateImage(idx)"
-                        :class="[pic.contentType == 'image/gif' && state.showOriginUrl[idx] == false?'flex':'hidden']"
+                    <div @click="playAnimateImage(idx)" :class="[pic.contentType == 'image/gif' && state.showOriginUrl[idx] == false ? 'flex' : 'hidden']"
                         class="absolute justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
                         <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
                     </div>
                 </div>
             </div>
-        </div>  
+        </div>
         <div class="card-tags container z-index-96" v-if="hasTags">
             <div class="row row-cols-auto gx-3">
                 <div class="col" v-for="tag in state.post.tags">
@@ -75,7 +74,7 @@
             </div>
         </div>
 
-        <div v-if="!state.post.plan" class="btn-group z-index-96" :class="[state.post.type=='MARKDOWN'?'btn-group-mkd':'btn-group-umkd']" role="group">
+        <div v-if="!state.post.plan" class="btn-group z-index-96" :class="[state.post.type == 'MARKDOWN' ? 'btn-group-mkd' : 'btn-group-umkd']" role="group">
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
                     :class="{ 'm-active': isReposted }" />
@@ -97,54 +96,54 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.scheduled-card{
+.scheduled-card {
     z-index: 98 !important;
     background-color: #e5e7eb88 !important;
     pointer-events: none;
 }
 
-.alt-icon{
+.alt-icon {
     widows: 1.6rem;
     height: 1.6rem;
 }
 
-.fade-enter-active{
+.fade-enter-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-leave-active{
+.fade-leave-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-enter-from{
+.fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to{
+.fade-leave-to {
     opacity: 0;
 }
 
-.alt-enter-active{
+.alt-enter-active {
     transition: translate 0.3s ease-in-out;
 }
 
-.alt-leave-active{
+.alt-leave-active {
     transition: translate 0.3s ease-in-out;
 }
 
-.alt-enter-from{
+.alt-enter-from {
     translate: 0 100%;
 }
 
-.alt-leave-to{
+.alt-leave-to {
     translate: 0 100%;
 }
 
-.m-card-body .expand-btn{
+.m-card-body .expand-btn {
     z-index: 96;
     position: absolute;
     left: 50%;
-    top: calc(100% - 50px) ;
+    top: calc(100% - 50px);
     translate: -50% -100%;
     padding: 0.25rem 1rem;
     border-radius: 9999px;
@@ -152,7 +151,8 @@
     font-size: 11pt;
     cursor: pointer;
 }
-.altTextContainer::-webkit-scrollbar{
+
+.altTextContainer::-webkit-scrollbar {
     display: none;
     width: 0 !important;
     height: 0 !important;
@@ -160,31 +160,34 @@
     background: transparent;
 }
 
-.m-cursor-text{
+.m-cursor-text {
     cursor: text;
 }
 
-.pdg-1{
+.pdg-1 {
     padding: 0.25rem;
 }
 
-.btm-1{
+.btm-1 {
     bottom: 0.3rem;
 }
 
-.rgt-1{
+.rgt-1 {
     right: 0.3rem;
 }
-.black-80-bg{
+
+.black-80-bg {
     background-color: #000000AA !important;
 }
 
-.black-85-bg{
+.black-85-bg {
     background-color: #000000BB !important;
 }
-.white-text{
+
+.white-text {
     color: white !important;
 }
+
 .gif {
     color: white;
 }
@@ -201,7 +204,7 @@
     z-index: 98 !important;
 }
 
-.z-index-100{
+.z-index-100 {
     z-index: 100 !important;
 }
 
@@ -372,7 +375,7 @@
     right: 3%;
 }
 
-.post-menus{
+.post-menus {
     z-index: 99;
     position: absolute;
     height: auto;
@@ -441,13 +444,13 @@
     background-color: cadetblue !important;
 }
 
-.max-height-50vh{
+.max-height-50vh {
     max-height: 50vh !important;
 }
 </style>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, provide } from 'vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
 import { likeAPost, dislikeAPost, getUserInfoByNickname, getImageUrlIgnoreHidden } from '@/api'
 import router from '@/route'
@@ -463,7 +466,6 @@ import { VueShowdown } from 'vue-showdown'
 
 const props = defineProps(['post'])
 const cardMask = ref()
-const emits = defineEmits(['deletePost', 'deleteBookmark'])
 
 const state = reactive({
     post: props.post,
@@ -644,13 +646,11 @@ function setSuitableHeight() {
     }
 }
 
-function deletePost(args) {
-    emits('deletePost', { postId: args.postId })
+function dismissPostMenus(){
+    state.isShowMenu = false
 }
 
-function deleteBookmark(args) {
-    emits('deleteBookmark', { postId: args.postId })
-}
+provide('dismissPostMenus', { dismissPostMenus })
 
 onMounted(() => {
     resizePicture()

@@ -37,9 +37,9 @@
 </style>
 
 <script setup>
-import { reactive } from 'vue';
-import router from '@/route';
-import { store } from '@/store';
+import { reactive } from 'vue'
+import router from '@/route'
+import { store } from '@/store'
 
 const props = defineProps(['title', 'goBack', 'showMenu', 'menuIcon', 'menuAction','iconTooltip','width','noBorder'])
 

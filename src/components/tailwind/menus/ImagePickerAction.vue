@@ -1,6 +1,7 @@
 <template>
     <div>
         <ImageEditor
+            id="imageEditPanel"
             :image="loadImage(state.imgList[state.imageEditIndex])"
             :imageInfo="state.imagesInfo[state.imageEditIndex]"
             :showAltText="state.showAltEditor[state.imageEditIndex]"
@@ -41,7 +42,7 @@
 <style scoped></style>
 
 <script setup>
-import { computed, reactive, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconError from '@/components/icons/IconError.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
@@ -52,7 +53,7 @@ const state = reactive({
     imgList: props.imgList || [],
     imagesInfo: props.imagesInfo || [],
     showImageEditPanel: false,
-    imageEditIndex:0,
+    imageEditIndex: 0,
     showAltEditor: [false, false, false, false, false, false, false, false, false]
 })
 
@@ -62,7 +63,7 @@ function loadImage(file) {
     return imgUrl
 }
 
-function deleteImg(item,key) {
+function deleteImg(item, key) {
     state.imgList.splice(state.imgList.indexOf(item), 1)
     state.imagesInfo[key].hidden = false
     state.imagesInfo[key].altText = ''
@@ -86,7 +87,7 @@ watch(() => state.showImageEditPanel, (newVal, oldVal) => {
     }
 })
 
-function closeImageEditor(args){
+function closeImageEditor(args) {
     state.showImageEditPanel = false
     // const index = state.imageEditIndex
     // if (state.showAltEditor[index] == false) { state.imagesInfo[index].altText = '' }

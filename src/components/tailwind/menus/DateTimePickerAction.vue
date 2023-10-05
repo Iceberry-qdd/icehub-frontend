@@ -164,7 +164,7 @@
 </style>
 
 <script setup>
-import { computed, reactive, onMounted } from 'vue'
+import { computed, reactive, onMounted, onUnmounted } from 'vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
 
 const props = defineProps(['showTimePicker', 'showDatePicker', 'validDateTimeRange', 'noteMsg', 'curPickedTime'])
@@ -292,5 +292,16 @@ onMounted(() => {
     state.pickedDate = now.getDate()
     state.pickedHour = now.getHours()
     state.pickedMinute = now.getMinutes()
+
+    const dateTimePickerAction = document.querySelector('#dateTimePickerAction')
+    document.querySelector('#app').addEventListener('click', function (event) {
+        if (!dateTimePickerAction.contains(event.target)) {
+            emits('closeWithClear')
+        }
+    })
+})
+
+onUnmounted(() => {
+    document.querySelector('#app').removeEventListener('click', () => { })
 })
 </script>

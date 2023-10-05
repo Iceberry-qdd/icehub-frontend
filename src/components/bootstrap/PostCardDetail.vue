@@ -1,10 +1,10 @@
 <template>
     <div class="card">
-        <button type="button" class="btn menu">
+        <button type="button" class="btn menu" :id="`pmb-${props.post.id}`">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
         </button>
         <Transition name="fade">
-            <PostMenus id="post-menus" class="post-menus" :post="state.post" @dismissMenu="state.isShowMenu = false" v-if="state.isShowMenu"></PostMenus>
+            <PostMenus :id="`pm-${props.post.id}`" class="post-menus" :post="state.post" v-if="state.isShowMenu"></PostMenus>
         </Transition>
         <div class="user-info d-flex">
             <Transition name="fade">
@@ -391,7 +391,7 @@
 </style>
 
 <script setup>
-import { computed, reactive, onMounted } from 'vue'
+import { computed, reactive, onMounted, provide } from 'vue'
 import { likeAPost, dislikeAPost, getImageUrlIgnoreHidden } from '@/api.js'
 import router from '@/route.js'
 import { store } from '@/store.js'
@@ -556,6 +556,17 @@ async function getImageUrlIgnoreNSFW(imageIndex){
         console.error(e)
     }
 }
+
+function dismissPostMenus(){
+    state.isShowMenu = false
+}
+
+function deletePostOnUi(){
+    router.back()
+}
+
+provide('dismissPostMenus', { dismissPostMenus })
+provide('deletePostOnUi', { deletePostOnUi })
 
 onMounted(() => {
     resizePicture()

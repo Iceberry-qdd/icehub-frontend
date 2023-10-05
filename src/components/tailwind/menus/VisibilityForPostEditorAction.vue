@@ -13,10 +13,10 @@
 <style scoped></style>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, onMounted, onUnmounted } from 'vue'
 import IconDone from '@/components/icons/IconDone.vue'
 
-const emits = defineEmits(['pickedVisibility'])
+const emits = defineEmits(['pickedVisibility', 'dismissVisibilityForPostEditorAction'])
 const props = defineProps(['visibility'])
 
 const state = reactive({
@@ -32,6 +32,19 @@ const state = reactive({
 })
 
 function pickedVisibility(action) {
-    emits('pickedVisibility', [action.code,action.name])
+    emits('pickedVisibility', [action.code, action.name])
 }
+
+onMounted(() => {
+    const visibilityForPostEditorAction = document.querySelector('#visibilityForPostEditorAction')
+    document.querySelector('#app').addEventListener('click', function (event) {
+        if (!visibilityForPostEditorAction.contains(event.target)) {
+            emits('dismissVisibilityForPostEditorAction')
+        }
+    })
+})
+
+onUnmounted(() => {
+    document.querySelector('#app').removeEventListener('click', () => { })
+})
 </script>

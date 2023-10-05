@@ -48,10 +48,10 @@
 </style>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, onMounted, onUnmounted } from 'vue'
 import emojiPack from 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/+esm'
 
-const emits = defineEmits(['emojiName'])
+const emits = defineEmits(['emojiName', 'dismissEmojiPanel'])
 
 const categoryZh = {
     'Smileys & Emotion': '表情与角色',
@@ -99,4 +99,17 @@ function storeEmojiToLocalStorage(emoji) {
     }, [])
     localStorage.setItem(KEY, JSON.stringify(historyEmojis))
 }
+
+onMounted(() => {
+    const emojiPanel = document.querySelector('#emojiPanel')
+    document.querySelector('#app').addEventListener('click', function (event) {
+        if (!emojiPanel.contains(event.target)) {
+            emits('dismissEmojiPanel')
+        }
+    })
+})
+
+onUnmounted(() => {
+    document.querySelector('#app').removeEventListener('click', () => { })
+})
 </script>

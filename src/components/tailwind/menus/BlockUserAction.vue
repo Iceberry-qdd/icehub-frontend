@@ -1,83 +1,83 @@
 <template>
     <div>
-        <div @click="showConfirmDialogBox">删除此内容</div>
+        <div @click="showConfirmDialogBox">不喜欢此作者</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 ref="confirmDialogBox"
                 @choice="choose"
-                v-if="state.confirmDialogBoxUi.show"
-                :ui="state.confirmDialogBoxUi">
+                v-if="state.confirmBDialogUi.show"
+                :ui="state.confirmBDialogUi">
             </ConfirmDialogBox>
         </Teleport>
     </div>
 </template>
-
 <style scoped></style>
 
 <script setup>
 import { reactive, inject } from 'vue'
-import { deleteOnePost } from '@/api.js'
-import { store } from '@/store.js'
 import ConfirmDialogBox from '@/components/tailwind/menus/ConfirmDialogBox.vue'
+import { createOneBlacklist } from '@/api'
+import { store } from '@/store.js'
 
-const props = defineProps(['post'])
+const props = defineProps(['post', 'user'])
 const { deletePostOnUi } = inject('deletePostOnUi')
 
 const state = reactive({
-    confirmDialogBoxUi: {
+    confirmBDialogUi: {
         show: false,
-        title: '确定要删除此帖子吗？',
+        title: '确定要屏蔽此用户吗？屏蔽后可在黑名单界面查看',
         confirmButton: {
-            text: '删除',
+            text: '屏蔽',
             color: 'rgb(239 68 68)',
             bgColor: 'rgb(254 226 226)',
             selected: false
         },
         cancelButton: {
-            text: '不删除',
+            text: '不屏蔽',
             color: '#000000',
             bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
             show: false,
-            text: '正在删除中......',
+            text: '屏蔽后可在黑名单界面查看',
             color: 'rgb(239 68 68)'
         }
     }
 })
 
-function showConfirmDialogBox() {
-    state.confirmDialogBoxUi.show = true
-}
-
-function dismissConfirmDialogBox(){
-    state.confirmDialogBoxUi.show = false
-}
-
-function toggleDialogLoading(isLoading){
-    state.confirmDialogBoxUi.loading.show = isLoading
-}
-
 function choose(args) {
     const choice = args.choice
     if (choice == 'confirm') {
-        deleteIt()
+        blockThisUser()
     } else {
         dismissConfirmDialogBox()
     }
 }
 
-async function deleteIt() {
+function showConfirmDialogBox() {
+    state.confirmBDialogUi.show = true
+}
+
+function dismissConfirmDialogBox() {
+    state.confirmBDialogUi.show = false
+}
+
+function toggleDialogLoading(isLoading){
+    state.confirmBDialogUi.loading.show = isLoading
+}
+
+async function blockThisUser() {
     try {
         toggleDialogLoading(true)
-        const response = await deleteOnePost(props.post)
+        const response = await createOneBlacklist('USER', props.user.id)
         if (!response.ok) throw new Error((await response.json()).error)
 
-        const result = await response.text()
-        if (result == 'false') throw new Error("删除失败！")
-        store.setSuccessMsg("已删除！")
-        deletePostOnUi(props.post.id)
+        const { id } = await response.json()
+        if (id != props.user.id) throw new Error('操作失败，请稍后重试!')
+        store.setSuccessMsg('将为您减少此类内容!')
+
+        props.post ? deletePostOnUi(props.post.id) : dismissConfirmDialogBox()
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)

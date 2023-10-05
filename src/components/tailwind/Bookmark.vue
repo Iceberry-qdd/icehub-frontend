@@ -13,8 +13,7 @@
                 v-for="(post, index) in state.posts"
                 :post="post"
                 :key="post.id"
-                :index="index"
-                @deleteBookmark="deleteBookmark">
+                :index="index">
             </PostCard>
         </TransitionGroup>
         <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
@@ -43,7 +42,7 @@
 
 <script setup>
 import Header from '@/components/tailwind/Header.vue'
-import { reactive, computed, onMounted, onUnmounted } from 'vue'
+import { reactive, computed, onMounted, onUnmounted, provide } from 'vue'
 import PostCard from '@/components/bootstrap/PostCard.vue'
 import { store } from '@/store.js'
 import { getMarkPostList } from '@/api.js'
@@ -102,9 +101,9 @@ function fetchNewPost() {
     }
 }
 
-function deleteBookmark(args) {
-    const preDeletePost = state.posts.find(it => it.id == args.postId)
-    if (preDeletePost == undefined) {
+function deletePostOnUi(postId) {
+    const preDeletePost = state.posts.find(it => it.id == postId)
+    if (!preDeletePost) {
         store.setErrorMsg("移除书签失败，该帖子不存在！")
         return
     }
@@ -124,4 +123,6 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewPost)
 })
+
+provide('deletePostOnUi', { deletePostOnUi })
 </script>

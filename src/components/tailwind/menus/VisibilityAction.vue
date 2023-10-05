@@ -41,9 +41,10 @@ import IconDone from '@/components/icons/IconDone.vue'
 import { reactive } from 'vue'
 import { updatePost } from '@/api.js'
 import { store } from '@/store.js'
+import { inject } from 'vue'
 
 const props = defineProps(['post'])
-const emits = defineEmits(['dismissMenu'])
+const { dismissPostMenus }  = inject('dismissPostMenus')
 
 const state = reactive({
     actions: [
@@ -56,36 +57,37 @@ const state = reactive({
     ],
     post: props.post,
     showSubActions: false,
-    originStatus:null
+    originStatus: null
 })
 
-async function updatePostApi(newPost) {
+function dismiss() { dismissPostMenus() }
+
+async function updateVisibility(newStatus) {
+    if (state.post.status == newStatus) return
+    const originCreatedTime = state.post.originCreatedTime
+    const originStatus = state.post.status
+
     try {
-        state.originStatus = state.post.status
-        const response = await updatePost(newPost)
+        state.post.createdTime = null
+        state.post.status = newStatus
+
+        const response = await updatePost(state.post)
         if (!response.ok) throw new Error(await response.json().error)
 
         const result = await response.json()
         state.post = result
         store.setSuccessMsg('已更改帖子可见范围！')
     } catch (e) {
+        state.post.status = originStatus
         store.setErrorMsg('更改帖子可见范围失败！')
-        console.log(e)
-        state.status = state.originStatus
+        console.error(e)
     } finally {
+        state.post.createdTime = originCreatedTime //FIXME 此处当发生错误时，无法触发
         dismiss()
     }
 }
 
-function dismiss() { emits('dismissMenu') }
-
-function updateVisibility(newStatus) {
-    if(state.post.status == newStatus) return
-    state.post.status = newStatus
-    updatePostApi(state.post)
-}
-
-function toggleSubAction(){
+function toggleSubAction() {
     const lastState = state.showSubActions
     state.showSubActions = !lastState
 }

@@ -9,12 +9,13 @@
 </style>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, inject } from 'vue'
 import { store } from '@/store.js'
 import { markAPost, unMarkAPost } from '@/api.js'
 
-const emits = defineEmits(['dismissMenu', 'delete', 'deleteBookmark'])
-
+const emits = defineEmits(['delete'])
+const { deletePostOnUi } = inject('deletePostOnUi')
+const { dismissPostMenus }  = inject('dismissPostMenus')
 const props = defineProps(['post'])
 
 const state = reactive({
@@ -26,8 +27,6 @@ const bookMarkText = computed(() => {
     const { marked } = state.post
     return marked ? "从书签中移除" : "加入书签"
 })
-
-function dismiss() { emits('dismissMenu') }
 
 function toggleMark() {
     const { marked, id } = state.post
@@ -47,7 +46,7 @@ async function markIt(postId) {
         store.setErrorMsg(e.message)
         console.error(e)
     } finally {
-        dismiss()
+        dismissPostMenus()
     }
 }
 
@@ -60,12 +59,12 @@ async function unMarkIt(postId) {
         if (result == false) throw new Error("移除失败！")
         state.post.marked = false
         store.setSuccessMsg("已移出书签！")
-        emits('deleteBookmark', { postId: state.post.id })
+        deletePostOnUi(state.post.id)
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
     } finally {
-        dismiss()
+        dismissPostMenus()
     }
 }
 </script>

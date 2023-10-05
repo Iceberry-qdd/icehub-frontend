@@ -8,7 +8,8 @@
             :showMenu="state.headerConfig.showMenu"
             :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"
-            :iconTooltip="state.headerConfig.iconTooltip"></Header>
+            :iconTooltip="state.headerConfig.iconTooltip">
+        </Header>
         <div v-if="state.isLoading == true" class="loading">
             <IconLoading :class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
             <div>正在提交...</div>
@@ -23,9 +24,10 @@
         </div>
         <div class="content">
             <div class="banner">
-                <img class=" w-[38rem] h-[18rem] object-cover object-center" :src="bannerPic" />
+                <img class=" w-full max-h-[22rem] object-cover object-center" :src="bannerPic" />
             </div>
-            <div><img class="avatar relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] rounded-lg" :src="avatarPic" />
+            <div>
+                <img class="avatar relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] rounded-lg" :src="avatarPic" />
             </div>
             <div class="text-info">
                 <div class="form-floating mb-3">
