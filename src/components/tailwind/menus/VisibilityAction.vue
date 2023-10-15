@@ -39,7 +39,7 @@
 <script setup>
 import IconDone from '@/components/icons/IconDone.vue'
 import { reactive } from 'vue'
-import { updatePost } from '@/api.js'
+import { modifyPostVisibility } from '@/api.js'
 import { store } from '@/store.js'
 import { inject } from 'vue'
 
@@ -56,33 +56,28 @@ const state = reactive({
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF' },
     ],
     post: props.post,
-    showSubActions: false,
-    originStatus: null
+    showSubActions: false
 })
 
 function dismiss() { dismissPostMenus() }
 
 async function updateVisibility(newStatus) {
     if (state.post.status == newStatus) return
-    const originCreatedTime = state.post.originCreatedTime
     const originStatus = state.post.status
 
     try {
-        state.post.createdTime = null
         state.post.status = newStatus
-
-        const response = await updatePost(state.post)
+        const response = await modifyPostVisibility(state.post, originStatus)
         if (!response.ok) throw new Error(await response.json().error)
 
         const result = await response.json()
-        state.post = result
+        if(!result) throw new Error(`更改帖子内容失败：${result}`)
         store.setSuccessMsg('已更改帖子可见范围！')
     } catch (e) {
         state.post.status = originStatus
         store.setErrorMsg('更改帖子可见范围失败！')
         console.error(e)
     } finally {
-        state.post.createdTime = originCreatedTime //FIXME 此处当发生错误时，无法触发
         dismiss()
     }
 }

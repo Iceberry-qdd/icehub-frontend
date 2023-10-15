@@ -137,7 +137,7 @@
 
 <script setup>
 import { computed, reactive, watch } from 'vue'
-import { uploadImages, posting } from '@/api.js'
+import { uploadImages, posting, postingPlan } from '@/api.js'
 import { store } from '@/store.js'
 import { VideoTwo, AddPicture, PreviewOpen, PreviewClose, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
@@ -213,7 +213,7 @@ async function submitPost() {
             state.data.attachmentsUrl = JSON.parse(response)
         }
 
-        const response = await posting(state.data)
+        const response = state.data.createdTime ? await postingPlan(state.data) : await posting(state.data)
         if (!response.ok) throw new Error((await response.json()).error)
         state.result = await response.json()
 

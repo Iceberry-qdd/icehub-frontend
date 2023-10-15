@@ -96,6 +96,24 @@ export function posting(data) {
 }
 
 /**
+ * 发布定时帖子
+ * @param {string} data 帖子内容
+ * @returns Promise<any>
+ */
+export function postingPlan(data) {
+    return fetch(`${BASE_URL}/post/plan`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': "application/json"
+        },
+        body: JSON.stringify(data),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
  * 对帖子点赞
  * @param {string} postId 待点赞帖子id
  * @returns 点赞结果
@@ -701,6 +719,31 @@ export function createOneBlacklist(type, contentId) {
     return fetch(`${BASE_URL}/blacklist`, {
         method: 'POST',
         body: JSON.stringify(blacklist),
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 修改帖子的可见属性
+ * @param {object} post 待修改的帖子
+ * @param {string} oldVisibility 帖子原先的visibility
+ * @returns 新的帖子对象
+ */
+export function modifyPostVisibility(post, oldVisibility) {
+    const requestBody = {
+        id: post.id,
+        oldVisibility: oldVisibility,
+        newVisibility: post.status
+    }
+
+    return fetch(`${BASE_URL}/post/visibility`, {
+        method: 'PUT',
+        body: JSON.stringify(requestBody),
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
