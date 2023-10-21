@@ -1,5 +1,5 @@
 <template>
-    <div id="confirmDialogBox" class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
+    <div @click.stop="" id="confirmDialogBox" class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
         <div
             class="flex flex-col flex-nowrap justify-between items-center gap-y-[1rem] w-[18rem] min-h-[8rem] max-h-[75%] p-6 bg-white rounded-[8px] overflow-y-auto">
             <div class="text-[11pt]">{{ title }}</div>

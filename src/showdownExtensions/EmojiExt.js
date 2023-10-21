@@ -3,7 +3,7 @@ import emojiPack from 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.
 export const emojiExt = {
     type: 'lang',
     filter: function (text, converter, options) {
-        text = text.replace(/:([a-zA-Z_]|-)+:/gm, function (match, content) {
+        text = text.replace(/:([0-9a-zA-Z_]|-)+:/gm, function (match, content) {
             const name = match.replaceAll(':', '')
             const bgPosition = calcSpriteSheet(...getEmojiLocation(name))
             return `<button title="${name}" class="emoji w-[2rem] h-[2rem] p-1">

@@ -113,18 +113,20 @@ const showDeletePostAction = computed(() => {
     return isMySelf.value == true
 })
 
-onMounted(() => {
+function handlePostMenusDismiss(event) {
     const postMenus = document.querySelector(`#pm-${props.post.id}`)
     const showPostMenusBtn = document.querySelector(`#pmb-${props.post.id}`)
-    document.querySelector('#app').addEventListener('click', function (event) {
-        if (!postMenus.contains(event.target) && !showPostMenusBtn.contains(event.target)) {
-            dismissPostMenus() //XXX 此处首次触发正常，下次会使点击postMenus内部元素也触发
-        }
-        event.stopPropagation()
-    })
+    if (!postMenus.contains(event.target) && !showPostMenusBtn.contains(event.target)) {
+        dismissPostMenus()
+    }
+    event.stopPropagation()
+}
+
+onMounted(() => {
+    document.querySelector('#app').addEventListener('click', handlePostMenusDismiss)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', () => { console.log('#app listener removed') })
+    document.querySelector('#app').removeEventListener('click', handlePostMenusDismiss)
 })
 </script>
