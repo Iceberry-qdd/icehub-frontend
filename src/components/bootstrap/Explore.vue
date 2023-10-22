@@ -29,7 +29,7 @@ import PostsTimeline from '@/components/bootstrap/PostsTimeline.vue'
 import Header from '@/components/tailwind/Header.vue'
 import { getTimeline } from '@/api.js'
 import { store } from '@/store.js'
-import { onMounted, onUnmounted, reactive } from 'vue'
+import { onMounted, onUnmounted, reactive, provide } from 'vue'
 
 const state = reactive({
     posts: [],
@@ -83,6 +83,10 @@ function fetchNewPost() {
     }
 }
 
+function postingNew(post) {
+    state.posts.unshift(post)
+}
+
 onMounted(() => {
     const explore = document.getElementById('explore')
     state.headerConfig.width = window.getComputedStyle(explore).width.replace('px', '') - 3
@@ -94,4 +98,6 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewPost)
 })
+
+provide('postingNew', { postingNew })
 </script>

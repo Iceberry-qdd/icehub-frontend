@@ -1,8 +1,16 @@
 <template>
-    <div @click="blockThisPost">对此内容不感兴趣</div>
+    <div @click="blockThisPost" class="flex flex-rows justify-start items-center gap-x-3">
+        <span class="material-icons-round no-hover">visibility_off</span>
+        <div>对此内容不感兴趣</div>
+    </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.material-icons-round {
+    padding: 0;
+    font-size: 16pt;
+}
+</style>
 
 <script setup>
 import { createOneBlacklist } from '@/api'

@@ -1,11 +1,15 @@
 <template>
-    <div>
-        <div @click="toggleMark()">{{ bookMarkText }}</div>
+    <div @click="toggleMark()" class="flex flex-rows justify-start items-center gap-x-3">
+        <span class="material-icons-round">{{ bookmarkIcon }}</span>
+        <div>{{ bookMarkText }}</div>
     </div>
 </template>
 
 <style scoped>
-
+.material-icons-round {
+    padding: 0;
+    font-size: 16pt;
+}
 </style>
 
 <script setup>
@@ -26,6 +30,10 @@ const state = reactive({
 const bookMarkText = computed(() => {
     const { marked } = state.post
     return marked ? "从书签中移除" : "加入书签"
+})
+
+const bookmarkIcon = computed(() => {
+    return state.post.marked ? 'bookmark_remove' : 'bookmark_add'
 })
 
 function toggleMark() {

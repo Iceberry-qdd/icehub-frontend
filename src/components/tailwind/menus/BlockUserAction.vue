@@ -1,6 +1,7 @@
 <template>
-    <div>
-        <div @click="showConfirmDialogBox">不喜欢此作者</div>
+    <div @click="showConfirmDialogBox" class="flex flex-rows justify-start items-center gap-x-3">
+        <span class="material-icons-round no-hover">person_off</span>
+        <div>不喜欢此作者</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 ref="confirmDialogBox"
@@ -11,7 +12,12 @@
         </Teleport>
     </div>
 </template>
-<style scoped></style>
+<style scoped>
+.material-icons-round {
+    padding: 0;
+    font-size: 16pt;
+}
+</style>
 
 <script setup>
 import { reactive, inject } from 'vue'

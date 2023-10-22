@@ -53,7 +53,7 @@ export default function (el, binding) {
         color: white;
         font-size: 11pt;
         border-radius: 5px;
-        padding: 0.25rem 0.25rem;
+        padding: 25%;
         translate: 0 ${translateY}%;
         word-break: break-all;
         max-width: 12rem;
@@ -62,7 +62,7 @@ export default function (el, binding) {
     `
 
     const element = instantTemplate(template, style)
-    element.style.minWidth = calcWidth(element)
+    // element.style.minWidth = calcWidth(element)
 
     el.style.position = 'relative'
 }

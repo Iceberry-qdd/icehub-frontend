@@ -8,17 +8,36 @@
                 </div>
             </div>
             <div>
-                <VueShowdown tag="markdown" :extensions="['exts']" v-if="state.showMarkdownPanel==true" :markdown="state.content" class="min-h-[6rem]"></VueShowdown>
-                <textarea v-else v-model="state.content" @keydown="resize"
+                <VueShowdown
+                    tag="markdown"
+                    :extensions="['exts']"
+                    v-if="state.showMarkdownPanel==true"
+                    :markdown="state.content"
+                    class="min-h-[6rem]">
+                </VueShowdown>
+                <textarea
+                    v-else
+                    v-model="state.content"
+                    @keydown="resize"
                     class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
-                    maxlength="25000" rows="3" placeholder="发布帖子" id="post-input" name="post"></textarea>
+                    maxlength="10000"
+                    rows="3"
+                    placeholder="发布帖子"
+                    id="post-input"
+                    name="post">
+                </textarea>
             </div>
             <div class="px-2 flex flex-row justify-between">
-                <div class="text-base flex flex-row gap-x-4 items-center justify-start content-center">
+                <div class="text-base flex flex-row gap-x-1 items-center justify-start content-center">
                     <input v-show="false" type="file" id="imgFile" @change="clickFileSelector" name="imgFile" multiple="true" accept="image/*" />
                     <div id= "imagePickerAction" class="relative flex-col">
                         <div class="flex" @click="preChoosePics">
-                            <add-picture v-tooltip="'添加图片'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[hasImage ? 'bg-blue-200' : '', state.showImagePanel ? 'bg-[#d3d3d5]' : '']" />
+                            <span
+                                v-tooltip="'添加图片'"
+                                class="material-icons-round"
+                                :class="[hasImage || state.showImagePanel ? 'active' : '']">
+                                add_photo_alternate
+                            </span>
                         </div>
                         <Transition name="fade">
                             <ImagePickerAction
@@ -29,19 +48,20 @@
                         </Transition>
                     </div>
 
-                    <!-- <video-two v-tooltip="'添加视频'" theme="outline" size="18" fill="#333" :strokeWidth="3" v-if="!hasImage" /> -->
-
                     <div id = "visibilityForPostEditorAction" class="relative flex-col">
                         <div class="flex" @click="state.showVisibilityPanel = !state.showVisibilityPanel">
-                            <preview-open v-tooltip="'帖子可见范围'" v-if="state.data.status == 'PUBLIC'" theme="outline" size="18" fill="#333"
-                                :strokeWidth="3" :class="[state.showVisibilityPanel ? 'bg-[#d3d3d5]' : '']" />
-                            <preview-close v-tooltip="'帖子可见范围'" v-else theme="outline" size="18" fill="#333" :strokeWidth="3"
-                                class="bg-blue-200" />
+                            <span
+                                v-tooltip="'帖子可见范围'"
+                                class="material-icons-round"
+                                :class="[state.showVisibilityPanel ? 'bg-blue-100 active' : '', curVisibility.code != 'PUBLIC' ? 'active' : '']">
+                                {{ curVisibility.icon }}
+                            </span>
                         </div>
                         <Transition name="fade">
                             <VisibilityForPostEditorAction 
-                                class="absolute top-[2.5rem]"
+                                class="z-[99] absolute top-[2.5rem] py-1"
                                 :visibility="state.data.status"
+                                :ui="state.visibilityActionData"
                                 v-if="state.showVisibilityPanel"
                                 @dismissVisibilityForPostEditorAction="dismissVisibilityForPostEditorAction"
                                 @picked-visibility="pickVisibility">
@@ -51,7 +71,12 @@
 
                     <div id = "dateTimePickerAction" class="relative flex-col">
                         <div class="flex" @click="state.showSchedulePanel = !state.showSchedulePanel">
-                            <m-time v-tooltip="'定时发送'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[state.showSchedulePanel ? 'bg-[#d3d3d5]' : '',state.data.createdTime ? 'bg-blue-200' : '']" />
+                            <span
+                                v-tooltip="'定时发送'"
+                                class="material-icons-round"
+                                :class="[state.showSchedulePanel ? 'bg-blue-100 active' : '',state.data.createdTime ? 'active' : '']">
+                                schedule
+                            </span>
                         </div>
                         <Transition name="fade">
                             <DateTimePickerAction
@@ -71,7 +96,12 @@
 
                     <div id="emojiPanel" class="relative flex-col">
                         <div class="flex" @click="state.showEmojiPanel=!state.showEmojiPanel">
-                            <grinning-face-with-open-mouth v-tooltip="'表情面板'" theme="outline" size="18" fill="#333" :strokeWidth="3" :class="[state.showEmojiPanel ? 'bg-[#d3d3d5]' : '']" />
+                            <span
+                                v-tooltip="'表情面板'"
+                                class="material-icons-round"
+                                :class="[state.showEmojiPanel ? 'bg-blue-100 active' : '']">
+                                mood
+                            </span>
                         </div>
                         <Transition name="fade">
                             <EmojiPanel
@@ -82,14 +112,22 @@
                         </Transition>
                     </div>
 
-                    <button @click="state.showMarkdownPanel=!state.showMarkdownPanel"
-                        :class="[state.showMarkdownPanel?'bg-[#bfdbfe]':'bg-transparent']"
-                        class="hover:bg-gray-300 p-1 w-[30px] h-[31px] rounded-full" >
-                        <i class="cursor-pointer bi bi-markdown-fill " title="启用markdown格式并预览"></i>
-                    </button>
+                    <div id="long-article" @click="state.showMarkdownPanel=!state.showMarkdownPanel">
+                        <span
+                            :class="[state.showMarkdownPanel ? 'active' : '']"
+                            v-tooltip="'长文章'"
+                            class="material-icons-round">
+                            article
+                        </span>
+                    </div>
 
-                    <!-- <i class="cursor-pointer bi bi-code-slash" title="添加代码片段"></i>
-                    <i class="cursor-pointer bi bi-arrow-up-square-fill" title="在个人主页置顶"></i>-->
+                    <div id="poll">
+                        <span
+                            v-tooltip="'投票'"
+                            class="material-icons-round">
+                            equalizer
+                        </span>
+                    </div>
                 </div>
 
                 <div @click="submitPost"
@@ -120,8 +158,23 @@
 }
 
 .material-icons-round {
-    font-size: 14pt;
+    font-size: 16pt;
     cursor: pointer;
+    padding: 0.4rem;
+}
+
+.material-icons-round.active{
+    color: rgb(59 130 246);
+    /* background-color: #dbeafe; */
+}
+
+.material-icons-round:not(.active){
+    color: #303133;
+}
+
+.material-icons-round:hover {
+    background-color: #dbeafe !important;
+    color: rgb(59 130 246);
 }
 
 @keyframes spin {
@@ -136,7 +189,7 @@
 </style>
 
 <script setup>
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, watch, inject } from 'vue'
 import { uploadImages, posting, postingPlan } from '@/api.js'
 import { store } from '@/store.js'
 import { VideoTwo, AddPicture, PreviewOpen, PreviewClose, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
@@ -150,6 +203,7 @@ import { renderMath } from '../../katexConfig.js'
 import { getDateTimeRange } from '@/utils/formatUtils.js'
 
 const emits = defineEmits(['postingNew'])
+const { postingNew } = inject('postingNew')
 
 const state = reactive({
     content: "",
@@ -180,7 +234,14 @@ const state = reactive({
     showVisibilityPanel: false,
     showEmojiPanel: false,
     showMarkdownPanel: false,
-    showSchedulePanel: false
+    showSchedulePanel: false,
+    visibilityActionData: [
+        { id: 1, name: '公开', code: 'PUBLIC',icon:'public' },
+        { id: 2, name: '公共时间线内隐藏', code: 'NOT_TIMELINE',icon:'vpn_lock' },
+        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon:'people_outline' },
+        { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon:'people' },
+        { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon:'lock' },
+    ]
 })
 
 const hasImage = computed(() => {
@@ -221,7 +282,7 @@ async function submitPost() {
         state.content = ""
         state.imgList = []
 
-        emits('postingNew', { post: state.result })
+        postingNew(state.result)
     } catch (err) {
         store.setErrorMsg(err.message)
         console.error(err)
@@ -266,6 +327,11 @@ function pickVisibility(args) {
     state.data.status = args[0]
     state.showVisibilityPanel = false
 }
+
+const curVisibility = computed(() => {
+    const filteredVisibility = state.visibilityActionData.filter(it => it.code == state.data.status)
+    return filteredVisibility.length > 0 ? filteredVisibility[0] : state.visibilityActionData[0]
+})
 
 function pickedTimeAndClose(args) {
     if (args && args.timestamps) {

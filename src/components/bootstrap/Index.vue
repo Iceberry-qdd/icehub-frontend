@@ -75,7 +75,7 @@ import Header from '@/components/tailwind/Header.vue'
 import { getUserTimeline } from '@/api.js'
 import { store } from '@/store.js'
 import PostEditor from '@/components/tailwind/PostEditor.vue'
-import { computed, onMounted, onUnmounted, reactive } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, provide } from 'vue'
 import GlobalRefresh from '@/components/tailwind/GlobalRefresh.vue'
 
 const state = reactive({
@@ -130,9 +130,8 @@ function fetchNewPost() {
     }
 }
 
-function postingNew(args) {
-    const newPost = args.post
-    state.posts.unshift(newPost)
+function postingNew(post) {
+    state.posts.unshift(post)
 }
 
 const isShowGlobalNotifyBannerMsg = computed(() => {
@@ -150,4 +149,6 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewPost)
 })
+
+provide('postingNew', { postingNew })
 </script>

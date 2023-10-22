@@ -8,7 +8,6 @@
             <GlobalTipDialog></GlobalTipDialog>
             <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
             <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
-            <RepostPanel v-if="store.REPOST_POST"></RepostPanel>
             <ReviewPanel v-if="store.REVIEW_PANEL_DATA"></ReviewPanel>
             <div id="sidebar-l" :style="{ 'flex-basis': state.basis[0] + '%' }" v-if="state.basis[0] > 0">
                 <Brand></Brand>

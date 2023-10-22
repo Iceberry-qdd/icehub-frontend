@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <div class="m-card-body" :style="{ 'margin-left': state.post.type == 'MARKDOWN' ? '0' : '3.5rem' }">
+        <div class="m-card-body" :style="{ 'margin-left': state.post.type == 'MARKDOWN' ? '3.5rem' : '3.5rem' }">
             <div v-if="state.shrinkContent" class="expand-btn" @click="state.shrinkContent = false">展开</div>
             <p class="card-text" id="content" :class="[state.shrinkContent ? 'max-height-50vh' : '']">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
@@ -74,7 +74,14 @@
             </div>
         </div>
 
-        <div v-if="!state.post.plan" class="btn-group z-index-96" :class="[state.post.type == 'MARKDOWN' ? 'btn-group-mkd' : 'btn-group-umkd']" role="group">
+        <div v-if="!state.post.plan" class="btn-group z-index-96" :class="[state.post.type == 'MARKDOWN' ? 'btn-group-umkd' : 'btn-group-umkd']" role="group">
+            <Teleport to="#app">
+                <RepostPanel
+                    v-if="state.showRepostPanel"
+                    :post="state.post"
+                    @dismiss="state.showRepostPanel = false">
+                </RepostPanel>
+            </Teleport>
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
                     :class="{ 'm-active': isReposted }" />
@@ -450,7 +457,7 @@
 </style>
 
 <script setup>
-import { computed, onMounted, reactive, ref, provide } from 'vue'
+import { computed, onMounted, reactive, ref, provide} from 'vue'
 import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
 import { likeAPost, dislikeAPost, getUserInfoByNickname, getImageUrlIgnoreHidden } from '@/api'
 import router from '@/route'
@@ -463,6 +470,7 @@ import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { ws, MsgPack } from '../../websocket.js'
 import { VueShowdown } from 'vue-showdown'
+import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 
 const props = defineProps(['post'])
 const cardMask = ref()
@@ -475,7 +483,8 @@ const state = reactive({
     isShowMenu: false,
     showAltText: [false, false, false, false, false, false, false, false, false],
     user: JSON.parse(localStorage.getItem("CUR_USER")),
-    shrinkContent: false
+    shrinkContent: false,
+    showRepostPanel: false
 })
 
 const cardClass = computed(() => {
@@ -559,7 +568,7 @@ async function toggleLike() {
     }
 }
 
-function repostIt() { store.repost(state.post) }
+function repostIt() { state.showRepostPanel = true }
 
 function showSlide(images, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")

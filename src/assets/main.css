@@ -28,14 +28,11 @@ img,li,.userCard {
     background-color: transparent;
     border-radius: 24rem;
     padding: 0.5rem;
+    color: #5d6064;
 }
 
-.material-icons-round:hover {
-    cursor: pointer;
-    font-family: 'Material Icons Round' !important;
+.material-icons-round:hover:not(.no-hover) {
     background-color: #00000022;
-    border-radius: 24rem;
-    padding: 0.5rem;
 }
 
 .i-icon {

@@ -1,11 +1,15 @@
 <template>
-    <div>
-        <div @click="toggleFollow()">{{ followText }}</div>
+    <div @click="toggleFollow()" class="flex flex-rows justify-start items-center gap-x-3">
+        <span class="material-icons-round no-hover">{{ followIcon }}</span>
+        <div>{{ followText }}</div>
     </div>
 </template>
 
 <style scoped>
-
+.material-icons-round {
+    padding: 0;
+    font-size: 16pt;
+}
 </style>
 
 <script setup>
@@ -24,6 +28,11 @@ const state = reactive({
 const followText = computed(() => {
     const { following, nickname } = state.user
     return following ? `不再订阅${nickname}` : `订阅${nickname}`
+})
+
+const followIcon = computed(() => {
+    const { following } = state.user
+    return following ? `person_remove` : `person_add_alt`
 })
 
 function dismiss() { emits('dismissMenu') }

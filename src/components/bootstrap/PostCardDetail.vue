@@ -67,6 +67,13 @@
             </div>
         </div>
         <div v-if="!state.post.plan" class="btn-group" role="group">
+            <Teleport to="#app">
+                <RepostPanel
+                    v-if="state.showRepostPanel"
+                    :post="state.post"
+                    @dismiss="state.showRepostPanel = false">
+                </RepostPanel>
+            </Teleport>
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
                     :class="{ 'm-active': isReposted }" />
@@ -178,10 +185,6 @@
 
 .gif {
     color: white;
-}
-
-.repostCard {
-    margin-left: 4rem;
 }
 
 .m-active {
@@ -403,6 +406,7 @@ import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { VueShowdown } from 'vue-showdown'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
+import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 
 const props = defineProps(['post'])
 
@@ -412,7 +416,8 @@ const state = reactive({
     post: props.post,
     isShowMenu: false,
     showAltText: [false, false, false, false, false, false, false, false, false],
-    showUserInfoPop: false
+    showUserInfoPop: false,
+    showRepostPanel: false
 })
 
 const likedIconTheme = computed(() => {
@@ -442,8 +447,6 @@ function routeToUserProfile() {
 }
 
 function showUserProfile(uid) { store.changeSelectUid(uid) }
-
-function repostIt() { store.repost(state.post) }
 
 async function toggleLike() {
     const LastLikedState = state.post.liked
@@ -482,6 +485,8 @@ function toggleReviewPanel() {
         store.showReviewPanel()
     }
 }
+
+function repostIt() { state.showRepostPanel = true }
 
 function showSlide(images, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
@@ -565,10 +570,15 @@ function deletePostOnUi(){
     router.back()
 }
 
-provide('dismissPostMenus', { dismissPostMenus })
-provide('deletePostOnUi', { deletePostOnUi })
+function postingNew(post){
+    // Ignore this method body, nothing todo.
+}
 
 onMounted(() => {
     resizePicture()
 })
+
+provide('dismissPostMenus', { dismissPostMenus })
+provide('deletePostOnUi', { deletePostOnUi })
+provide('postingNew', { postingNew })
 </script>

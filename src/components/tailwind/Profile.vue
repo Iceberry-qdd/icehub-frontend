@@ -22,7 +22,7 @@
 import Header from '@/components/tailwind/Header.vue'
 import ProfileInfo from '@/components/tailwind/ProfileInfo.vue'
 import PostsTimeline from '@/components/bootstrap/PostsTimeline.vue'
-import { reactive, onMounted, onUnmounted, computed } from 'vue'
+import { reactive, onMounted, onUnmounted, computed, provide } from 'vue'
 import { getUserPosts, getUserInfoByNickname } from '@/api'
 import { store } from '@/store'
 import { useRoute } from 'vue-router'
@@ -112,11 +112,15 @@ function toggleHeaderIcon(event){
     }
 }
 
+function postingNew(post) {
+    state.posts.unshift(post)
+}
+
 onMounted(async () => {
     const nickname = $route.params.nickname
 
     await getUser(nickname)
-    state.lastTimestamp = state.user.lastPostAt || Date.now()
+    state.lastTimestamp = state.user?.lastPostAt || Date.now()
     await getPosts()
     window.addEventListener('scroll', fetchNewPost)
     window.addEventListener('wheel', toggleHeaderIcon)
@@ -130,4 +134,6 @@ onUnmounted(() => {
     window.removeEventListener('wheel', toggleHeaderIcon)
     store.clearSelectUser()
 })
+
+provide('postingNew', { postingNew })
 </script>
