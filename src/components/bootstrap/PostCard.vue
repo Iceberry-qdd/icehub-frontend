@@ -38,7 +38,7 @@
             <p class="card-text" id="content" :class="[state.shrinkContent ? 'max-height-50vh' : '']">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
-            <RepostCard v-if="state.post.root && !state.post.plan" :post="state.post.root" class="z-index-96 relative"></RepostCard>
+            <RepostCard v-if="state.post.rootId && !state.post.plan" :postId="state.post.rootId" class="z-index-96 relative"></RepostCard>
         </div>
 
         <div class="card-pics container z-index-96" :class="cardClass" v-if = "hasPics">

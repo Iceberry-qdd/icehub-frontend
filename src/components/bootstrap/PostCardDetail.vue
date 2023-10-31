@@ -35,7 +35,7 @@
             <p class="card-text" id="content">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
-            <RepostCard v-if="state.post.root && !state.post.plan" :post="state.post.root" class="repostCard"></RepostCard>
+            <RepostCard v-if="state.post.rootId && !state.post.plan" :postId="state.post.rootId" class="repostCard"></RepostCard>
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
@@ -570,6 +570,10 @@ function deletePostOnUi(){
     router.back()
 }
 
+function deleteAllPostsOfUserOnUi(){
+    router.back()
+}
+
 function postingNew(post){
     // Ignore this method body, nothing todo.
 }
@@ -581,4 +585,5 @@ onMounted(() => {
 provide('dismissPostMenus', { dismissPostMenus })
 provide('deletePostOnUi', { deletePostOnUi })
 provide('postingNew', { postingNew })
+provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
 </script>

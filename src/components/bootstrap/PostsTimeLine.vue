@@ -57,5 +57,21 @@ function deletePostOnUi(postId) {
     state.posts.splice(index, 1)
 }
 
+function deleteAllPostsOfUserOnUi(userId) {
+    if (!userId) return
+
+    const preDeletePosts = state.posts.filter(it => it.user.id == userId)
+    if (!preDeletePosts) {
+        store.setErrorMsg("删除失败，该帖子不存在！")
+        return
+    }
+
+    preDeletePosts.forEach( post => {
+        const index = state.posts.indexOf(post)
+        state.posts.splice(index, 1)
+    })
+}
+
 provide('deletePostOnUi', { deletePostOnUi })
+provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
 </script>

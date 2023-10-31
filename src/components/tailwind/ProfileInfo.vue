@@ -45,10 +45,10 @@
                 </div>
                 <div class="flex flex-row gap-x-6">
                     <div @click="routeTo('followerList', state.user.nickname)" class="cursor-pointer hover:underline">
-                        <span>{{ followingCountText }}</span>
+                        <span>{{ followerCountText }}</span>
                     </div>
                     <div @click="routeTo('followingList', state.user.nickname)" class="cursor-pointer hover:underline">
-                        <span>{{ followerCountText }}</span>
+                        <span>{{ followingCountText }}</span>
                     </div>
                 </div>
             </div>
@@ -110,18 +110,18 @@ const bannerPic = computed(() => {
     return previewUrl || originUrl || defaultUrl
 })
 
-const followingCountText = computed(() => {
-    const { gender, followingCount } = state.user
-    if (isMyself.value == true) return `订阅我的 ${followingCount}`
-    if (gender == 'FEMALE') return `订阅她的 ${followingCount}`
-    return `订阅他的 ${followingCount}`
-})
-
 const followerCountText = computed(() => {
     const { gender, followerCount } = state.user
-    if (isMyself.value == true) return `我的订阅 ${followerCount}`
-    if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
-    return `他的订阅 ${followerCount}`
+    if (isMyself.value == true) return `订阅我的 ${followerCount}`
+    if (gender == 'FEMALE') return `订阅她的 ${followerCount}`
+    return `订阅他的 ${followerCount}`
+})
+
+const followingCountText = computed(() => {
+    const { gender, followingCount } = state.user
+    if (isMyself.value == true) return `我的订阅 ${followingCount}`
+    if (gender == 'FEMALE') return `她的订阅 ${followingCount}`
+    return `他的订阅 ${followingCount}`
 })
 
 const avatarPic = computed(() => {

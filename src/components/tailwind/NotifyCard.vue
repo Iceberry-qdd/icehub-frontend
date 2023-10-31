@@ -27,10 +27,10 @@
             </div>
             <div class="content" v-if="state.type == 'REPOST'">
                 <div class="py-2">{{ state.content.content }}</div>
-                <RepostCard :post="state.content.parent"></RepostCard>
+                <RepostCard :postId="state.content.rootId"></RepostCard>
             </div>
             <div class="content" v-if="state.type == 'POST_LIKE'">
-                <RepostCard :post="state.content"></RepostCard>
+                <RepostCard :postId="state.content.rootId"></RepostCard>
             </div>
             <div class="content" v-if="state.type == 'REVIEW_LIKE'">
                 <div class="py-1">{{ state.content.content }}</div>

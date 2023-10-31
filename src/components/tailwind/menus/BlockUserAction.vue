@@ -26,7 +26,7 @@ import { createOneBlacklist } from '@/api'
 import { store } from '@/store.js'
 
 const props = defineProps(['post', 'user'])
-const { deletePostOnUi } = inject('deletePostOnUi')
+const { deleteAllPostsOfUserOnUi } = inject('deleteAllPostsOfUserOnUi')
 
 const state = reactive({
     confirmBDialogUi: {
@@ -81,9 +81,9 @@ async function blockThisUser() {
 
         const { id } = await response.json()
         if (id != props.user.id) throw new Error('操作失败，请稍后重试!')
-        store.setSuccessMsg('将为您减少此类内容!')
+        store.setSuccessMsg('将为您减少该用户的内容!')
 
-        props.post ? deletePostOnUi(props.post.id) : dismissConfirmDialogBox()
+        props.post ? deleteAllPostsOfUserOnUi(props.post.user.id) : dismissConfirmDialogBox()
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
