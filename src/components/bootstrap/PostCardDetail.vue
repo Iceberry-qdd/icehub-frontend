@@ -39,7 +39,7 @@
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :index="idx">
+                <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="pic.id" :index="pic.id">
                     <IconAltOn @mouseenter="state.showAltText[idx]=true" v-show="pic.altText && state.showAltText[idx]==false" class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer"></IconAltOn>
                     <Transition name="fade-translate">
                         <div @mouseleave="state.showAltText[idx]=false" v-show="pic.altText && state.showAltText[idx]==true" class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
@@ -47,7 +47,7 @@
                         </div>
                     </Transition>
                     <div class="absolute w-full h-full flex flex-row justify-center items-center z-[99]" :class="[pic.hidden==true?'flex':'hidden']">
-                        <div @click="getImageUrlIgnoreNSFW(idx)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
+                        <div @click="getImageUrlIgnoreNSFW(pic.id)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
                     </div>
                     <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic m-pic img-fluid"
                         :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
@@ -548,14 +548,19 @@ const postStatus = computed(() => {
     return statusMap.get(status)
 })
 
-async function getImageUrlIgnoreNSFW(imageIndex){
+async function getImageUrlIgnoreNSFW(imageId){
     const postId = state.post.id
-    try{
-        const response = await getImageUrlIgnoreHidden(postId,imageIndex)
+    try {
+        const response = await getImageUrlIgnoreHidden(postId, imageId)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
-        state.post.attachmentsUrl[imageIndex]=result
+
+        const imageIndex = state.post.attachmentsUrl.findIndex(it => it.id === imageId)
+
+        if(imageIndex != -1){
+            state.post.attachmentsUrl[imageIndex] = result
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)

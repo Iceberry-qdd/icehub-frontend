@@ -47,14 +47,10 @@ const hasMore = computed(() => {
 
 function deletePostOnUi(postId) {
     if (!postId) return
-    const preDeletePost = state.posts.find(it => it.id == postId)
-    if (!preDeletePost) {
-        store.setErrorMsg("删除失败，该帖子不存在！")
-        return
+    const preDeletePostIndex = state.posts.findIndex(it => it.id == postId)
+    if (preDeletePostIndex != -1) {
+        state.posts.splice(preDeletePostIndex, 1)
     }
-
-    const index = state.posts.indexOf(preDeletePost)
-    state.posts.splice(index, 1)
 }
 
 function deleteAllPostsOfUserOnUi(userId) {

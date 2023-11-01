@@ -102,14 +102,11 @@ function fetchNewPost() {
 }
 
 function deletePostOnUi(postId) {
-    const preDeletePost = state.posts.find(it => it.id == postId)
-    if (!preDeletePost) {
-        store.setErrorMsg("移除书签失败，该帖子不存在！")
-        return
+    if (!postId) return
+    const preDeletePostIndex = state.posts.findIndex(it => it.id == postId)
+    if (preDeletePostIndex != -1) {
+        state.posts.splice(preDeletePostIndex, 1)
     }
-
-    const index = state.posts.indexOf(preDeletePost)
-    state.posts.splice(index, 1)
 }
 
 onMounted(() => {
