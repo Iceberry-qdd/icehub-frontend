@@ -9,13 +9,35 @@
             :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"
             :iconTooltip="state.headerConfig.iconTooltip"></Header>
-        <ProfileInfo :user="state.user"></ProfileInfo>
-        <PostsTimeline :isLoading="state.isPostLoading" :posts="state.posts" :curPageIndex="state.pageIndex" :totalPages="state.totalPages"></PostsTimeline>
+        <ProfileInfo :user="state.user" @unblockUser="unblockUser"></ProfileInfo>
+        <div v-if="state.user.blocking"
+            class="w-full flex flex-col justify-center items-center gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)]">
+            <span class="material-icons-round">disabled_visible</span>
+            <div>你已屏蔽对方</div>
+        </div>
+        <div v-else-if="state.user.blocked"
+            class="w-full flex flex-col justify-center items-center gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)]">
+            <span class="material-icons-round">disabled_visible</span>
+            <div>对方屏蔽了你</div>
+        </div>
+        <PostsTimeline
+            v-else
+            :isLoading="state.isPostLoading" 
+            :posts="state.posts"
+            :curPageIndex="state.pageIndex"
+            :totalPages="state.totalPages">
+        </PostsTimeline>
     </div>
 </template>
 
 <style scoped>
+.material-icons-round:hover{
+    background-color: transparent;
+}
 
+.material-icons-round{
+    font-size: 24pt;
+}
 </style>
 
 <script setup>
@@ -23,7 +45,7 @@ import Header from '@/components/tailwind/Header.vue'
 import ProfileInfo from '@/components/tailwind/ProfileInfo.vue'
 import PostsTimeline from '@/components/bootstrap/PostsTimeline.vue'
 import { reactive, onMounted, onUnmounted, computed, provide } from 'vue'
-import { getUserPosts, getUserInfoByNickname } from '@/api'
+import { getUserPosts, getUserInfoByNickname, deleteOneBlacklist } from '@/api'
 import { store } from '@/store'
 import { useRoute } from 'vue-router'
 
@@ -116,12 +138,33 @@ function postingNew(post) {
     state.posts.unshift(post)
 }
 
+async function unblockUser(){
+    try{
+        const response = await deleteOneBlacklist('USER', state.user.id)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = await response.json()
+        if(result){
+            await getUser(state.user.id)
+            await getPosts()
+            store.setSuccessMsg('已将该用户解除屏蔽')
+        }else{
+            throw new Error("解除屏蔽失败！")
+        }
+    } catch (e) {
+        store.setErrorMsg(e.message)
+        console.error(e)
+    }
+}
+
 onMounted(async () => {
     const nickname = $route.params.nickname
 
     await getUser(nickname)
     state.lastTimestamp = state.user?.lastPostAt || Date.now()
-    await getPosts()
+    if(!state.user.blocked && !state.user.blocking){
+        await getPosts()
+    }
     window.addEventListener('scroll', fetchNewPost)
     window.addEventListener('wheel', toggleHeaderIcon)
 

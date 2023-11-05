@@ -112,7 +112,7 @@ async function fetchPost() {
         const result = await response.json()
         state.post = result
     } catch (e) {
-        state.fetchFailedText = e.message
+        state.fetchFailedText = "该帖子目前无法加载"
     }
 }
 
