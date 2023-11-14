@@ -1,7 +1,6 @@
 <template>
     <div id="setting-notify-and-message">
         <Header
-            v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -27,13 +26,7 @@ const state = reactive({
         showMenu: false,
         menuIcon: null,
         menuAction: { action: 'route', param: '' },
-        width: 0,
         noBorder: true
     }
-})
-
-onMounted(() => {
-    const notifyMessage = document.getElementById('setting-notify-and-message')
-    state.headerConfig.width = window.getComputedStyle(notifyMessage).width.replace('px', '')
 })
 </script>

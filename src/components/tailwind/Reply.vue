@@ -44,7 +44,7 @@
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1"
                     @click="store.setReviewPanelData(props.reply)">
                     <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
-                    {{ props.reply.reviewCount }}
+                    {{ props.reply.replyCount }}
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1" @click="toggleLike">
                     <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3"

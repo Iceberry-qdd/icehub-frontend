@@ -1,7 +1,7 @@
 <template>
     <div v-if="state.user" class="relative" id="profile" @wheel="toggleHeaderIcon">
         <Header
-            v-if="state.user && state.headerConfig.width != 0"
+            v-if="state.user"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -68,8 +68,7 @@ const state = reactive({
         showMenu: isCurUser.value,
         menuIcon: isCurUser.value ? 'create' : '',
         menuAction: { action: 'route', param: '/profile/edit' },
-        iconTooltip: '编辑个人资料',
-        width: 0
+        iconTooltip: '编辑个人资料'
     },
     isPostLoading: false,
     lastWheelDirection: 0
@@ -167,9 +166,6 @@ onMounted(async () => {
     }
     window.addEventListener('scroll', fetchNewPost)
     window.addEventListener('wheel', toggleHeaderIcon)
-
-    const profile = document.getElementById('profile')
-    state.headerConfig.width = window.getComputedStyle(profile).width.replace('px', '')
 })
 
 onUnmounted(() => {

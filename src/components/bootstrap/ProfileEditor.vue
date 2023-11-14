@@ -1,7 +1,6 @@
 <template>
     <div id="profile-editor">
         <Header
-            v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -277,13 +276,9 @@ async function submitProfile() {
         state.newBanner = store.CROPPED_IMAGE.banner
         if (state.newAvatar) {
             await uploadAvatar()
-        } else {
-            state.newUser.avatarUrl = null
         }
         if (state.newBanner) {
             await uploadBanner()
-        } else {
-            state.newUser.bannerUrl = null
         }
 
         const response = await updateUserProfile(state.newUser)
@@ -423,10 +418,5 @@ const isWebsiteValid = computed(() => {
 
 onUnmounted(() => {
     store.clearCroppedImage()
-})
-
-onMounted(() => {
-    const profileEditor = document.getElementById('profile-editor')
-    state.headerConfig.width = window.getComputedStyle(profileEditor).width.replace('px','')
 })
 </script>

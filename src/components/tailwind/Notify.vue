@@ -1,7 +1,6 @@
 <template>
     <div id="notify">
         <Header
-            v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -211,9 +210,6 @@ async function AckMsgAndRouteTo(message){
 }
 
 onMounted(()=>{
-    const notify = document.getElementById('notify')
-    state.headerConfig.width = window.getComputedStyle(notify).width.replace('px','') - 3
-
     fetchNotify()
     window.addEventListener('scroll', fetchNewList)
 })

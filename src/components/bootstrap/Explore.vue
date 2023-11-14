@@ -1,7 +1,6 @@
 <template>
     <div class="position-relative" id="explore">
         <Header
-            v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -43,8 +42,7 @@ const state = reactive({
         showMenu: true,
         menuIcon: 'search',
         menuAction: { action: 'route', param: '' },
-        iconTooltip: '搜索',
-        width: 0
+        iconTooltip: '搜索'
     },
     isLoading: false
 })
@@ -88,9 +86,6 @@ function postingNew(post) {
 }
 
 onMounted(() => {
-    const explore = document.getElementById('explore')
-    state.headerConfig.width = window.getComputedStyle(explore).width.replace('px', '') - 3
-
     getData()
     window.addEventListener('scroll', fetchNewPost)
 })

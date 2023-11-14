@@ -1,7 +1,6 @@
 <template>
     <div id="bookmark">
         <Header
-            v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -54,8 +53,7 @@ const state = reactive({
         goBack: false,
         showMenu: false,
         menuIcon: 'create',
-        menuAction: { action: 'route', param: '/profile/edit' },
-        width: 0
+        menuAction: { action: 'route', param: '/profile/edit' }
     },
     posts: [],
     isLoading: false,
@@ -110,9 +108,6 @@ function deletePostOnUi(postId) {
 }
 
 onMounted(() => {
-    const bookmark = document.getElementById('bookmark')
-    state.headerConfig.width = window.getComputedStyle(bookmark).width.replace('px', '')
-
     getPostList()
     window.addEventListener('scroll', fetchNewPost)
 })

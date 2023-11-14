@@ -1,7 +1,6 @@
 <template>
     <div id="setting-data-and-privacy">
         <Header
-            v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -17,7 +16,7 @@
 <style scoped></style>
 
 <script setup>
-import { onMounted, reactive, onUnmounted, computed, ref } from 'vue'
+import { reactive } from 'vue'
 import Header from '@/components/tailwind/Header.vue'
 
 const state = reactive({
@@ -27,13 +26,7 @@ const state = reactive({
         showMenu: false,
         menuIcon: null,
         menuAction: { action: 'route', param: '' },
-        width: 0,
         noBorder: true
     }
-})
-
-onMounted(() => {
-    const dataPrivacy = document.getElementById('setting-data-and-privacy')
-    state.headerConfig.width = window.getComputedStyle(dataPrivacy).width.replace('px', '')
 })
 </script>

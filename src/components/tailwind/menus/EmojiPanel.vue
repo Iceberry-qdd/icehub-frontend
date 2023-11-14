@@ -103,7 +103,7 @@ function storeEmojiToLocalStorage(emoji) {
 onMounted(() => {
     const emojiPanel = document.querySelector('#emojiPanel')
     document.querySelector('#app').addEventListener('click', function (event) {
-        if (!emojiPanel.contains(event.target)) {
+        if (emojiPanel && !emojiPanel.contains(event.target)) {
             emits('dismissEmojiPanel')
         }
     })

@@ -1,7 +1,6 @@
 <template>
     <div id="follow">
         <Header
-            v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -88,9 +87,6 @@ async function getUserInfo(nickname) {
 }
 
 onMounted(() => {
-    const follow = document.getElementById('follow')
-    state.headerConfig.width = window.getComputedStyle(follow).width.replace('px','')
-
     const username = $route.params.nickname
     getUserInfo(username)
 })

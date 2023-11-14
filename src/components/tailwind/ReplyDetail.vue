@@ -1,7 +1,6 @@
 <template>
     <div v-if="state.review != null" id="reply-detail">
         <Header
-            v-if="state.headerConfig.width != 0"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :goBack="state.headerConfig.goBack"
@@ -45,8 +44,7 @@ const state = reactive({
         goBack: true,
         showMenu: false,
         menuIcon: null,
-        menuAction: { action: 'route', param: '' },
-        width: 0
+        menuAction: { action: 'route', param: '' }
     },
     isLoading:false
 })
@@ -63,11 +61,8 @@ async function getReview(id) {
     }
 }
 
-onMounted(async () => {  
+onMounted(() => {  
     const reviewId = $route.params.id
-    await getReview(reviewId)
-
-    const replyDetail = document.getElementById('reply-detail')
-    state.headerConfig.width = window.getComputedStyle(replyDetail).width.replace('px','')
+    getReview(reviewId)
 })
 </script>

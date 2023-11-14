@@ -5,7 +5,7 @@
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
                 <img v-if="(menu.routeTo == '/profile')" :src="menu.icon" class="avatar" />
-                <span v-else class="material-icons-round">{{ menu.icon }}</span>{{ menu.name }}
+                <span v-else class="material-icons-round no-hover">{{ menu.icon }}</span>{{ menu.name }}
             </div>
 
             <span class="badge rounded-pill" v-if="menu.badgeCount > 0">{{ menu.badgeCount }}</span>
@@ -47,6 +47,7 @@ li:hover {
 }
 
 .menu {
+    color: #303133;
     font-size: large;
     font-weight: bold;
     display: flex;

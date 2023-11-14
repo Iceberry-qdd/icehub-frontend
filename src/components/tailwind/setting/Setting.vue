@@ -2,7 +2,6 @@
     <div class="relative flex flex-row flex-nowrap divide-x">
         <div id="setting" class="basis-[40%] h-screen">
             <Header
-                v-if="state.headerConfig.width != 0"
                 :width="state.headerConfig.width"
                 :title="state.headerConfig.title"
                 :goBack="state.headerConfig.goBack"
@@ -57,7 +56,6 @@ const state = reactive({
         showMenu: false,
         menuIcon: null,
         menuAction: { action: 'route', param: '' },
-        width: 0,
         noBorder: true
     },
     menus: [
@@ -75,9 +73,4 @@ function routeTo(url){
     state.menus.filter(menu => menu.routeTo == url)[0].isActive = true
     router.push(`/setting/${url}`)
 }
-
-onMounted(() => {
-    const setting = document.getElementById('setting')
-    state.headerConfig.width = window.getComputedStyle(setting).width.replace('px', '')
-})
 </script>

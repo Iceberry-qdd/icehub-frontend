@@ -608,11 +608,11 @@ export function updatePost(post) {
 /**
  * 查询给定图片的完整链接，忽略hidden警告
  * @param {string} postId 帖子id
- * @param {int} imageIndex 图片下标
+ * @param {int} imageId 图片id
  * @returns 该图片的完整链接
  */
-export function getImageUrlIgnoreHidden(postId, imageIndex) {
-    return fetch(`${BASE_URL}/post/attachment?pid=${postId}&attrId=${imageIndex}&ih=true`, {
+export function getImageUrlIgnoreHidden(postId, imageId) {
+    return fetch(`${BASE_URL}/post/attachment?pid=${postId}&attrId=${imageId}&ih=true`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -744,6 +744,28 @@ export function modifyPostVisibility(post, oldVisibility) {
     return fetch(`${BASE_URL}/post/visibility`, {
         method: 'PUT',
         body: JSON.stringify(requestBody),
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 删除黑名单
+ * @param {string} type 黑名单类型
+ * @param {string} contentId 内容id
+ */
+export function deleteOneBlacklist(type, contentId) {
+    const blacklist = {
+        type: type,
+        contentId: contentId
+    }
+    return fetch(`${BASE_URL}/blacklist`, {
+        method: 'DELETE',
+        body: JSON.stringify(blacklist),
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'

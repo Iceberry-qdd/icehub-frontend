@@ -14,7 +14,7 @@
                                 v-if="state.showUserInfoPop"
                                 class="user-info-pop z-[99] absolute top-0 shadow-lg">
                             </UserInfoPop>
-                        </Transition>
+                    </Transition>
                     <div class="w-[2.5rem] h-[2.5rem] relative z-10">
                         <a @mouseenter="state.showUserInfoPop = true" @click="routeToUser(props.review.user.nickname)">
                             <img :src="avatar" class="rounded-[6px]" />
@@ -35,7 +35,9 @@
                     <div class='text-[10pt] text-gray-400'>{{ formattedTime }}</div>
                 </div>
             </div>
-            <div class="pl-[4rem] text-[12pt]"> {{ props.review.content }} </div>
+            <div class="pl-[4rem] text-[12pt]">
+                <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.review.content"></VueShowdown>
+            </div>
             <div class="flex flex-row justify-between pl-[4rem] z-20">
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-2" @click="toggleMenu">
                     <more-two theme="outline" size="20" fill="#333" :strokeWidth="3" />
@@ -43,7 +45,7 @@
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1"
                     @click="store.setReviewPanelData(props.review)">
                     <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
-                    {{ props.review.reviewCount }}
+                    {{ props.review.replyCount }}
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1" @click="toggleLike">
                     <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" :class="isLiked ? 'liked' : ''" />
@@ -103,6 +105,7 @@ import { Like, Message, MoreTwo } from '@icon-park/vue-next'
 import router from '@/route'
 import Reply from '@/components/tailwind/Reply.vue'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
+import { VueShowdown } from 'vue-showdown'
 
 const props = defineProps(['review', 'post', 'tieSub'])
 

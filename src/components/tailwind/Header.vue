@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem]" :class="[!state.noBorder ? 'border-btm' : '']" :style="{'width':props.width + 'px'}">
+        <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem] w-[calc(100%*5/13)]"
+        :class="[!state.noBorder ? 'border-btm' : '']">
             <div class="text-[15pt] h-full flex flex-row items-center">
                 <div @click="routeBackTo" v-if="props.goBack" v-tooltip:full="'返回'"
                     class="material-icons-round cursor-pointer text-[14pt] mr-[0.5rem]">
