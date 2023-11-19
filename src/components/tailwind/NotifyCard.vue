@@ -1,5 +1,5 @@
 <template>
-    <div v-if="state.from != null" class="notify-card" :class="postStatus">
+    <div v-if="state.from  && state.content" class="notify-card" :class="postStatus">
         <div>
             <Like v-if="state.type == 'POST_LIKE' || state.type == 'REVIEW_LIKE'" theme="filled" size="20" fill="red" strokeWidth="3" class="icon bg-[#fecaca] hover:bg-[#fecaca]" />
             <message v-else-if="state.type == 'REVIEW' || state.type == 'REVIEW_REPLY'" theme="filled" size="19" fill="#f97316" :strokeWidth="3" class="icon bg-[#fed7aa] hover:bg-[#fed7aa]" />
@@ -10,18 +10,13 @@
         </div>
         <div class="w-full">
             <div>
-                <img @click.self="routeToUserProfile(state.from)" class="w-[2rem] h-[2rem] mb-2 rounded-full z-[97] relative" :src="state.from.avatarUrl.originUrl"/>
+                <img @click.self="routeToUserProfile(state.from)" class="w-[2rem] h-[2rem] mb-2 rounded-full z-[97] relative" :src="avatar(state.from.nickname,state.from.avatarUrl)"/>
             </div>
             <div class="brief">
                 <div class="event-text">{{ brief }}</div>
                 <div class="time">{{ formattedTime }}</div>
             </div>
-            <!-- <div v-if="state.type == 'REVIEW'" class="py-1">{{ state.content.content }}</div>
-                <div v-if="state.type == 'REPOST'" class="py-2">{{ state.content.content }}</div>
-                <RepostCard v-if="state.type == 'POST_LIKE'" :post="state.content"></RepostCard>
-                <RepostCard v-if="state.type == 'REPOST'" :post="state.content.parent"></RepostCard>
-                <UserProfileCard v-if="state.type == 'USER_FOLLOW'" :user="state.content"></UserProfileCard>
-                <div v-if="state.type == 'SYS_NOTIFY'">{{ state.content }}</div> -->
+
             <div class="content" v-if="state.type == 'REVIEW'">
                 <div class="py-1">{{ state.content.content }}</div>
             </div>
@@ -172,4 +167,18 @@ function routeToUserProfile(user){
 watch(()=>props.message.read,function(newVal,oldVal){
     state.read = newVal
 })
+
+function avatar(nickname,avatarUrl) {
+    const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
+    const { previewUrl, originUrl,contentType } = avatarUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    return previewUrl || originUrl || defaultUrl
+}
+
+function banner(bannerUrl) {
+    const defaultUrl = '/src/assets/default-bg.jpg'
+    const { previewUrl, originUrl,contentType } = bannerUrl || [null, null,null]
+    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    return previewUrl || originUrl || defaultUrl
+}
 </script>
