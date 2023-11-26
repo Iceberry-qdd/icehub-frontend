@@ -1,5 +1,5 @@
 <template>
-    <div  @click="routeToUserProfile" ref="repostCard"
+    <div @click="routeToUserProfile" ref="repostCard"
         class="border-[1px] m-bg-white border-gray-300 rounded-[8px] flex flex-col gap-y-1 cursor-pointer">
         <div class="pt-2" v-if="state.post">
             <div class="flex flex-row items-center px-2 gap-x-2 text-[11pt]">

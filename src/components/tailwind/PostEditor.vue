@@ -192,7 +192,7 @@
 import { computed, reactive, watch, inject } from 'vue'
 import { uploadImages, posting, postingPlan } from '@/api.js'
 import { store } from '@/store.js'
-import { VideoTwo, AddPicture, PreviewOpen, PreviewClose, AtSign, Time as mTime, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
+import { VideoTwo} from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import EmojiPanel from '@/components/tailwind/menus/EmojiPanel.vue'
 import { VueShowdown } from 'vue-showdown'
@@ -281,6 +281,7 @@ async function submitPost() {
         //防止重复提交上一次的内容
         state.content = ""
         state.imgList = []
+        state.data.createdTime = null
 
         postingNew(state.result)
     } catch (err) {

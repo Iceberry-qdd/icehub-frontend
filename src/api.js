@@ -1,4 +1,4 @@
-const BASE_URL = "http://icehub.com:8080"
+const BASE_URL = "https://icehub.com:8080"
 const TOKEN = localStorage.getItem('TOKEN')
 
 /**
@@ -710,11 +710,13 @@ export function deleteOnePost(postVO) {
  * 创建黑名单
  * @param {string} type 黑名单类型
  * @param {string} contentId 内容id
+ * @param {string} curUserId 当前登录用户id
  */
-export function createOneBlacklist(type, contentId) {
+export function createOneBlacklist(type, contentId, curUserId) {
     const blacklist = {
         type: type,
-        contentId: contentId
+        contentId: contentId,
+        userId: curUserId
     }
     return fetch(`${BASE_URL}/blacklist`, {
         method: 'POST',
@@ -757,11 +759,13 @@ export function modifyPostVisibility(post, oldVisibility) {
  * 删除黑名单
  * @param {string} type 黑名单类型
  * @param {string} contentId 内容id
+ * @param {string} curUserId 当前登录用户id
  */
-export function deleteOneBlacklist(type, contentId) {
+export function deleteOneBlacklist(type, contentId, curUserId) {
     const blacklist = {
         type: type,
-        contentId: contentId
+        contentId: contentId,
+        userId: curUserId
     }
     return fetch(`${BASE_URL}/blacklist`, {
         method: 'DELETE',

@@ -71,7 +71,8 @@ const state = reactive({
         iconTooltip: '编辑个人资料'
     },
     isPostLoading: false,
-    lastWheelDirection: 0
+    lastWheelDirection: 0,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
 })
 
 async function getPosts() {
@@ -139,7 +140,7 @@ function postingNew(post) {
 
 async function unblockUser(){
     try{
-        const response = await deleteOneBlacklist('USER', state.user.id)
+        const response = await deleteOneBlacklist('USER', state.user.id, state.curUser.id)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()

@@ -49,7 +49,8 @@ const state = reactive({
             text: '屏蔽后可在黑名单界面查看',
             color: 'rgb(239 68 68)'
         }
-    }
+    },
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
 })
 
 function choose(args) {
@@ -76,7 +77,7 @@ function toggleDialogLoading(isLoading){
 async function blockThisUser() {
     try {
         toggleDialogLoading(true)
-        const response = await createOneBlacklist('USER', props.user.id)
+        const response = await createOneBlacklist('USER', props.user.id, state.curUser.id)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { id } = await response.json()

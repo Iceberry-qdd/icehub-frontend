@@ -42,9 +42,16 @@
                     <more-two theme="outline" size="20" fill="#333" :strokeWidth="3" />
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1"
-                    @click="store.setReviewPanelData(props.reply)">
+                    @click="state.showReplyPanel = true">
                     <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
                     {{ props.reply.replyCount }}
+                    <Teleport to = '#app'>
+                        <ReviewPanel
+                            :parentReview = "props.reply"
+                            @dismiss = "dismissReplyPanel"
+                            v-if="state.showReplyPanel">
+                        </ReviewPanel>
+                    </Teleport>
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1" @click="toggleLike">
                     <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3"
@@ -99,6 +106,7 @@ import { Like, Message, MoreTwo } from '@icon-park/vue-next'
 import router from '@/route'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import ReviewPanel from '@/components/tailwind/ReviewPanel.vue'
 
 const props = defineProps(['review', 'tieSub', 'reply', 'totalReplyCount', 'fetchedReplyCount', 'index'])
 const emits = defineEmits(['fetchMoreReply'])
@@ -107,7 +115,8 @@ const state = reactive({
     review: props.review,
     tieSub: props.tieSub,
     showUserInfoPop: false,
-    isLoading: false
+    isLoading: false,
+    showReplyPanel: false
 })
 
 const formattedTime = computed(() => {
@@ -159,6 +168,10 @@ async function toggleLike() {
         store.setErrorMsg(e.message)
         console.error(e)
     }
+}
+
+function dismissReplyPanel(){
+    state.showReplyPanel = false
 }
 
 const isLiked = computed(() => {

@@ -99,12 +99,35 @@ function fetchNewPost() {
     }
 }
 
+function deleteBookmarkOnUi(postId) {
+    if (!postId) return
+    const preDeletePostIndex = state.posts.findIndex(it => it.id == postId)
+    if (preDeletePostIndex != -1) {
+        state.posts.splice(preDeletePostIndex, 1)
+    }
+}
+
 function deletePostOnUi(postId) {
     if (!postId) return
     const preDeletePostIndex = state.posts.findIndex(it => it.id == postId)
     if (preDeletePostIndex != -1) {
         state.posts.splice(preDeletePostIndex, 1)
     }
+}
+
+function deleteAllPostsOfUserOnUi(userId) {
+    if (!userId) return
+
+    const preDeletePosts = state.posts.filter(it => it.user.id == userId)
+    if (!preDeletePosts) {
+        store.setErrorMsg("删除失败，该帖子不存在！")
+        return
+    }
+
+    preDeletePosts.forEach( post => {
+        const index = state.posts.indexOf(post)
+        state.posts.splice(index, 1)
+    })
 }
 
 onMounted(() => {
@@ -116,5 +139,7 @@ onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewPost)
 })
 
+provide('deleteBookmarkOnUi', { deleteBookmarkOnUi })
 provide('deletePostOnUi', { deletePostOnUi })
+provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
 </script>

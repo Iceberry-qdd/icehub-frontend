@@ -54,7 +54,7 @@
 <style scoped></style>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, inject } from 'vue'
 import { reviewing } from '@/api'
 import { store } from '@/store'
 import { AddPicture, LocalTwo, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
@@ -62,9 +62,9 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/websocket.js'
 import EmojiPanel from '@/components/tailwind/menus/EmojiPanel.vue'
 
+const emits = defineEmits(['dismiss'])
 const props = defineProps(['post', 'parent', 'tieLocation', 'fromReviewPanel'])
-const emits = defineEmits(['newReview'])
-
+const { newReview } = inject('newReview')
 const state = reactive({
     content: '',
     loading: false,
@@ -102,13 +102,15 @@ async function submitReview() {
         const data = {
             'content': state.content,
             'postId': props.post ? props.post.id : props.parent.postId,
-            'parentId': props.parent ? props.parent.id : null
+            'parentId': props.parent ? props.parent.id : null,
+            'userId': state.curUser.id
         }
         const response = await reviewing(data)
         if (!response.ok) throw new Error((await response.json()).error)
         const result = await response.json()
-        emits('newReview', { 'review': result })
+        newReview({review: result})
         state.content = ''
+        emits('dismiss')
 
         const reviewId = result.id
         const receiverId = data.parentId == null ? props.post.user.id : props.parent.user.id

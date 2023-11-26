@@ -111,6 +111,7 @@ async function reposting() {
         if(state.parentPost.plan) throw new Error('该帖子尚未发布，无法进行转发操作')
         state.data.parentId = state.parentPost.id
         state.data.rootId = state.parentPost.root ? state.parentPost.root.id : state.parentPost.id
+        state.data.userId ??= state.curUser.id
         const response = await posting(state.data)
         if (!response.ok) throw new Error((await response.json()).error)
 

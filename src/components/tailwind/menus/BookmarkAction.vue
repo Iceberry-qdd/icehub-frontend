@@ -17,8 +17,7 @@ import { reactive, computed, inject } from 'vue'
 import { store } from '@/store.js'
 import { markAPost, unMarkAPost } from '@/api.js'
 
-const emits = defineEmits(['delete'])
-const { deletePostOnUi } = inject('deletePostOnUi')
+const { deleteBookmarkOnUi } = inject('deleteBookmarkOnUi', {"deleteBookmarkOnUi": () => {}})
 const { dismissPostMenus }  = inject('dismissPostMenus')
 const props = defineProps(['post'])
 
@@ -67,7 +66,7 @@ async function unMarkIt(postId) {
         if (result == false) throw new Error("移除失败！")
         state.post.marked = false
         store.setSuccessMsg("已移出书签！")
-        deletePostOnUi(state.post.id)
+        deleteBookmarkOnUi(state.post.id)
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)

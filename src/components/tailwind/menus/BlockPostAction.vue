@@ -15,14 +15,18 @@
 <script setup>
 import { createOneBlacklist } from '@/api'
 import { store } from '@/store.js'
-import {inject} from 'vue'
+import { inject, reactive } from 'vue'
 
 const props = defineProps(['post'])
 const { deletePostOnUi } = inject('deletePostOnUi')
 
+const state = reactive({
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+})
+
 async function blockThisPost() {
     try {
-        const response = await createOneBlacklist('POST', props.post.id)
+        const response = await createOneBlacklist('POST', props.post.id, state.curUser.id)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { id } = await response.json()

@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class=" flex relative flex-col gap-y-4 px-[1rem] py-[1rem] border-gray-100 border-b-[1px] hover:bg-[#f5f5f5] cursor-pointer">
-            <div v-if="state.tieSub == 'mid'" class="timeline-mid absolute w-[0.15rem] h-full top-0 left-[2.7rem] bg-gray-200 z-0"></div>
-            <div v-if="state.tieSub == 'top'" class="timeline-top absolute w-[0.15rem] top-[2.5rem] left-[2.7rem] bg-gray-200 z-0"></div>
-            <div v-if="state.tieSub == 'bottom'" class="timeline-bottom absolute w-[0.15rem] h-[2.5rem] top-0 left-[2.7rem] bg-gray-200 z-0"></div>
+            <div v-if="tieSub == 'mid'" class="timeline-mid absolute w-[0.15rem] h-full top-0 left-[2.7rem] bg-gray-200 z-0"></div>
+            <div v-if="tieSub == 'top'" class="timeline-top absolute w-[0.15rem] top-[2.5rem] left-[2.7rem] bg-gray-200 z-0"></div>
+            <div v-if="tieSub == 'bottom'" class="timeline-bottom absolute w-[0.15rem] h-[2.5rem] top-0 left-[2.7rem] bg-gray-200 z-0"></div>
             <div class="absolute left-0 top-0 w-full h-full z-10 bg-transparent" @click.self="routeToReplyDetail(review.id)"></div>
             <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
                 <div class="flex relative flex-row items-center gap-x-4">
@@ -43,9 +43,16 @@
                     <more-two theme="outline" size="20" fill="#333" :strokeWidth="3" />
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1"
-                    @click="store.setReviewPanelData(props.review)">
+                    @click="state.showReplyPanel = true">
                     <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
-                    {{ props.review.replyCount }}
+                    {{ state.totalReplyCount }}
+                    <Teleport to = '#app'>
+                        <ReviewPanel
+                            :parentReview = "props.review"
+                            @dismiss = "dismissReplyPanel"
+                            v-if="state.showReplyPanel">
+                        </ReviewPanel>
+                    </Teleport>
                 </button>
                 <button type="button" class="btn op text-[11pt] flex flex-row items-center gap-x-1" @click="toggleLike">
                     <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3" :class="isLiked ? 'liked' : ''" />
@@ -54,21 +61,40 @@
             </div>
         </div>
         <div v-if="state.replies.length > 0">
-            <Reply class="z-10 hover:bg-[#f5f5f5] cursor-pointer" v-for="(review, index) in state.replies"
-                @fetchMoreReply="fetchMoreReply"
-                :reply="review"
-                :index="index"
-                :review="props.review"
-                :tieSub="index < state.totalReplyCount - 1 ? 'mid' : 'bottom'"
-                :totalReplyCount="state.totalReplyCount"
-                :fetchedReplyCount="state.replies.length"
-                :key="review.id">
-            </Reply>
+            <TransitionGroup name="reviews">
+                <Reply class="z-10 hover:bg-[#f5f5f5] cursor-pointer" v-for="(review, index) in state.replies"
+                    @fetchMoreReply="fetchMoreReply"
+                    :reply="review"
+                    :index="index"
+                    :review="props.review"
+                    :tieSub="index < state.totalReplyCount - 1 ? 'mid' : 'bottom'"
+                    :totalReplyCount="state.totalReplyCount"
+                    :fetchedReplyCount="state.replies.length"
+                    :key="review.id">
+                </Reply>
+            </TransitionGroup>
         </div>
     </div>
 </template>
 
 <style scoped>
+.reviews-move,
+.reviews-enter-active,
+.reviews-leave-active {
+    transition: all 0.5s cubic-bezier(0.39, 0.58, 0.57, 1);
+}
+
+.reviews-enter-from,
+.reviews-leave-to {
+    opacity: 0;
+}
+
+.reviews-leave-active {
+    position: absolute;
+    width: 100%;
+    height: fit-content;
+}
+
 .liked {
     color: red;
     background-color: #fecaca;
@@ -97,7 +123,7 @@
 
 <script setup>
 // 只包括评论和一层回复
-import { computed, reactive, onMounted } from 'vue'
+import { computed, reactive, onMounted, provide } from 'vue'
 import { dislikeAReview, getSubReviewById, likeAReview } from '@/api'
 import { humanizedTime } from '@/utils/formatUtils.js'
 import { store } from '@/store'
@@ -106,18 +132,17 @@ import router from '@/route'
 import Reply from '@/components/tailwind/Reply.vue'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import { VueShowdown } from 'vue-showdown'
+import ReviewPanel from '@/components/tailwind/ReviewPanel.vue'
 
 const props = defineProps(['review', 'post', 'tieSub'])
-
 const state = reactive({
-    showPanel: false,
     replies: [],
-    totalReplyCount: 0,
+    totalReplyCount: props.review.replyCount,
     pageIndex: 1,
     pageSize: 2,
-    lastTimestamp:new Date().getTime(),
-    tieSub: props.tieSub,
-    showUserInfoPop: false
+    lastTimestamp: new Date().getTime(),
+    showUserInfoPop: false,
+    showReplyPanel: false,
 })
 
 const formattedTime = computed(() => {
@@ -137,11 +162,9 @@ const replyTo = computed(() => {
     }
 })
 
-async function toggleReviewPanel() {
-    const isShow = state.showPanel
-    if (isShow == false) { await getReply() }
-    state.showPanel = !isShow
-}
+const tieSub = computed(()=> {
+    return state.totalReplyCount == 0 ? 'none' : 'top'
+})
 
 async function getReply() {
     try {
@@ -153,7 +176,6 @@ async function getReply() {
         if(content.length>1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
-        if (hasReply.value) { state.tieSub = 'top' }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -163,6 +185,10 @@ async function getReply() {
 function fetchMoreReply() {
     state.pageSize = 10
     getReply()
+}
+
+function dismissReplyPanel(){
+    state.showReplyPanel = false
 }
 
 async function toggleLike() {
@@ -221,12 +247,18 @@ const avatar = computed(() => {
     return previewUrl || originUrl || defaultUrl
 })
 
-onMounted(() => {
-    getReply()
-
-})
-
 function routeToUser(nickname) {
     router.push({ name: 'profile', params: { nickname: nickname } })
 }
+
+function newReview({ review }) {
+    state.totalReplyCount++;
+    state.replies.unshift(review)
+}
+
+onMounted(() => {
+    getReply()
+})
+
+provide('newReview', { newReview })
 </script>

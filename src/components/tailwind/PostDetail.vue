@@ -10,13 +10,12 @@
         </Header>
         <PostCardDetail v-if="state.post" :post="state.post"></PostCardDetail>
         <ReviewEditor
-            @newReview="newReview"
             :post="state.post"
             v-if="allowReview">
         </ReviewEditor>
         <div v-if="!allowReview && state.post" class="w-[96%] h-[3rem] translate-x-[2%] my-[2%] p-4 bg-[#e8f0ff] rounded-lg flex justify-left items-center gap-2 cursor-default">
             <IconInfo class="bg-[#3b82f6] text-white rounded-full box-content p-[0.1rem]"></IconInfo>
-            <span class="text-[11pt] text-[#303133]">该帖子目前无法进行评论</span>
+            <span class="text-[11pt] text-[#303133]">该帖子的评论功能已关闭</span>
         </div>
         <div v-if="state.reviews.length > 0">
             <TransitionGroup name="reviews">
@@ -61,7 +60,7 @@
 
 <script setup>
 import Header from '@/components/tailwind/Header.vue'
-import { onMounted, reactive, onUnmounted, computed } from 'vue'
+import { onMounted, reactive, onUnmounted, computed, provide } from 'vue'
 import { getPostById, getPostReviews } from '@/api.js'
 import { store } from '@/store';
 import PostCardDetail from '@/components/bootstrap/PostCardDetail.vue'
@@ -162,4 +161,6 @@ onMounted(async () => {
 onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewReview)
 })
+
+provide('newReview', { newReview })
 </script>
