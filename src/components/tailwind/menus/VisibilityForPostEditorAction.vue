@@ -2,7 +2,7 @@
     <div id="visibilityForPostEditorAction" class="bg-white rounded-[6px] shadow-md ring-1 ring-gray-200 min-w-max min-h-max">
         <div @click.stop="pickedVisibility(action)"
             :class="[action.code == state.curVisibility ? 'bg-blue-100 hover:bg-blue-100' : 'hover:bg-gray-100 active:bg-gray-200']"
-            class="flex flex-row justify-left items-center gap-x-3 py-[0.6rem] px-4 cursor-pointer"
+            class="flex flex-row justify-left items-center gap-x-3 py-[0.6rem] px-4 cursor-pointer last:rounded-b-[6px] first:rounded-t-[6px]"
             v-for="action in state.visibilityActions" :key="action.id" :index="action.id">
             <span class="material-icons-round no-hover" :class="[action.code == state.curVisibility ? 'text-blue-500' : '']">
                 {{ action.icon }}

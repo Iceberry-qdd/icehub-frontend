@@ -59,7 +59,7 @@
                         </div>
                         <Transition name="fade">
                             <VisibilityForPostEditorAction 
-                                class="z-[99] absolute top-[2.5rem] py-1"
+                                class="z-[99] absolute top-[2.5rem]"
                                 :visibility="state.data.status"
                                 :ui="state.visibilityActionData"
                                 v-if="state.showVisibilityPanel"

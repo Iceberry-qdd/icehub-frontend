@@ -7,9 +7,9 @@
         </div>
         <div class="material-icons-round cursor-pointer text-10-pt rotate-180"> arrow_back_ios </div>
         <div v-if="state.showSubActions == true" @blur="toggleSubAction"
-            class="absolute right-[-11rem] w-full rounded-[8px] py-1 shadow ring-1 ring-slate-900/5 bg-white">
+            class="absolute right-[-11rem] w-full rounded-[8px] shadow ring-1 ring-slate-900/5 bg-white">
             <div @click="updateVisibility(action.code)"
-                class="flex flex-row gap-4 justify-left items-center py-2 px-3 text-start"
+                class="flex flex-row gap-4 justify-left items-center py-[0.6rem] px-3 text-start last:rounded-b-[7px] first:rounded-t-[7px]"
                 v-for="action in state.actions" :key="action.id" :index="action.id"
                 :class="[action.code == props.post.status ? 'bg-blue-100 hover:bg-blue-100':'hover:bg-gray-100 active:bg-gray-200']">
                 <span class="material-icons-round no-hover" :class="[action.code == props.post.status? 'text-blue-500' : '']">

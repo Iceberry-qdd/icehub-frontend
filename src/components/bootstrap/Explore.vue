@@ -6,8 +6,9 @@
             :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu"
             :menuIcon="state.headerConfig.menuIcon"
-            :menuAction="state.headerConfig.menuAction"
-            :iconTooltip="state.headerConfig.iconTooltip"></Header>
+            :iconTooltip="state.headerConfig.iconTooltip"
+            @handleAction="handleAction">
+        </Header>
         <PostsTimeline
             :isLoading="state.isLoading"
             :posts="state.posts"
@@ -41,7 +42,6 @@ const state = reactive({
         goBack: false,
         showMenu: true,
         menuIcon: 'search',
-        menuAction: { action: 'route', param: '' },
         iconTooltip: '搜索'
     },
     isLoading: false

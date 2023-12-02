@@ -8,7 +8,10 @@
             :showMenu="state.headerConfig.showMenu"
             :menuIcon="state.headerConfig.menuIcon"
             :menuAction="state.headerConfig.menuAction"
-            :iconTooltip="state.headerConfig.iconTooltip"></Header>
+            :iconTooltip="state.headerConfig.iconTooltip"
+            @handleAction="handleAction">
+        </Header>
+
         <ProfileInfo :user="state.user" @unblockUser="unblockUser"></ProfileInfo>
         <div v-if="state.user.blocking"
             class="w-full flex flex-col justify-center items-center gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)]">
@@ -48,6 +51,7 @@ import { reactive, onMounted, onUnmounted, computed, provide } from 'vue'
 import { getUserPosts, getUserInfoByNickname, deleteOneBlacklist } from '@/api'
 import { store } from '@/store'
 import { useRoute } from 'vue-router'
+import router from '@/route'
 
 const $route = useRoute()
 const user = JSON.parse(localStorage.getItem("CUR_USER"))
@@ -67,7 +71,6 @@ const state = reactive({
         goBack: !isCurUser.value,
         showMenu: isCurUser.value,
         menuIcon: isCurUser.value ? 'create' : '',
-        menuAction: { action: 'route', param: '/profile/edit' },
         iconTooltip: '编辑个人资料'
     },
     isPostLoading: false,
@@ -84,7 +87,7 @@ async function getPosts() {
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
         state.totalPages = totalPages
-        if(content.length > 1) {
+        if (content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
@@ -122,12 +125,12 @@ function fetchNewPost() {
     }
 }
 
-function toggleHeaderIcon(event){
-    if(event.pageY > 718 && event.deltaY > 0 && state.lastWheelDirection <= 0){
+function toggleHeaderIcon(event) {
+    if (event.pageY > 718 && event.deltaY > 0 && state.lastWheelDirection <= 0) {
         state.lastWheelDirection = event.deltaY
         state.headerConfig.menuIcon = 'date_range'
         state.headerConfig.iconTooltip = '搜索帖子'
-    }else if(event.pageY < 718 && event.deltaY < 0 && state.lastWheelDirection > 0){
+    } else if (event.pageY < 718 && event.deltaY < 0 && state.lastWheelDirection > 0) {
         state.lastWheelDirection = event.deltaY
         state.headerConfig.menuIcon = isCurUser.value ? 'create' : ''
         state.headerConfig.iconTooltip = '编辑个人资料'
@@ -138,17 +141,17 @@ function postingNew(post) {
     state.posts.unshift(post)
 }
 
-async function unblockUser(){
-    try{
+async function unblockUser() {
+    try {
         const response = await deleteOneBlacklist('USER', state.user.id, state.curUser.id)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
-        if(result){
+        if (result) {
             await getUser(state.user.id)
             await getPosts()
             store.setSuccessMsg('已将该用户解除屏蔽')
-        }else{
+        } else {
             throw new Error("解除屏蔽失败！")
         }
     } catch (e) {
@@ -157,12 +160,16 @@ async function unblockUser(){
     }
 }
 
+function handleAction() {
+    router.push('/profile/edit')
+}
+
 onMounted(async () => {
     const nickname = $route.params.nickname
 
     await getUser(nickname)
     state.lastTimestamp = state.user?.lastPostAt || Date.now()
-    if(!state.user.blocked && !state.user.blocking){
+    if (!state.user.blocked && !state.user.blocking) {
         await getPosts()
     }
     window.addEventListener('scroll', fetchNewPost)

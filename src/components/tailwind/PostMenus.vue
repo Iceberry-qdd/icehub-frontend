@@ -1,50 +1,63 @@
 <template>
     <div >
-        <div :id="`pm-${props.post.id}`" class="flex flex-col min-w-[12rem] max-w-[18rem] py-1 bg-white rounded-[8px] shadow ring-1 ring-slate-900/5">
+        <div :id="`pm-${props.post.id}`" class="flex flex-col min-w-[12rem] max-w-[18rem] bg-white rounded-[8px] shadow ring-1 ring-slate-900/5">
             <LinkCopyAction v-if="showLinkCopyAction" :link="generateLink"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </LinkCopyAction>
 
             <PosterGenerateAction v-if="showGeneratePoster"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </PosterGenerateAction>
 
             <BookmarkAction v-if="showBookmarkAction" :post="state.post"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </BookmarkAction>
 
             <FollowingAction v-if="showFollowAction" :user="state.post.user"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </FollowingAction>
 
             <BlockPostAction v-if="showBlockPostAction" :post="state.post"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </BlockPostAction>
 
             <BlockUserAction v-if="showBlockUserAction" :post="state.post" :user="state.post.user"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </BlockUserAction>
 
             <ReportPostProblemAction v-if="showReportAction"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </ReportPostProblemAction>
 
-            <VisibilityAction class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200" :post="state.post"
+            <VisibilityAction class="action last:rounded-b-[8px] first:rounded-t-[8px]" :post="state.post"
                  v-if="showVisibilityAction">
             </VisibilityAction>
 
             <AdminOperationAction v-if="showAdminAction"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </AdminOperationAction>
 
             <DeletePostAction v-if="showDeletePostAction" :post = "state.post"
-                class="py-2 px-3 w-full text-start hover:bg-gray-100 text-red-500 active:bg-gray-200">
+                class="action last:rounded-b-[8px] first:rounded-t-[8px] text-red-500">
             </DeletePostAction>
         </div>
     </div>
 </template>
 
 <style scoped>
+.action{
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+    text-align: start;
+}
+
+.action:hover{
+    background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.action:active{
+    background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
 </style>
 
 <script setup>

@@ -6,7 +6,18 @@
             :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu"
             :menuIcon="state.headerConfig.menuIcon"
-            :menuAction="state.headerConfig.menuAction"></Header>
+            :iconTooltip="state.headerConfig.iconTooltip"
+            @handleAction="handleAction">
+        </Header>
+
+        <Teleport to="#app">
+            <ConfirmDialogBox
+                ref="confirmDialogBox"
+                @choice="markAllNotifyReadOfCurUser"
+                v-if="state.confirmBDialogUi.show"
+                :ui="state.confirmBDialogUi">
+            </ConfirmDialogBox>
+        </Teleport>
 
         <div id="container">
             <div id="notify-cards">
@@ -99,25 +110,47 @@ import Header from '@/components/tailwind/Header.vue'
 import { computed, onMounted, onUnmounted, reactive } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import NotifyCard from '@/components/tailwind/NotifyCard.vue'
-import {getUsersNotifyList,markNotifyRead} from '@/api.js'
+import { getUsersNotifyList, markNotifyRead, markAllNotifyRead } from '@/api.js'
 import { store } from '@/store'
 import router from '@/route'
+import ConfirmDialogBox from '@/components/tailwind/menus/ConfirmDialogBox.vue'
 
 const state = reactive({
     headerConfig: {
         title: '消息',
         goBack: false,
-        showMenu: false,
-        menuIcon: 'cleaning_services',
-        menuAction: { action: 'route', param: '/profile/edit' },
-        width: 0
+        showMenu: true,
+        menuIcon: 'checklist',
+        width: 0,
+        iconTooltip: '全部已读'
     },
     messages: [],
     pageIndex: 1,
     pageSize: 10,
-    lastTimestamp:new Date().getTime(),
+    lastTimestamp: new Date().getTime(),
     totalPages: 0,
-    loading:false
+    loading: false,
+    confirmBDialogUi: {
+        show: false,
+        title: '确定要已读全部消息吗？(已读后不可撤回)',
+        confirmButton: {
+            text: '全部已读',
+            color: 'rgb(239 68 68)',
+            bgColor: 'rgb(254 226 226)',
+            selected: false
+        },
+        cancelButton: {
+            text: '取消',
+            color: '#000000',
+            bgColor: 'rgb(243 244 246)',
+            selected: false
+        },
+        loading: {
+            show: false,
+            text: '正在将全部消息设为已读...',
+            color: 'rgb(239 68 68)'
+        }
+    },
 })
 
 const hasMore = computed(() => {
@@ -138,10 +171,10 @@ function fetchNewList() {
     }
 }
 
-async function fetchNotify(){
-    state.loading=true
-    try{
-        const response = await getUsersNotifyList(state.pageIndex,state.pageSize,state.lastTimestamp)
+async function fetchNotify() {
+    state.loading = true
+    try {
+        const response = await getUsersNotifyList(state.pageIndex, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
@@ -207,6 +240,36 @@ async function AckMsgAndRouteTo(message){
         default:
             break
     }
+}
+
+async function markAllNotifyReadOfCurUser({ choice }){
+    try{
+        state.confirmBDialogUi.loading.show = true
+        if(choice != 'confirm') return
+        if(store.UNREAD_MSG_COUNT <= 0){
+            store.setWarningMsg(`所以消息已全部已读！`)
+            state.confirmBDialogUi.show = false
+            return
+        }
+
+        const response = await markAllNotifyRead()
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = await response.json()
+        state.messages.forEach(it => it.read = true)
+        store.setUnreadMsgCount(0)
+        store.setSuccessMsg(`已将${result}条消息设为已读`)
+    }catch(e){
+        store.setErrorMsg("无法设置消息状态！")
+        console.error(e)
+    }finally{
+        state.confirmBDialogUi.loading.show = false
+        state.confirmBDialogUi.show = false
+    }
+}
+
+function handleAction(){
+    state.confirmBDialogUi.show = true
 }
 
 onMounted(()=>{

@@ -778,3 +778,16 @@ export function deleteOneBlacklist(type, contentId, curUserId) {
         credentials: 'same-origin'
     })
 }
+
+export function markAllNotifyRead() {
+    return fetch(`${BASE_URL}/notify/read/batch/all`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+
+    })
+}

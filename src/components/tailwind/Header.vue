@@ -1,7 +1,7 @@
 <template>
     <div>
         <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem] w-[calc(100%*5/13)]"
-        :class="[!state.noBorder ? 'border-btm' : '']">
+            :class="[!state.noBorder ? 'border-btm' : '']">
             <div class="text-[15pt] h-full flex flex-row items-center">
                 <div @click="routeBackTo" v-if="props.goBack" v-tooltip:full="'返回'"
                     class="material-icons-round cursor-pointer text-[14pt] mr-[0.5rem]">
@@ -43,15 +43,8 @@ import router from '@/route'
 import { store } from '@/store'
 
 const props = defineProps(['title', 'goBack', 'showMenu', 'menuIcon', 'menuAction','iconTooltip','width','noBorder'])
-
+const emits = defineEmits(['handleAction'])
 const state = reactive({
-    // backArrow: props.goBack,
-    // titleText: props.title,
-    // menuIcon: props.menuIcon,
-    // showMenu: props.showMenu,
-    // menuAction: props.menuAction,
-    // iconTooltip: props.iconTooltip,
-    // width: props.width,
     routeUrl: '/',
     editIcon: '',
     url: window.location.href,
@@ -61,23 +54,7 @@ const state = reactive({
 
 
 function handleAction() {
-    const action = props.menuAction.action
-    const param = props.menuAction.param
-    switch (action) {
-        case 'route':
-            routeTo(param)
-            break;
-        case 'submit':
-            store.IS_SUBMIT = param
-            break
-        default:
-            break;
-    }
-}
-
-function routeTo(url) {
-    if (!url) return
-    router.push(url)
+    emits('handleAction')
 }
 
 function routeBackTo() {

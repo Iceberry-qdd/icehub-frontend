@@ -6,8 +6,8 @@
             :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu"
             :menuIcon="state.headerConfig.menuIcon"
-            :menuAction="state.headerConfig.menuAction"
-            :iconTooltip="state.headerConfig.iconTooltip">
+            :iconTooltip="state.headerConfig.iconTooltip"
+            @handleAction="handleAction">
         </Header>
         <div v-if="state.isLoading == true" class="loading">
             <IconLoading :class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
@@ -225,7 +225,6 @@ const state = reactive({
         goBack: true,
         showMenu: true,
         menuIcon: 'done',
-        menuAction: { action: 'submit', param: true },
         iconTooltip: '提交资料',
         width: 0
     }
@@ -239,12 +238,10 @@ function showImageCropper(mode) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
 }
 
-watch(() => store.IS_SUBMIT, (newVal, oldVal) => {
-    if (newVal == true) {
-        state.newUser.gender = selected.value
-        submitProfile()
-    }
-})
+function handleAction() {
+    state.newUser.gender = selected.value
+    submitProfile()
+}
 
 async function checkUsernameValid() {
     try {
@@ -332,15 +329,15 @@ const bannerPic = computed(() => {
     const defaultUrl = '/src/assets/default-bg.jpg'
     const clippedUrl = store.CROPPED_IMAGE.banner
     const { previewUrl, originUrl, contentType } = state.user.bannerUrl || [null, null, null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return clippedUrl || originUrl || defaultUrl
+    if (contentType && contentType.toLowerCase() == 'image/gif') return clippedUrl || originUrl || defaultUrl
     return clippedUrl || previewUrl || originUrl || defaultUrl
 })
 
 const avatarPic = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
     const clippedUrl = store.CROPPED_IMAGE.avatar
-    const { previewUrl, originUrl,contentType } = state.user.avatarUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return clippedUrl|| originUrl || defaultUrl
+    const { previewUrl, originUrl, contentType } = state.user.avatarUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return clippedUrl || originUrl || defaultUrl
     return clippedUrl || previewUrl || originUrl || defaultUrl
 })
 

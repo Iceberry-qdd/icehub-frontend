@@ -10,7 +10,7 @@
                         <div @click="toggleVisibilityAction" class="relative flex flex-row gap-x-1 items-center text-[11pt] text-[#3b82f6] border-[#3b82f6] border-2 py-[0.1rem] px-3 rounded-full min-w-[4rem] cursor-pointer">
                             <span>{{ curVisibility.name }}</span>
                             <VisibilityForPostEditorAction
-                                class="absolute top-[2rem] text-black z-[99] py-1"
+                                class="absolute top-[2rem] text-black z-[99]"
                                 :visibility="state.data.status"
                                 v-if="state.showVisibilityPanel"
                                 :ui="state.visibilityActions"
@@ -78,16 +78,16 @@ const state = reactive({
         type: 'REPOST',
         parentId: null,
         rootId: null,
-        status:'PUBLIC'
+        status: 'PUBLIC'
     },
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     showVisibilityPanel: false,
     visibilityActions: [
-        { id: 1, name: '公开', code: 'PUBLIC',icon:'public', picked: false },
-        { id: 2, name: '公共时间线内隐藏', code: 'NOT_TIMELINE',icon:'vpn_lock', picked: false },
-        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon:'people_outline', picked: false },
-        { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon:'people', picked: false },
-        { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon:'lock', picked: false },
+        { id: 1, name: '公开', code: 'PUBLIC', icon: 'public', picked: false },
+        { id: 2, name: '公共时间线内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock', picked: false },
+        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'people_outline', picked: false },
+        { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people', picked: false },
+        { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock', picked: false },
     ]
 })
 
@@ -97,18 +97,18 @@ function resize() {
     //FIXME 当删除内容时无法自动调整大小
 }
 
-function dismiss(){
+function dismiss() {
     emits('dismiss')
 }
 
 async function reposting() {
-    if(state.loading==true){
+    if (state.loading == true) {
         store.setWarningMsg('正在提交中，请勿重复提交')
         return
     }
     state.loading = true
     try {
-        if(state.parentPost.plan) throw new Error('该帖子尚未发布，无法进行转发操作')
+        if (state.parentPost.plan) throw new Error('该帖子尚未发布，无法进行转发操作')
         state.data.parentId = state.parentPost.id
         state.data.rootId = state.parentPost.root ? state.parentPost.root.id : state.parentPost.id
         state.data.userId ??= state.curUser.id
@@ -121,9 +121,9 @@ async function reposting() {
         state.data.content = null
         store.setSuccessMsg('转发成功')
         // 发布通知
-        const receiverId=state.parentPost.root==null ? state.parentPost.user.id : state.parentPost.root.user.id
+        const receiverId = state.parentPost.root == null ? state.parentPost.user.id : state.parentPost.root.user.id
         // ws.sendToOneQueue(new MsgPack(result.id, state.curUser.id, 'REPOST', receiverId),'interact')
-        if(state.data.status.code !== 'PUBLIC'){
+        if (state.data.status.code !== 'PUBLIC') {
             postingNew(result)
         }
         dismiss()
@@ -137,8 +137,8 @@ async function reposting() {
 
 const avatar = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${state.curUser.nickname}.svg`
-    const { previewUrl, originUrl,contentType } = state.curUser.avatarUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const { previewUrl, originUrl, contentType } = state.curUser.avatarUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
@@ -147,16 +147,16 @@ const curVisibility = computed(() => {
     return filteredActions.length > 0 ? filteredActions[0] : state.visibilityActions[0]
 })
 
-function pickVisibility(args){
+function pickVisibility(args) {
     state.data.status = args[0]
-    for(let i = 0; i < state.visibilityActions.length; i++){
+    for (let i = 0; i < state.visibilityActions.length; i++) {
         const action = state.visibilityActions[i]
         action.picked = action.code === state.data.status
     }
     state.showVisibilityPanel = false
 }
 
-function toggleVisibilityAction(){
+function toggleVisibilityAction() {
     const lastState = state.showVisibilityPanel
     state.showVisibilityPanel = !lastState
 }
