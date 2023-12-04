@@ -95,7 +95,7 @@ const hasMore = computed(() => {
 })
 
 const allowReview = computed(() => {
-    return state.post && !state.post.plan
+    return state.post && !state.post.plan && state.post.allowReview
 })
 
 async function getPost(id) {

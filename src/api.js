@@ -791,3 +791,21 @@ export function markAllNotifyRead() {
 
     })
 }
+
+export function toggleCloseReviewApi({ id, allowReview }) {
+    const requestBody = {
+        id: id,
+        oldAllowReview: allowReview,
+        newAllowReview: !allowReview
+    }
+    return fetch(`${BASE_URL}/post/allowReview`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}

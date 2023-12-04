@@ -33,6 +33,10 @@
                  v-if="showVisibilityAction">
             </VisibilityAction>
 
+            <CloseReviewAction class="action last:rounded-b-[8px] first:rounded-t-[8px]" :post="state.post"
+                v-if="state.curUser.id === state.post.user.id">
+            </CloseReviewAction>
+
             <AdminOperationAction v-if="showAdminAction"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </AdminOperationAction>
@@ -72,6 +76,7 @@ import BlockUserAction from '@/components/tailwind/menus/BlockUserAction.vue'
 import PosterGenerateAction from '@/components/tailwind/menus/PosterGenerateAction.vue'
 import AdminOperationAction from '@/components/tailwind/menus/AdminOperationAction.vue'
 import ReportPostProblemAction from '@/components/tailwind/menus/ReportPostProblemAction.vue'
+import CloseReviewAction from '@/components/tailwind/menus/CloseReviewAction.vue'
 
 const props = defineProps(['post'])
 const { dismissPostMenus } = inject('dismissPostMenus')
