@@ -27,7 +27,7 @@
                                 <EmojiPanel
                                     id = "emojiPanel"
                                     v-if="state.showEmojiPanel"
-                                    @emojiName="insertEmoji"
+                                    @insertEmojiCode="insertEmoji"
                                     class="z-[99] absolute top-[2.5rem] min-w-max min-h-max">
                                 </EmojiPanel>
                             </Transition>
@@ -136,9 +136,8 @@ function resize() {
     //FIXME 当删除内容时无法自动调整大小
 }
 
-function insertEmoji(name) {
-    const emojiName = ` :${name[0]}: `
-    state.content = state.content.concat(emojiName)
-    state.showEmojiPanel = false
+function insertEmoji({ unified }) {
+    const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
+    state.content = state.content.concat(emoji)
 }
 </script>

@@ -24,7 +24,7 @@
                     class="material-icons-round last-month">
                     keyboard_arrow_left
                 </div>
-                <div class="text-[11pt] font-bold">{{ state.pickedYear }}</div>
+                <div class="text-[11pt] font-bold">{{ `${state.pickedYear}-${state.pickedMonth}` }}</div>
                 <div
                     @click="canPickMonthAfter ? addOneMonth() : ''"
                     :class="[canPickMonthAfter ? '' : 'm-disabled']"
@@ -46,10 +46,6 @@
                         {{ week }}
                     </div>
                 </div>
-                <div
-                    class="absolute flex justify-center items-center w-full -translate-x-[1rem] h-[calc(100%-2rem-0.75rem-0.5rem-11pt-2rem-1.25rem-16pt-2rem-2.5rem)] text-[96pt] text-[#EBEEF5] -z-[1]">
-                    {{ state.pickedMonth }}
-                </div>
                 <div class="grid grid-cols-7 gap-1 pt-2 cursor-pointer">
                     <div
                         v-for="i in startWeekOfPickedMonth - 1"
@@ -57,7 +53,7 @@
                     </div>
 
                     <div v-for="i in daysCountOfPickedMonth"
-                        :class="[state.pickedDate == i ? 'bg-[#c6e2ff] hover:bg-[#c6e2ff]' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '' : 'm-disabled']"
+                        :class="[state.pickedDate == i ? 'text-white bg-blue-500' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '' : 'm-disabled']"
                         @click="canPickThisDay(i) ? state.pickedDate = i : ''"
                         class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center">
                         {{ i }}
@@ -85,21 +81,6 @@
                 <option class="text-[11pt] font-normal" v-for="(minute, index) in 60" :value="index">{{ index < 10 ? '0' + index : index }}</option>
             </select>
         </div>
-
-        <!-- 滚轮形式时间选择器，未实现 -->
-        <!-- <div class="w-[9.5rem]"></div>
-            <div class="time-picker flex flex-row top-0 translate-x-[20.5rem] translate-y-[2.75rem] h-[calc(100%-2.75rem)] cursor-n-resize">
-                <div
-                    class="overflow-y-scroll overflow-x-hidden  w-[3rem] h-full text-[10pt] flex flex-col divide-y">
-                    <div class="w-full h-full py-1 flex flex-row flex-nowrap justify-center items-center" v-for="i in 24">{{ i - 1 }}</div>
-                </div>
-                <div class="overflow-y-scroll overflow-x-hidden w-[3rem] h-full text-[10pt] flex flex-col divide-y">
-                    <div class="w-full h-full py-1 flex flex-row flex-nowrap justify-center items-center" v-for="i in 60">{{ i - 1 }}</div>
-                </div>
-                <div class="overflow-y-scroll overflow-x-hidden w-[3rem] h-full text-[10pt] flex flex-col divide-y">
-                    <div class="w-full h-full py-1 flex flex-row flex-nowrap justify-center items-center" v-for="i in 60">{{ i - 1 }}</div>
-                </div>
-            </div> -->
     </div>
 </template>
 

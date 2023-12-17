@@ -6,8 +6,9 @@
             <button v-for="(emoji, index) in state.historyEmojis" :key="index" :title="emoji.short_name"
                 @click="chooseEmoji(emoji)"
                 class="flex aria-selected justify-center items-center w-[2rem] h-[2rem] p-1 border border-transparent rounded-[8px] cursor-pointer hover:bg-[#f1f3f4] focus:bg-[#cfe2ff]">
-                <span :style="{ backgroundPosition: calcSpriteSheet(emoji.sheet_x, emoji.sheet_y) }"
-                    class="w-[22px] h-[22px] bg-[length:6100%_6100%] bg-[url('https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/sheets-256/64.png')]"></span>
+                <span>{{ emojiCode(emoji.unified) }}</span>
+                <!-- <span :style="{ backgroundPosition: calcSpriteSheet(emoji.sheet_x, emoji.sheet_y) }"
+                    class="w-[22px] h-[22px] bg-[length:6100%_6100%] bg-[url('https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/sheets-256/64.png')]"></span> -->
             </button>
         </div>
 
@@ -20,14 +21,13 @@
                 <div class="grid p-2 gap-2 grid-cols-6">
                     <button @click="chooseEmoji(emoji)" v-for="(emoji) in emojis" :key="emoji.unified" :title="emoji.name"
                         class="flex justify-center items-center w-[2.5rem] h-[2.5rem] p-1 border text-[16pt] border-transparent rounded-[8px] cursor-pointer hover:bg-[#f1f3f4] focus:bg-[#cfe2ff]">
-                        <span :style="{ backgroundPosition: calcSpriteSheet(emoji.sheet_x, emoji.sheet_y) }"
-                            class="w-[24px] h-[24px] bg-[length:6100%_6100%] bg-[url('https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/sheets-256/64.png')]"></span>
+                        <span>{{ emojiCode(emoji.unified) }}</span>
+                        <!-- <span :style="{ backgroundPosition: calcSpriteSheet(emoji.sheet_x, emoji.sheet_y) }"
+                            class="w-[24px] h-[24px] bg-[length:6100%_6100%] bg-[url('https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/sheets-256/64.png')]"></span> -->
                     </button>
                 </div>
             </div>
         </div>
-
-
     </div>
 </template>
 
@@ -51,7 +51,7 @@
 import { reactive, onMounted, onUnmounted } from 'vue'
 import emojiPack from 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/+esm'
 
-const emits = defineEmits(['emojiName', 'dismissEmojiPanel'])
+const emits = defineEmits(['insertEmojiCode', 'dismissEmojiPanel'])
 
 const categoryZh = {
     'Smileys & Emotion': '表情与角色',
@@ -81,7 +81,7 @@ function calcSpriteSheet(sheet_x, sheet_y) {
 
 function chooseEmoji(emoji) {
     storeEmojiToLocalStorage(emoji)
-    emits('emojiName', [emoji.short_name])
+    emits('insertEmojiCode', emoji)
 }
 
 function storeEmojiToLocalStorage(emoji) {
@@ -98,6 +98,10 @@ function storeEmojiToLocalStorage(emoji) {
         return total
     }, [])
     localStorage.setItem(KEY, JSON.stringify(historyEmojis))
+}
+
+function emojiCode(unified){
+    return String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
 }
 
 onMounted(() => {

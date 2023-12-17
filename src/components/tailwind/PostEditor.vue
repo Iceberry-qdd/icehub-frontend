@@ -106,7 +106,7 @@
                         <Transition name="fade">
                             <EmojiPanel
                                 @dismissEmojiPanel="dismissEmojiPanel"
-                                v-if="state.showEmojiPanel" @emojiName="insertEmoji"
+                                v-if="state.showEmojiPanel" @insertEmojiCode="insertEmoji"
                                 class="z-[99] absolute top-[2.5rem] min-w-max min-h-max">
                             </EmojiPanel>
                         </Transition>
@@ -212,6 +212,7 @@ const state = reactive({
     result: "",
     showImagePanel: false,
     data: {
+        allowReview: true,
         content: "",
         top: false,
         attachmentsUrl: [],
@@ -319,9 +320,9 @@ function choosePics() {
     imgFileSelector.click()
 }
 
-function insertEmoji(name) {
-    const emojiName = ` :${name[0]}: `
-    state.content = state.content.concat(emojiName)
+function insertEmoji({ unified }) {
+    const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
+    state.content = state.content.concat(emoji)
 }
 
 function pickVisibility(args) {
