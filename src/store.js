@@ -16,7 +16,7 @@ export const store = reactive({
     },
     dismissMsg(messageId) {
         const message = this.GLOBAL_MSG.find(it => it.id == messageId)
-        if (message == undefined) return
+        if (!message) return
 
         const index = this.GLOBAL_MSG.indexOf(message)
         this.GLOBAL_MSG.splice(index, 1)

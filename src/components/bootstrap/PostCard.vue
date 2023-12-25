@@ -33,7 +33,10 @@
             </div>
         </div>
 
-        <div class="m-card-body" :style="{ 'margin-left': state.post.type == 'MARKDOWN' ? '3.5rem' : '3.5rem' }">
+        <div
+            class="m-card-body"
+            :class="[state.post.type == 'MARKDOWN' ? 'mkd' : '']"
+            :style="{ 'margin-left': state.post.type == 'MARKDOWN' ? '0' : '3.5rem' }">
             <div v-if="state.shrinkContent" class="expand-btn" @click="state.shrinkContent = false">展开</div>
             <p class="card-text" id="content" :class="[state.shrinkContent ? 'max-height-50vh' : '']">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
@@ -74,7 +77,7 @@
             </div>
         </div>
 
-        <div v-if="!state.post.plan" class="btn-group z-index-96" :class="[state.post.type == 'MARKDOWN' ? 'btn-group-umkd' : 'btn-group-umkd']" role="group">
+        <div v-if="!state.post.plan" class="btn-group z-index-96" :class="[state.post.type == 'MARKDOWN' ? 'btn-group-mkd' : 'btn-group-umkd']" role="group">
             <Teleport to="#app">
                 <RepostPanel
                     v-if="state.showRepostPanel"
@@ -383,7 +386,7 @@
 }
 
 .post-menus {
-    z-index: 99;
+    z-index: 100;
     position: absolute;
     height: auto;
     right: 3%;
@@ -415,6 +418,10 @@
 
 .m-card-body {
     padding: 0.5rem 0.8rem 0.5rem 0 !important;
+}
+
+.m-card-body.mkd {
+    padding: 0 !important;
 }
 
 .card-text {

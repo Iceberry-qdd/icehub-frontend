@@ -50,10 +50,9 @@
                 </div>
                 <div v-if="props.user.website" class="flex flex-row gap-x-2 items-center">
                     <IconWebsite class="text-[12pt]" title="个人网站"></IconWebsite>
-                    <a :href="props.user.website"
-                        class="hover:underline hover:decoration-blue-500 hover:text-blue-500">{{
-                            props.user.website
-                        }}</a>
+                    <a :href="props.user.website" class="hover:underline hover:decoration-blue-500 hover:text-blue-500">
+                        {{ props.user.website }}
+                    </a>
                 </div>
                 <div class="flex flex-row gap-x-6">
                     <div @click="routeTo('followerList', props.user.nickname)" class="cursor-pointer hover:underline">
@@ -136,34 +135,34 @@ const state = reactive({
 const formattedDate = computed(() => {
     const timestamps = props.user.createdTime
     const date = new Date(Number.parseInt(timestamps))
-    return `${date.getFullYear()}年${date.getMonth()+1}月${date.getDate()}日`
+    return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
 })
 
 const bannerPic = computed(() => {
-    const defaultUrl = '/src/assets/default-bg.jpg'
-    const { previewUrl, originUrl,contentType } = props.user.bannerUrl || [null, null, null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const defaultUrl = import.meta.env.VITE_DEFAULT_BG
+    const { previewUrl, originUrl, contentType } = props.user.bannerUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
 const followerCountText = computed(() => {
-    const { gender, followerCount } = props.user
-    if (isMyself.value == true) return `订阅我的 ${followerCount}`
-    if (gender == 'FEMALE') return `订阅她的 ${followerCount}`
-    return `订阅他的 ${followerCount}`
+    const { gender, followingCount } = props.user
+    if (isMyself.value == true) return `订阅我的 ${followingCount}`
+    if (gender == 'FEMALE') return `订阅她的 ${followingCount}`
+    return `订阅他的 ${followingCount}`
 })
 
 const followingCountText = computed(() => {
-    const { gender, followingCount } = props.user
-    if (isMyself.value == true) return `我的订阅 ${followingCount}`
-    if (gender == 'FEMALE') return `她的订阅 ${followingCount}`
-    return `他的订阅 ${followingCount}`
+    const { gender, followerCount } = props.user
+    if (isMyself.value == true) return `我的订阅 ${followerCount}`
+    if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
+    return `他的订阅 ${followerCount}`
 })
 
 const avatarPic = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${props.user.nickname}.svg`
-    const { previewUrl, originUrl,contentType } = props.user.avatarUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const { previewUrl, originUrl, contentType } = props.user.avatarUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
@@ -207,7 +206,7 @@ async function unFollowAUser(userId) {
 
         const result = response.json()
         if (result == false) throw new Error('取消关注失败！')
-        state.isFollower = !result
+        state.isFollowing = !result
     } catch (e) {
         store.setErrorMsg('取消订阅失败！')
         console.error(e)
@@ -221,7 +220,7 @@ function showSlide(images, idx) {
     store.showSlide(images, idx)
 }
 
-function unblockUser(){
+function unblockUser() {
     emits('unblockUser')
     state.confirmBDialogUi.show = false
 }

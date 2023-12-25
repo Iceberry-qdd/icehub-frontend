@@ -1,4 +1,4 @@
-const BASE_URL = "https://icehub.com:8080"
+const BASE_URL = import.meta.env.VITE_BASE_URL
 const TOKEN = localStorage.getItem('TOKEN')
 
 /**
@@ -394,7 +394,7 @@ export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
  */
 export function uploadUserBanner(data) {
     let formData = new FormData()
-    const fileInfo = JSON.stringify({ hidden: false, altText: '', contentType: '' })
+    const fileInfo = JSON.stringify({ hidden: false, altText: '', contentType: data.type })
     const image = JSON.stringify(data)
     formData.append('file', new Blob([image], { type: 'application/json' }))
     formData.append('fileInfo', new Blob([fileInfo], { type: 'application/json' }))
@@ -416,7 +416,7 @@ export function uploadUserBanner(data) {
  */
 export function uploadUserAvatar(data) {
     let formData = new FormData()
-    const fileInfo = JSON.stringify({ hidden: false, altText: '', contentType: '' })
+    const fileInfo = JSON.stringify({ hidden: false, altText: '', contentType: data.type })
     const image = JSON.stringify(data)
     formData.append('file', new Blob([image], { type: 'application/json' }))
     formData.append('fileInfo', new Blob([fileInfo], { type: 'application/json' }))

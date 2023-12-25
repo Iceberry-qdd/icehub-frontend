@@ -1,5 +1,5 @@
 <template>
-    <div v-if="state.from  && state.content" class="notify-card" :class="postStatus">
+    <div v-if="state.from && state.content" class="notify-card" :class="postStatus">
         <div>
             <Like v-if="state.type == 'POST_LIKE' || state.type == 'REVIEW_LIKE'" theme="filled" size="20" fill="red" strokeWidth="3" class="icon bg-[#fecaca] hover:bg-[#fecaca]" />
             <message v-else-if="state.type == 'REVIEW' || state.type == 'REVIEW_REPLY'" theme="filled" size="19" fill="#f97316" :strokeWidth="3" class="icon bg-[#fed7aa] hover:bg-[#fed7aa]" />
@@ -34,17 +34,17 @@
                 <UserProfileCard :user="state.content"></UserProfileCard>
             </div>
             <div class="content" v-if="state.type == 'AT_SIGN'">
-                
+
             </div>
             <div class="content" v-if="state.type == 'SYS_NOTIFY'">
-            
+
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-.notify-card:not(.UNREAD):hover{
+.notify-card:not(.UNREAD):hover {
     background-color: #f5f5f5;
 }
 
@@ -54,7 +54,7 @@
     height: 2rem;
 }
 
-.i-icon:hover{
+.i-icon:hover {
     cursor: pointer;
     padding: 0.4rem;
     border-radius: 99rem;
@@ -103,13 +103,13 @@
     color: #9ca3af;
 }
 
-.content{
+.content {
     font-size: 11pt;
 }
 </style>
 
 <script setup>
-import { computed, reactive,watch } from 'vue'
+import { computed, reactive, watch } from 'vue'
 import { Like, Message, Share, PeoplePlusOne, AtSign } from '@icon-park/vue-next'
 import { humanizedTime } from '@/utils/formatUtils.js'
 import RepostCard from '@/components/tailwind/RepostCard.vue'
@@ -156,29 +156,29 @@ const formattedTime = computed(() => {
     return humanizedTime(state.timestamps)
 })
 
-const postStatus = computed(()=>{
-    return state.read?'READ':'UNREAD'
+const postStatus = computed(() => {
+    return state.read ? 'READ' : 'UNREAD'
 })
 
-function routeToUserProfile(user){
-    router.push({ name: 'profile', params: { nickname: user.nickname }})
+function routeToUserProfile(user) {
+    router.push({ name: 'profile', params: { nickname: user.nickname } })
 }
 
-watch(()=>props.message.read,function(newVal,oldVal){
+watch(() => props.message.read, function (newVal, oldVal) {
     state.read = newVal
 })
 
-function avatar(nickname,avatarUrl) {
+function avatar(nickname, avatarUrl) {
     const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
-    const { previewUrl, originUrl,contentType } = avatarUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const { previewUrl, originUrl, contentType } = avatarUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 }
 
 function banner(bannerUrl) {
-    const defaultUrl = '/src/assets/default-bg.jpg'
-    const { previewUrl, originUrl,contentType } = bannerUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const defaultUrl = import.meta.env.VITE_DEFAULT_BG
+    const { previewUrl, originUrl, contentType } = bannerUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 }
 </script>

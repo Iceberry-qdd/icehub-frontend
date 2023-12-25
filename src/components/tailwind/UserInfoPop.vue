@@ -8,7 +8,7 @@
                 class="w-[3.5rem] h-[3.5rem] rounded-[8px] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white" />
             <div class="absolute top-[8rem] ml-[0.95rem] flex flex-row gap-x-1 items-center">
                 <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline cursor-pointer">
-                {{ state.user.nickname }}</div>
+                    {{ state.user.nickname }}</div>
                 <i class="bi bi-patch-check-fill verify text-[10pt] text-blue-500" v-if="state.user.verified"></i>
             </div>
             <div class="absolute top-[9.8rem] ml-[0.95rem] text-[11pt]">{{ brief }}</div>
@@ -54,16 +54,16 @@ const state = reactive({
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const bannerPic = computed(() => {
-    const defaultUrl = '/src/assets/default-bg.jpg'
+    const defaultUrl = import.meta.env.VITE_DEFAULT_BG
     const { previewUrl, originUrl, contentType } = state.user.bannerUrl || [null, null, null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
 const avatarPic = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
     const { previewUrl, originUrl, contentType } = state.user.avatarUrl || [null, null, null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 

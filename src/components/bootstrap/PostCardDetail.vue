@@ -327,7 +327,7 @@
 }
 
 .post-menus{
-    z-index: 99;
+    z-index: 100;
     position: absolute;
     height: auto;
     right: 3%;

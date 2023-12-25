@@ -8,7 +8,6 @@
             <GlobalTipDialog></GlobalTipDialog>
             <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
             <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
-            <ReviewPanel v-if="store.REVIEW_PANEL_DATA"></ReviewPanel>
             <div id="sidebar-l" :style="{ 'flex-basis': state.basis[0] + '%' }" v-if="state.basis[0] > 0">
                 <Brand></Brand>
                 <Sidebar id="menu"></Sidebar>
@@ -21,7 +20,7 @@
                 </router-view>
             </div>
             <div id="sidebar-r" :style="{ 'flex-basis': state.basis[2] + '%' }" v-if="state.basis[2] > 0">
-                <RecommendUserCard></RecommendUserCard>
+                <Recommend></Recommend>
             </div>
         </div>
     </div>
@@ -55,7 +54,7 @@
 <script setup>
 import GlobalBanner from '@/components/tailwind/GlobalBanner.vue'
 import Sidebar from '@/components/bootstrap/Sidebar.vue'
-import RecommendUserCard from '@/components/bootstrap/RecommendUserCard.vue'
+import Recommend from '@/components/tailwind/Recommend.vue'
 import GlobalTipDialog from '@/components/tailwind/GlobalTipDialog.vue'
 import Brand from '@/components/tailwind/Brand.vue'
 import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
@@ -63,10 +62,8 @@ import { getCurUserInfo } from '@/api'
 import { store } from '@/store'
 import ImageSlide2 from '@/components/tailwind/ImageSlide2.vue'
 import ImageCropper from '@/components/tailwind/ImageCropper.vue'
-import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 import { ws } from '@/websocket.js'
 import GlobalNotifyBanner from '@/components/tailwind/GlobalNotifyBanner.vue'
-import ReviewPanel from '@/components/tailwind/ReviewPanel.vue'
 import { useRoute } from 'vue-router'
 
 const $route = useRoute()

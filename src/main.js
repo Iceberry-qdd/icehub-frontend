@@ -12,11 +12,12 @@ import { extensions } from './showdownExtensions/Extensions.js'
 
 const reg = new RegExp(/.*auth\.html.*$/)
 const path = window.location.href.match(reg)
+const origin = window.location.origin
 if (path != null) {
     createApp(App2).mount("#app2")
 } else {
     showdown.setFlavor('github')
-    const options = { emoji: false, ghMentions: false, ghMentionsLink: 'http://icehub.com:5173/profile/{u}' }
+    const options = { emoji: false, ghMentions: false, ghMentionsLink: `${origin}/profile/{u}` }
     Object.keys(options).forEach(key => { showdown.setOption(key, options[key]) })
     showdown.extension('exts', extensions)
 

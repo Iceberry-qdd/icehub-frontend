@@ -10,9 +10,18 @@
             <div class="text-[14pt] font-bold">{{ state.user.nickname }}</div>
             <div class="text-[11pt] max-w-[85%] break-all brief">{{ state.user.remark }}</div>
             <div class="flex flex-row w-full mt-[1rem]">
-                <div class="w-1/3 flex flex-col gap-1 justify-center items-center"><div class="font-bold">{{ state.user.postCount }}</div><div>帖子</div></div>
-                <div class="w-1/3 flex flex-col gap-1 justify-center items-center"><div class="font-bold">{{ state.user.followingCount }}</div><div>订阅他的</div></div>
-                <div class="w-1/3 flex flex-col gap-1 justify-center items-center"><div class="font-bold">{{ state.user.followerCount }}</div><div>他的订阅</div></div>
+                <div class="w-1/3 flex flex-col gap-1 justify-center items-center">
+                    <div class="font-bold">{{ state.user.postCount }}</div>
+                    <div>帖子</div>
+                </div>
+                <div class="w-1/3 flex flex-col gap-1 justify-center items-center">
+                    <div class="font-bold">{{ state.user.followingCount }}</div>
+                    <div>订阅他的</div>
+                </div>
+                <div class="w-1/3 flex flex-col gap-1 justify-center items-center">
+                    <div class="font-bold">{{ state.user.followerCount }}</div>
+                    <div>他的订阅</div>
+                </div>
             </div>
         </div>
     </div>
@@ -29,24 +38,24 @@
 </style>
 
 <script setup>
-import { reactive,computed } from 'vue'
+import { reactive, computed } from 'vue'
 
 const props = defineProps(['user'])
 const state = reactive({
-    user : props.user
+    user: props.user
 })
 
 const avatar = computed(() => {
     const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
-    const { previewUrl, originUrl,contentType } = state.user.avatarUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const { previewUrl, originUrl, contentType } = state.user.avatarUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 
 const bannerPic = computed(() => {
-    const defaultUrl = '/src/assets/default-bg.jpg'
-    const { previewUrl, originUrl,contentType } = state.user.bannerUrl || [null, null,null]
-    if(contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
+    const defaultUrl = import.meta.env.VITE_DEFAULT_BG
+    const { previewUrl, originUrl, contentType } = state.user.bannerUrl || [null, null, null]
+    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
     return previewUrl || originUrl || defaultUrl
 })
 

@@ -34,7 +34,7 @@
             </VisibilityAction>
 
             <CloseReviewAction class="action last:rounded-b-[8px] first:rounded-t-[8px]" :post="state.post"
-                v-if="state.curUser.id === state.post.user.id">
+                v-if="showCloseReviewAction">
             </CloseReviewAction>
 
             <AdminOperationAction v-if="showAdminAction"
@@ -140,6 +140,10 @@ const showVisibilityAction = computed(() => {
 
 const showDeletePostAction = computed(() => {
     return isMySelf.value == true
+})
+
+const showCloseReviewAction = computed(() => {
+    return state.curUser.id === state.post.user.id && isPlannedPost.value == false
 })
 
 function handlePostMenusDismiss(event) {

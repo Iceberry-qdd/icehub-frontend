@@ -326,7 +326,7 @@ async function uploadBanner() {
 }
 
 const bannerPic = computed(() => {
-    const defaultUrl = '/src/assets/default-bg.jpg'
+    const defaultUrl = import.meta.env.VITE_DEFAULT_BG
     const clippedUrl = store.CROPPED_IMAGE.banner
     const { previewUrl, originUrl, contentType } = state.user.bannerUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return clippedUrl || originUrl || defaultUrl
