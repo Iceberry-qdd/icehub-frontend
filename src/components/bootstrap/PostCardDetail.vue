@@ -15,8 +15,11 @@
                     class="user-info-pop">
                 </UserInfoPop>
             </Transition>
-            <a @mouseenter="state.showUserInfoPop = true" class="position-relative" @click="showUserProfile(state.post.user.id)">
-                <img @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="avatarUrl">
+            <a @mouseenter="state.showUserInfoPop = true" class="position-relative no-underline" @click="showUserProfile(state.post.user.id)">
+                <img v-if="state.post.user.avatarUrl" @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="avatarUrl">
+                <div v-else class="flex justify-center items-center bg-blue-500 h-[2.5rem] w-[2.5rem] rounded-16">
+                   <div class="font-16 font-bold white-text">{{ state.post.user.nickname.charAt(0) }}</div>
+                </div>
             </a>
             <div class="user-text">
                 <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline flex flex-row items-center gap-1">
@@ -391,6 +394,18 @@
     border-radius: 4rem !important;
     background-color: cadetblue !important;
 }
+
+.font-16{
+    font-size: 16pt;
+}
+
+.rounded-16{
+    border-radius: 8px;
+}
+
+.no-underline{
+    text-decoration: none;
+}
 </style>
 
 <script setup>
@@ -494,10 +509,9 @@ function showSlide(images, idx) {
 }
 
 const avatarUrl = computed(() => {
-    const defaultUrl = `https://api.multiavatar.com/${state.post.user.nickname}.svg`
     const { previewUrl, originUrl, contentType } = state.post.user.avatarUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl || defaultUrl
+    return previewUrl || originUrl
 })
 
 const hasPics = computed(() => {

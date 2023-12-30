@@ -1,10 +1,18 @@
 <template>
     <div>
         <div>
-            <div><img @click="showSlide([props.user.bannerUrl], 0)" class=" w-full max-h-[22rem] object-cover object-center" :src="bannerPic" /></div>
-            <div><img @click="showSlide([props.user.avatarUrl], 0)"
+            <div>
+                <img v-if="props.user.bannerUrl" @click="showSlide([props.user.bannerUrl], 0)" class="w-full max-h-[18rem] object-cover object-center" :src="bannerPic" />
+                <div v-else class="w-full h-[18rem] object-cover object-center bg-gradient-to-r from-sky-500 to-indigo-500"></div>
+            </div>
+            <div>
+                <img v-if="props.user.avatarUrl" @click="showSlide([props.user.avatarUrl], 0)"
                     class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
-                    :src="avatarPic" /></div>
+                    :src="avatarPic" />
+                <div v-else class="flex justify-center items-center relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg bg-blue-500 cursor-default">
+                    <div class="text-white text-[28pt] font-bold">{{ props.user.nickname.charAt(0) }}</div>
+                </div>
+            </div>
             <div v-if="!isMyself" class="flex w-full flex-row justify-end h-fit gap-x-3 px-[1rem] relative -top-[4rem]">
                 <div v-if="!props.user.blocking && !props.user.blocked" @click="toggleFollowState"
                     class="bg-blue-500 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer"
@@ -139,10 +147,9 @@ const formattedDate = computed(() => {
 })
 
 const bannerPic = computed(() => {
-    const defaultUrl = import.meta.env.VITE_DEFAULT_BG
     const { previewUrl, originUrl, contentType } = props.user.bannerUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl || defaultUrl
+    return previewUrl || originUrl
 })
 
 const followerCountText = computed(() => {
@@ -160,10 +167,9 @@ const followingCountText = computed(() => {
 })
 
 const avatarPic = computed(() => {
-    const defaultUrl = `https://api.multiavatar.com/${props.user.nickname}.svg`
     const { previewUrl, originUrl, contentType } = props.user.avatarUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl || defaultUrl
+    return previewUrl || originUrl
 })
 
 const isMyself = computed(() => { return props.user.id == state.curUser.id })

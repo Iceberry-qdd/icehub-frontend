@@ -6,7 +6,12 @@
             <div v-if="props.tieLocation == 'mid'" class="timeline-mid absolute w-[0.15rem] h-full top-0 left-[2.7rem] bg-gray-200 z-0"></div>
             <div v-if="props.tieLocation == 'top'" class="timeline-top absolute w-[0.15rem] top-[2.5rem] left-[2.7rem] bg-gray-200 z-0"></div>
             <div v-if="props.tieLocation == 'bottom'" class="timeline-bottom absolute w-[0.15rem] h-[2.5rem] top-0 left-[2.7rem] bg-gray-200 -z-0"></div>
-            <div class="h-fit z-10"><img :src="avatar" class="rounded-[6px] h-[2.5rem] w-[2.5rem] max-w-none cursor-default" /></div>
+            <div class="h-fit z-10">
+                <img v-if="state.curUser.avatarUrl" :src="avatar" class="rounded-[6px] h-[2.5rem] w-[2.5rem] max-w-none cursor-default" />
+                <div v-else class="flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-[6px] cursor-default bg-blue-500">
+                    <div class="text-white text-[14pt] font-bold">{{ state.curUser.nickname.charAt(0) }}</div>
+                </div>
+            </div>
             <div class="w-full">
                 <div v-if="state.content.length > 0" class="text-[11pt] mb-2">
                     回复 <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
@@ -124,10 +129,9 @@ async function submitReview() {
 }
 
 const avatar = computed(() => {
-    const defaultUrl = `https://api.multiavatar.com/${state.curUser.nickname}.svg`
     const { previewUrl, originUrl, contentType } = state.curUser.avatarUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl || defaultUrl
+    return previewUrl || originUrl
 })
 
 function resize() {

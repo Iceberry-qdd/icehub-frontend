@@ -10,7 +10,10 @@
         </div>
         <div class="w-full">
             <div>
-                <img @click.self="routeToUserProfile(state.from)" class="w-[2rem] h-[2rem] mb-2 rounded-full z-[97] relative" :src="avatar(state.from.nickname,state.from.avatarUrl)"/>
+                <img v-if="state.from.avatarUrl" @click.self="routeToUserProfile(state.from)" class="w-[2rem] h-[2rem] mb-2 rounded-full z-[97] relative" :src="avatar(state.from.nickname,state.from.avatarUrl)"/>
+                <div v-else class="flex justify-center items-center w-[2rem] h-[2rem] mb-2 rounded-full z-[97] reactive bg-blue-500">
+                    <div class="text-white text-[12pt] font-bold">{{ state.from.nickname.charAt(0) }}</div>
+                </div>
             </div>
             <div class="brief">
                 <div class="event-text">{{ brief }}</div>
@@ -169,16 +172,14 @@ watch(() => props.message.read, function (newVal, oldVal) {
 })
 
 function avatar(nickname, avatarUrl) {
-    const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
     const { previewUrl, originUrl, contentType } = avatarUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl || defaultUrl
+    return previewUrl || originUrl
 }
 
 function banner(bannerUrl) {
-    const defaultUrl = import.meta.env.VITE_DEFAULT_BG
     const { previewUrl, originUrl, contentType } = bannerUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl || defaultUrl
+    return previewUrl || originUrl
 }
 </script>

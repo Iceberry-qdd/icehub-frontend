@@ -4,8 +4,12 @@
             @click="routeTo(menu.routeTo, menu.id, menu.routeParams.nickname || null)" :class="{ active: menu.active }"
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
-                <img v-if="(menu.routeTo == '/profile')" :src="menu.icon" class="avatar" />
-                <span v-else class="material-icons-round no-hover">{{ menu.icon }}</span>{{ menu.name }}
+                <img v-if="menu.routeTo == '/profile' && state.user.avatarUrl" :src="menu.icon" class="avatar" />
+                <div v-else-if="menu.routeTo == '/profile' && !state.user.avatarUrl" class="flex justify-center items-center bg-blue-500 h-1.7 w-1.7 rounded-full">
+                   <div class="font-9 font-bold white-text">{{ state.user.nickname.charAt(0) }}</div>
+                </div>
+                <span v-else class="material-icons-round no-hover">{{ menu.icon }}</span>
+                <span>{{ menu.name }}</span>
             </div>
 
             <span class="badge rounded-pill" v-if="menu.badgeCount > 0">{{ menu.badgeCount }}</span>
@@ -74,7 +78,6 @@ li:hover {
 }
 
 .badge {
-    background-color: #cfe2ff !important;
     color: black;
     border-radius: 4rem !important;
     width: 2rem;
@@ -106,6 +109,26 @@ li:hover {
     font-size: 14pt;
     margin-right: 1rem;
 }
+
+.font-9{
+    font-size: 9pt;
+}
+
+.no-underline{
+    text-decoration: none;
+}
+
+.white-text{
+    color: white;
+}
+
+.h-1\.7{
+    height: 1.7rem;
+}
+
+.w-1\.7{
+    width: 1.7rem;
+}
 </style>
 
 <script setup>
@@ -120,13 +143,13 @@ const $route = useRoute()
 
 const state = reactive({
     menus: [
-        { id: 1, name: '主页', routeTo: '/index', routeParams: {}, icon: 'home', badgeCount: 12, visible: true, active: true },
-        { id: 2, name: '探索', routeTo: '/explore', routeParams: {}, icon: 'explore', badgeCount: 1, visible: true, active: false },
+        { id: 1, name: '主页', routeTo: '/index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: true },
+        { id: 2, name: '探索', routeTo: '/explore', routeParams: {}, icon: 'explore', badgeCount: 0, visible: true, active: false },
         { id: 3, name: '消息', routeTo: '/notify', routeParams: {}, icon: 'notifications', badgeCount: 0, visible: true, active: false },
         { id: 4, name: '书签', routeTo: '/bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: true, active: false },
         { id: 5, name: '勋章', routeTo: '/badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: false, active: false },
         { id: 6, name: '活动', routeTo: '/activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible:false, active: false },
-        { id: 7, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: true, active: false },
+        { id: 7, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: JSON.parse(localStorage.getItem("CUR_USER")).type === 'ADMIN', active: false },
         { id: 8, name: getCurUserNickname(), routeTo: '/profile', routeParams: { nickname: getCurUserNickname() }, icon: getCurUserAvatar(), badgeCount: 0, visible: true, active: false },
         { id: 9, name: '设置', routeTo: '/setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: true, active: false }
     ],
@@ -182,8 +205,7 @@ function getCurUserAvatar() {
     try {
         const { avatarUrl, nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
         const { previewUrl, originUrl } = avatarUrl || [null, null]
-        const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
-        return previewUrl || originUrl || defaultUrl
+        return previewUrl || originUrl
     } catch (e) {
         store.setErrorMsg("无法获取登录用户信息！")
         console.log(e.message)

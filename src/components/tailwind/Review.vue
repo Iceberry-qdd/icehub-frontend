@@ -15,9 +15,12 @@
                                 class="user-info-pop z-[99] absolute top-0 shadow-lg">
                             </UserInfoPop>
                     </Transition>
-                    <div class="w-[2.5rem] h-[2.5rem] relative z-10">
+                    <div class="relative z-10">
                         <a @mouseenter="state.showUserInfoPop = true" @click="routeToUser(props.review.user.nickname)">
-                            <img :src="avatar" class="rounded-[6px]" />
+                            <img v-if="props.review.user.avatarUrl" :src="avatar" class="w-[2.5rem] h-[2.5rem] rounded-[6px]" />
+                            <div v-else class="flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-[6px] cursor-default bg-blue-500">
+                                <div class="text-white text-[14pt] font-bold">{{ props.review.user.nickname.charAt(0) }}</div>
+                            </div>
                         </a>
                     </div>
                     <div class="z-20">
@@ -241,10 +244,9 @@ function routeToReplyDetail(reviewId) {
 }
 
 const avatar = computed(() => {
-    const defaultUrl = `https://api.multiavatar.com/${props.review.user.nickname}.svg`
     const { previewUrl, originUrl, contentType } = props.review.user.avatarUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl || defaultUrl
+    return previewUrl || originUrl
 })
 
 function routeToUser(nickname) {

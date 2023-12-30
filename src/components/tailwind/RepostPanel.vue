@@ -4,7 +4,10 @@
         <div class="flex flex-col flex-nowrap justify-between w-[40%] max-h-[60%] p-4 bg-white rounded-[8px] overflow-y-auto" :class="[state.showVisibilityPanel ? 'min-h-[38%]' : 'min-h-[28%]']">
             <div class="flex flex-row justify-between items-center">
                 <div class="flex flex-row items-center gap-x-2">
-                    <img :src="avatar" class="w-[2.5rem] h-[2.5rem] rounded-[8px]" />
+                    <img v-if="state.curUser.avatarUrl" :src="avatar" class="w-[2.5rem] h-[2.5rem] rounded-[8px]" />
+                    <div v-else class="flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-[8px] cursor-default bg-blue-500">
+                        <div class="text-white text-[14pt] font-bold">{{ state.curUser.nickname.charAt(0) }}</div>
+                    </div>
                     <div class="flex flex-row gap-4 h-full justify-center items-center">
                         <span class="text-[13pt] font-bold cursor-default">{{ state.curUser.nickname }}</span>
                         <div @click="toggleVisibilityAction" class="relative flex flex-row gap-x-1 items-center text-[11pt] text-[#3b82f6] border-[#3b82f6] border-2 py-[0.1rem] px-3 rounded-full min-w-[4rem] cursor-pointer">
@@ -136,10 +139,9 @@ async function reposting() {
 }
 
 const avatar = computed(() => {
-    const defaultUrl = `https://api.multiavatar.com/${state.curUser.nickname}.svg`
     const { previewUrl, originUrl, contentType } = state.curUser.avatarUrl || [null, null, null]
     if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl || defaultUrl
+    return previewUrl || originUrl
 })
 
 const curVisibility = computed(() => {
