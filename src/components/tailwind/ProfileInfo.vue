@@ -1,44 +1,36 @@
 <template>
     <div>
         <div>
-            <div>
-                <img v-if="props.user.bannerUrl" @click="showSlide([props.user.bannerUrl], 0)" class="w-full max-h-[18rem] object-cover object-center" :src="bannerPic" />
-                <div v-else class="w-full h-[18rem] object-cover object-center bg-gradient-to-r from-sky-500 to-indigo-500"></div>
-            </div>
-            <div>
-                <img v-if="props.user.avatarUrl" @click="showSlide([props.user.avatarUrl], 0)"
-                    class="relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg"
-                    :src="avatarPic" />
-                <div v-else class="flex justify-center items-center relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg bg-blue-500 cursor-default">
-                    <div class="text-white text-[28pt] font-bold">{{ props.user.nickname.charAt(0) }}</div>
-                </div>
-            </div>
-            <div v-if="!isMyself" class="flex w-full flex-row justify-end h-fit gap-x-3 px-[1rem] relative -top-[4rem]">
-                <div v-if="!props.user.blocking && !props.user.blocked" @click="toggleFollowState"
-                    class="bg-blue-500 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer"
-                    :class="{ 'bg-gray-300': state.isFollowing, 'bg-blue-500': !state.isFollowing, 'text-black': state.isFollowing, 'text-white': !state.isFollowing }">
-                    <div v-if="!state.loading"> {{ state.isFollowing ? '已订阅' : '订阅' }}</div>
-                    <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
-                </div>
-                <div v-else-if="props.user.blocking"
-                    @click="state.confirmBDialogUi.show = true"
-                    class="bg-red-200 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer">
-                    <div v-if="!state.loading" class="text-red-500"> 解除屏蔽 </div>
-                    <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
-                    <Teleport to="#app">
-                        <ConfirmDialogBox
-                            ref="confirmDialogBox"
-                            @choice="choose"
-                            v-if="state.confirmBDialogUi.show"
-                            :ui="state.confirmBDialogUi">
-                        </ConfirmDialogBox>
-                    </Teleport>
-                </div>
-            </div>
+            <Avatar
+                :user="props.user"
+                @click="props.user && props.user.avatarUrl ? showSlide([props.user.avatarUrl], 0): ()=>{}"
+                class="translate-x-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg">
+            </Avatar>
             <div v-if="!props.user.blocking && !props.user.blocked"
-                class="relative flex flex-col gap-y-1 pl-[1rem]"
-                :class="{ 'top-[-4rem]': !isMyself, 'top-[-1.5rem]': isMyself }">
-                <div class="text-[18pt] font-bold">{{ props.user.nickname }}</div>
+                class="flex flex-col gap-y-1 px-[1rem]">
+                <div class="flex flex-row flex-nowrap justify-between">
+                    <div class="text-[18pt] font-bold w-fit max-w-[20rem]">{{ props.user.nickname }}</div>
+                    <div v-if="!props.user.blocking && !props.user.blocked" @click="toggleFollowState"
+                        class="bg-blue-500 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer"
+                        :class="{ 'bg-gray-300': state.isFollowing, 'bg-blue-500': !state.isFollowing, 'text-black': state.isFollowing, 'text-white': !state.isFollowing }">
+                        <div v-if="!state.loading"> {{ state.isFollowing ? '已订阅' : '订阅' }}</div>
+                        <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
+                    </div>
+                    <div v-else-if="props.user.blocking"
+                        @click="state.confirmBDialogUi.show = true"
+                        class="bg-red-200 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer">
+                        <div v-if="!state.loading" class="text-red-500"> 解除屏蔽 </div>
+                        <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
+                        <Teleport to="#app">
+                            <ConfirmDialogBox
+                                ref="confirmDialogBox"
+                                @choice="choose"
+                                v-if="state.confirmBDialogUi.show"
+                                :ui="state.confirmBDialogUi">
+                            </ConfirmDialogBox>
+                        </Teleport>
+                    </div>
+                </div>
                 <div class="">{{ props.user.remark }}</div>
                 <div class="flex flex-row gap-x-2 items-center">
                     <IconCalendar class="text-[14pt]"></IconCalendar>
@@ -108,6 +100,7 @@ import IconLocation from '@/components/icons/IconLocation.vue'
 import IconWebsite from '@/components/icons/IconWebsite.vue'
 import IconEmail from '@/components/icons/IconEmail.vue'
 import ConfirmDialogBox from '@/components/tailwind/menus/ConfirmDialogBox.vue'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const props = defineProps(['user'])
 const emits = defineEmits(['unblockUser'])
@@ -146,12 +139,6 @@ const formattedDate = computed(() => {
     return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
 })
 
-const bannerPic = computed(() => {
-    const { previewUrl, originUrl, contentType } = props.user.bannerUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
-
 const followerCountText = computed(() => {
     const { gender, followingCount } = props.user
     if (isMyself.value == true) return `订阅我的 ${followingCount}`
@@ -164,12 +151,6 @@ const followingCountText = computed(() => {
     if (isMyself.value == true) return `我的订阅 ${followerCount}`
     if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
     return `他的订阅 ${followerCount}`
-})
-
-const avatarPic = computed(() => {
-    const { previewUrl, originUrl, contentType } = props.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
 })
 
 const isMyself = computed(() => { return props.user.id == state.curUser.id })

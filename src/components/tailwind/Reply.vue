@@ -17,12 +17,12 @@
                         </UserInfoPop>
                     </Transition>
                     <div class="relative z-10">
-                        <a @mouseenter="state.showUserInfoPop = true" @click="routeToUser(props.reply.user.nickname)">
-                            <img v-if="state.review.user.avatarUrl" :src="avatar" class="w-[2.5rem] h-[2.5rem] rounded-[6px]" />
-                            <div v-else class="flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-[6px] cursor-default bg-blue-500">
-                                 <div class="text-white text-[14pt] font-bold">{{ state.review.user.nickname.charAt(0) }}</div>
-                            </div>
-                        </a>
+                    <Avatar
+                        :user="state.review.user"
+                        @mouseenter="state.showUserInfoPop = true"
+                        @click="routeToUser(props.reply.user.nickname)"
+                        class="w-[2.5rem] h-[2.5rem] rounded-[6px]">
+                    </Avatar>
                     </div>
                     <div class="z-20">
                         <div @click="routeToUser(props.reply.user.nickname)"
@@ -110,6 +110,7 @@ import router from '@/route'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import ReviewPanel from '@/components/tailwind/ReviewPanel.vue'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const props = defineProps(['review', 'tieSub', 'reply', 'totalReplyCount', 'fetchedReplyCount', 'index'])
 const emits = defineEmits(['fetchMoreReply'])
@@ -195,12 +196,6 @@ const hasMore = computed(() => {
 
 const showMoreReplyButton = computed(() => {
     return hasMore.value && props.index >= props.fetchedReplyCount - 1
-})
-
-const avatar = computed(() => {
-    const { previewUrl, originUrl, contentType } = props.reply.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
 })
 
 function routeToUser(nickname) {

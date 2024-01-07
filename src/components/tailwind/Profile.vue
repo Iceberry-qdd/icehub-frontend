@@ -12,24 +12,32 @@
             @handleAction="handleAction">
         </Header>
 
-        <ProfileInfo :user="state.user" @unblockUser="unblockUser"></ProfileInfo>
-        <div v-if="state.user.blocking"
-            class="w-full flex flex-col justify-center items-center gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)]">
-            <span class="material-icons-round">disabled_visible</span>
-            <div>你已屏蔽对方</div>
+        <Banner
+            :user="state.user"
+            @click="state.user && state.user.bannerUrl ? showSlide([state.user.bannerUrl], 0): ()=>{}"
+            class="w-full h-[20rem] object-cover">
+        </Banner>
+        <div class="-translate-y-[2.5rem]">
+            <ProfileInfo :user="state.user" @unblockUser="unblockUser"></ProfileInfo>
+            <div v-if="state.user.blocking"
+                class="w-full flex flex-col justify-center items-center gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)]">
+                <span class="material-icons-round">disabled_visible</span>
+                <div>你已屏蔽对方</div>
+            </div>
+            <div v-else-if="state.user.blocked"
+                class="w-full flex flex-col justify-center items-center gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)]">
+                <span class="material-icons-round">disabled_visible</span>
+                <div>对方屏蔽了你</div>
+            </div>
+            <PostsTimeline
+                v-else
+                :isLoading="state.isPostLoading" 
+                :posts="state.posts"
+                :curPageIndex="state.pageIndex"
+                :totalPages="state.totalPages">
+            </PostsTimeline>
         </div>
-        <div v-else-if="state.user.blocked"
-            class="w-full flex flex-col justify-center items-center gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)]">
-            <span class="material-icons-round">disabled_visible</span>
-            <div>对方屏蔽了你</div>
-        </div>
-        <PostsTimeline
-            v-else
-            :isLoading="state.isPostLoading" 
-            :posts="state.posts"
-            :curPageIndex="state.pageIndex"
-            :totalPages="state.totalPages">
-        </PostsTimeline>
+
     </div>
 </template>
 
@@ -52,6 +60,7 @@ import { getUserPosts, getUserInfoByNickname, deleteOneBlacklist } from '@/api'
 import { store } from '@/store'
 import { useRoute } from 'vue-router'
 import router from '@/route'
+import Banner from '@/components/tailwind/Banner.vue'
 
 const $route = useRoute()
 const user = JSON.parse(localStorage.getItem("CUR_USER"))
@@ -162,6 +171,11 @@ async function unblockUser() {
 
 function handleAction() {
     router.push('/profile/edit')
+}
+
+function showSlide(images, idx) {
+    document.querySelector("body").setAttribute("style", "overflow:hidden")
+    store.showSlide(images, idx)
 }
 
 onMounted(async () => {

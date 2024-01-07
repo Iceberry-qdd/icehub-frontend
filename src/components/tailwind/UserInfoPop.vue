@@ -1,15 +1,8 @@
 <template>
     <div class="m-container w-[22rem] h-[12rem] rounded-[8px] shadow ring-1 ring-slate-900/5 ">
-        <div @click="routeToProfile">
-            <img v-if="state.user.bannerUrl" :src="bannerPic" class="w-full h-[6rem] object-cover rounded-t-[8px]" />
-            <div v-else class="w-full h-[6rem] object-cover rounded-t-[8px] bg-gradient-to-r from-sky-500 to-indigo-500"></div>
-        </div>
+        <Banner :user="state.user" @click="routeToProfile" class="w-full h-[6rem] object-cover rounded-t-[8px]"></Banner>
         <div>
-            <img @click="routeToProfile" :src="avatarPic" v-if="state.user.avatarUrl"
-                class="w-[3.5rem] h-[3.5rem] rounded-[8px] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white" />
-            <div v-else class="flex justify-center items-center w-[3.5rem] h-[3.5rem] rounded-[8px] bg-blue-500 ml-3 absolute top-[4.25rem] border-[0.2rem] border-white">
-                <div class="text-white text-[18pt] font-bold">{{ state.user.nickname.charAt(0) }}</div>
-            </div>
+            <Avatar :user="state.user" class="w-[3.5rem] h-[3.5rem] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white rounded-[8px]"></Avatar>
             <div class="absolute top-[8rem] ml-[0.95rem] flex flex-row gap-x-1 items-center">
                 <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline cursor-pointer">
                     {{ state.user.nickname }}</div>
@@ -45,7 +38,9 @@ import { computed, reactive } from 'vue'
 import { followUser, unFollowUser } from '@/api'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { store } from '@/store'
-import router from '@/route';
+import router from '@/route'
+import Avatar from '@/components/tailwind/Avatar.vue'
+import Banner from '@/components/tailwind/Banner.vue'
 
 const props = defineProps(['user'])
 
@@ -56,18 +51,6 @@ const state = reactive({
 })
 
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
-
-const bannerPic = computed(() => {
-    const { previewUrl, originUrl, contentType } = state.user.bannerUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
-
-const avatarPic = computed(() => {
-    const { previewUrl, originUrl, contentType } = state.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
 
 const brief = computed(() => {
     const remark = state.user.remark

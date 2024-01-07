@@ -5,12 +5,10 @@
             <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
                 <div class="flex flex-row items-center gap-x-4">
                     <div class="relative z-10" >
-                        <a>
-                            <img v-if="props.review.user.avatarUrl" class="cursor-default rounded-[6px] w-[2.5rem] h-[2.5rem]" :src="avatar" />
-                            <div v-else class="flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-[6px] cursor-default bg-blue-500">
-                                <div class="text-white text-[14pt] font-bold">{{ props.review.user.nickname.charAt(0) }}</div>
-                            </div>
-                        </a>
+                        <Avatar
+                            :user="props.review.user"
+                            class="w-[2.5rem] h-[2.5rem] rounded-[6px] cursor-default">
+                        </Avatar>
                     </div>
                     <div>
                         <div class="text-[14pt] font-bold cursor-default">
@@ -43,16 +41,11 @@
 // 只包括评论和一层回复
 import { computed } from 'vue'
 import { humanizedTime } from '@/utils/formatUtils.js'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const props = defineProps(['review', 'parentReview'])
 
 const formattedTime = computed(() => {
     return humanizedTime(props.review.createdTime)
-})
-
-const avatar = computed(() => {
-    const { previewUrl, originUrl, contentType } = props.review.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
 })
 </script>

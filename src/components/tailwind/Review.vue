@@ -16,12 +16,12 @@
                             </UserInfoPop>
                     </Transition>
                     <div class="relative z-10">
-                        <a @mouseenter="state.showUserInfoPop = true" @click="routeToUser(props.review.user.nickname)">
-                            <img v-if="props.review.user.avatarUrl" :src="avatar" class="w-[2.5rem] h-[2.5rem] rounded-[6px]" />
-                            <div v-else class="flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-[6px] cursor-default bg-blue-500">
-                                <div class="text-white text-[14pt] font-bold">{{ props.review.user.nickname.charAt(0) }}</div>
-                            </div>
-                        </a>
+                        <Avatar
+                            :user="props.review.user"
+                            @mouseenter="state.showUserInfoPop = true"
+                            @click="routeToUser(props.review.user.nickname)"
+                            class="w-[2.5rem] h-[2.5rem] rounded-[6px]">
+                        </Avatar>
                     </div>
                     <div class="z-20">
                         <div @click="routeToUser(props.review.user.nickname)"
@@ -136,6 +136,7 @@ import Reply from '@/components/tailwind/Reply.vue'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import { VueShowdown } from 'vue-showdown'
 import ReviewPanel from '@/components/tailwind/ReviewPanel.vue'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const props = defineProps(['review', 'post', 'tieSub'])
 const state = reactive({
@@ -242,12 +243,6 @@ const hasReply = computed(() => {
 function routeToReplyDetail(reviewId) {
     router.push({ name: 'replyDetail', params: { id: reviewId } })
 }
-
-const avatar = computed(() => {
-    const { previewUrl, originUrl, contentType } = props.review.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
 
 function routeToUser(nickname) {
     router.push({ name: 'profile', params: { nickname: nickname } })

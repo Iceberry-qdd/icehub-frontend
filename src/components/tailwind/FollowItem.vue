@@ -1,28 +1,17 @@
 <template>
-    <div class="flex flex-row justify-between items-center h-[6rem] border-b-[1px] px-2 py-2 ">
-        <div class="flex flex-row items-center basis-5/6 gap-x-4">
-            <div @click="routeToUserProfile">
-                <img :src="avatarUrl(state.user.avatarUrl, state.user.nickname)"
-                    class="w-[72px] h-[72px] rounded-[8px]" />
+    <div class="flex flex-row flex-nowrap justify-center items-start gap-x-3 border-b-[1px] p-2">
+        <Avatar :user="state.user" class="flex-initial w-[60px] h-[60px] rounded-[8px]" @click="routeToUserProfile"></Avatar>
+        <div class="flex-auto">
+            <div @click="routeToUserProfile" class="font-bold text-[14pt] cursor-pointer hover:underline">
+                {{ state.user.nickname }}
+                <i v-show="state.user.verified == true" class="bi bi-patch-check-fill verify text-[11pt] text-blue-500"></i>
             </div>
-            <div class="h-full w-full">
-                <div @click="routeToUserProfile" class="font-bold text-[14pt] cursor-pointer hover:underline">
-                    {{ state.user.nickname }}
-                    <i v-show="state.user.verified == true" class="bi bi-patch-check-fill verify text-[11pt] text-blue-500"></i>
-                </div>
-                <div class="text-[11pt] brief">{{ brief(state.user.remark) }}</div>
-            </div>
+            <div class="text-[11pt] brief">{{ brief(state.user.remark) }}</div>
         </div>
-        <div v-if="!isSelf" class="basis-1/6 h-full flex flex-row justify-center items-center">
-            <div @click="toggleFollowState" :class="{
-                'bg-blue-500': !state.user.following,
-                'bg-gray-300': state.user.following,
-                'text-black': state.user.following,
-                'text-white': !state.user.following
-            }" class=" px-[1rem] py-[0.4rem] text-white text-[11pt] font-bold rounded-full cursor-pointer">
-                <div v-if="!state.loading">{{ state.user.following ? '已订阅' : '订阅' }}</div>
-                <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
-            </div>
+        <div @click="toggleFollowState" :class="buttonClass"
+            class="flex-initial place-self-center w-[5rem] px-[1rem] py-[0.4rem] text-white text-[11pt] font-bold rounded-full cursor-pointer">
+            <div v-if="!state.loading" class="text-center">{{ state.user.following ? '已订阅' : '订阅' }}</div>
+            <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
         </div>
     </div>
 </template>
@@ -37,10 +26,6 @@
     -webkit-line-clamp: 2;
 }
 
-img {
-    max-width: 64px;
-    max-height: 64px;
-}
 </style>
 
 <script setup>
@@ -48,12 +33,20 @@ import { reactive, computed } from 'vue'
 import { followUser, unFollowUser } from '@/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import router from '@/route.js'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const props = defineProps(["user"])
 
 const state = reactive({
     user: props.user,
     loading: false
+})
+
+const buttonClass = reactive({
+    'bg-blue-500': !state.user.following,
+    'bg-gray-300': state.user.following,
+    'text-black': state.user.following,
+    'text-white': !state.user.following
 })
 
 const isSelf = computed(() => {
@@ -63,12 +56,6 @@ const isSelf = computed(() => {
 
 function routeToUserProfile() {
     router.push({ name: 'profile', params: { nickname: state.user.nickname } })
-}
-
-function avatarUrl(avatarUrl, nickname) {
-    const {previewUrl,originUrl} = avatarUrl || [null,null]
-    const defaultUrl = `https://api.multiavatar.com/${nickname}.svg`
-    return previewUrl||originUrl||defaultUrl
 }
 
 function brief(remark) {

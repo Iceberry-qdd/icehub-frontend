@@ -13,14 +13,16 @@
         </Transition>
         <div class="user-info d-flex">
             <Transition name="fade">
-                <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user" v-if="state.showUserInfoPop" class="user-info-pop z-index-98"></UserInfoPop>
+                <UserInfoPop
+                    @mouseleave="state.showUserInfoPop = false"
+                    :user="state.post.user"
+                    v-if="state.showUserInfoPop"
+                    class="user-info-pop z-index-98">
+                </UserInfoPop>
             </Transition>
             <a @mouseenter="state.showUserInfoPop = true" class="z-index-97 position-relative no-underline"
                 @click="routeToUser(state.post.user.nickname)">
-                <img v-if="state.post.user.avatarUrl" class="avatar img-fluid" loading="lazy" :src="avatar">
-                <div v-else class="flex justify-center items-center bg-blue-500 h-[2.5rem] w-[2.5rem] rounded-16">
-                   <div class="font-16 font-bold white-text">{{ state.post.user.nickname.charAt(0) }}</div>
-                </div>
+                <Avatar :user="state.post.user" class="w-[2.5rem] h-[2.5rem] rounded-[8px]"></Avatar>
             </a>
             <div class="user-text z-index-97">
                 <div @click="routeToUser(state.post.user.nickname)"
@@ -409,12 +411,6 @@
     position: relative;
 }
 
-.avatar {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 16%;
-}
-
 #verify-badge {
     background-color: red !important;
 }
@@ -493,6 +489,7 @@ import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { ws, MsgPack } from '../../websocket.js'
 import { VueShowdown } from 'vue-showdown'
 import RepostPanel from '@/components/tailwind/RepostPanel.vue'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const props = defineProps(['post'])
 const cardMask = ref()
@@ -596,13 +593,6 @@ function showSlide(images, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
     store.showSlide(images, idx)
 }
-
-
-const avatar = computed(() => {
-    const { previewUrl, originUrl, contentType } = state.post.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
 
 const hasPics = computed(() => {
     return state.post.attachmentsUrl.length != 0

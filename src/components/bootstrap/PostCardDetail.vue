@@ -16,10 +16,7 @@
                 </UserInfoPop>
             </Transition>
             <a @mouseenter="state.showUserInfoPop = true" class="position-relative no-underline" @click="showUserProfile(state.post.user.id)">
-                <img v-if="state.post.user.avatarUrl" @click="routeToUserProfile" class="avatar img-fluid" loading="lazy" :src="avatarUrl">
-                <div v-else class="flex justify-center items-center bg-blue-500 h-[2.5rem] w-[2.5rem] rounded-16">
-                   <div class="font-16 font-bold white-text">{{ state.post.user.nickname.charAt(0) }}</div>
-                </div>
+                <Avatar :user="state.post.user" class="w-[2.5rem] h-[2.5rem] rounded-[8px]" @click="routeToUserProfile"></Avatar>
             </a>
             <div class="user-text">
                 <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline flex flex-row items-center gap-1">
@@ -422,6 +419,7 @@ import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { VueShowdown } from 'vue-showdown'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import RepostPanel from '@/components/tailwind/RepostPanel.vue'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const props = defineProps(['post'])
 
@@ -507,12 +505,6 @@ function showSlide(images, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
     store.showSlide(images, idx)
 }
-
-const avatarUrl = computed(() => {
-    const { previewUrl, originUrl, contentType } = state.post.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
 
 const hasPics = computed(() => {
     return state.post.attachmentsUrl.length != 0

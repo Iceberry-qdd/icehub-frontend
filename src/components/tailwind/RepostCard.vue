@@ -3,10 +3,10 @@
         class="border-[1px] m-bg-white border-gray-300 rounded-[8px] flex flex-col gap-y-1 cursor-pointer">
         <div class="pt-2" v-if="state.post">
             <div class="flex flex-row items-center px-2 gap-x-2 text-[11pt]">
-                <img v-if="state.post.user.avatarUrl" :src="avatar" class="w-[1.5rem] h-[1.5rem] rounded-[4px]" />
-                <div v-else class="flex justify-center items-center w-[1.5rem] h-[1.5rem] rounded-[4px] cursor-default bg-blue-500">
-                    <div class="text-white text-[10pt] font-bold">{{ state.post.user.nickname.charAt(0) }}</div>
-                </div>
+                <Avatar
+                    :user="state.post.user"
+                    class="w-[1.5rem] h-[1.5rem] rounded-[4px] cursor-default">
+                </Avatar>
                 <div class="font-bold">{{ state.post.user.nickname }}</div>
                 <div class="text-gray-400 top-[1px]">发布于 {{ formattedTime }}</div>
             </div>
@@ -59,6 +59,7 @@ import router from '@/route.js'
 import IconGif from '@/components/icons/IconGif.vue'
 import { VueShowdown } from 'vue-showdown'
 import { getPostById } from '@/api'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const props = defineProps(['postId', 'post'])
 const repostCard = ref()
@@ -78,13 +79,6 @@ function routeToUserProfile() {
 
     router.push({ name: 'postDetail', params: { id: state.post.id } })
 }
-
-
-const avatar = computed(() => {
-    const { previewUrl, originUrl, contentType } = state.post.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
 
 function getCoverImageUrl(attachment) {
     return attachment.previewUrl || attachment.originUrl

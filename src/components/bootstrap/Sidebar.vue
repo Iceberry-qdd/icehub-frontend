@@ -4,10 +4,7 @@
             @click="routeTo(menu.routeTo, menu.id, menu.routeParams.nickname || null)" :class="{ active: menu.active }"
             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
             <div class="menu">
-                <img v-if="menu.routeTo == '/profile' && state.user.avatarUrl" :src="menu.icon" class="avatar" />
-                <div v-else-if="menu.routeTo == '/profile' && !state.user.avatarUrl" class="flex justify-center items-center bg-blue-500 h-1.7 w-1.7 rounded-full">
-                   <div class="font-9 font-bold white-text">{{ state.user.nickname.charAt(0) }}</div>
-                </div>
+                <Avatar v-if="menu.routeTo == '/profile'" :user="state.user" :rounded="true" class="w-1.7 h-1.7 rounded-full"></Avatar>
                 <span v-else class="material-icons-round no-hover">{{ menu.icon }}</span>
                 <span>{{ menu.name }}</span>
             </div>
@@ -122,13 +119,6 @@ li:hover {
     color: white;
 }
 
-.h-1\.7{
-    height: 1.7rem;
-}
-
-.w-1\.7{
-    width: 1.7rem;
-}
 </style>
 
 <script setup>
@@ -138,6 +128,7 @@ import { store } from '@/store'
 import { getUserInfoByNickname,queryCurUserUnreadNotifyCount } from '@/api.js'
 import { useRoute } from 'vue-router'
 import { ws } from '../../websocket.js'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const $route = useRoute()
 
@@ -150,7 +141,7 @@ const state = reactive({
         { id: 5, name: '勋章', routeTo: '/badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: false, active: false },
         { id: 6, name: '活动', routeTo: '/activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible:false, active: false },
         { id: 7, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: JSON.parse(localStorage.getItem("CUR_USER")).type === 'ADMIN', active: false },
-        { id: 8, name: getCurUserNickname(), routeTo: '/profile', routeParams: { nickname: getCurUserNickname() }, icon: getCurUserAvatar(), badgeCount: 0, visible: true, active: false },
+        { id: 8, name: getCurUserNickname(), routeTo: '/profile', routeParams: { nickname: getCurUserNickname() }, icon: null, badgeCount: 0, visible: true, active: false },
         { id: 9, name: '设置', routeTo: '/setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: true, active: false }
     ],
     user: JSON.parse(localStorage.getItem("CUR_USER")),
@@ -200,17 +191,6 @@ async function getUnreadNotifyCount(){
 watch(()=>store.UNREAD_MSG_COUNT,(newVal,oldVal)=>{
     state.menus.filter(item=>item.name == '消息')[0].badgeCount = newVal
 })
-
-function getCurUserAvatar() {
-    try {
-        const { avatarUrl, nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
-        const { previewUrl, originUrl } = avatarUrl || [null, null]
-        return previewUrl || originUrl
-    } catch (e) {
-        store.setErrorMsg("无法获取登录用户信息！")
-        console.log(e.message)
-    }
-}
 
 function getCurUserNickname() {
     const { nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
