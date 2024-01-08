@@ -1,6 +1,6 @@
 <template>
     <div class="flex flex-row flex-nowrap justify-center items-start gap-x-3 border-b-[1px] p-2">
-        <Avatar :user="state.user" class="flex-initial w-[60px] h-[60px] rounded-[8px]" @click="routeToUserProfile"></Avatar>
+        <Avatar :user="state.user" class="flex-initial w-[60px] h-[60px] rounded-[8px] text-[18pt]" @click="routeToUserProfile"></Avatar>
         <div class="flex-auto">
             <div @click="routeToUserProfile" class="font-bold text-[14pt] cursor-pointer hover:underline">
                 {{ state.user.nickname }}

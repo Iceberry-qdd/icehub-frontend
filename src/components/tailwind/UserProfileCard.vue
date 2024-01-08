@@ -7,7 +7,7 @@
         <div class="flex flex-row justify-center items-center w-full -translate-y-1/2">
             <Avatar
                 :user="props.user"
-                class="w-[3.5rem] h-[3.5rem] border-white box-content border-[0.2rem] object-cover rounded-[8px]">
+                class="w-[3.5rem] h-[3.5rem] border-white box-content border-[0.2rem] object-cover rounded-[8px] text-[18pt]">
             </Avatar>
         </div>
         <div class="flex flex-col justify-center items-center w-full -translate-y-[1.5rem]">

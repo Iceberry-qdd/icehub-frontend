@@ -2,7 +2,7 @@
     <div class="m-container w-[22rem] h-[12rem] rounded-[8px] shadow ring-1 ring-slate-900/5 ">
         <Banner :user="state.user" @click="routeToProfile" class="w-full h-[6rem] object-cover rounded-t-[8px]"></Banner>
         <div>
-            <Avatar :user="state.user" class="w-[3.5rem] h-[3.5rem] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white rounded-[8px]"></Avatar>
+            <Avatar :user="state.user" class="w-[3.5rem] h-[3.5rem] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white rounded-[8px] text-[16pt]"></Avatar>
             <div class="absolute top-[8rem] ml-[0.95rem] flex flex-row gap-x-1 items-center">
                 <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline cursor-pointer">
                     {{ state.user.nickname }}</div>

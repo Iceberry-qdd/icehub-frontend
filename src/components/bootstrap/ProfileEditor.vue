@@ -13,7 +13,7 @@
             <IconLoading :class="'-ml-1 mr-3 h-5 w-5 text-white'"></IconLoading>
             <div>正在提交...</div>
         </div>
-        <div>
+        <div class="relative w-full h-[21rem]">
             <div class="banner-cover">
                 <span @click="showImageCropper('banner')" class="material-icons-round">edit</span>
             </div>
@@ -21,13 +21,17 @@
                 <span @click="showImageCropper('avatar')" class="material-icons-round">edit</span>
             </div>
         </div>
-        <div class="content">
-            <div class="banner">
-                <img class=" w-full max-h-[22rem] object-cover object-center" :src="bannerPic" />
-            </div>
-            <div>
-                <img class="avatar relative top-[-2.5rem] left-[1rem] w-[5rem] h-[5rem] rounded-lg" :src="avatarPic" />
-            </div>
+
+         <Banner
+            :user="state.user"
+            style="height: 20.7rem;"
+            class="w-full max-h-[20rem] object-cover object-center">
+        </Banner>
+        <div class="-translate-y-[2.5rem]">
+            <Avatar
+                :user="state.user"
+                class="translate-x-[1rem] w-[5rem] h-[5rem] rounded-lg">
+            </Avatar>
             <div class="text-info">
                 <div class="form-floating mb-3">
                     <input @blur="checkUsernameValid" v-model.trim="state.newUser.nickname" type="text"
@@ -93,9 +97,10 @@
 
 .avatar-cover {
     background-color: #00000000;
-    position: relative;
-    top: -2.5rem;
+    position: absolute;
+    top: calc(21rem - 2.8rem);
     margin-left: 1rem;
+    border-radius: 8px;
     padding: 1rem;
     width: 5rem;
     height: 5rem;
@@ -107,17 +112,6 @@
 
 .avatar-cover:hover {
     background-color: #00000066;
-    position: relative;
-    top: -2.3rem;
-    margin-left: 1.3rem;
-    border-radius: 4px;
-    padding: 1rem;
-    width: 5rem;
-    height: 5rem;
-    z-index: 98;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .avatar-cover>.material-icons-round {
@@ -140,39 +134,23 @@
     font-size: 24pt;
 }
 
-.avatar {
-    border: 4px solid white;
-    z-index: 97;
-    box-sizing: content-box;
-}
-
 .banner-cover {
     background-color: #00000000;
-    position: relative;
-    width: 100%;
-    height: 18rem;
-    z-index: 96;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 20.7rem;
+    z-index: 0;
 }
 
 .banner-cover:hover {
     background-color: #00000066;
-    position: relative;
-    width: 100%;
-    height: 18rem;
-    z-index: 96;
-}
-
-.content {
-    position: relative;
-    top: -23rem;
 }
 
 .text-info {
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 1rem 1rem 0 1rem;
 }
 
 .loading {
@@ -199,6 +177,8 @@ import { store } from '@/store.js'
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/api.js'
 import router from '@/route'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import Avatar from '@/components/tailwind/Avatar.vue'
+import Banner from '@/components/tailwind/Banner.vue'
 
 const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),
@@ -325,20 +305,14 @@ async function uploadBanner() {
     }
 }
 
-const bannerPic = computed(() => {
-    const defaultUrl = import.meta.env.VITE_DEFAULT_BG
-    const clippedUrl = store.CROPPED_IMAGE.banner
-    const { previewUrl, originUrl, contentType } = state.user.bannerUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return clippedUrl || originUrl || defaultUrl
-    return clippedUrl || previewUrl || originUrl || defaultUrl
+watch(() => store.CROPPED_IMAGE.banner, (newVal, oldVal) => {
+    state.user.bannerUrl.previewUrl = newVal
+    state.user.bannerUrl.originUrl = newVal
 })
 
-const avatarPic = computed(() => {
-    const defaultUrl = `https://api.multiavatar.com/${state.user.nickname}.svg`
-    const clippedUrl = store.CROPPED_IMAGE.avatar
-    const { previewUrl, originUrl, contentType } = state.user.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return clippedUrl || originUrl || defaultUrl
-    return clippedUrl || previewUrl || originUrl || defaultUrl
+watch(() => store.CROPPED_IMAGE.avatar, (newVal, oldVal) => {
+    state.user.avatarUrl.previewUrl = newVal
+    state.user.avatarUrl.originUrl = newVal
 })
 
 const isUNameValid = computed(() => {

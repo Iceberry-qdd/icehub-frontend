@@ -3,8 +3,12 @@
         <div @click="dismiss"
             class="pointer-events-auto cursor-pointer shadow-lg shadow-blue-500/25   bg-blue-500 gap-x-1 py-1 px-2 rounded-full flex flex-row items-center">
             <div class="userAvatars flex justify-center -space-x-4">
-                <img class="avatar border-4 border-solid border-white rounded-full -translate-x-1 w-9 h-9" :src="avatar"
-                    v-for="(avatar, index) in state.userAvatars" :key="index" />
+                <Avatar
+                    v-for="user in state.users"
+                    :key="user.id"
+                    :user="user"
+                    class="border-4 border-solid border-white rounded-full -translate-x-1 w-9 h-9 text-[11pt]">
+                </Avatar>
             </div>
             <div class="text-white text-sm">新动态</div>
             <i class="bi bi-arrow-clockwise text-white text-xl"></i>
@@ -18,6 +22,7 @@
 
 <script setup>
 import { reactive, computed } from 'vue'
+import Avatar from '@/components/tailwind/Avatar.vue'
 
 const emits = defineEmits(['closeGlobalRefresh'])
 

@@ -3,7 +3,7 @@
         <img @click="routeToProfile" :src="avatarPic" v-if="props.user?.avatarUrl" loading="lazy" v-bind="$attrs"/>
         <div v-else
             class="flex justify-center items-center bg-blue-500" v-bind="$attrs">
-            <div class="text-white text-[18pt] font-bold">{{ props.user?.nickname.charAt(0) }}</div>
+            <div class="text-white font-bold">{{ props.user?.nickname.charAt(0) }}</div>
         </div>
     </div>
 </template>

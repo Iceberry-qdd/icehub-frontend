@@ -16,7 +16,7 @@
                 </UserInfoPop>
             </Transition>
             <a @mouseenter="state.showUserInfoPop = true" class="position-relative no-underline" @click="showUserProfile(state.post.user.id)">
-                <Avatar :user="state.post.user" class="w-[2.5rem] h-[2.5rem] rounded-[8px]" @click="routeToUserProfile"></Avatar>
+                <Avatar :user="state.post.user" class="w-[2.5rem] h-[2.5rem] rounded-[8px] text-[14pt]" @click="routeToUserProfile"></Avatar>
             </a>
             <div class="user-text">
                 <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline flex flex-row items-center gap-1">

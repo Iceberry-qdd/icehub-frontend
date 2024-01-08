@@ -4,7 +4,7 @@
             <Avatar
                 :user="props.user"
                 @click="props.user && props.user.avatarUrl ? showSlide([props.user.avatarUrl], 0): ()=>{}"
-                class="translate-x-[1rem] w-[5rem] h-[5rem] border-[4px] border-white rounded-lg">
+                class="translate-x-[1rem] w-[5rem] h-[5rem] border-[4px] text-[18pt] border-white rounded-lg">
             </Avatar>
             <div v-if="!props.user.blocking && !props.user.blocked"
                 class="flex flex-col gap-y-1 px-[1rem]">

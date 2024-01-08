@@ -22,7 +22,7 @@
             </Transition>
             <a @mouseenter="state.showUserInfoPop = true" class="z-index-97 position-relative no-underline"
                 @click="routeToUser(state.post.user.nickname)">
-                <Avatar :user="state.post.user" class="w-[2.5rem] h-[2.5rem] rounded-[8px]"></Avatar>
+                <Avatar :user="state.post.user" class="w-[2.5rem] h-[2.5rem] rounded-[8px] text-[14pt]"></Avatar>
             </a>
             <div class="user-text z-index-97">
                 <div @click="routeToUser(state.post.user.nickname)"
