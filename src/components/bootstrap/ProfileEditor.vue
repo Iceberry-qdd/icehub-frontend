@@ -306,13 +306,17 @@ async function uploadBanner() {
 }
 
 watch(() => store.CROPPED_IMAGE.banner, (newVal, oldVal) => {
-    state.user.bannerUrl.previewUrl = newVal
-    state.user.bannerUrl.originUrl = newVal
+    state.user.bannerUrl = {
+        previewUrl: newVal,
+        originUrl: newVal
+    }
 })
 
 watch(() => store.CROPPED_IMAGE.avatar, (newVal, oldVal) => {
-    state.user.avatarUrl.previewUrl = newVal
-    state.user.avatarUrl.originUrl = newVal
+    state.user.avatarUrl = {
+        previewUrl: newVal,
+        originUrl: newVal
+    }
 })
 
 const isUNameValid = computed(() => {

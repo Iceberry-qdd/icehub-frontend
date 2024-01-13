@@ -1,25 +1,21 @@
 <template>
-    <div class="flex flex-row w-full h-full absolute">
-        <div id="poster" class="basis-2/5 h-full">
-            <div>
-                <img id="brand-bg" class="cursor-default object-cover h-screen w-full grayscale hover:grayscale-0"
-                    src="http://192.168.0.101:9000/b072e283-924e-4a3f-b362-2b4577041e09/095a3775479e5c6255b37346eb4f1658.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=SIHDHMTXP75LANWE1N9A%2F20230108%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20230108T101804Z&X-Amz-Expires=604800&X-Amz-Security-Token=eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiJTSUhESE1UWFA3NUxBTldFMU45QSIsImV4cCI6MTY3MzE3NjY2NiwicGFyZW50IjoibWluaW9hZG1pbiJ9.lpAm-X3iKddwlyu2G-GvpFjt3K_NoDqCi1H10OmjA9-zRhf5ovSiRGiEJpGiXLj6SBXrNaUkGXcL6JbQDuyRWg&X-Amz-SignedHeaders=host&versionId=null&X-Amz-Signature=c471d5fdd64dcefc20f3a3293440c7f455fc1ec995633a7c2b6d425e42aea880" />
-            </div>
-        </div>
-        <div v-if="state.loginPannel" id="login-panel"
-            class="basis-3/5 h-full bg-gray-100 flex items-center justify-center">
+    <div class="flex w-full h-full absolute bg-gray-100 justify-center items-center">
+        <div v-if="state.loginPanel" id="login-panel"
+            class="h-2/3 w-1/3 bg-white flex items-center justify-center rounded-xl">
             <div class="flex flex-col items-center justify-center gap-y-4">
-                <div id="brand-name" class="font-bold text-2xl">Icehub</div>
+                <a href="/index"><img src="/icon.svg" width="48" height="48"/></a>
+                <div id="brand-name" class="font-bold text-2xl">{{ state.appName }}</div>
                 <input :disabled="state.loading"
-                    class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
+                    class="py-2 px-4 rounded-full w-64 bg-gray-100 text-[11pt] focus:outline-none focus:ring focus:border-blue-500"
                     v-model="state.nickname" type="text" placeholder="请输入账号名" />
                 <input :disabled="state.loading"
-                    class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
+                    class="py-2 px-4 rounded-full w-64 bg-gray-100 text-[11pt] focus:outline-none focus:ring focus:border-blue-500"
                     v-model="state.password" type="password" placeholder="请输入密码" />
-                <div class="flex flex-row gap-x-8">
+                <div>
                     <button :disabled="state.loading" @click="tryLogin"
-                        class="p-2 w-32 bg-blue-500 rounded-md text-md text-white" name="login">
-                        <svg v-if="state.loading" class="animate-spin relative left-[2.725rem] h-5 w-5 text-white"
+                        :class="[state.loading ? 'bg-blue-300' : 'bg-blue-500']"
+                        class="p-2 w-64 rounded-full text-[11pt] text-white shadow-lg shadow-blue-200/50" name="login">
+                        <svg v-if="state.loading" class="animate-spin relative left-[calc(50%-0.875rem)]  h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
                             </circle>
@@ -29,29 +25,38 @@
                         </svg>
                         <span v-else>登录</span>
                     </button>
-                    <button :disabled="state.loading" :class="{ 'cursor-not-allowed': state.loading }"
-                        @click="toggleRegister" class="p-2 w-32 bg-white rounded-md text-md text-black"
-                        name="login">注册</button>
                 </div>
+                <div class="text-[10pt] w-full text-right">
+                        <span class="text-gray-500">还没有账号？点此</span>
+                        <span class="text-blue-500 hover:underline cursor-pointer" @click="toggleRegister">注册</span>
+                </div>
+                <div class="hidden ">
+                    <div class="text-[10pt] text-gray-400">or</div>
+                </div>
+                <button type="button" class="hidden bg-black text-white font-bold text-[11pt] py-2 px-6 rounded-full">仅浏览</button>
             </div>
         </div>
 
-        <div v-else id="register-panel" class="basis-3/5 h-full bg-gray-100 flex items-center justify-center">
+        <div v-else id="register-panel"
+            class="relative h-2/3 w-1/3 bg-white flex items-center justify-center rounded-xl">
+            <button name="返回登录" type="button" @click="toggleLogin('')" class="material-icons-round absolute top-[1rem] left-[1rem] cursor-pointer text-[12pt]">arrow_back_ios</button>
             <div class="flex flex-col items-center justify-center gap-y-4">
-                <div id="brand-name" class="font-bold text-2xl">Panboo</div>
+                <a href="/index"><img src="/icon.svg" width="48" height="48"/></a>
+                <div id="brand-name" class="font-bold text-2xl">{{ state.appName }}</div>
                 <input :disabled="state.loading"
-                    class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
+                    class="py-2 px-4 rounded-full w-64 bg-gray-100 text-[11pt] focus:outline-none focus:ring focus:border-blue-500"
                     v-model="state.nickname" type="text" placeholder="请输入账号名" />
                 <input :disabled="state.loading"
-                    class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
+                    class="py-2 px-4 rounded-full w-64 bg-gray-100 text-[11pt] focus:outline-none focus:ring focus:border-blue-500"
                     v-model="state.password" type="password" placeholder="请输入密码" />
                 <input :disabled="state.loading"
-                    class="p-2 rounded-md w-72 bg-white text-md focus:outline-none focus:ring focus:border-blue-500"
+                    class="py-2 px-4 rounded-full w-64 bg-gray-100 text-[11pt] focus:outline-none focus:ring focus:border-blue-500"
                     v-model="state.rePassword" type="password" placeholder="请再次输入密码" />
                 <div class="flex flex-row gap-x-8">
                     <button :disabled="state.loading" @click="tryRegister"
-                        class="p-2 w-32 bg-gray-100 rounded-md text-md text-black" name="login">
-                        <svg v-if="state.loading" class="animate-spin relative left-[2.725rem] h-5 w-5 text-white"
+                        :class="[state.loading ? 'bg-neutral-500' : 'bg-black']"
+                        class="p-2 w-64 rounded-full text-[11pt] text-white shadow-lg shadow-neutral-300" name="login">
+                        <svg v-if="state.loading" class="animate-spin relative left-[calc(50%-0.875rem)] h-5 w-5 text-white"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
                             </circle>
@@ -59,7 +64,7 @@
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                             </path>
                         </svg>
-                        <span v-else><i class="bi bi-arrow-right-circle text-lg"></i></span>
+                        <span v-else>注册</span>
                     </button>
                 </div>
             </div>
@@ -84,12 +89,16 @@ const state = reactive({
     publicKey: "",
     rePassword: "",
     loading: false,
-    //loginFailed: false,
-    loginPannel: true,
-    avatarUrl: ""
+    loginPanel: true,
+    avatarUrl: "",
+    appName: import.meta.env.VITE_APP_TITLE
 })
 
-function toggleRegister() { state.loginPannel = false }
+function toggleRegister() { state.loginPanel = false }
+function toggleLogin(username) { 
+    state.loginPanel = true
+    state.nickname = username
+}
 
 async function getPK() {
     try {
@@ -158,7 +167,7 @@ async function tryRegister() {
         store.setSuccessMsg("注册成功！");
         state.password = ''
         state.rePassword = ''
-        state.loginPannel = true
+        toggleLogin(state.nickname)
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)

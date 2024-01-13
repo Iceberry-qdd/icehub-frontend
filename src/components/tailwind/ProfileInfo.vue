@@ -6,17 +6,16 @@
                 @click="props.user && props.user.avatarUrl ? showSlide([props.user.avatarUrl], 0): ()=>{}"
                 class="translate-x-[1rem] w-[5rem] h-[5rem] border-[4px] text-[18pt] border-white rounded-lg">
             </Avatar>
-            <div v-if="!props.user.blocking && !props.user.blocked"
-                class="flex flex-col gap-y-1 px-[1rem]">
+            <div class="flex flex-col gap-y-1 px-[1rem]">
                 <div class="flex flex-row flex-nowrap justify-between">
                     <div class="text-[18pt] font-bold w-fit max-w-[20rem]">{{ props.user.nickname }}</div>
-                    <div v-if="!props.user.blocking && !props.user.blocked" @click="toggleFollowState"
+                    <div v-if="!isMyself && !props.user.blocking && !props.user.blocked" @click="toggleFollowState"
                         class="bg-blue-500 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer"
                         :class="{ 'bg-gray-300': state.isFollowing, 'bg-blue-500': !state.isFollowing, 'text-black': state.isFollowing, 'text-white': !state.isFollowing }">
                         <div v-if="!state.loading"> {{ state.isFollowing ? '已订阅' : '订阅' }}</div>
                         <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
                     </div>
-                    <div v-else-if="props.user.blocking"
+                    <div v-else-if="props.user.blocking && !isMyself"
                         @click="state.confirmBDialogUi.show = true"
                         class="bg-red-200 px-5 py-[0.325rem] rounded-full text-white font-bold cursor-pointer">
                         <div v-if="!state.loading" class="text-red-500"> 解除屏蔽 </div>
