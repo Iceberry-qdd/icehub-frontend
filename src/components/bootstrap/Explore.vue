@@ -30,6 +30,7 @@ import Header from '@/components/tailwind/Header.vue'
 import { getTimeline } from '@/api.js'
 import { store } from '@/store.js'
 import { onMounted, onUnmounted, reactive, provide } from 'vue'
+import router from '@/route'
 
 const state = reactive({
     posts: [],
@@ -79,6 +80,10 @@ function fetchNewPost() {
             getData()
         }, 1000)
     }
+}
+
+function handleAction() {
+    router.push({ name: 'search' })
 }
 
 function postingNew(post) {

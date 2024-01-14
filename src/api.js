@@ -779,6 +779,10 @@ export function deleteOneBlacklist(type, contentId, curUserId) {
     })
 }
 
+/**
+ * 将当前用户所有未读通知标记为已读
+ * @returns 标记的数量
+ */
 export function markAllNotifyRead() {
     return fetch(`${BASE_URL}/notify/read/batch/all`, {
         method: 'POST',
@@ -788,10 +792,14 @@ export function markAllNotifyRead() {
         },
         redirect: 'follow',
         credentials: 'same-origin'
-
     })
 }
 
+/**
+ * 切换帖子是否允许评论
+ * @param {object} param0 请求体，包含reviewId和allowReview的值
+ * @returns 关闭评论结果
+ */
 export function toggleCloseReviewApi({ id, allowReview }) {
     const requestBody = {
         id: id,
@@ -800,6 +808,33 @@ export function toggleCloseReviewApi({ id, allowReview }) {
     }
     return fetch(`${BASE_URL}/post/allowReview`, {
         method: 'PUT',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 全局搜索联想接口
+ * @param {string} word 待搜索关键词
+ * @param {Array<number>} timeRange 搜索范围，起止时间戳
+ * @param {Array<string>} type 搜索范围，搜索类型 
+ * @param {Array<string>} userId 搜索范围， 搜索特定用户，不传则搜索所有用户
+ * @returns 搜索结果
+ */
+export function globalSearchSuggest(word, type = ['USER', 'POST', 'REVIEW'], timeRange = [0, Date.now()], userId = []) {
+    const requestBody = {
+        key: word,
+        timeRange: timeRange,
+        type: type,
+        userId: userId
+    }
+    return fetch(`${BASE_URL}/search/suggest`, {
+        method: 'POST',
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'

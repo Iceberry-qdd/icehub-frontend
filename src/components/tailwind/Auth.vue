@@ -5,10 +5,14 @@
             <div class="flex flex-col items-center justify-center gap-y-4">
                 <a href="/index"><img src="/icon.svg" width="48" height="48"/></a>
                 <div id="brand-name" class="font-bold text-2xl">{{ state.appName }}</div>
-                <input :disabled="state.loading"
+                <input
+                    @keyup.enter.exact="tryLogin"
+                    :disabled="state.loading"
                     class="py-2 px-4 rounded-full w-64 bg-gray-100 text-[11pt] focus:outline-none focus:ring focus:border-blue-500"
                     v-model="state.nickname" type="text" placeholder="请输入账号名" />
-                <input :disabled="state.loading"
+                <input
+                    @keyup.enter.exact="tryLogin"
+                    :disabled="state.loading"
                     class="py-2 px-4 rounded-full w-64 bg-gray-100 text-[11pt] focus:outline-none focus:ring focus:border-blue-500"
                     v-model="state.password" type="password" placeholder="请输入密码" />
                 <div>

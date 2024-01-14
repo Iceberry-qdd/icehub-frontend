@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const Index = () => import('@/components/bootstrap/Index.vue')
 const Explore = () => import('@/components/bootstrap/Explore.vue')
+const Manage = () => import('@/components/tailwind/Manage.vue')
+const Search = () => import('@/components/tailwind/search/Search.vue')
 const Bookmark = () => import('@/components/tailwind/Bookmark.vue')
 const PostDetail = () => import('@/components/tailwind/PostDetail.vue')
 const Profile = () => import('@/components/tailwind/Profile.vue')
@@ -23,6 +25,8 @@ const routes = [
     { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
     { name: 'explore', path: '/explore', component: Explore },
     { name: 'bookmark', path: '/bookmark', component: Bookmark },
+    { name: 'manage', path: '/manage', component: Manage },
+    { name: 'search', path: '/search', component: Search },
     { name: 'postDetail', path: '/post/:id', component: PostDetail },
     { name: 'profile', path: '/profile/:nickname', component: Profile },
     { name: 'profileEdit', path: '/profile/edit', component: ProfileEditor },
