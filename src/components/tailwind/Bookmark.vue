@@ -130,6 +130,10 @@ function deleteAllPostsOfUserOnUi(userId) {
     })
 }
 
+function postingNew(post) {
+    state.posts.unshift(post)
+}
+
 onMounted(() => {
     getPostList()
     window.addEventListener('scroll', fetchNewPost)
@@ -142,4 +146,5 @@ onUnmounted(() => {
 provide('deleteBookmarkOnUi', { deleteBookmarkOnUi })
 provide('deletePostOnUi', { deletePostOnUi })
 provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
+provide('postingNew', { postingNew })
 </script>

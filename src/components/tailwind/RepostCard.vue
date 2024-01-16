@@ -11,7 +11,7 @@
                 <div class="text-gray-400 top-[1px]">发布于 {{ formattedTime }}</div>
             </div>
 
-            <div class="relative px-2 break-all text-[11pt]" :class="[state.shrinkContent?'max-h-[50vh] overflow-hidden':'']">
+            <div class="relative px-2 break-all text-[11pt]" :class="[state.shrinkContent?'max-h-[50vh] overflow-hidden rounded-b-[8px]':'']">
                 <div v-if="state.shrinkContent" class="shrink-mask relative top-0 bottom-0 left-0 right-0 bg-slate-400"></div>
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </div>
@@ -20,7 +20,7 @@
                     <div class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
                 </div>
                 <img loading="lazy" v-if="state.post.attachmentsUrl.length > 0" :src="getCoverImageUrl(state.post.attachmentsUrl[0])"
-                    class=" rounded-b-[8px] w-full h-[15rem] object-cover" />
+                    class="pic img-fluid rounded-b-[8px] w-full h-[15rem] object-cover" />
                 <div v-if="isGifCover && !isCoverHidden"
                     class="absolute flex justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
                     <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>

@@ -18,7 +18,7 @@
                     </Transition>
                     <div class="relative z-10">
                     <Avatar
-                        :user="state.review.user"
+                        :user="props.reply.user"
                         @mouseenter="state.showUserInfoPop = true"
                         @click="routeToUser(props.reply.user.nickname)"
                         class="w-[2.5rem] h-[2.5rem] rounded-[6px]">
