@@ -14,7 +14,7 @@
             </div>
             <div id="main" :style="{ 'flex-basis': state.basis[1] + '%' }" v-if="state.basis[1] > 0">
                 <router-view v-slot="{ Component }">
-                    <keep-alive :max="16" :include="['Index', 'Explore', 'Bookmark', 'Notify']">
+                    <keep-alive :max="16" :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search']">
                         <component :is="Component" />
                     </keep-alive>
                 </router-view>
@@ -48,6 +48,10 @@
 
 #sidebar-r {
     border-left: 1px solid #EEEEEE;
+}
+
+#main{
+    min-width: 0;
 }
 </style>
 

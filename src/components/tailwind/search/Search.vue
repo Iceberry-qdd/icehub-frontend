@@ -3,55 +3,216 @@
         <div class="header relative">
             <SearchBar
                 @search="search"
-                @routeTo="routeTo">
+                @routeTo="routeTo"
+                :typeMap="state.prompt.typeMap">
             </SearchBar>
         </div>
         <div>
-            <div class="text-[13pt] font-bold px-2 py-2">用户</div>
+            <div class="text-[13pt] font-bold px-2 py-2" v-if="showUsers">用户</div>
             <div
                 v-for="(searches, index) in state.apiSearch"
                 :index = "index">
-                <div
+                <UserCardSlide
                     v-if="index === 'USER'"
-                    class="flex flex-row flex-nowrap px-2 pt-0 pb-2 gap-x-2 overflow-auto">
-                    <UserCard
-                        class="w-[calc(50%-1rem)] h-[12.5rem] grow-0 shrink-0 cursor-pointer hover:shadow-lg transition-shadow delay-100"
-                        v-for="search in searches"
-                        :index="search.content.id"
-                        :user="search.content">
-                    </UserCard>
-                </div>
+                    :searches="searches"
+                    @routeTo="routeTo">
+                </UserCardSlide>
                 <div v-if="index === 'POST'">
-                    <PostCard v-for="search in searches" :index="search.content.id" :post="search.content"></PostCard>
+                    <TransitionGroup>
+                        <PostCard
+                            v-for="search in searches"
+                            :key="search.content.id"
+                            :post="search.content">
+                        </PostCard>
+                    </TransitionGroup>
+                </div>
+                <div v-if="index === 'REVIEW'">
+                    <TransitionGroup>
+                        <Review
+                            v-for="search in searches"
+                            :key="search.content.id"
+                            :review="search.content">
+                        </Review>
+                    </TransitionGroup>
                 </div>
             </div>
+        </div>
+        <div v-if="state.prompt.key" id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
+            <IconLoading v-if="showFooterLoading"  class="h-5 w-5 text-slate-500"></IconLoading>
+            <span v-else>没有更多了</span>
+        </div>
+        <div v-else class="flex flex-nowrap justify-center items-center w-full h-[150px] mt-20">
+            <img src="../../../assets/search.svg" height="150" width="150" loading="lazy"/>
         </div>
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.v-move,
+.v-enter-active,
+.v-leave-active {
+    transition: all 0.5s cubic-bezier(0.39, 0.58, 0.57, 1);
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}
+
+.v-leave-active {
+    position: absolute;
+    width: 100%;
+    height: fit-content;
+}
+</style>
 
 <script setup>
 import SearchBar from '@/components/tailwind/search/SearchBar.vue'
 import router from '@/route'
-import { reactive } from 'vue'
-import UserCard from '@/components/tailwind/search/UserCard.vue'
+import { reactive, computed, onMounted, onUnmounted, provide } from 'vue'
+import UserCardSlide from '@/components/tailwind/search/UserCardSlide.vue'
 import PostCard from '@/components/bootstrap/PostCard.vue'
+import { globalSearch } from '@/api.js'
+import { store } from '@/store'
+import IconLoading from '@/components/icons/IconLoading.vue'
+import Review from '@/components/tailwind/Review.vue'
 
 const state = reactive({
-    key: '',
-    apiSearch: null
+    prompt: {
+        key: undefined,
+        typeMap: new Map([
+            ['ALL', { zh: '全部', routePrefix: '', icon: 'history', fetch: false, show: true, once:false }],
+            ['HISTORY', { zh: '历史', routePrefix: '', icon: 'history', fetch: false, show: false,once:false }],
+            ['USER', { zh: '用户', routePrefix: 'profile', icon: 'history', fetch: true, show: true, once: true }],
+            ['POST', { zh: '帖子', routePrefix: 'post', icon: 'history', fetch: true, show: true, once:false }],
+            ['REVIEW', { zh: '评论', routePrefix: 'review', icon: 'history', fetch: true, show: true,once:false }]
+        ]),
+        type: [],
+        pageIndex: 0,
+        pageSize: 10
+    },
+    apiSearch: {},
+    hasMore: false,
+    isLoading: false
 })
 
-function routeTo({ url }) {
+const showUsers = computed(() => {
+    return state.apiSearch && Object.keys(state.apiSearch).includes('USER')
+})
+
+const showFooterLoading = computed(() => {
+    return state.hasMore || state.isLoading
+})
+
+// 包含只fetch一次和不需要fetch的类型
+const invalidTypes = computed(() => {
+    return [...state.prompt.typeMap.entries()]
+                .filter(([_, { fetch, once }]) => !fetch || once)
+                .map(([k, _]) => k)
+})
+
+async function routeTo({ url }) {
     if (!url) {
-        router.back()
+        state.prompt.key = undefined
+        state.prompt.type = []
+        state.prompt.pageIndex = 0
+        state.apiSearch = {}
+        await router.back()
     } else {
-        router.push(url)
+        await router.push(url)
     }
 }
 
-function search({ key }) {
-    state.key = key
+function search({ key, type }) {
+    state.prompt.key = key
+    state.prompt.type = type
+    state.prompt.pageIndex = 0
+    state.apiSearch = {}
+    doSearch()
 }
+
+async function doSearch() {
+    try {
+        state.isLoading = true
+        if(!state.prompt.key) return
+        if (state.prompt.pageIndex > 0) {
+            //第二次fetch时，排除once属性为true的type数据
+            state.prompt.type = state.prompt.type.filter(it => !invalidTypes.value.includes(it))
+        }
+        const response = await globalSearch(state.prompt.key,state.prompt.pageSize, state.prompt.pageIndex, state.prompt.type)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = await response.json()
+        Object.keys(result).forEach(type => {
+            if(!state.apiSearch.hasOwnProperty(type)){
+                state.apiSearch[type] = []
+            }
+            state.apiSearch[type].push(...result[type].filter(it => it.content != null))
+        })
+        state.hasMore = Object.keys(result).length > 0
+    } catch (e) {
+        store.setErrorMsg(e.message)
+        console.error(e)
+    }finally{
+        state.isLoading = false
+    }
+}
+
+function fetchMoreSameSearch() {
+    if (!state.hasMore) return
+
+    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+    const clientHeight = document.documentElement.clientHeight
+    const scrollHeight = document.documentElement.scrollHeight
+
+    if (scrollTop + clientHeight >= scrollHeight) {
+        setTimeout(() => {
+            const lastPageIndex = state.prompt.pageIndex
+            state.prompt.pageIndex = lastPageIndex + 1
+            doSearch()
+        }, 1000)
+    }
+}
+
+function deletePostOnUi(postId) {
+    if (!postId || !state.apiSearch['POST']) return
+    const preDeletePostIndex = state.apiSearch['POST'].findIndex(it => it.content.id == postId)
+    if (preDeletePostIndex != -1) {
+        state.apiSearch['POST'].splice(preDeletePostIndex, 1)
+    }
+}
+
+function deleteAllPostsOfUserOnUi(userId) {
+    if (!userId) return
+
+    const preDeletePosts = state.apiSearch['POST'].filter(it => it.content.user.id == userId)
+    if (!preDeletePosts) {
+        store.setErrorMsg("删除失败，该帖子不存在！")
+        return
+    }
+
+    preDeletePosts.forEach( post => {
+        const index = state.posts.indexOf(post)
+        state.apiSearch['POST'].splice(index, 1)
+    })
+}
+
+function postingNew(post) {
+    state.apiSearch['POST'].unshift({
+        type: 'POST',
+        content: post
+    })
+}
+
+onMounted(() => {
+    window.addEventListener('scroll', fetchMoreSameSearch)
+})
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', fetchMoreSameSearch)
+})
+
+provide('deletePostOnUi', { deletePostOnUi })
+provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
+provide('postingNew', { postingNew })
 </script>

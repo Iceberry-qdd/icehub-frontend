@@ -831,7 +831,9 @@ export function globalSearchSuggest(word, type = ['USER', 'POST', 'REVIEW'], tim
         key: word,
         timeRange: timeRange,
         type: type,
-        userId: userId
+        userId: userId,
+        pageSize: 10,
+        pageIndex: 0
     }
     return fetch(`${BASE_URL}/search/suggest`, {
         method: 'POST',
@@ -840,6 +842,49 @@ export function globalSearchSuggest(word, type = ['USER', 'POST', 'REVIEW'], tim
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 全局联搜索接口
+ * @param {string} word 待搜索关键词
+ * @param {number} pageSize 每页大小
+ * @param {number} pageIndex 当前页码
+ * @param {Array<string>} type 搜索范围，搜索类型 
+ * @param {Array<number>} timeRange 搜索范围，起止时间戳
+ * @param {Array<string>} userId 搜索范围， 搜索特定用户，不传则搜索所有用户
+ * @returns 搜索结果
+ */
+export function globalSearch(word, pageSize, pageIndex, type = ['USER', 'POST', 'REVIEW'], timeRange = [0, Date.now()], userId = []) {
+    const requestBody = {
+        key: word,
+        timeRange: timeRange,
+        type: type,
+        userId: userId,
+        pageSize: pageSize,
+        pageIndex: pageIndex
+    }
+    return fetch(`${BASE_URL}/search`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+export function getHotSearch(count){
+    return fetch(`${BASE_URL}/search/hot?n=${count}`,{
+        method: 'GET',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
         redirect: 'follow',
         credentials: 'same-origin'
     })

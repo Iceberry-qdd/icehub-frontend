@@ -13,7 +13,8 @@
             :isLoading="state.isLoading"
             :posts="state.posts"
             :curPageIndex="state.pageIdx"
-            :totalPages="state.totalPages"></PostsTimeline>
+            :totalPages="state.totalPages">
+        </PostsTimeline>
     </div>
 
 </template>

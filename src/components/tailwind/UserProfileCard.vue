@@ -42,7 +42,7 @@
 </style>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive } from 'vue'
 import Avatar from '@/components/tailwind/Avatar.vue'
 import Banner from '@/components/tailwind/Banner.vue'
 

@@ -21,7 +21,7 @@ export class MsgPack {
 }
 
 export const ws = reactive({
-    url: 'http://icehub.com:8080/ws',
+    url: `${import.meta.env.VITE_BASE_URL}/ws`,
     globalStompClient: null,
     reconnectCount: 0,
     connectState: 'DISCONNECT', // CONNECTED,MAX_TRY_RECONNECT,DISCONNECTED,CONNECTED_FAILED
@@ -34,9 +34,7 @@ export const ws = reactive({
     },
     connectWebsocket(token) {
         const that = this
-        console.log(that.connectState)
         this.globalStompClient.connect({ TOKEN: token }, function (frame) {
-            console.log(`[Websocket]connected successful: ${frame}`)
             that.connectState = 'CONNECTED'
             that.reconnectCount = 0
         }, function (error) {
@@ -59,7 +57,6 @@ export const ws = reactive({
                 return
             }
 
-            console.log(`[Websocket]Starting reconnect, try ${that.reconnectCount} times...`)
             that.initWebsocket()
             that.connectWebsocket()
         }, 5000)
@@ -68,8 +65,7 @@ export const ws = reactive({
     },
     disconnectWebsocket() {
         if (this.globalStompClient != null) {
-            this.globalStompClient.disconnect(function () {
-                console.log('[Websocket]Stopping connect...')
+            this.globalStompClient.disconnect( function () {
             })
         }
     },

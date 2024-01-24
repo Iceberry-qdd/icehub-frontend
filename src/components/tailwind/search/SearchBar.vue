@@ -13,8 +13,8 @@
                     v-model.trim="state.type"
                     name="search-type"
                     id="type-select"
-                    class="border-[1px] h-full rounded-l-full border-r-0 pl-2 focus:outline-none">
-                    <option v-for="([k, { zh }]) in state.suggests.typeMap" :value="k" v-show="k !== 'HISTORY'">{{ zh }}</option>
+                    class="border-[1px] h-full rounded-l-full border-r-0 pl-2 focus:outline-none cursor-pointer">
+                    <option v-for="([k, { zh, show }]) in state.suggests.typeMap" :value="k" v-show="show">{{ zh }}</option>
                 </select>
                 <input
                     @keyup.enter.exact="search()"
@@ -176,6 +176,7 @@ import { globalSearchSuggest } from '@/api'
 import Avatar from '@/components/tailwind/Avatar.vue'
 
 const emits = defineEmits(['routeTo', 'search'])
+const props = defineProps(['typeMap'])
 const state = reactive({
     headerConfig: {
         title: '搜索',
@@ -193,13 +194,7 @@ const state = reactive({
         showLoading: false,
         loadingText: '正在搜索中......',
         failText: '无结果',
-        typeMap: new Map([
-            ['ALL', { zh: '全部', routePrefix: '', icon: 'history' }],
-            ['HISTORY', { zh: '历史', routePrefix: '', icon: 'history' }],
-            ['USER', { zh: '用户', routePrefix: 'profile', icon: 'history' }],
-            ['POST', { zh: '帖子', routePrefix: 'post', icon: 'history' }],
-            ['REVIEW', { zh: '评论', routePrefix: 'review', icon: 'history' }]
-        ]),
+        typeMap: props.typeMap,
         lock: false
     },
     apiSuggests: null
@@ -214,10 +209,9 @@ watch(() => state.prompt, (newVal, oldVal) => {
     // 请求服务器和快速回退输入时不触发联想功能
     if(state.suggests.showLoading || oldVal.substring(0, oldVal.length - 1) === newVal) return
     // 若lock未true,则不触发，冷待冷却时间
-    if(state.suggests.lock){
-        console.log('操作太快了！')
-        return
-    }
+    if(state.suggests.lock) return
+    // 输入的prompt为空，则不触发联想功能
+    if(!state.prompt) return
     
     state.suggests.show = true
     state.suggests.lock = true
@@ -235,14 +229,16 @@ async function searchSuggest() {
     state.suggests.show = true
     state.suggests.showLoading = true
     try {
-        const validTypeList = [...state.suggests.typeMap.keys()].filter(it => it !== 'ALL' && it !== 'HISTORY')
+        const validTypeList = [...state.suggests.typeMap.entries()]
+            .filter(([_, { fetch }]) => fetch === true)
+            .map(([k, _]) => k)
         const searchType = state.type === 'ALL' ? validTypeList : [state.type]
         const response = await globalSearchSuggest(state.prompt, searchType)
         if (!response.ok) throw new Error((await response.json()).error)
 
-        const result = await response.text()
-        state.suggests.hintSuggests = result === '{}' ? null : JSON.parse(result)
-        state.suggests.show = result !== '{}'
+        const result = await response.json()
+        state.suggests.hintSuggests = Object.keys(result).length > 0 ? result : null
+        state.suggests.show = Object.keys(result).length > 0
     } catch (e) {
         console.error(e)
         state.suggests.show = false
@@ -252,6 +248,7 @@ async function searchSuggest() {
 }
 
 function storeSearchHistory(word){
+    if(!word) return
     const key = 'SUGGEST_HISTORY'
     const history = JSON.parse(localStorage.getItem(key)) || {HISTORY: []}
     while(history.HISTORY.length >= 10){
@@ -289,13 +286,15 @@ function routeTo(type, id) {
 function search(word = state.prompt) {
     state.prompt = word
     storeSearchHistory(word)
-    emits('search', { key: word })
+    const validTypeList = [...state.suggests.typeMap.keys()].filter(it => it !== 'ALL' && it !== 'HISTORY')
+    const searchType = state.type === 'ALL' ? validTypeList : [state.type]
+    emits('search', { key: word, type: searchType })
     state.suggests.show = false
 }
 
 function handleDismissSuggestPanel(event) {
     const searchPanel = document.querySelector(`#search>.header`)
-    if (!searchPanel.contains(event.target)) {
+    if (searchPanel && !searchPanel.contains(event.target)) {
         state.suggests.show = false
     }
     event.stopPropagation()
