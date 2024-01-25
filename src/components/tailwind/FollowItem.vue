@@ -1,12 +1,12 @@
 <template>
     <div class="flex flex-row flex-nowrap justify-center items-start gap-x-3 border-b-[1px] p-2">
-        <Avatar :user="state.user" class="flex-initial w-[60px] h-[60px] rounded-[8px] text-[18pt]" @click="routeToUserProfile"></Avatar>
+        <Avatar :user="state.user" class="flex-initial w-[3rem] h-[3rem] object-cover rounded-[8px] text-[18pt]" @click="routeToUserProfile"></Avatar>
         <div class="flex-auto">
             <div @click="routeToUserProfile" class="font-bold text-[14pt] cursor-pointer hover:underline">
                 {{ state.user.nickname }}
                 <i v-show="state.user.verified == true" class="bi bi-patch-check-fill verify text-[11pt] text-blue-500"></i>
             </div>
-            <div class="text-[11pt] brief">{{ brief(state.user.remark) }}</div>
+            <div class="text-[10pt] brief">{{ brief(state.user.remark) }}</div>
         </div>
         <div @click="toggleFollowState" :class="buttonClass"
             class="flex-initial place-self-center w-[5rem] px-[1rem] py-[0.4rem] text-white text-[11pt] font-bold rounded-full cursor-pointer">
@@ -19,6 +19,7 @@
 <style scoped>
 .brief {
     width: 24.5rem;
+    font-weight: 400;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

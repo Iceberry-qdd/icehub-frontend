@@ -12,11 +12,19 @@
             <div
                 v-for="(searches, index) in state.apiSearch"
                 :index = "index">
-                <UserCardSlide
-                    v-if="index === 'USER'"
-                    :searches="searches"
-                    @routeTo="routeTo">
-                </UserCardSlide>
+                <div v-if="index === 'USER' && onlySearchUser">
+                    <FollowItem
+                        v-for="search in searches"
+                        :key="search.content.id"
+                        :user="search.content">
+                    </FollowItem>
+                </div>
+                <div v-else-if="index === 'USER'">
+                    <UserCardSlide
+                        :searches="searches"
+                        @routeTo="routeTo">
+                    </UserCardSlide>
+                </div>
                 <div v-if="index === 'POST'">
                     <TransitionGroup>
                         <PostCard
@@ -76,6 +84,7 @@ import { globalSearch } from '@/api.js'
 import { store } from '@/store'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Review from '@/components/tailwind/Review.vue'
+import FollowItem from '@/components/tailwind/FollowItem.vue'
 
 const state = reactive({
     prompt: {
@@ -102,6 +111,10 @@ const showUsers = computed(() => {
 
 const showFooterLoading = computed(() => {
     return state.hasMore || state.isLoading
+})
+
+const onlySearchUser = computed(() => {
+    return state.prompt.type.length === 1 && state.prompt.type[0] === 'USER'
 })
 
 // 包含只fetch一次和不需要fetch的类型
@@ -135,7 +148,7 @@ async function doSearch() {
     try {
         state.isLoading = true
         if(!state.prompt.key) return
-        if (state.prompt.pageIndex > 0) {
+        if (state.prompt.pageIndex > 0 && !onlySearchUser.value) {
             //第二次fetch时，排除once属性为true的type数据
             state.prompt.type = state.prompt.type.filter(it => !invalidTypes.value.includes(it))
         }
