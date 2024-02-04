@@ -1,7 +1,7 @@
 export function humanizedTime(timestamps) {
     const now = new Date()
     const postTime = new Date(Number.parseInt(timestamps))
-    const [timeDiff, suffix] = now < postTime ? [postTime - now,'后'] : [now - postTime,'前']
+    const [timeDiff, suffix] = now < postTime ? [postTime - now, '后'] : [now - postTime, '前']
 
     const oneSecond = 1000
     const oneMinute = oneSecond * 60
@@ -70,7 +70,7 @@ export function calcBgColor(string) {
  * @param {number} step 增加的步长
  * @param {string} unit 增加的单位
  */
-export function getDateTimeRange(start, step, unit){
+export function getDateTimeRange(start, step, unit) {
     let end = new Date(start)
     switch (unit) {
         case 'YEAR':
@@ -95,4 +95,15 @@ export function getDateTimeRange(start, step, unit){
             throw new Error(`Unspported time unit: ${unit}`)
     }
     return [start, end]
+}
+
+const intlNumberFormat = new Intl.NumberFormat("en-US",
+    {
+        notation: "compact",
+        maximumFractionDigits: 1,
+        compactDisplay: "short",
+        roundingMode: "floor"
+    })
+export function humanizedNumber(number) {
+    return intlNumberFormat.format(number)
 }

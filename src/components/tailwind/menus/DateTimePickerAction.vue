@@ -6,9 +6,9 @@
         </div>
         <div id="date-picker">
             <div class="flex w-full flex-row flex-nowrap justify-between items-center">
-                <div class="text-[11pt] text-[#409EFF] cursor-pointer" @click="closeAndClear">清除</div>
+                <div class="text-[11pt] text-[#409EFF] cursor-pointer btn-no-select" @click="closeAndClear">清除</div>
                 <div class="text-[11pt]">{{ formattedPickedDateTime }}</div>
-                <div class="text-[11pt] text-[#409EFF] cursor-pointer" @click="closeAndOk">确定</div>
+                <div class="text-[11pt] text-[#409EFF] cursor-pointer btn-no-select" @click="closeAndOk">确定</div>
             </div>
 
             <div class="flex flex-row w-full h-[2rem] justify-between items-center">
@@ -41,7 +41,7 @@
             <div class="divide-y  cursor-default">
                 <div class="grid grid-cols-7 gap-1">
                     <div
-                        class="w-[2.5rem] h-[2.5rem] flex justify-center items-center"
+                        class="w-[2.5rem] h-[2.5rem] flex justify-center items-center btn-no-select"
                         v-for="(week, index) in state.weekNames" :key="index">
                         {{ week }}
                     </div>
@@ -55,7 +55,7 @@
                     <div v-for="i in daysCountOfPickedMonth"
                         :class="[state.pickedDate == i ? 'text-white bg-blue-500' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '' : 'm-disabled']"
                         @click="canPickThisDay(i) ? state.pickedDate = i : ''"
-                        class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center">
+                        class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center btn-no-select">
                         {{ i }}
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 <template>
-    <div @click="showConfirmDialogBox" class="flex flex-rows justify-start items-center gap-x-3">
+    <div @click="showConfirmDialogBox" class="flex flex-rows justify-start items-center gap-x-3 btn-no-select">
         <span class="material-icons-round no-hover">{{ icon }}</span>
         <div>{{ text }}</div>
         <Teleport to="#app">

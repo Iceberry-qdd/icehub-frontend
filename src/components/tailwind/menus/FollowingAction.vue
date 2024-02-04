@@ -1,7 +1,7 @@
 <template>
     <div @click="toggleFollow()" class="flex flex-rows justify-start items-center gap-x-3">
         <span class="material-icons-round no-hover">{{ followIcon }}</span>
-        <div>{{ followText }}</div>
+        <div class="btn-no-select">{{ followText }}</div>
     </div>
 </template>
 

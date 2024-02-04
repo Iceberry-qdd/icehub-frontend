@@ -116,15 +116,19 @@
                         <span
                             :class="[state.showMarkdownPanel ? 'active' : '']"
                             v-tooltip="'长文章'"
+                            v-if="showUnImpl"
                             class="material-icons-round">
+                            <!-- TODO implement it. -->
                             article
                         </span>
                     </div>
 
                     <div id="poll">
                         <span
+                            v-if="showUnImpl"
                             v-tooltip="'投票'"
                             class="material-icons-round">
+                            <!-- TODO implement it. -->
                             equalizer
                         </span>
                     </div>
@@ -189,22 +193,21 @@
 </style>
 
 <script setup>
-import { computed, reactive, watch, inject } from 'vue'
+import { computed, reactive, watch, inject, defineAsyncComponent } from 'vue'
 import { uploadImages, posting, postingPlan } from '@/api.js'
 import { store } from '@/store.js'
-import { VideoTwo} from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import EmojiPanel from '@/components/tailwind/menus/EmojiPanel.vue'
 import { VueShowdown } from 'vue-showdown'
-import VisibilityForPostEditorAction from '@/components/tailwind/menus/VisibilityForPostEditorAction.vue'
-import DateTimePickerAction from '@/components/tailwind/menus/DateTimePickerAction.vue'
-import ImagePickerAction from '@/components/tailwind/menus/ImagePickerAction.vue'
 import { renderMath } from '../../katexConfig.js'
 import { getDateTimeRange } from '@/utils/formatUtils.js'
+const EmojiPanel = defineAsyncComponent(() => import('@/components/tailwind/menus/EmojiPanel.vue'))
+const VisibilityForPostEditorAction = defineAsyncComponent(() => import('@/components/tailwind/menus/VisibilityForPostEditorAction.vue'))
+const DateTimePickerAction = defineAsyncComponent(() => import('@/components/tailwind/menus/DateTimePickerAction.vue'))
+const ImagePickerAction = defineAsyncComponent(() => import('@/components/tailwind/menus/ImagePickerAction.vue'))
 
 const emits = defineEmits(['postingNew'])
 const { postingNew } = inject('postingNew')
-
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     content: "",
     imgList: [],
@@ -280,9 +283,16 @@ async function submitPost() {
         state.result = await response.json()
 
         //防止重复提交上一次的内容
-        state.content = ""
+        state.content = ''
         state.imgList = []
+        state.showImagePanel = false
+        state.data.allowReview = true
+        state.data.content = ''
+        state.data.top = false
+        state.data.attachmentsUrl = []
         state.data.createdTime = null
+        state.top = false
+        state.data.status = 'PUBLIC'
 
         postingNew(state.result)
     } catch (err) {
@@ -342,7 +352,6 @@ function pickedTimeAndClose(args) {
             return
         }
 
-        const time = new Date(args.timestamps)
         state.data.createdTime = args.timestamps
     } else {
         state.data.createdTime = null

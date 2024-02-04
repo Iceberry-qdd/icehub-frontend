@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-rows justify-start items-center gap-x-3">
         <span class="material-icons-round no-hover">report_problem</span>
-        <div >举报此内容</div>
+        <div class="btn-no-select">举报此内容</div>
     </div>
 </template>
 

@@ -197,7 +197,9 @@ const state = reactive({
         typeMap: props.typeMap,
         lock: false
     },
-    apiSuggests: null
+    apiSuggests: null,
+    toSearch : false,
+    timeoutIds: []
 })
 
 watch(() => state.prompt, (newVal, oldVal) => {
@@ -212,10 +214,13 @@ watch(() => state.prompt, (newVal, oldVal) => {
     if(state.suggests.lock) return
     // 输入的prompt为空，则不触发联想功能
     if(!state.prompt) return
+    // 按下enter键时，也不触发
+    if(state.toSearch) return
     
     state.suggests.show = true
     state.suggests.lock = true
-    setTimeout(() => { state.suggests.lock = false }, 500)
+    const timeoutId = setTimeout(() => { state.suggests.lock = false }, 500)
+    state.timeoutIds.push(timeoutId)
     searchSuggest()
 })
 
@@ -275,12 +280,14 @@ function removeHistory(id){
 function routeTo(type, id) {
     if (!type && !id) {
         emits('routeTo', { url: null })
+        state.prompt = ''
+        state.suggests.show = false
         return
     }
     storeSearchHistory(id)
     const url = `/${state.suggests.typeMap.get(type).routePrefix}/${id}`
-    emits('routeTo', { url: url })
     state.suggests.show = false
+    emits('routeTo', { url: url })
 }
 
 function search(word = state.prompt) {
@@ -288,8 +295,9 @@ function search(word = state.prompt) {
     storeSearchHistory(word)
     const validTypeList = [...state.suggests.typeMap.keys()].filter(it => it !== 'ALL' && it !== 'HISTORY')
     const searchType = state.type === 'ALL' ? validTypeList : [state.type]
-    emits('search', { key: word, type: searchType })
+    state.toSearch = true
     state.suggests.show = false
+    emits('search', { key: word, type: searchType })
 }
 
 function handleDismissSuggestPanel(event) {
@@ -306,5 +314,6 @@ onMounted(() => {
 
 onUnmounted(() => {
     document.querySelector('#app').removeEventListener('click', handleDismissSuggestPanel)
+    state.timeoutIds.forEach(id => clearTimeout(id))
 })
 </script>

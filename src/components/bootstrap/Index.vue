@@ -6,19 +6,23 @@
             :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu"
             :menuIcon="state.headerConfig.menuIcon"
-            :menuAction="state.headerConfig.menuAction"></Header>
+            :menuAction="state.headerConfig.menuAction"
+            :iconTooltip="state.headerConfig.iconTooltip">
+        </Header>
         <Transition>
             <GlobalRefresh v-if="state.isShowGlobalRefresh==true"
                 @closeGlobalRefresh="state.isShowGlobalRefresh=false"
                 class="fixed z-[99] left-1/2 -translate-x-1/2"
-                :class="[isShowGlobalNotifyBannerMsg ? 'top-6.5-rem' : 'top-4-rem']"></GlobalRefresh>
+                :class="[isShowGlobalNotifyBannerMsg ? 'top-6.5-rem' : 'top-4-rem']">
+            </GlobalRefresh>
         </Transition>
         <PostEditor @get-data="getData" @postingNew="postingNew"></PostEditor>
         <PostsTimeline
             :isLoading="state.isLoading"
             :posts="state.posts"
             :curPageIndex="state.pageIdx"
-            :totalPages="state.totalPages"></PostsTimeline>
+            :totalPages="state.totalPages">
+        </PostsTimeline>
     </div>
 </template>
 
@@ -77,6 +81,7 @@ import PostEditor from '@/components/tailwind/PostEditor.vue'
 import { computed, onMounted, onUnmounted, reactive, provide } from 'vue'
 import GlobalRefresh from '@/components/tailwind/GlobalRefresh.vue'
 
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     posts: [],
     pageIdx: 1,
@@ -86,9 +91,10 @@ const state = reactive({
     headerConfig: {
         title: '主页',
         goBack: false,
-        showMenu: true,
-        menuIcon: null,
-        menuAction: { action: 'route', param: '' }
+        showMenu: showUnImpl, // TODO implement it.
+        menuIcon: 'campaign',
+        menuAction: { action: 'route', param: '' },
+        iconTooltip: '公告'
     },
     isShowGlobalRefresh: true,
     isLoading: false

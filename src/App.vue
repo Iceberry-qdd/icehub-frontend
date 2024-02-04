@@ -1,8 +1,19 @@
 <template>
     <div v-if="state.user">
-        <GlobalNotifyBanner class="fixed" :class="{ 'top-0': isShowGlobalNotifyBannerMsg }"
-            v-if="isShowGlobalNotifyBannerMsg" @closeGlobalNotifyBanner="closeGlobalNotifyBannerMsg"
-            id="global-notify-banner" :message="store.GLOBAL_NOTIFY_BANNER_MSG"></GlobalNotifyBanner>
+        <GlobalProgressIndicator
+            class="fixed"
+            v-if="state.showProgressIndicator"
+            @close="closeProgressIndicator"
+            :routing="state.startRoute">
+        </GlobalProgressIndicator>
+        <GlobalNotifyBanner
+            class="fixed"
+            :class="{ 'top-0': isShowGlobalNotifyBannerMsg }"
+            v-if="isShowGlobalNotifyBannerMsg"
+            @closeGlobalNotifyBanner="closeGlobalNotifyBannerMsg"
+            id="global-notify-banner"
+            :message="store.GLOBAL_NOTIFY_BANNER_MSG">
+        </GlobalNotifyBanner>
         <div id="container" :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }">
             <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
             <GlobalTipDialog></GlobalTipDialog>
@@ -13,14 +24,14 @@
                 <Sidebar id="menu"></Sidebar>
             </div>
             <div id="main" :style="{ 'flex-basis': state.basis[1] + '%' }" v-if="state.basis[1] > 0">
-                <router-view v-slot="{ Component }">
-                    <keep-alive :max="16" :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search']">
-                        <component :is="Component" />
+                <router-view v-slot="{ Component }" >
+                    <keep-alive :max="8" :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
+                        <component :is="Component" :key="route.fullPath" />
                     </keep-alive>
                 </router-view>
             </div>
-            <div id="sidebar-r" :style="{ 'flex-basis': state.basis[2] + '%' }" v-if="state.basis[2] > 0">
-                <Recommend></Recommend>
+            <div id="sidebar-r" :style="sidebarRStyle" v-if="state.basis[2] > 0">
+                <Recommend class="p-4 mr-20"></Recommend>
             </div>
         </div>
     </div>
@@ -48,34 +59,67 @@
 
 #sidebar-r {
     border-left: 1px solid #EEEEEE;
+    overflow: hidden scroll;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 0;
 }
 
 #main{
     min-width: 0;
+    z-index: 1;
+}
+
+.mr-20 {
+    margin-right: 5rem/* 80px */;
+}
+
+#sidebar-r::-webkit-scrollbar {
+    width: 0 !important;
+    height: 100% !important;
+    -webkit-appearance: none;
+}
+
+#sidebar-r::-webkit-scrollbar-thumb {
+    width: 6px !important;
+    -webkit-appearance: none;
 }
 </style>
 
 <script setup>
-import GlobalBanner from '@/components/tailwind/GlobalBanner.vue'
+import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent } from 'vue'
 import Sidebar from '@/components/bootstrap/Sidebar.vue'
 import Recommend from '@/components/tailwind/Recommend.vue'
-import GlobalTipDialog from '@/components/tailwind/GlobalTipDialog.vue'
 import Brand from '@/components/tailwind/Brand.vue'
-import { computed, onMounted, onUnmounted, reactive, watch } from 'vue'
 import { getCurUserInfo } from '@/api'
 import { store } from '@/store'
-import ImageSlide2 from '@/components/tailwind/ImageSlide2.vue'
-import ImageCropper from '@/components/tailwind/ImageCropper.vue'
 import { ws } from '@/websocket.js'
-import GlobalNotifyBanner from '@/components/tailwind/GlobalNotifyBanner.vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import 'bootstrap'
+import 'material-icons/iconfont/round.css'
+import { NavigationFailureType, isNavigationFailure } from 'vue-router'
+import GlobalProgressIndicator from '@/components/tailwind/GlobalProgressIndicator.vue'
+const GlobalTipDialog = defineAsyncComponent(() => import('@/components/tailwind/GlobalTipDialog.vue'))
+const GlobalNotifyBanner = defineAsyncComponent(() => import('@/components/tailwind/GlobalNotifyBanner.vue'))
+const GlobalBanner = defineAsyncComponent(() => import('@/components/tailwind/GlobalBanner.vue'))
+const ImageSlide2 = defineAsyncComponent(() => import('@/components/tailwind/ImageSlide2.vue'))
+const ImageCropper = defineAsyncComponent(() => import('@/components/tailwind/ImageCropper.vue'))
 
-const $route = useRoute()
-
+const route = useRoute()
+const router = useRouter()
 const state = reactive({
     user: null,
     globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG,
-    basis: [40, 50, 40]
+    basis: [40, 50, 40],
+    startRoute:false,
+    showProgressIndicator: false,
+    timeoutId: 0
+})
+
+const sidebarRStyle = reactive({
+    flexBasis: `${state.basis[2]}%`,
+
 })
 
 async function curUser() {
@@ -97,9 +141,6 @@ async function curUser() {
 
         localStorage.removeItem('TOKEN')
         localStorage.removeItem('CUR_USER')
-        setTimeout(() => {
-            top.location = `http://${window.document.location.host}/auth.html`
-        }, 1500)
     }
 }
 
@@ -153,7 +194,7 @@ watch(() => ws.connectState, function (newVal, oldVal) {
     }
 })
 
-watch(() => $route.path, function (newVal, oldVal) {
+watch(() => route.path, function (newVal, oldVal) {
     if (newVal.startsWith('/setting')) {
         state.basis = [40, 90, 0]
     } else {
@@ -161,12 +202,31 @@ watch(() => $route.path, function (newVal, oldVal) {
     }
 })
 
+function closeProgressIndicator(){
+    state.timeoutId = setTimeout(() => {
+        state.showProgressIndicator = false
+    }, 1100);
+}
+
+curUser()
 onMounted(() => {
-    curUser()
+    document.getElementById('pre-loading').style.display = 'none'
+    router.beforeEach((to, from) => {
+        state.showProgressIndicator = true
+        state.startRoute = true
+    })
+
+    router.afterEach((to, from, failure) => {
+        state.startRoute = false
+        if(failure && !isNavigationFailure(failure, NavigationFailureType.duplicated)){
+            store.setErrorMsg('无法加载页面，您可以刷新重试！')
+        }
+    })
 })
 
 onUnmounted(() => {
     disconnectToWs()
+    clearTimeout(state.timeoutId)
 })
 
 </script>

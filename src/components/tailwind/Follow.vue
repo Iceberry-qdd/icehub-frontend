@@ -6,15 +6,15 @@
             :goBack="state.headerConfig.goBack"
             :showMenu="state.headerConfig.showMenu"
             :menuIcon="state.headerConfig.menuIcon"
-            :menuAction="state.headerConfig.menuAction"></Header>
+            :menuAction="state.headerConfig.menuAction">
+        </Header>
         <div class="flex flex-row text-center h-[3rem] items-center">
-        <div v-for="(menu, index) in state.menus" :index="index" :key="menu.id" :class="{ active: menu.isActive }"
-            @click="routeTo(menu.routeTo, menu.id)"
-            class=" basis-full cursor-pointer h-full w-full flex items-center justify-center">{{ menu.name }}</div>
+            <div v-for="(menu, index) in state.menus" :index="index" :key="menu.id" :class="{ active: menu.isActive }"
+                @click="routeTo(menu.routeTo, menu.id)"
+                class=" basis-full cursor-pointer h-full w-full flex items-center justify-center">{{ menu.name }}</div>
         </div>
         <router-view></router-view>
     </div>
-
 </template>
 
 <style scoped>
@@ -32,18 +32,17 @@ import router from '@/route.js'
 import { getUserInfoByNickname } from '@/api.js'
 import { store } from '@/store.js'
 
-const $route = useRoute()
-
+const route = useRoute()
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     user: null,
     menus: [
-        { id: 1, name: '我的订阅', isActive: $route.name == 'followingList', routeTo: `/following/${$route.params.nickname}` },
-        { id: 2, name: '订阅我的', isActive: $route.name == 'followerList', routeTo: `/follower/${$route.params.nickname}` },
-        { id: 3, name: '共同订阅', isActive: $route.name == 'coFollowingList', routeTo: `/coFollow/${$route.params.nickname}` }
+        { id: 1, name: '我的订阅', isActive: route.params == 'followingList', routeTo: `/following/${route.params.nickname}` },
+        { id: 2, name: '订阅我的', isActive: route.params == 'followerList', routeTo: `/follower/${route.params.nickname}` },
+        { id: 3, name: '共同订阅', isActive: route.params == 'coFollowingList', routeTo: `/coFollow/${route.params.nickname}` }
     ],
     headerConfig: {
-        title: $route.params.nickname,
+        title: route.params.nickname,
         goBack: true,
         showMenu: false,
         menuIcon: null,
@@ -87,7 +86,7 @@ async function getUserInfo(nickname) {
 }
 
 onMounted(() => {
-    const username = $route.params.nickname
+    const username = route.params.nickname
     getUserInfo(username)
 })
 </script>

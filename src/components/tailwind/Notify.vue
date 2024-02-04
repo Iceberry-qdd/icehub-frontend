@@ -21,8 +21,9 @@
 
         <div id="container">
             <div id="notify-cards">
-                <div v-for="(msg,index) in state.messages" :key="index" class="relative">
-                    <div class="absolute w-full h-full bg-transparent z-[96] cursor-pointer" @click.self="AckMsgAndRouteTo(msg)"></div>
+                <div v-for="(msg, index) in state.messages" :key="index" class="relative">
+                    <div class="absolute w-full h-full bg-transparent z-[96] cursor-pointer"
+                        @click.self="AckMsgAndRouteTo(msg)"></div>
                     <NotifyCard :message="msg"></NotifyCard>
                 </div>
             </div>
@@ -41,9 +42,9 @@
     height: 2rem;
 }
 
-.unread{
+.unread {
     background-color: #eff6ff;
-} 
+}
 
 .icon-post-like {
     background-color: #fecaca;
@@ -62,11 +63,11 @@
     background-color: #bfdbfe;
 }
 
-.icon-user-followed{
+.icon-user-followed {
     background-color: #ddd6fe;
 }
 
-.icon-at-sign{
+.icon-at-sign {
     background-color: #fecdd3;
 }
 
@@ -112,9 +113,10 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import NotifyCard from '@/components/tailwind/NotifyCard.vue'
 import { getUsersNotifyList, markNotifyRead, markAllNotifyRead } from '@/api.js'
 import { store } from '@/store'
-import router from '@/route'
+import { useRouter } from 'vue-router'
 import ConfirmDialogBox from '@/components/tailwind/menus/ConfirmDialogBox.vue'
 
+const router = useRouter()
 const state = reactive({
     headerConfig: {
         title: '消息',
@@ -181,57 +183,57 @@ async function fetchNotify() {
         state.messages.push(...content)
         state.totalPages = totalPages
 
-        if(content.length>1) {
+        if (content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].timestamps
         }
     } catch (e) {
         store.setErrorMsg("无法获取消息列表！")
         console.error(e)
-    }finally{
+    } finally {
         state.loading = false
     }
 }
 
-async function ackMessage(messageId){
-    try{
+async function ackMessage(messageId) {
+    try {
         const response = await markNotifyRead(messageId)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
-        if(result==false){throw new Error("无法设置消息状态！")}
-        state.messages.filter(message=>message.id == messageId)[0].read = true
+        if (result == false) { throw new Error("无法设置消息状态！") }
+        state.messages.filter(message => message.id == messageId)[0].read = true
         const lastUnreadCount = store.UNREAD_MSG_COUNT
         store.setUnreadMsgCount(lastUnreadCount - 1)
         return true
-    }catch(e){
+    } catch (e) {
         store.setErrorMsg("无法设置消息状态！")
         console.error(e)
         return false
     }
 }
 
-async function AckMsgAndRouteTo(message){
+async function AckMsgAndRouteTo(message) {
     let contentId = message.content.id
     let isAck = false
-    if(!message.read){ isAck = await ackMessage(message.id) }
-    if(!isAck && !message.read) return
+    if (!message.read) { isAck = await ackMessage(message.id) }
+    if (!isAck && !message.read) return
 
     switch (message.type) {
         case 'POST_LIKE':
             contentId = message.content.id
-            router.push({ name: 'postDetail', params: { id: contentId }})
+            router.push({ name: 'postDetail', params: { id: contentId } })
             break
         case 'REVIEW':
             contentId = message.content.postId
-            router.push({ name: 'postDetail', params: { id: contentId }})
+            router.push({ name: 'postDetail', params: { id: contentId } })
             break
         case 'REVIEW_LIKE':
             contentId = message.content.postId
-            router.push({ name: 'postDetail', params: { id: contentId }})
+            router.push({ name: 'postDetail', params: { id: contentId } })
             break
         case 'REPOST':
             contentId = message.content.id
-            router.push({ name: 'postDetail', params: { id: contentId }})
+            router.push({ name: 'postDetail', params: { id: contentId } })
             break
         case 'USER_FOLLOW':
             contentId = message.content.nickname
@@ -242,11 +244,11 @@ async function AckMsgAndRouteTo(message){
     }
 }
 
-async function markAllNotifyReadOfCurUser({ choice }){
-    try{
+async function markAllNotifyReadOfCurUser({ choice }) {
+    try {
         state.confirmBDialogUi.loading.show = true
-        if(choice != 'confirm') return
-        if(store.UNREAD_MSG_COUNT <= 0){
+        if (choice != 'confirm') return
+        if (store.UNREAD_MSG_COUNT <= 0) {
             store.setWarningMsg(`所以消息已全部已读！`)
             state.confirmBDialogUi.show = false
             return
@@ -259,25 +261,25 @@ async function markAllNotifyReadOfCurUser({ choice }){
         state.messages.forEach(it => it.read = true)
         store.setUnreadMsgCount(0)
         store.setSuccessMsg(`已将${result}条消息设为已读`)
-    }catch(e){
+    } catch (e) {
         store.setErrorMsg("无法设置消息状态！")
         console.error(e)
-    }finally{
+    } finally {
         state.confirmBDialogUi.loading.show = false
         state.confirmBDialogUi.show = false
     }
 }
 
-function handleAction(){
+function handleAction() {
     state.confirmBDialogUi.show = true
 }
 
-onMounted(()=>{
+onMounted(() => {
     fetchNotify()
     window.addEventListener('scroll', fetchNewList)
 })
 
-onUnmounted(()=>{
+onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewList)
 })
 </script>

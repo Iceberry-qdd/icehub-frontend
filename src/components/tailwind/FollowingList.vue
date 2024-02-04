@@ -20,14 +20,13 @@ import { getUserInfoByNickname, getFollowingList } from '@/api.js'
 import FollowItem from '@/components/tailwind/FollowItem.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 
-const $route = useRoute()
-
+const route = useRoute()
 const state = reactive({
     followingList: [],
     pageIndex: 1,
     pageSize: 10,
     totalPages: 0,
-    lastTimestamp:new Date().getTime(),
+    lastTimestamp: new Date().getTime(),
     nickname: null
 })
 
@@ -41,13 +40,13 @@ async function getFollowing() {
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { id } = await response.json()
-        const response2 = await getFollowingList(id, state.pageIndex, state.pageSize,state.lastTimestamp)
+        const response2 = await getFollowingList(id, state.pageIndex, state.pageSize, state.lastTimestamp)
         if (!response2.ok) throw new Error((await response2.json()).error)
 
         const { content, totalPages } = await response2.json()
         state.followingList.push(...content)
         state.totalPages = totalPages
-        if(content.length>1) {
+        if (content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
@@ -71,7 +70,7 @@ function fetchNewList() {
 }
 
 onMounted(() => {
-    const nickname = $route.params.nickname
+    const nickname = route.params.nickname
     state.nickname = nickname
     getFollowing()
     window.addEventListener('scroll', fetchNewList)

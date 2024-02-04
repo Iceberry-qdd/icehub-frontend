@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-rows justify-start items-center gap-x-3">
         <span class="material-icons-round no-hover">add_photo_alternate</span>
-        <div>生成海报</div>
+        <div class="btn-no-select">生成海报</div>
     </div>
 </template>
 

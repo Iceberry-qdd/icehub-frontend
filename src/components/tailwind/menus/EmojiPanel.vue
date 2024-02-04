@@ -7,8 +7,6 @@
                 @click="chooseEmoji(emoji)"
                 class="flex aria-selected justify-center items-center w-[2rem] h-[2rem] p-1 border border-transparent rounded-[8px] cursor-pointer hover:bg-[#f1f3f4] focus:bg-[#cfe2ff]">
                 <span>{{ emojiCode(emoji.unified) }}</span>
-                <!-- <span :style="{ backgroundPosition: calcSpriteSheet(emoji.sheet_x, emoji.sheet_y) }"
-                    class="w-[22px] h-[22px] bg-[length:6100%_6100%] bg-[url('https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/sheets-256/64.png')]"></span> -->
             </button>
         </div>
 
@@ -22,8 +20,6 @@
                     <button @click="chooseEmoji(emoji)" v-for="(emoji) in emojis" :key="emoji.unified" :title="emoji.name"
                         class="flex justify-center items-center w-[2.5rem] h-[2.5rem] p-1 border text-[16pt] border-transparent rounded-[8px] cursor-pointer hover:bg-[#f1f3f4] focus:bg-[#cfe2ff]">
                         <span>{{ emojiCode(emoji.unified) }}</span>
-                        <!-- <span :style="{ backgroundPosition: calcSpriteSheet(emoji.sheet_x, emoji.sheet_y) }"
-                            class="w-[24px] h-[24px] bg-[length:6100%_6100%] bg-[url('https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/img/apple/sheets-256/64.png')]"></span> -->
                     </button>
                 </div>
             </div>
@@ -74,10 +70,6 @@ const state = reactive({
     emojiMap: emojis,
     historyEmojis: JSON.parse(localStorage.getItem('historyEmoji')) || []
 })
-
-function calcSpriteSheet(sheet_x, sheet_y) {
-    return `${100 / 60 * sheet_x}% ${100 / 60 * sheet_y}%`
-}
 
 function chooseEmoji(emoji) {
     storeEmojiToLocalStorage(emoji)

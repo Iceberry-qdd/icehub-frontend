@@ -11,9 +11,11 @@
                 :menuAction="state.headerConfig.menuAction">
             </Header>
             <div class="text-[#303133]">
-                <div v-for="menu in state.menus" :key="menu.id"
+                <div
+                    v-for="menu in state.menus"
+                    :key="menu.id"
                     @click="routeTo(menu.routeTo)"
-                    :class="[menu.isActive?'bg-[#f4f4f5] border-l-[#3b82f6] border-l-4 pl-[calc(1rem-4px)]':'']"
+                    :class="[menu.isActive ? 'bg-[#f4f4f5] border-l-[#3b82f6] border-l-4 pl-[calc(1rem-4px)]' : '']"
                     class="flex flex-row justify-between items-center px-4 py-4 text-[12pt] hover:bg-[#f4f4f5] cursor-pointer">
                     <div>{{ menu.name }}</div>
                     <div class="material-icons-round cursor-pointer text-[12pt] mr-[0.5rem]">arrow_forward_ios</div>
@@ -42,13 +44,12 @@
 </style>
 
 <script setup>
-import { onMounted, reactive, onUnmounted, computed } from 'vue'
+import { reactive } from 'vue'
 import Header from '@/components/tailwind/Header.vue'
 import router from '@/route.js'
 import { useRoute } from 'vue-router'
 
-const $route = useRoute()
-
+const route = useRoute()
 const state = reactive({
     headerConfig: {
         title: '设置',
@@ -59,16 +60,16 @@ const state = reactive({
         noBorder: true
     },
     menus: [
-        { id: 1, name: '账号与安全', routeTo: 'account&safe', isActive: $route.name == 'accountSafe' },
-        { id: 2, name: '消息通知', routeTo: 'notify&msg', isActive: $route.name == 'notifyMsg' },
-        { id: 3, name: '数据与隐私', routeTo: 'data&privacy', isActive: $route.name == 'dataPrivacy' },
-        { id: 4, name: '界面个性化设置', routeTo: 'display&theme', isActive: $route.name == 'displayTheme' },
-        { id: 5, name: '帮助与反馈', routeTo: 'help&feedback', isActive: $route.name == 'helpFeedback' },
-        { id: 6, name: '关于', routeTo: 'about', isActive: $route.name == 'about' }
+        { id: 1, name: '账号与安全', routeTo: 'account&safe', isActive: route.params == 'accountSafe' },
+        { id: 2, name: '消息通知', routeTo: 'notify&msg', isActive: route.params == 'notifyMsg' },
+        { id: 3, name: '数据与隐私', routeTo: 'data&privacy', isActive: route.params == 'dataPrivacy' },
+        { id: 4, name: '界面个性化设置', routeTo: 'display&theme', isActive: route.params == 'displayTheme' },
+        { id: 5, name: '帮助与反馈', routeTo: 'help&feedback', isActive: route.params == 'helpFeedback' },
+        { id: 6, name: '关于', routeTo: 'about', isActive: route.params == 'about' }
     ]
 })
 
-function routeTo(url){
+function routeTo(url) {
     state.menus.forEach(menu => menu.isActive = false)
     state.menus.filter(menu => menu.routeTo == url)[0].isActive = true
     router.push(`/setting/${url}`)

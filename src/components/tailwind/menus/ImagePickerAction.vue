@@ -14,7 +14,7 @@
                 <div class="relative" v-for="(item, key) in state.imgList" :key="key" :index="key">
                     <div v-if="state.imagesInfo[key].hidden == 'true'"
                         class="absolute h-full w-full rounded-[8px] bg-white/5 backdrop-blur-xl"></div>
-                    <img class="max-w-[5rem] min-w-[5rem] h-[5rem] rounded-[8px] cursor-default object-cover"
+                    <img class="max-w-[5rem] min-w-[5rem] h-[5rem] rounded-[8px] cursor-default object-cover image-picker"
                         :src="loadImage(item)" />
                     <div class="absolute w-full h-full rounded-[8px] top-0 left-0 bg-transparent cursor-pointer">
                         <div @click="editImage(key)"

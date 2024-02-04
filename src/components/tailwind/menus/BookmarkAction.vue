@@ -1,5 +1,5 @@
 <template>
-    <div @click="toggleMark()" class="flex flex-rows justify-start items-center gap-x-3">
+    <div @click="toggleMark()" class="flex flex-rows justify-start items-center gap-x-3 btn-no-select">
         <span class="material-icons-round">{{ bookmarkIcon }}</span>
         <div>{{ bookMarkText }}</div>
     </div>

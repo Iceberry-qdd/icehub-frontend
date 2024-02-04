@@ -1,6 +1,6 @@
 <template>
     <div class="card">
-        <button type="button" class="btn menu" :id="`pmb-${props.post.id}`">
+        <button type="button" class="btn menu btn-no-select" :id="`pmb-${props.post.id}`">
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
         </button>
         <Transition name="fade">
@@ -25,8 +25,8 @@
                 </div>
                 <div class="post-time">
                     <div>{{ state.post.plan ? `将于${formattedTime}发布` : `发布于${formattedTime}` }}</div>
-                    <div v-if="state.post.status != 'PUBLIC'">•</div>
-                    <div v-if="state.post.status != 'PUBLIC'">{{ postStatus }}</div>
+                    <div v-if="state.post.status != 'PUBLIC'">• {{ postStatus }}</div>
+                    <div v-if="state.post.updatedTime">• 已编辑</div>
                 </div>
             </div>
         </div>
@@ -38,24 +38,38 @@
             <RepostCard v-if="state.post.rootId && !state.post.plan" :postId="state.post.rootId" class="repostCard"></RepostCard>
         </div>
         <div class="card-pics container" v-if="hasPics">
-            <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper relative" :class="gridWrapperClass" v-for="(pic, idx) in state.post.attachmentsUrl" :key="pic.id" :index="pic.id">
-                    <IconAltOn @mouseenter="state.showAltText[idx]=true" v-show="pic.altText && state.showAltText[idx]==false" class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer"></IconAltOn>
-                    <Transition name="fade-translate">
-                        <div @mouseleave="state.showAltText[idx]=false" v-show="pic.altText && state.showAltText[idx]==true" class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
-                            {{ pic.altText }}
-                        </div>
-                    </Transition>
-                    <div class="absolute w-full h-full flex flex-row justify-center items-center z-[99]" :class="[pic.hidden==true?'flex':'hidden']">
-                        <div @click="getImageUrlIgnoreNSFW(pic.id)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
+            <div
+                class="wrapper"
+                v-for="(pic, idx) in state.post.attachmentsUrl"
+                :key="pic.id"
+                :style="wrapperStyle">
+                <IconAltOn
+                    @mouseenter="state.showAltText[idx]=true"
+                    v-if="pic.altText && state.showAltText[idx]==false"
+                    class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer">
+                </IconAltOn>
+                <Transition name="fade-translate">
+                    <div
+                        @mouseleave="state.showAltText[idx]=false"
+                        v-if="pic.altText && state.showAltText[idx]==true"
+                        class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
+                        {{ pic.altText }}
                     </div>
-                    <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic m-pic img-fluid"
-                        :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
-                    <div @click="playAnimateImage(idx)"
-                        :class="[pic.contentType == 'image/gif' && state.showOriginUrl[idx] == false?'flex':'hidden']"
-                        class="absolute flex justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
-                        <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
-                    </div>
+                </Transition>
+                <div class="absolute w-full h-full flex flex-row justify-center items-center z-[99]" v-if = "pic.hidden">
+                    <div @click="getImageUrlIgnoreNSFW(pic.id)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
+                </div>
+                <img
+                    loading="lazy"
+                    @click="showSlide(state.post.attachmentsUrl, idx)"
+                    class="pic m-pic img-fluid"
+                    :class="mPicClass"
+                    :src="getImageUrl(pic, idx)"
+                    :alt="pic.altText">
+                <div @click="playAnimateImage(idx)"
+                    v-if="pic.contentType == 'image/gif' && !state.showOriginUrl[idx]"
+                    class="absolute flex justify-center items-center w-full h-full top-0 right-0 text-white cursor-pointer">
+                    <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
                 </div>
             </div>
         </div>
@@ -77,16 +91,16 @@
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
                     :class="{ 'm-active': isReposted }" />
-                {{ state.post.repostCount }}
+                {{ humanizedNumber(state.post.repostCount) }}
             </button>
             <button type="button" class="btn op op-review" @click="toggleReviewPanel">
                 <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
-                {{ state.post.reviewCount }}
+                {{ humanizedNumber(state.post.reviewCount) }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
                 <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3"
                     :class="isLiked ? 'liked' : ''" />
-                {{ state.post.likeCount }}
+                {{ humanizedNumber(state.post.likeCount) }}
             </button>
         </div>
     </div>
@@ -191,24 +205,6 @@
     background-color: #d1e7dd;
 }
 
-.imgs-grid {
-    display: grid;
-    gap: 0.35rem;
-    width: 100%;
-}
-
-.imgs-grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-}
-
-.imgs-grid-2 {
-    grid-template-columns: repeat(2, 1fr);
-}
-
-.imgs-grid-1 {
-    grid-template-columns: repeat(1, 1fr);
-}
-
 .op-repost {
     justify-content: flex-start;
 }
@@ -230,27 +226,10 @@
     gap: 1rem;
 }
 
-.grid-item {
-    gap: 0.3rem;
-}
-
-.container,
-.row {
+.container,.row {
     --bs-gutter-x: 0;
     --bs-gutter-y: 0;
     /* width: 80%; */
-}
-
-.wrapper {
-    overflow: hidden;
-    border-radius: 4px;
-}
-
-.wrapper>img {
-    width: 100%;
-    object-fit: cover;
-    border-radius: 4px;
-    transition: transform 400ms;
 }
 
 .user-info-pop {
@@ -258,18 +237,6 @@
     top: 1rem;
     z-index: 103;
 }
-.img-wrapper-h-grid-1 {
-    max-height: 90vh;
-    min-height: fit-content;
-}
-
-/* .img-wrapper-h-grid-2 {
-    height: 160px;
-}
-
-.img-wrapper-h-grid-3 {
-    height: 120px;
-} */
 
 .wrapper:hover img {
     transform: scale(1.2);
@@ -379,7 +346,10 @@
     /* margin-left: 4rem; */
     margin-bottom: 0.5rem;
     margin-top: 0.5rem;
-    /* display: flex; */
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.3rem;
 }
 
 .card-tags {
@@ -403,23 +373,39 @@
 .no-underline{
     text-decoration: none;
 }
+
+.m-pic{
+    width: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform 400ms;
+}
+
+.m-ratio-1{
+    aspect-ratio: 1 / 1;
+}
+
+.m-max-h-\[90vh\]{
+    max-height: 90vh;
+}
 </style>
 
 <script setup>
-import { computed, reactive, onMounted, provide } from 'vue'
+import { computed, reactive, onMounted, provide, defineAsyncComponent } from 'vue'
 import { likeAPost, dislikeAPost, getImageUrlIgnoreHidden } from '@/api.js'
 import router from '@/route.js'
 import { store } from '@/store.js'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import { standardTime } from '@/utils/formatUtils.js'
-import RepostCard from '@/components/tailwind/RepostCard.vue'
-import PostMenus from '@/components/tailwind/PostMenus.vue'
 import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { VueShowdown } from 'vue-showdown'
-import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
-import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 import Avatar from '@/components/tailwind/Avatar.vue'
+import { humanizedNumber } from '@/utils/formatUtils'
+const RepostCard = defineAsyncComponent(() => import('@/components/tailwind/RepostCard.vue'))
+const PostMenus = defineAsyncComponent(() => import('@/components/tailwind/PostMenus.vue'))
+const UserInfoPop = defineAsyncComponent(() => import('@/components/tailwind/UserInfoPop.vue'))
+const RepostPanel = defineAsyncComponent(() => import('@/components/tailwind/RepostPanel.vue'))
 
 const props = defineProps(['post'])
 
@@ -439,20 +425,6 @@ const likedIconTheme = computed(() => {
 
 const likedIconColor = computed(() => {
     return isLiked.value ? '#FF0000' : '#333'
-})
-
-const gridWrapperClass = computed(() => {
-    const picturesCount = state.post.attachmentsUrl.length
-    if (picturesCount == 1) return 'img-wrapper-h-grid-1'
-    else if (picturesCount == 2 || picturesCount == 4) return 'img-wrapper-h-grid-2'
-    else return 'img-wrapper-h-grid-3'
-})
-
-const gridTemplateClass = computed(() => {
-    const picturesCount = state.post.attachmentsUrl.length
-    if (picturesCount == 1) return 'imgs-grid-1'
-    else if (picturesCount == 2 || picturesCount == 4) return 'imgs-grid-2'
-    else return 'imgs-grid-3'
 })
 
 function routeToUserProfile() {
@@ -526,17 +498,30 @@ const cardMaskClass = computed(() => ({
     'card-mask': !state.shrinkContent
 }))
 
+const gridColCount = computed(() => {
+    const picCount = state.post.attachmentsUrl.length
+    if(picCount === 0) return 0
+    if(picCount === 1) return 1
+    if((picCount > 1 && picCount <= 2) || picCount == 4) return 2
+    return 3
+})
+
+const wrapperStyle = reactive({
+    width: `calc((100% - 0.3rem * ${gridColCount.value - 1}) / ${gridColCount.value})`,
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: '4px'
+})
+
+const mPicClass = reactive({
+    'm-ratio-1': gridColCount.value !== 1,
+    'm-max-h-[90vh]': gridColCount.value === 1
+})
+
 function getImageUrl(image, idx) {
     const { originUrl, previewUrl } = image || [null, null]
     if (state.showOriginUrl[idx] == true) { return originUrl }
     return previewUrl || originUrl
-}
-
-function resizePicture() {
-    const picturesCount = state.post.attachmentsUrl.length
-    if (picturesCount == 1) return
-    const pics = document.querySelectorAll('.m-pic')
-    pics.forEach(pic => { pic.style.height = pic.clientWidth + 'px' })
 }
 
 function playAnimateImage(idx) { state.showOriginUrl[idx] = true }
@@ -588,10 +573,6 @@ function deleteAllPostsOfUserOnUi(){
 function postingNew(post){
     // Ignore this method body, nothing todo.
 }
-
-onMounted(() => {
-    resizePicture()
-})
 
 provide('dismissPostMenus', { dismissPostMenus })
 provide('deletePostOnUi', { deletePostOnUi })

@@ -100,6 +100,7 @@ import IconWebsite from '@/components/icons/IconWebsite.vue'
 import IconEmail from '@/components/icons/IconEmail.vue'
 import ConfirmDialogBox from '@/components/tailwind/menus/ConfirmDialogBox.vue'
 import Avatar from '@/components/tailwind/Avatar.vue'
+import { humanizedNumber } from '@/utils/formatUtils'
 
 const props = defineProps(['user'])
 const emits = defineEmits(['unblockUser'])
@@ -139,14 +140,16 @@ const formattedDate = computed(() => {
 })
 
 const followerCountText = computed(() => {
-    const { gender, followingCount } = props.user
+    const gender = props.user.gender
+    const followingCount = humanizedNumber(props.user.followingCount)
     if (isMyself.value == true) return `订阅我的 ${followingCount}`
     if (gender == 'FEMALE') return `订阅她的 ${followingCount}`
     return `订阅他的 ${followingCount}`
 })
 
 const followingCountText = computed(() => {
-    const { gender, followerCount } = props.user
+    const gender = props.user.gender
+    const followerCount = humanizedNumber(props.user.followerCount)
     if (isMyself.value == true) return `我的订阅 ${followerCount}`
     if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
     return `他的订阅 ${followerCount}`

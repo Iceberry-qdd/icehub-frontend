@@ -17,12 +17,12 @@
                         </UserInfoPop>
                     </Transition>
                     <div class="relative z-10">
-                    <Avatar
-                        :user="props.reply.user"
-                        @mouseenter="state.showUserInfoPop = true"
-                        @click="routeToUser(props.reply.user.nickname)"
-                        class="w-[2.5rem] h-[2.5rem] rounded-[6px]">
-                    </Avatar>
+                        <Avatar
+                            :user="props.reply.user"
+                            @mouseenter="state.showUserInfoPop = true"
+                            @click="routeToUser(props.reply.user.nickname)"
+                            class="w-[2.5rem] h-[2.5rem] rounded-[6px]">
+                        </Avatar>
                     </div>
                     <div class="z-20">
                         <div @click="routeToUser(props.reply.user.nickname)"
@@ -106,12 +106,13 @@ import { humanizedTime } from '@/utils/formatUtils.js'
 import { dislikeAReview, likeAReview } from '@/api.js'
 import { store } from '@/store'
 import { Like, Message, MoreTwo } from '@icon-park/vue-next'
-import router from '@/route'
+import { useRouter } from 'vue-router'
 import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import ReviewPanel from '@/components/tailwind/ReviewPanel.vue'
 import Avatar from '@/components/tailwind/Avatar.vue'
 
+const router = useRouter()
 const props = defineProps(['review', 'tieSub', 'reply', 'totalReplyCount', 'fetchedReplyCount', 'index'])
 const emits = defineEmits(['fetchMoreReply'])
 
@@ -174,7 +175,7 @@ async function toggleLike() {
     }
 }
 
-function dismissReplyPanel(){
+function dismissReplyPanel() {
     state.showReplyPanel = false
 }
 

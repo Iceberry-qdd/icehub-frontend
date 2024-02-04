@@ -7,7 +7,7 @@
             <span class="material-icons-round no-hover" :class="[action.code == state.curVisibility ? 'text-blue-500' : '']">
                 {{ action.icon }}
             </span>
-            <div>{{ action.name }}</div>
+            <div class="btn-no-select">{{ action.name }}</div>
         </div>
     </div>
 </template>

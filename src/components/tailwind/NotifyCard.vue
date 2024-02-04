@@ -10,8 +10,14 @@
         </div>
         <div class="w-full">
             <div>
-                <img v-if="state.from.avatarUrl" @click.self="routeToUserProfile(state.from)" class="w-[2rem] h-[2rem] mb-2 rounded-full z-[97] relative" :src="avatar(state.from.nickname,state.from.avatarUrl)"/>
-                <div v-else class="flex justify-center items-center w-[2rem] h-[2rem] mb-2 rounded-full z-[97] reactive bg-blue-500">
+                <img
+                    v-if="state.from.avatarUrl"
+                    @click.self="routeToUserProfile(state.from)"
+                    class="w-[2rem] h-[2rem] mb-2 rounded-full z-[97] relative"
+                    :src="avatar(state.from.nickname,state.from.avatarUrl)" />
+                <div
+                    v-else
+                    class="flex justify-center items-center w-[2rem] h-[2rem] mb-2 rounded-full z-[97] reactive bg-blue-500">
                     <div class="text-white text-[12pt] font-bold">{{ state.from.nickname.charAt(0) }}</div>
                 </div>
             </div>
@@ -112,16 +118,15 @@
 </style>
 
 <script setup>
-import { computed, reactive, watch } from 'vue'
+import { computed, reactive, watch, defineAsyncComponent } from 'vue'
 import { Like, Message, Share, PeoplePlusOne, AtSign } from '@icon-park/vue-next'
 import { humanizedTime } from '@/utils/formatUtils.js'
-import RepostCard from '@/components/tailwind/RepostCard.vue'
-import UserProfileCard from '@/components/tailwind/UserProfileCard.vue'
-import { store } from '@/store'
-import router from '@/route'
+import { useRouter } from 'vue-router'
+const RepostCard = defineAsyncComponent(() => import('@/components/tailwind/RepostCard.vue'))
+const UserProfileCard = defineAsyncComponent(() => import('@/components/tailwind/UserProfileCard.vue'))
 
+const router = useRouter()
 const props = defineProps(['message'])
-
 const state = reactive({
     type: props.message.type, // POST_LIKE, POST_REVIEW, POST_REPOST, SYS_NOTIFY, USER_FOLLOW AT_SIGN
     content: props.message.content,

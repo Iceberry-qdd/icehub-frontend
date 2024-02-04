@@ -1,5 +1,5 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 24 24" class="btn-no-select">
         <g id="evaEmailOutline0">
             <g id="evaEmailOutline1">
                 <path id="evaEmailOutline2" fill="currentColor"

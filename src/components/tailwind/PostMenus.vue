@@ -1,47 +1,69 @@
 <template>
     <div >
         <div :id="`pm-${props.post.id}`" class="flex flex-col min-w-[12rem] max-w-[18rem] bg-white rounded-[8px] shadow ring-1 ring-slate-900/5">
-            <LinkCopyAction v-if="showLinkCopyAction" :link="generateLink"
+            <LinkCopyAction
+                v-if="showLinkCopyAction"
+                :link="generateLink"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </LinkCopyAction>
 
-            <PosterGenerateAction v-if="showGeneratePoster"
+            <PosterGenerateAction
+                v-if="showUnImpl && showGeneratePoster"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
+                <!-- TODO implement it. -->
             </PosterGenerateAction>
 
-            <BookmarkAction v-if="showBookmarkAction" :post="state.post"
+            <BookmarkAction
+                v-if="showBookmarkAction"
+                :post="state.post"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </BookmarkAction>
 
-            <FollowingAction v-if="showFollowAction" :user="state.post.user"
+            <FollowingAction
+                v-if="showFollowAction"
+                :user="state.post.user"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </FollowingAction>
 
-            <BlockPostAction v-if="showBlockPostAction" :post="state.post"
+            <BlockPostAction
+                v-if="showBlockPostAction"
+                :post="state.post"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </BlockPostAction>
 
-            <BlockUserAction v-if="showBlockUserAction" :post="state.post" :user="state.post.user"
+            <BlockUserAction
+                v-if="showBlockUserAction"
+                :post="state.post" :user="state.post.user"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
             </BlockUserAction>
 
-            <ReportPostProblemAction v-if="showReportAction"
+            <ReportPostProblemAction
+                v-if="showUnImpl && showReportAction"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
+                <!-- TODO implement it. -->
             </ReportPostProblemAction>
 
-            <VisibilityAction class="action last:rounded-b-[8px] first:rounded-t-[8px]" :post="state.post"
+            <VisibilityAction
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]"
+                :post="state.post"
                  v-if="showVisibilityAction">
             </VisibilityAction>
 
-            <CloseReviewAction class="action last:rounded-b-[8px] first:rounded-t-[8px]" :post="state.post"
+            <CloseReviewAction
+                class="action last:rounded-b-[8px] first:rounded-t-[8px]"
+                :post="state.post"
                 v-if="showCloseReviewAction">
             </CloseReviewAction>
 
-            <AdminOperationAction v-if="showAdminAction"
+            <AdminOperationAction
+                v-if="showUnImpl && showAdminAction"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px]">
+                <!-- TODO implement it. -->
             </AdminOperationAction>
 
-            <DeletePostAction v-if="showDeletePostAction" :post = "state.post"
+            <DeletePostAction
+                v-if="showDeletePostAction"
+                :post = "state.post"
                 class="action last:rounded-b-[8px] first:rounded-t-[8px] text-red-500">
             </DeletePostAction>
         </div>
@@ -80,6 +102,7 @@ import CloseReviewAction from '@/components/tailwind/menus/CloseReviewAction.vue
 
 const props = defineProps(['post'])
 const { dismissPostMenus } = inject('dismissPostMenus')
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     user: props.post.user,

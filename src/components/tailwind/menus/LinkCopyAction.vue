@@ -1,7 +1,7 @@
 <template>
     <div @click="copyLink" class="flex flex-rows justify-start items-center gap-x-3">
         <span class="material-icons-round no-hover">content_copy</span>
-        <div>复制链接</div>
+        <div class="btn-no-select">复制链接</div>
     </div>
 </template>
 

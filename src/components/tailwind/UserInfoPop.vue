@@ -38,12 +38,13 @@ import { computed, reactive } from 'vue'
 import { followUser, unFollowUser } from '@/api'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { store } from '@/store'
-import router from '@/route'
+import { useRouter } from 'vue-router'
 import Avatar from '@/components/tailwind/Avatar.vue'
 import Banner from '@/components/tailwind/Banner.vue'
+import { humanizedNumber } from '@/utils/formatUtils'
 
 const props = defineProps(['user'])
-
+const router = useRouter()
 const state = reactive({
     user: props.user,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
@@ -61,14 +62,16 @@ const brief = computed(() => {
 const isCurUser = computed(() => { return state.curUser.id == state.user.id })
 
 const followingCountText = computed(() => {
-    const { gender, followingCount } = state.user
+    const gender = state.user.gender
+    const followingCount = humanizedNumber(state.user.followingCount)
     if (isMyself.value == true) return `订阅我的 ${followingCount}`
     if (gender == 'FEMALE') return `订阅她的 ${followingCount}`
     return `订阅他的 ${followingCount}`
 })
 
 const followerCountText = computed(() => {
-    const { gender, followerCount } = state.user
+    const gender = state.user.gender
+    const followerCount = humanizedNumber(state.user.followerCount)
     if (isMyself.value == true) return `我的订阅 ${followerCount}`
     if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
     return `他的订阅 ${followerCount}`

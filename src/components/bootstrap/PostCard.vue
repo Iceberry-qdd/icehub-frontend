@@ -1,23 +1,18 @@
 <template>
     <div class="card" :class="[state.post.type == 'MARKDOWN' ? 'card-mkd' : '']">
         <div ref="cardMask" id="card-mask" @click.self="routeToPost(state.post.id)" :class="cardMaskClass"></div>
-        <button type="button" class="btn menu" :id="`pmb-${state.post.id}`">
-            <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" class="z-index-96" />
+        <button type="button" class="btn menu btn-no-select" :id="`pmb-${state.post.id}`">
+            <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2"
+                class="z-index-96" />
         </button>
         <Transition name="fade">
-            <PostMenus
-                class="post-menus"
-                :post="state.post"
-                v-if="state.isShowMenu">
+            <PostMenus class="post-menus" :post="state.post" v-if="state.isShowMenu">
             </PostMenus>
         </Transition>
         <div class="user-info d-flex">
             <Transition name="fade">
-                <UserInfoPop
-                    @mouseleave="state.showUserInfoPop = false"
-                    :user="state.post.user"
-                    v-if="state.showUserInfoPop"
-                    class="user-info-pop z-index-98">
+                <UserInfoPop @mouseleave="state.showUserInfoPop = false" :user="state.post.user"
+                    v-if="state.showUserInfoPop" class="user-info-pop z-index-98">
                 </UserInfoPop>
             </Transition>
             <a @mouseenter="state.showUserInfoPop = true" class="z-index-97 position-relative no-underline"
@@ -32,45 +27,45 @@
                 </div>
                 <div class="post-time">
                     <div>{{ state.post.plan ? `将于${formattedTime}发布` : formattedTime }}</div>
-                    <div v-if="state.post.status != 'PUBLIC'">•</div>
-                    <div v-if="state.post.status != 'PUBLIC'">{{ postStatus }}</div>
+                    <div v-if="state.post.status != 'PUBLIC'">• {{ postStatus }}</div>
+                    <div v-if="state.post.updatedTime">• 已编辑</div>
                 </div>
             </div>
         </div>
 
-        <div
-            class="m-card-body"
-            :class="[state.post.type == 'MARKDOWN' ? 'mkd' : '']"
+        <div class="m-card-body" :class="[state.post.type == 'MARKDOWN' ? 'mkd' : '']"
             :style="{ 'margin-left': state.post.type == 'MARKDOWN' ? '0' : '3.5rem' }">
             <div v-if="state.shrinkContent" class="expand-btn" @click="state.shrinkContent = false">展开</div>
             <p class="card-text" id="content" :class="[state.shrinkContent ? 'max-height-50vh' : '']">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
-            <RepostCard v-if="state.post.rootId && !state.post.plan" :postId="state.post.rootId" class="z-index-96 relative"></RepostCard>
+            <RepostCard
+                v-if="state.post.rootId && !state.post.plan" :postId="state.post.rootId"
+                class="z-index-96 relative">
+            </RepostCard>
         </div>
 
-        <div class="card-pics container z-index-96" :class="cardClass" v-if = "hasPics">
-            <div class="imgs-grid" :class="gridTemplateClass">
-                <div class="col wrapper relative" :class="gridWrapperClass" v-for = "(pic, idx) in state.post.attachmentsUrl" :key = "idx" :index = "pic.id">
-                    <IconAltOn @mouseenter="state.showAltText[idx] = true"
-                        v-show="pic.altText && state.showAltText[idx] == false"
-                        class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer">
-                    </IconAltOn>
-                    <Transition name="alt">
-                        <div @mouseleave="state.showAltText[idx] = false" v-show="pic.altText && state.showAltText[idx] == true"
-                            class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
-                            {{ pic.altText }}
-                        </div>
-                    </Transition>
-                    <div class="absolute w-full h-full flex-row justify-center items-center z-[99]" :class = "[pic.hidden == true ? 'flex' : 'hidden']">
-                        <div @click="getImageUrlIgnoreNSFW(pic.id)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
+        <div class="card-pics container z-index-96" v-if="hasPics">
+            <div class="wrapper" v-for="(pic, idx) in state.post.attachmentsUrl" :key="idx" :style="wrapperStyle">
+                <IconAltOn @mouseenter="state.showAltText[idx] = true" v-if="pic.altText && state.showAltText[idx] == false"
+                    class="alt-icon absolute btm-1 rgt-1 black-80-bg rounded-full pdg-1 box-content z-index-100 cursor-pointer">
+                </IconAltOn>
+                <Transition name="alt">
+                    <div @mouseleave="state.showAltText[idx] = false" v-if="pic.altText && state.showAltText[idx] == true"
+                        class="altTextContainer absolute bottom-0 w-full max-h-full h-fit overflow-scroll m-cursor-text black-85-bg white-text text-[11pt] z-index-100 p-3 leading-[1.5rem] text-justify break-words">
+                        {{ pic.altText }}
                     </div>
-                    <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic img-fluid"
-                        :class="gridWrapperClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
-                    <div @click="playAnimateImage(idx)" :class="[pic.contentType == 'image/gif' && state.showOriginUrl[idx] == false ? 'flex' : 'hidden']"
-                        class="absolute justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
-                        <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
+                </Transition>
+                <div class="absolute w-full h-full flex flex-row justify-center items-center z-[99]" v-if="pic.hidden">
+                    <div @click="getImageUrlIgnoreNSFW(pic.id)"
+                        class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏
                     </div>
+                </div>
+                <img loading="lazy" @click="showSlide(state.post.attachmentsUrl, idx)" class="pic img-fluid m-pic"
+                    :class="mPicClass" :src="getImageUrl(pic, idx)" :alt="pic.altText">
+                <div @click="playAnimateImage(idx)" v-if="pic.contentType == 'image/gif' && !state.showOriginUrl[idx]"
+                    class="absolute justify-center items-center w-full h-full top-0 right-0  text-white cursor-pointer">
+                    <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
                 </div>
             </div>
         </div>
@@ -82,27 +77,25 @@
             </div>
         </div>
 
-        <div v-if="!state.post.plan" class="btn-group z-index-96" :class="[state.post.type == 'MARKDOWN' ? 'btn-group-mkd' : 'btn-group-umkd']" role="group">
+        <div v-if="!state.post.plan" class="btn-group z-index-96"
+            :class="[state.post.type == 'MARKDOWN' ? 'btn-group-mkd' : 'btn-group-umkd']" role="group">
             <Teleport to="#app">
-                <RepostPanel
-                    v-if="state.showRepostPanel"
-                    :post="state.post"
-                    @dismiss="state.showRepostPanel = false">
+                <RepostPanel v-if="state.showRepostPanel" :post="state.post" @dismiss="state.showRepostPanel = false">
                 </RepostPanel>
             </Teleport>
             <button type="button" class="btn op op-repost" @click="repostIt">
                 <share theme="filled" size="18" :fill="isReposted ? '#198754' : '#333'" :strokeWidth="3"
                     :class="{ 'm-active': isReposted }" />
-                {{ state.post.repostCount }}
+                {{ humanizedNumber(state.post.repostCount) }}
             </button>
             <button @click="routeToPost(state.post.id)" type="button" class="btn op op-review">
                 <message theme="outline" size="19" fill="#333" :strokeWidth="3" />
-                {{ state.post.reviewCount }}
+                {{ humanizedNumber(state.post.reviewCount) }}
             </button>
             <button type="button" class="btn op op-like" @click="toggleLike">
                 <like :theme="likedIconTheme" size="20" :fill="likedIconColor" :strokeWidth="3"
                     :class="isLiked ? 'liked' : ''" />
-                {{ state.post.likeCount }}
+                {{ humanizedNumber(state.post.likeCount) }}
             </button>
         </div>
     </div>
@@ -247,23 +240,6 @@
     background-color: #d1e7dd;
 }
 
-.imgs-grid {
-    display: grid;
-    gap: 0.35rem;
-}
-
-.imgs-grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-}
-
-.imgs-grid-2 {
-    grid-template-columns: repeat(2, 1fr);
-}
-
-.imgs-grid-1 {
-    grid-template-columns: repeat(1, 1fr);
-}
-
 .user-info-pop {
     position: absolute;
     top: 1rem;
@@ -294,37 +270,11 @@
     gap: 1rem;
 }
 
-.grid-item {
-    gap: 0.3rem;
-}
-
 .container,
 .row {
     --bs-gutter-x: 0;
     --bs-gutter-y: 0;
     /* width: 80%; */
-}
-
-.container {
-    width: auto !important;
-}
-
-.wrapper {
-    overflow: hidden;
-    border-radius: 4px;
-}
-
-.wrapper>img {
-    width: 100%;
-    /* height: 160px; */
-    object-fit: cover;
-    border-radius: 4px;
-    transition: transform 400ms;
-}
-
-.img-wrapper-h-grid-1 {
-    max-height: 90vh;
-    min-height: fit-content;
 }
 
 .wrapper:hover img {
@@ -442,10 +392,10 @@
 .card-pics {
     margin: 0.5rem 0.8rem 0 3.5rem;
     bottom: 0.5rem;
-}
-
-.card-pics-1 {
-    display: block;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.3rem;
 }
 
 .card-tags {
@@ -461,36 +411,53 @@
     max-height: 50vh !important;
 }
 
-.font-16{
+.font-16 {
     font-size: 16pt;
 }
 
-.rounded-16{
+.rounded-16 {
     border-radius: 8px;
 }
 
-.no-underline{
+.no-underline {
     text-decoration: none;
+}
+
+.m-pic {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform 400ms;
+}
+
+.m-ratio-1 {
+    aspect-ratio: 1 / 1;
+}
+
+.m-max-h-\[90vh\] {
+    max-height: 90vh;
 }
 </style>
 
 <script setup>
-import { computed, onMounted, reactive, ref, provide} from 'vue'
-import PostMenus from '@/components/tailwind/PostMenus.vue' //NOTE 组件字母小写会导致hmr失效
+import { humanizedNumber } from '@/utils/formatUtils'
+import { computed, onMounted, reactive, ref, provide, defineAsyncComponent } from 'vue'
 import { likeAPost, dislikeAPost, getUserInfoByNickname, getImageUrlIgnoreHidden } from '@/api'
-import router from '@/route'
+import { useRouter } from 'vue-router'
 import { store } from '@/store'
 import { humanizedTime } from '@/utils/formatUtils.js'
-import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
-import RepostCard from '@/components/tailwind/RepostCard.vue'
 import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { ws, MsgPack } from '../../websocket.js'
 import { VueShowdown } from 'vue-showdown'
-import RepostPanel from '@/components/tailwind/RepostPanel.vue'
 import Avatar from '@/components/tailwind/Avatar.vue'
+const PostMenus = defineAsyncComponent(() => import('@/components/tailwind/PostMenus.vue')) //NOTE 组件字母小写会导致hmr失效
+const UserInfoPop = defineAsyncComponent(() => import('@/components/tailwind/UserInfoPop.vue'))
+const RepostCard = defineAsyncComponent(() => import('@/components/tailwind/RepostCard.vue'))
+const RepostPanel = defineAsyncComponent(() => import('@/components/tailwind/RepostPanel.vue'))
 
+const router = useRouter()
 const props = defineProps(['post'])
 const cardMask = ref()
 
@@ -506,25 +473,24 @@ const state = reactive({
     showRepostPanel: false
 })
 
-const cardClass = computed(() => {
-    const picturesCount = state.post.attachmentsUrl.length
-    if (picturesCount == 1) return 'card-pics-1'
-    else if (picturesCount == 2 || picturesCount == 4) return 'card-pics-2'
-    else return 'card-pics-3'
+const gridColCount = computed(() => {
+    const picCount = state.post.attachmentsUrl.length
+    if (picCount === 0) return 0
+    if (picCount === 1) return 1
+    if ((picCount > 1 && picCount <= 2) || picCount == 4) return 2
+    return 3
 })
 
-const gridWrapperClass = computed(() => {
-    const picturesCount = state.post.attachmentsUrl.length
-    if (picturesCount == 1) return 'img-wrapper-h-grid-1'
-    else if (picturesCount == 2 || picturesCount == 4) return 'img-wrapper-h-grid-2 m-pic'
-    else return 'img-wrapper-h-grid-3 m-pic'
+const wrapperStyle = reactive({
+    width: `calc((100% - 0.3rem * ${gridColCount.value - 1} - 3.5rem) / ${gridColCount.value})`,
+    position: 'relative',
+    overflow: 'hidden',
+    borderRadius: '4px'
 })
 
-const gridTemplateClass = computed(() => {
-    const picturesCount = state.post.attachmentsUrl.length
-    if (picturesCount == 1) return 'imgs-grid-1'
-    else if (picturesCount == 2 || picturesCount == 4) return 'imgs-grid-2'
-    else return 'imgs-grid-3'
+const mPicClass = reactive({
+    'm-ratio-1': gridColCount.value !== 1,
+    'm-max-h-[90vh]': gridColCount.value === 1
 })
 
 function getImageUrl(image, idx) {
@@ -624,13 +590,6 @@ const cardMaskClass = computed(() => ({
     'card-mask': !state.shrinkContent
 }))
 
-function resizePicture() {
-    const picturesCount = state.post.attachmentsUrl.length
-    if (picturesCount == 1) return
-    const pics = document.querySelectorAll('.m-pic')
-    pics.forEach(pic => { pic.style.height = pic.clientWidth + 'px' })
-}
-
 function playAnimateImage(idx) { state.showOriginUrl[idx] = true }
 
 const postStatus = computed(() => {
@@ -656,7 +615,7 @@ async function getImageUrlIgnoreNSFW(imageId) {
 
         const imageIndex = state.post.attachmentsUrl.findIndex(it => it.id === imageId)
 
-        if(imageIndex != -1){
+        if (imageIndex != -1) {
             state.post.attachmentsUrl[imageIndex] = result
         }
     } catch (e) {
@@ -671,14 +630,13 @@ function setSuitableHeight() {
     }
 }
 
-function dismissPostMenus(){
+function dismissPostMenus() {
     state.isShowMenu = false
 }
 
 provide('dismissPostMenus', { dismissPostMenus })
 
 onMounted(() => {
-    resizePicture()
     setSuitableHeight()
 })
 

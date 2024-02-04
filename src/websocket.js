@@ -29,8 +29,8 @@ export const ws = reactive({
     initWebsocket() {
         let socket = new SockJS(this.url, null, { timeout: 15000 })
         this.globalStompClient = Stomp.over(socket)
-        this.globalStompClient.heartbeat.outgoing = 0
-        this.globalStompClient.heartbeat.incoming = 0
+        this.globalStompClient.heartbeat.outgoing = 20000
+        this.globalStompClient.heartbeat.incoming = 20000
     },
     connectWebsocket(token) {
         const that = this

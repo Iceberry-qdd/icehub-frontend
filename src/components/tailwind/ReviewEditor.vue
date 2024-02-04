@@ -22,8 +22,10 @@
                     maxlength="512" placeholder="发布评论" id="review-input" name="review"></textarea>
                 <div class="flex flex-row justify-between items-center" v-if="state.content.length > 0">
                     <div class="flex flex-row gap-x-2 items-center" v-if="!state.loading">
-                        <add-picture theme="outline" size="20" fill="#333" :strokeWidth="3" />
-                        <local-two theme="outline" size="20" class="icon" fill="#333" :strokeWidth="4" />
+                        <!-- TODO implement it. -->
+                        <add-picture v-if="showUnImpl" theme="outline" size="20" fill="#333" :strokeWidth="3" />
+                        <!-- TODO implement it. -->
+                        <local-two v-if="showUnImpl" theme="outline" size="20" class="icon" fill="#333" :strokeWidth="4" />
                         <div class="relative flex-col">
                             <div class="flex" @click="state.showEmojiPanel=!state.showEmojiPanel">
                                 <grinning-face-with-open-mouth v-tooltip="'表情面板'" theme="outline" size="18" fill="#333" :strokeWidth="3" />
@@ -70,6 +72,7 @@ import EmojiPanel from '@/components/tailwind/menus/EmojiPanel.vue'
 const emits = defineEmits(['dismiss'])
 const props = defineProps(['post', 'parent', 'tieLocation', 'fromReviewPanel'])
 const { newReview } = inject('newReview')
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     content: '',
     loading: false,

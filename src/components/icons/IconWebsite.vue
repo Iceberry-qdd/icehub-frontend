@@ -1,5 +1,5 @@
 <template>
-    <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 48 48">
+    <svg xmlns="http://www.w3.org/2000/svg" width="1rem" height="1rem" viewBox="0 0 48 48" class="btn-no-select">
         <g fill="none" stroke="#000" stroke-linejoin="round" stroke-width="4">
             <path stroke-linecap="round"
                 d="M24 32C35.0457 32 44 28.4183 44 24C44 19.5817 35.0457 16 24 16C12.9543 16 4 19.5817 4 24C4 28.4183 12.9543 32 24 32Z" />

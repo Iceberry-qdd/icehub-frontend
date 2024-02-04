@@ -16,7 +16,6 @@
             :totalPages="state.totalPages">
         </PostsTimeline>
     </div>
-
 </template>
 
 <style scoped>
@@ -31,8 +30,9 @@ import Header from '@/components/tailwind/Header.vue'
 import { getTimeline } from '@/api.js'
 import { store } from '@/store.js'
 import { onMounted, onUnmounted, reactive, provide } from 'vue'
-import router from '@/route'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const state = reactive({
     posts: [],
     pageIdx: 1,

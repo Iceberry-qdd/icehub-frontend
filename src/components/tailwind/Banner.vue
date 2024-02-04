@@ -1,6 +1,6 @@
 <template>
     <div class="cursor-pointer">
-        <img v-if="props.user && props.user.bannerUrl" :src="bannerPic" loading="lazy" v-bind="$attrs" />
+        <img class="pic img-fluid" v-if="props.user && props.user.bannerUrl" :src="bannerPic" loading="lazy" v-bind="$attrs" />
         <div v-else v-bind="$attrs" class="bg-gradient-to-r from-sky-500 to-indigo-500"></div>
     </div>
 </template>

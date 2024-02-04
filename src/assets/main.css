@@ -18,12 +18,42 @@ html::-webkit-scrollbar-thumb {
     border-radius: 9999px;
 }
 
-img,li,.userCard {
-    cursor: pointer;
+#pre-loading{
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
 }
 
-img{
-    max-width: max-content !important;
+#pre-loading>#icon{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 3rem;
+    height: 3rem;
+    background-image: url('../assets/logo.svg');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: loading 4s ease-in-out 0s infinite normal both;
+}
+
+@keyframes loading{
+    0%{
+        opacity: 25%;
+    }
+
+    50%{
+        opacity: 100%;
+    }
+
+    100%{
+        opacity: 25%;
+    }
+}
+
+img,li,.userCard {
+    cursor: pointer;
 }
 
 img.pic.img-fluid{
@@ -37,6 +67,7 @@ img.pic.img-fluid{
     border-radius: 24rem;
     padding: 0.5rem;
     color: #5d6064;
+    user-select: none;
 }
 
 .material-icons-round:hover:not(.no-hover) {
@@ -58,6 +89,10 @@ img.pic.img-fluid{
 
 .katex {
     font: normal 1.1em KaTeX_Math, Times New Roman, serif !important;
+}
+
+.btn-no-select{
+    user-select: none;
 }
 
 @tailwind base;

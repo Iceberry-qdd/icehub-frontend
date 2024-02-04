@@ -10,7 +10,12 @@
                     :user="props.user"
                     class="w-[3.5rem] h-[3.5rem] border-white box-content border-[0.2rem] object-cover rounded-[8px] text-[18pt]">
                 </Avatar>
-                <div class="flex flex-row justify-center items-center text-[11pt] bg-blue-500 text-white w-[4.5rem] h-[1.8rem] rounded-full">订阅</div>
+                <div
+                    @click.stop="state.isFollowing ? doUnFollowUser() : doFollowUser()"
+                    :class="followBtnClass"
+                    class="flex flex-row justify-center items-center text-[11pt] min-w-[4.5rem] px-3 h-[1.8rem] rounded-full btn-no-select">
+                    {{ state.isFollowing ? '取消' : '' }}订阅
+                </div>
             </div>
             <div class="text-[14pt] font-bold">
                 {{ state.user.nickname }}
@@ -35,10 +40,55 @@
 import { reactive, computed } from 'vue'
 import Avatar from '@/components/tailwind/Avatar.vue'
 import Banner from '@/components/tailwind/Banner.vue'
+import { store } from '@/store'
+import { followUser, unFollowUser } from '@/api'
 
 const props = defineProps(['user'])
 const state = reactive({
-    user: props.user
+    user: props.user,
+    loading: true,
+    isFollowing: props.user.following
 })
+
+const followBtnClass = computed(() => ({
+    'bg-blue-500': !state.isFollowing,
+    'bg-gray-300': state.isFollowing,
+    'text-white': !state.isFollowing,
+    'text-zinc-700': state.isFollowing
+}))
+
+async function doFollowUser() {
+    state.loading = true
+    try {
+        const response = await followUser(props.user.id)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = response.json()
+        if (result == false) throw new Error('关注失败！')
+        state.isFollowing = true
+    } catch (e) {
+        store.setErrorMsg('订阅失败！')
+        console.error(e)
+    } finally {
+        state.loading = false
+    }
+}
+
+async function doUnFollowUser() {
+    state.loading = true
+    try {
+        const response = await unFollowUser(props.user.id)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = response.json()
+        if (result == false) throw new Error('取消关注失败！')
+        state.isFollowing = false
+    } catch (e) {
+        store.setErrorMsg('取消订阅失败！')
+        console.error(e)
+    } finally {
+        state.loading = false
+    }
+}
 
 </script>

@@ -1,10 +1,10 @@
 <template>
     <div class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
-        <div class="w-[25%] h-fit max-h-[95vh] bg-white rounded-[8px] overflow-y-auto">
+        <div class="relative w-[25%] max-h-[90vh] h-fit bg-white rounded-[8px] overflow-y-auto">
             <div id="imgWrapper" class="relative flex flex-row justify-center items-center w-full">
                 <div v-if="state.imageInfo.hidden == 'true'"
                     class="absolute h-full w-full bg-white/5 backdrop-blur-xl"></div>
-                <img :src="state.image" class="max-w-full max-h-[90vh] object-cover" />
+                <img :src="state.image" class="max-w-full max-h-[90vh] object-cover image-picker" />
                 <div class="absolute bottom-0 right-0 flex flex-row gap-2 p-2">
                     <button v-if="state.imageInfo.hidden == 'false'" title="标记为敏感内容">
                         <IconFlagOn @click="toggleHiddenFlag"
@@ -31,7 +31,7 @@
 
             <textarea v-if="state.showAltEditor == true"
                 v-model="state.imageInfo.altText" @keydown="resize"
-                class="p-3 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
+                class="p-3 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-y-auto rounded w-full"
                 maxlength="512" rows="2" placeholder="简述此图片的内容" id="post-input" name="post"></textarea>
             <div @click="dismissImageEditPanel"
                 class="cursor-pointer bg-blue-500 w-fit text-[11pt] mt-3 mb-3 mr-0 ml-3 text-white font-bold px-4 py-1 rounded-full">

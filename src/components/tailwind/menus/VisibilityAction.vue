@@ -3,7 +3,7 @@
         class="flex relative flex-row justify-between items-center">
         <div class="flex flex-rows justify-start items-center gap-x-3">
             <span class="material-icons-round no-hover">{{ curActiveAction.icon }}</span>
-            <div>更改可见范围</div>
+            <div class="btn-no-select">更改可见范围</div>
         </div>
         <div class="material-icons-round cursor-pointer text-10-pt rotate-180"> arrow_back_ios </div>
         <div v-if="state.showSubActions == true" @blur="toggleSubAction"
@@ -15,7 +15,7 @@
                 <span class="material-icons-round no-hover" :class="[action.code == props.post.status? 'text-blue-500' : '']">
                     {{ action.icon }}
                 </span>
-                <div>{{ action.name }}</div>
+                <div class="btn-no-select">{{ action.name }}</div>
             </div>
         </div>
     </div>

@@ -5,10 +5,10 @@
             <div class="text-[11pt]">{{ title }}</div>
             <IconLoading v-if="props.ui.loading.show" class="h-auto w-5" :style="loadingStyle"></IconLoading>
             <div v-else class="flex flex-row flex-nowrap gap-x-[1rem]">
-                <div @click="confirm" class="text-[11pt] rounded-full px-4 py-[0.3rem] cursor-pointer" :style="confirmButtonStyle">
+                <div @click="confirm" class="text-[11pt] rounded-full px-4 py-[0.3rem] cursor-pointer btn-no-select" :style="confirmButtonStyle">
                     {{ props.ui.confirmButton.text }}
                 </div>
-                <div @click="cancel" class=" text-[11pt] rounded-full px-4 py-[0.3rem] cursor-pointer" :style="cancelButtonStyle">
+                <div @click="cancel" class=" text-[11pt] rounded-full px-4 py-[0.3rem] cursor-pointer btn-no-select" :style="cancelButtonStyle">
                     {{ props.ui.cancelButton.text }}
                 </div>
             </div>

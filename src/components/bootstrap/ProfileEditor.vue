@@ -22,7 +22,7 @@
             </div>
         </div>
 
-         <Banner
+        <Banner
             :user="state.user"
             style="height: 20.7rem;"
             class="w-full max-h-[20rem] object-cover object-center">
@@ -34,8 +34,14 @@
             </Avatar>
             <div class="text-info">
                 <div class="form-floating mb-3">
-                    <input @blur="checkUsernameValid" v-model.trim="state.newUser.nickname" type="text"
-                        class="form-control" :class="isUNameValid.class" id="floatingInput" placeholder="用户名" required>
+                    <input
+                        @blur="checkUsernameValid"
+                        v-model.trim="state.newUser.nickname"
+                        type="text" class="form-control"
+                        :class="isUNameValid.class"
+                        id="floatingInput"
+                        placeholder="用户名"
+                        required>
                     <label for="floatingInput">用户名</label>
                     <!-- <div class="valid-feedback">Looks good!</div> -->
                     <div class="invalid-feedback">{{ isUNameValid.msg }}</div>
@@ -66,8 +72,13 @@
                     <label for="floatingInput">性别</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input v-model.trim="state.newUser.email" type="email" :class="isEmailValid.class"
-                        class="form-control" id="floatingInput" placeholder="电子邮件">
+                    <input
+                        v-model.trim="state.newUser.email"
+                        type="email"
+                        :class="isEmailValid.class"
+                        class="form-control"
+                        id="floatingInput"
+                        placeholder="电子邮件">
                     <label for="floatingInput">电子邮件</label>
                     <div class="invalid-feedback">{{ isEmailValid.msg }}</div>
                 </div>
@@ -172,14 +183,15 @@
 
 <script setup>
 import Header from '@/components/tailwind/Header.vue'
-import { reactive, computed, watch, ref, onUnmounted, onMounted } from 'vue'
+import { reactive, computed, watch, ref, onUnmounted } from 'vue'
 import { store } from '@/store.js'
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/api.js'
-import router from '@/route'
+import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/tailwind/Avatar.vue'
 import Banner from '@/components/tailwind/Banner.vue'
 
+const router = useRouter()
 const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),
     newUser: {

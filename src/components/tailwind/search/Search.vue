@@ -10,8 +10,7 @@
         <div>
             <div class="text-[13pt] font-bold px-2 py-2" v-if="showUsers">用户</div>
             <div
-                v-for="(searches, index) in state.apiSearch"
-                :index = "index">
+                v-for = "(searches, index) in state.apiSearch" :index = "index">
                 <div v-if="index === 'USER' && onlySearchUser">
                     <FollowItem
                         v-for="search in searches"
@@ -45,12 +44,13 @@
                 </div>
             </div>
         </div>
-        <div v-if="state.prompt.key" id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
-            <IconLoading v-if="showFooterLoading"  class="h-5 w-5 text-slate-500"></IconLoading>
+        <div v-if="state.prompt.key" id="footer"
+            class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
+            <IconLoading v-if="showFooterLoading" class="h-5 w-5 text-slate-500"></IconLoading>
             <span v-else>没有更多了</span>
         </div>
-        <div v-else class="flex flex-nowrap justify-center items-center w-full h-[150px] mt-20">
-            <img src="../../../assets/search.svg" height="150" width="150" loading="lazy"/>
+        <div v-else class="flex flex-nowrap justify-center items-center w-full h-[9.5rem] mt-20">
+            <div class="w-[9.5rem] h-[9.5rem] bg-[url('/src/assets/search.svg')] bg-no-repeat bg-contain bg-center"></div>
         </div>
     </div>
 </template>
@@ -75,26 +75,28 @@
 </style>
 
 <script setup>
+import { defineAsyncComponent } from 'vue'
 import SearchBar from '@/components/tailwind/search/SearchBar.vue'
-import router from '@/route'
+import { useRouter } from 'vue-router'
 import { reactive, computed, onMounted, onUnmounted, provide } from 'vue'
-import UserCardSlide from '@/components/tailwind/search/UserCardSlide.vue'
-import PostCard from '@/components/bootstrap/PostCard.vue'
 import { globalSearch } from '@/api.js'
 import { store } from '@/store'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import Review from '@/components/tailwind/Review.vue'
-import FollowItem from '@/components/tailwind/FollowItem.vue'
+const UserCardSlide = defineAsyncComponent(() => import('@/components/tailwind/search/UserCardSlide.vue'))
+const PostCard = defineAsyncComponent(() => import('@/components/bootstrap/PostCard.vue'))
+const Review = defineAsyncComponent(() => import('@/components/tailwind/Review.vue'))
+const FollowItem = defineAsyncComponent(() => import('@/components/tailwind/FollowItem.vue'))
 
+const router = useRouter()
 const state = reactive({
     prompt: {
         key: undefined,
         typeMap: new Map([
-            ['ALL', { zh: '全部', routePrefix: '', icon: 'history', fetch: false, show: true, once:false }],
-            ['HISTORY', { zh: '历史', routePrefix: '', icon: 'history', fetch: false, show: false,once:false }],
+            ['ALL', { zh: '全部', routePrefix: '', icon: 'history', fetch: false, show: true, once: false }],
+            ['HISTORY', { zh: '历史', routePrefix: '', icon: 'history', fetch: false, show: false, once: false }],
             ['USER', { zh: '用户', routePrefix: 'profile', icon: 'history', fetch: true, show: true, once: true }],
-            ['POST', { zh: '帖子', routePrefix: 'post', icon: 'history', fetch: true, show: true, once:false }],
-            ['REVIEW', { zh: '评论', routePrefix: 'review', icon: 'history', fetch: true, show: true,once:false }]
+            ['POST', { zh: '帖子', routePrefix: 'post', icon: 'history', fetch: true, show: true, once: false }],
+            ['REVIEW', { zh: '评论', routePrefix: 'review', icon: 'history', fetch: true, show: true, once: false }]
         ]),
         type: [],
         pageIndex: 0,
@@ -120,8 +122,8 @@ const onlySearchUser = computed(() => {
 // 包含只fetch一次和不需要fetch的类型
 const invalidTypes = computed(() => {
     return [...state.prompt.typeMap.entries()]
-                .filter(([_, { fetch, once }]) => !fetch || once)
-                .map(([k, _]) => k)
+        .filter(([_, { fetch, once }]) => !fetch || once)
+        .map(([k, _]) => k)
 })
 
 async function routeTo({ url }) {
@@ -147,26 +149,33 @@ function search({ key, type }) {
 async function doSearch() {
     try {
         state.isLoading = true
-        if(!state.prompt.key) return
+        if (!state.prompt.key) return
         if (state.prompt.pageIndex > 0 && !onlySearchUser.value) {
             //第二次fetch时，排除once属性为true的type数据
             state.prompt.type = state.prompt.type.filter(it => !invalidTypes.value.includes(it))
         }
-        const response = await globalSearch(state.prompt.key,state.prompt.pageSize, state.prompt.pageIndex, state.prompt.type)
+        const response = await globalSearch(state.prompt.key, state.prompt.pageSize, state.prompt.pageIndex, state.prompt.type)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
         Object.keys(result).forEach(type => {
-            if(!state.apiSearch.hasOwnProperty(type)){
+            if (!state.apiSearch.hasOwnProperty(type)) {
                 state.apiSearch[type] = []
             }
             state.apiSearch[type].push(...result[type].filter(it => it.content != null))
         })
-        state.hasMore = Object.keys(result).length > 0
+
+        state.hasMore = false
+        for (const items of Object.values(result)) {
+            if (items.length >= state.prompt.pageSize) {
+                state.hasMore = true
+                break
+            }
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
-    }finally{
+    } finally {
         state.isLoading = false
     }
 }
@@ -204,7 +213,7 @@ function deleteAllPostsOfUserOnUi(userId) {
         return
     }
 
-    preDeletePosts.forEach( post => {
+    preDeletePosts.forEach(post => {
         const index = state.posts.indexOf(post)
         state.apiSearch['POST'].splice(index, 1)
     })

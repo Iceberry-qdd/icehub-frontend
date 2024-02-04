@@ -8,12 +8,12 @@
             <div class='flex flex-row pl-[0.5rem] justify-between items-center'>
                 <div class="flex relative flex-row items-center gap-x-4">
                     <Transition name="fade">
-                            <UserInfoPop
-                                @mouseleave="state.showUserInfoPop = false"
-                                :user="props.review.user"
-                                v-if="state.showUserInfoPop"
-                                class="user-info-pop z-[99] absolute top-0 shadow-lg">
-                            </UserInfoPop>
+                        <UserInfoPop
+                            @mouseleave="state.showUserInfoPop = false"
+                            :user="props.review.user"
+                            v-if="state.showUserInfoPop"
+                            class="user-info-pop z-[99] absolute top-0 shadow-lg">
+                        </UserInfoPop>
                     </Transition>
                     <div class="relative z-10">
                         <Avatar
@@ -29,7 +29,7 @@
                             {{ props.review.user.nickname }}
                             <i v-if="props.review.user.verified" class="bi bi-patch-check-fill verify relative text-[10pt] text-blue-500"></i>
                         </div>
-                        <div v-if="props.post != null" @click="routeToUser(replyTo)" class="text-[11pt]"> 回复 
+                        <div v-if="props.post != null" @click="routeToUser(replyTo)" class="text-[11pt]"> 回复
                             <span class="cursor-pointer hover:underline font-bold">@{{ replyTo }}</span>
                         </div>
                     </div>
@@ -107,37 +107,38 @@
     height: calc(100% - 2.5rem);
 }
 
-.fade-enter-active{
+.fade-enter-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-leave-active{
+.fade-leave-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-enter-from{
+.fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to{
+.fade-leave-to {
     opacity: 0;
 }
 </style>
 
 <script setup>
 // 只包括评论和一层回复
-import { computed, reactive, onMounted, provide } from 'vue'
+import { computed, reactive, onMounted, provide, defineAsyncComponent } from 'vue'
 import { dislikeAReview, getSubReviewById, likeAReview } from '@/api'
 import { humanizedTime } from '@/utils/formatUtils.js'
 import { store } from '@/store'
 import { Like, Message, MoreTwo } from '@icon-park/vue-next'
-import router from '@/route'
-import Reply from '@/components/tailwind/Reply.vue'
-import UserInfoPop from '@/components/tailwind/UserInfoPop.vue'
+import { useRouter } from 'vue-router'
 import { VueShowdown } from 'vue-showdown'
-import ReviewPanel from '@/components/tailwind/ReviewPanel.vue'
 import Avatar from '@/components/tailwind/Avatar.vue'
+const UserInfoPop = defineAsyncComponent(() => import('@/components/tailwind/UserInfoPop.vue'))
+const ReviewPanel = defineAsyncComponent(() => import('@/components/tailwind/ReviewPanel.vue'))
+const Reply = defineAsyncComponent(() => import('@/components/tailwind/Reply.vue'))
 
+const router = useRouter()
 const props = defineProps(['review', 'post', 'tieSub'])
 const state = reactive({
     replies: [],
@@ -166,18 +167,18 @@ const replyTo = computed(() => {
     }
 })
 
-const tieSub = computed(()=> {
+const tieSub = computed(() => {
     return state.totalReplyCount == 0 ? 'none' : 'top'
 })
 
 async function getReply() {
     try {
-        const response = await getSubReviewById(props.review.id, state.pageIndex, state.pageSize,state.lastTimestamp)
+        const response = await getSubReviewById(props.review.id, state.pageIndex, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
         const { content, totalCount } = await response.json()
         state.replies.push(...content)
         state.totalReplyCount = totalCount
-        if(content.length>1) {
+        if (content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
@@ -191,7 +192,7 @@ function fetchMoreReply() {
     getReply()
 }
 
-function dismissReplyPanel(){
+function dismissReplyPanel() {
     state.showReplyPanel = false
 }
 

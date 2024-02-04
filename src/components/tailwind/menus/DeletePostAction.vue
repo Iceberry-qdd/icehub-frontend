@@ -1,7 +1,7 @@
 <template>
     <div @click="showConfirmDialogBox" class="flex flex-rows justify-start items-center gap-x-3">
         <span class="material-icons-round no-hover text-red-500">delete</span>
-        <div>删除此内容</div>
+        <div class="btn-no-select">删除此内容</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 ref="confirmDialogBox"

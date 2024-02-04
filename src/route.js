@@ -20,6 +20,7 @@ const SettingDataPrivacy = () => import('@/components/tailwind/setting/DataPriva
 const SettingDisplayTheme = () => import('@/components/tailwind/setting/DisplayTheme.vue')
 const SettingHelpFeedback = () => import('@/components/tailwind/setting/HelpFeedback.vue')
 const SettingAbout = () => import('@/components/tailwind/setting/About.vue')
+const Global404 = () => import('@/components/tailwind/Global404.vue')
 
 const routes = [
     { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
@@ -44,15 +45,16 @@ const routes = [
         path: '/',
         component: Setting,
         name: 'setting',
-        children:[
-            {name:'accountSafe', path:'/setting/account&safe', component: SettingAccountSafe, alias: ['/setting']},
-            {name:'notifyMsg', path:'/setting/notify&msg', component: SettingNotifyMsg},
-            {name:'dataPrivacy', path:'/setting/data&privacy', component: SettingDataPrivacy},
-            {name:'displayTheme', path:'/setting/display&theme', component: SettingDisplayTheme},
-            {name:'helpFeedback', path:'/setting/help&feedback', component: SettingHelpFeedback},
-            {name:'about', path:'/setting/about', component: SettingAbout}
+        children: [
+            { name: 'accountSafe', path: '/setting/account&safe', component: SettingAccountSafe, alias: ['/setting'] },
+            { name: 'notifyMsg', path: '/setting/notify&msg', component: SettingNotifyMsg },
+            { name: 'dataPrivacy', path: '/setting/data&privacy', component: SettingDataPrivacy },
+            { name: 'displayTheme', path: '/setting/display&theme', component: SettingDisplayTheme },
+            { name: 'helpFeedback', path: '/setting/help&feedback', component: SettingHelpFeedback },
+            { name: 'about', path: '/setting/about', component: SettingAbout }
         ]
-    }
+    },
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: Global404 }
 ]
 
 const router = createRouter({

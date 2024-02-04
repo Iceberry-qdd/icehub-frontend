@@ -1,5 +1,5 @@
 <template>
-    <div @click="showConfirmDialogBox" class="flex flex-rows justify-start items-center gap-x-3">
+    <div @click="showConfirmDialogBox" class="flex flex-rows justify-start items-center gap-x-3 btn-no-select">
         <span class="material-icons-round no-hover">person_off</span>
         <div>不喜欢此作者</div>
         <Teleport to="#app">

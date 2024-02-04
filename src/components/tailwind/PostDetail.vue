@@ -13,13 +13,15 @@
             :post="state.post"
             v-if="allowReview">
         </ReviewEditor>
-        <div v-if="!allowReview && state.post" class="w-[96%] h-[3rem] translate-x-[2%] my-[2%] p-4 bg-[#e8f0ff] rounded-lg flex justify-left items-center gap-2 cursor-default">
+        <div
+            v-if="!allowReview && state.post"
+            class="w-[96%] h-[3rem] translate-x-[2%] my-[2%] p-4 bg-[#e8f0ff] rounded-lg flex justify-left items-center gap-2 cursor-default">
             <IconInfo class="bg-[#3b82f6] text-white rounded-full box-content p-[0.1rem]"></IconInfo>
             <span class="text-[11pt] text-[#303133]">该帖子的评论功能已关闭</span>
         </div>
         <div v-if="state.reviews.length > 0">
             <TransitionGroup name="reviews">
-                <Review 
+                <Review
                     v-for="(review, index) in state.reviews"
                     :review="review"
                     :post="state.post"
@@ -29,7 +31,7 @@
             </TransitionGroup>
         </div>
         <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
-            <IconLoading v-if="state.isLoading==true" class="h-5 w-5 text-slate-500"></IconLoading>
+            <IconLoading v-if="state.isLoading == true" class="h-5 w-5 text-slate-500"></IconLoading>
             <span v-else>没有更多了</span>
         </div>
     </div>
@@ -70,8 +72,7 @@ import { useRoute } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
 
-const $route = useRoute()
-
+const route = useRoute()
 const state = reactive({
     post: null,
     reviews: [],
@@ -151,7 +152,7 @@ function newReview({ review }) {
 }
 
 onMounted(async () => {
-    const postId = $route.params.id
+    const postId = route.params.id
     if (!state.post) { await getPost(postId) }
 
     await getReviews()

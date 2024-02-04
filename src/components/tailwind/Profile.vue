@@ -14,7 +14,7 @@
 
         <Banner
             :user="state.user"
-            @click="state.user && state.user.bannerUrl ? showSlide([state.user.bannerUrl], 0): ()=>{}"
+            @click="state.user && state.user.bannerUrl ? showSlide([state.user.bannerUrl], 0) : () => { }"
             class="w-full h-[20rem] object-cover">
         </Banner>
         <div class="-translate-y-[2.5rem]">
@@ -31,7 +31,7 @@
             </div>
             <PostsTimeline
                 v-else
-                :isLoading="state.isPostLoading" 
+                :isLoading="state.isPostLoading"
                 :posts="state.posts"
                 :curPageIndex="state.pageIndex"
                 :totalPages="state.totalPages">
@@ -42,11 +42,11 @@
 </template>
 
 <style scoped>
-.material-icons-round:hover{
+.material-icons-round:hover {
     background-color: transparent;
 }
 
-.material-icons-round{
+.material-icons-round {
     font-size: 24pt;
 }
 </style>
@@ -58,16 +58,16 @@ import PostsTimeline from '@/components/bootstrap/PostsTimeline.vue'
 import { reactive, onMounted, onUnmounted, computed, provide } from 'vue'
 import { getUserPosts, getUserInfoByNickname, deleteOneBlacklist } from '@/api'
 import { store } from '@/store'
-import { useRoute } from 'vue-router'
-import router from '@/route'
+import { useRoute, useRouter } from 'vue-router'
 import Banner from '@/components/tailwind/Banner.vue'
 
-const $route = useRoute()
+const router = useRouter()
+const route = useRoute()
 const user = JSON.parse(localStorage.getItem("CUR_USER"))
 const isCurUser = computed(() => {
-    return $route.params.nickname == user.nickname
+    return route.params.nickname == user.nickname
 })
-
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     user: null,
     posts: [],
@@ -76,7 +76,7 @@ const state = reactive({
     lastTimestamp: Date.now(),
     totalPages: 0,
     headerConfig: {
-        title: $route.params.nickname,
+        title: route.params.nickname,
         goBack: !isCurUser.value,
         showMenu: isCurUser.value,
         menuIcon: isCurUser.value ? 'create' : '',
@@ -135,6 +135,8 @@ function fetchNewPost() {
 }
 
 function toggleHeaderIcon(event) {
+    // TODO implement it.
+    if (!showUnImpl) return
     if (event.pageY > 718 && event.deltaY > 0 && state.lastWheelDirection <= 0) {
         state.lastWheelDirection = event.deltaY
         state.headerConfig.menuIcon = 'date_range'
@@ -179,7 +181,7 @@ function showSlide(images, idx) {
 }
 
 onMounted(async () => {
-    const nickname = $route.params.nickname
+    const nickname = route.params.nickname
 
     await getUser(nickname)
     state.lastTimestamp = state.user?.lastPostAt || Date.now()

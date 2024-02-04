@@ -4,7 +4,7 @@
         id="user-card-slide"
         class="flex flex-row flex-nowrap px-0 pt-0 pb-2 gap-x-2 overflow-auto snap-mandatory scroll-p-2 snap-x scroll-smooth">
         <div class="sticky left-0 flex flex-col flex-nowrap justify-center items-center z-[99]">
-            <span @click="scrollToPre" class="material-icons-round ml-2 cursor-pointer shadow-md">arrow_back_ios</span>
+            <span @click="scrollToPre" class="material-icons-round ml-2 cursor-pointer shadow-md no-hover">arrow_back_ios</span>
         </div>
         <UserCard
             class="user-card w-[calc(50%-1rem)] h-[12.5rem] grow-0 shrink-0 cursor-pointer hover:shadow-lg transition-shadow delay-100 snap-start"
@@ -12,10 +12,10 @@
             :key="search.content.id"
             :id="search.content.id"
             :user="search.content"
-            @click="routeToProfile(search.content.nickname)">
+            @click.stop="routeToProfile(search.content.nickname)">
         </UserCard>
         <div class="sticky right-0 flex flex-col flex-nowrap justify-center items-center z-[99]">
-            <span @click="scrollToNext" class="material-icons-round mr-2 cursor-pointer shadow-md">arrow_forward_ios</span>
+            <span @click="scrollToNext" class="material-icons-round mr-2 cursor-pointer shadow-md no-hover">arrow_forward_ios</span>
         </div>
     </div>
 </template>

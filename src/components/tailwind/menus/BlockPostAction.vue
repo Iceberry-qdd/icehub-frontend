@@ -1,5 +1,5 @@
 <template>
-    <div @click="blockThisPost" class="flex flex-rows justify-start items-center gap-x-3">
+    <div @click="blockThisPost" class="flex flex-rows justify-start items-center gap-x-3 btn-no-select">
         <span class="material-icons-round no-hover">visibility_off</span>
         <div>对此内容不感兴趣</div>
     </div>

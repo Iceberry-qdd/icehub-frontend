@@ -10,12 +10,16 @@
                 <div class="text-[14pt] font-bold">{{ props.title }}</div>
             </div>
             <div v-tooltip:quarter="props.iconTooltip" v-if="props.showMenu">
-                <span v-if="props.menuIcon" @click="handleAction" class="material-icons-round text-[14pt]">{{ props.menuIcon }}</span>
+                <span
+                    v-if="props.menuIcon"
+                    @click="handleAction"
+                    class="material-icons-round text-[14pt]">
+                    {{ props.menuIcon }}
+                </span>
             </div>
         </div>
         <div id="h-hide"></div>
     </div>
-
 </template>
 
 <style scoped>
@@ -27,7 +31,7 @@
     position: fixed;
 }
 
-.border-btm{
+.border-btm {
     border-bottom: 1px solid #EEEEEE;
 }
 
@@ -39,9 +43,9 @@
 
 <script setup>
 import { reactive } from 'vue'
-import router from '@/route'
-import { store } from '@/store'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const props = defineProps(['title', 'goBack', 'showMenu', 'menuIcon', 'menuAction','iconTooltip','width','noBorder'])
 const emits = defineEmits(['handleAction'])
 const state = reactive({

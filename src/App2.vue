@@ -30,15 +30,17 @@ main {
 </style>
 
 <script setup>
-import GlobalBanner from '@/components/tailwind/GlobalBanner.vue';
+import { onMounted, onUnmounted, reactive, defineAsyncComponent } from 'vue'
 import Auth from '@/components/tailwind/Auth.vue'
-import { onMounted, onUnmounted, reactive } from 'vue'
+import 'material-icons/iconfont/round.css'
+const GlobalBanner = defineAsyncComponent(() => import('@/components/tailwind/GlobalBanner.vue'))
 
 const state = reactive({
     user: null,
 })
 
 onMounted(() => {
+    document.getElementById('pre-loading').style.display = 'none'
     history.pushState(null, null, document.URL)
     window.addEventListener('popstate', function () {
         history.pushState(null, null, document.URL)
