@@ -1,7 +1,11 @@
 <template>
     <div>
         <TransitionGroup name="posts">
-            <PostCard v-for="(post, index) in state.posts" :post="post" :key="post.id" :index="index"></PostCard>
+            <PostCard
+                v-for="post in state.posts"
+                :post="post"
+                :key="post.id">
+            </PostCard>
         </TransitionGroup>
         <div id="footer" class="w-full h-[10vh] flex flex-row justify-center pt-4 text-sm text-gray-500">
             <IconLoading v-if="hasMore || props.isLoading" class="h-5 w-5 text-slate-500"></IconLoading>

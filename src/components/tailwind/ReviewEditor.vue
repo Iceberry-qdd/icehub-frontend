@@ -28,7 +28,7 @@
                         <local-two v-if="showUnImpl" theme="outline" size="20" class="icon" fill="#333" :strokeWidth="4" />
                         <div class="relative flex-col">
                             <div class="flex" @click="state.showEmojiPanel=!state.showEmojiPanel">
-                                <grinning-face-with-open-mouth v-tooltip="'表情面板'" theme="outline" size="18" fill="#333" :strokeWidth="3" />
+                                <grinning-face-with-open-mouth title="表情面板" theme="outline" size="18" fill="#333" :strokeWidth="3" />
                             </div>
                             <Transition name="fade">
                                 <EmojiPanel

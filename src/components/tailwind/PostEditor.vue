@@ -11,7 +11,7 @@
                 <VueShowdown
                     tag="markdown"
                     :extensions="['exts']"
-                    v-if="state.showMarkdownPanel==true"
+                    v-if="state.showMarkdownPanel == true"
                     :markdown="state.content"
                     class="min-h-[6rem]">
                 </VueShowdown>
@@ -20,7 +20,7 @@
                     v-model="state.content"
                     @keydown="resize"
                     class="p-2 focus:outline-none tracking-wide text-[14pt] leading-6 text-justify resize-none overflow-hidden rounded w-full"
-                    maxlength="10000"
+                    :maxlength="state.maxContentWordCount + 50"
                     rows="3"
                     placeholder="发布帖子"
                     id="post-input"
@@ -30,10 +30,10 @@
             <div class="px-2 flex flex-row justify-between">
                 <div class="text-base flex flex-row gap-x-1 items-center justify-start content-center">
                     <input v-show="false" type="file" id="imgFile" @change="clickFileSelector" name="imgFile" multiple="true" accept="image/*" />
-                    <div id= "imagePickerAction" class="relative flex-col">
+                    <div id = "imagePickerAction" class="relative flex-col">
                         <div class="flex" @click="preChoosePics">
                             <span
-                                v-tooltip="'添加图片'"
+                                title = "添加图片"
                                 class="material-icons-round"
                                 :class="[hasImage || state.showImagePanel ? 'active' : '']">
                                 add_photo_alternate
@@ -51,14 +51,14 @@
                     <div id = "visibilityForPostEditorAction" class="relative flex-col">
                         <div class="flex" @click="state.showVisibilityPanel = !state.showVisibilityPanel">
                             <span
-                                v-tooltip="'帖子可见范围'"
+                                title = "帖子可见范围"
                                 class="material-icons-round"
                                 :class="[state.showVisibilityPanel ? 'bg-blue-100 active' : '', curVisibility.code != 'PUBLIC' ? 'active' : '']">
                                 {{ curVisibility.icon }}
                             </span>
                         </div>
                         <Transition name="fade">
-                            <VisibilityForPostEditorAction 
+                            <VisibilityForPostEditorAction
                                 class="z-[99] absolute top-[2.5rem]"
                                 :visibility="state.data.status"
                                 :ui="state.visibilityActionData"
@@ -72,9 +72,9 @@
                     <div id = "dateTimePickerAction" class="relative flex-col">
                         <div class="flex" @click="state.showSchedulePanel = !state.showSchedulePanel">
                             <span
-                                v-tooltip="'定时发送'"
+                                title = "定时发送"
                                 class="material-icons-round"
-                                :class="[state.showSchedulePanel ? 'bg-blue-100 active' : '',state.data.createdTime ? 'active' : '']">
+                                :class="[state.showSchedulePanel ? 'bg-blue-100 active' : '', state.data.createdTime ? 'active' : '']">
                                 schedule
                             </span>
                         </div>
@@ -87,17 +87,17 @@
                                 :noteMsg = '"您仅可以安排未来一年内的帖子"'
                                 :curPickedTime = state.data.createdTime
                                 @closeWithClear = 'pickedTimeAndClose'
-                                @closeWithOk = 'pickedTimeAndClose'
-                            ></DateTimePickerAction>
+                                @closeWithOk='pickedTimeAndClose'>
+                            </DateTimePickerAction>
                         </Transition>
                     </div>
 
                     <!-- <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
 
                     <div id="emojiPanel" class="relative flex-col">
-                        <div class="flex" @click="state.showEmojiPanel=!state.showEmojiPanel">
+                        <div class="flex" @click="state.showEmojiPanel = !state.showEmojiPanel">
                             <span
-                                v-tooltip="'表情面板'"
+                                title="表情面板"
                                 class="material-icons-round"
                                 :class="[state.showEmojiPanel ? 'bg-blue-100 active' : '']">
                                 mood
@@ -106,16 +106,17 @@
                         <Transition name="fade">
                             <EmojiPanel
                                 @dismissEmojiPanel="dismissEmojiPanel"
-                                v-if="state.showEmojiPanel" @insertEmojiCode="insertEmoji"
+                                v-if="state.showEmojiPanel"
+                                @insertEmojiCode="insertEmoji"
                                 class="z-[99] absolute top-[2.5rem] min-w-max min-h-max">
                             </EmojiPanel>
                         </Transition>
                     </div>
 
-                    <div id="long-article" @click="state.showMarkdownPanel=!state.showMarkdownPanel">
+                    <div id="long-article" @click="state.showMarkdownPanel = !state.showMarkdownPanel">
                         <span
                             :class="[state.showMarkdownPanel ? 'active' : '']"
-                            v-tooltip="'长文章'"
+                            title = "长文章"
                             v-if="showUnImpl"
                             class="material-icons-round">
                             <!-- TODO implement it. -->
@@ -126,18 +127,25 @@
                     <div id="poll">
                         <span
                             v-if="showUnImpl"
-                            v-tooltip="'投票'"
+                            title = "投票"
                             class="material-icons-round">
                             <!-- TODO implement it. -->
                             equalizer
                         </span>
                     </div>
                 </div>
-
-                <div @click="submitPost"
-                    :class='[state.content.length > 0 ? "bg-[#0d6efd] cursor-pointer" : "bg-gray-400 cursor-not-allowed pointer-events-none"]'
-                    class="text-sm py-2 px-6 rounded-full text-white">
-                    <span>发布</span>
+                <div class="flex flex-row items-center gap-x-4">
+                    <div
+                        class="text-[10pt] select-none"
+                        :class="leftWordCountClass"
+                        :title="leftWordCount < 0 ? `超出${-leftWordCount}字`: ''">
+                        {{ leftWordCount }}
+                    </div>
+                    <div @click="submitPost"
+                        :class='submitPostBtnClass'
+                        class="text-sm py-2 px-6 rounded-full text-white">
+                        <span>发布</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -167,12 +175,12 @@
     padding: 0.4rem;
 }
 
-.material-icons-round.active{
+.material-icons-round.active {
     color: rgb(59 130 246);
     /* background-color: #dbeafe; */
 }
 
-.material-icons-round:not(.active){
+.material-icons-round:not(.active) {
     color: #303133;
 }
 
@@ -209,6 +217,7 @@ const emits = defineEmits(['postingNew'])
 const { postingNew } = inject('postingNew')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
+    maxContentWordCount: 300,
     content: "",
     imgList: [],
     isLoading: false,
@@ -240,17 +249,39 @@ const state = reactive({
     showMarkdownPanel: false,
     showSchedulePanel: false,
     visibilityActionData: [
-        { id: 1, name: '公开', code: 'PUBLIC',icon:'public' },
-        { id: 2, name: '公共时间线内隐藏', code: 'NOT_TIMELINE',icon:'vpn_lock' },
-        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon:'people_outline' },
-        { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon:'people' },
-        { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon:'lock' },
+        { id: 1, name: '公开', code: 'PUBLIC', icon: 'public' },
+        { id: 2, name: '探索页内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock' },
+        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'people_outline' },
+        { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people' },
+        { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock' },
     ]
 })
 
 const hasImage = computed(() => {
     return state.imgList.length > 0
 })
+
+const leftWordCount = computed(() => {
+    return state.maxContentWordCount - state.content.length
+})
+
+const leftWordCountClass = computed(() => ({
+    'text-blue-500': leftWordCount.value >= 0,
+    'text-red-500': leftWordCount.value < 0,
+    'hidden': leftWordCount.value === state.maxContentWordCount
+}))
+
+const isValidContentLength = computed(() => {
+    return leftWordCount.value >= 0 && leftWordCount.value < state.maxContentWordCount
+})
+
+const submitPostBtnClass = computed(() => ({
+    'bg-blue-500': isValidContentLength.value,
+    'cursor-pointer': isValidContentLength.value,
+    'bg-gray-300': !isValidContentLength.value,
+    'cursor-not-allowed': !isValidContentLength.value,
+    'pointer-events-none': !isValidContentLength.value
+}))
 
 function resize() {
     const input = document.getElementById('post-input')
@@ -262,6 +293,7 @@ async function submitPost() {
     try {
         if (state.content.length == 0) throw new Error("文字内容不能为空！")
         if (state.data.createdTime && Date.now() >= state.data.createdTime) throw new Error('您安排的预发布时间早于现在！')
+        if(leftWordCount.value < 0) throw new Error('您发布的帖子内容超出长度限制！')
 
         state.isLoading = true
         state.data.type = state.showMarkdownPanel == true ? 'MARKDOWN' : 'NORMAL'
@@ -359,11 +391,11 @@ function pickedTimeAndClose(args) {
     state.showSchedulePanel = false
 }
 
-function dismissVisibilityForPostEditorAction(){
+function dismissVisibilityForPostEditorAction() {
     state.showVisibilityPanel = false
 }
 
-function dismissEmojiPanel(){
+function dismissEmojiPanel() {
     state.showEmojiPanel = false
 }
 

@@ -1,35 +1,37 @@
 <template>
-    <div class="m-container w-[22rem] h-[12rem] rounded-[8px] shadow ring-1 ring-slate-900/5 ">
+    <div class="white-bg w-[22rem] h-[12rem] rounded-[8px] shadow ring-1 ring-slate-900/5 ">
         <Banner :user="state.user" @click="routeToProfile" class="w-full h-[6rem] object-cover rounded-t-[8px]"></Banner>
-        <div>
-            <Avatar :user="state.user" class="w-[3.5rem] h-[3.5rem] ml-3 absolute top-[4.25rem] border-[0.2rem] border-white rounded-[8px] text-[16pt]"></Avatar>
-            <div class="absolute top-[8rem] ml-[0.95rem] flex flex-row gap-x-1 items-center">
-                <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline cursor-pointer">
-                    {{ state.user.nickname }}</div>
-                <i class="bi bi-patch-check-fill verify text-[10pt] text-blue-500" v-if="state.user.verified"></i>
+        <div class="relative -top-[calc(3.5rem/2)] mx-[0.95rem] h-[calc(6rem+3.5rem/2)]">
+            <div class="flex flex-row justify-between items-end">
+                <Avatar :user="state.user" class="w-[3.5rem] h-[3.5rem] border-[0.2rem] border-white rounded-[8px] text-[16pt]"></Avatar>
+                <div class="text-[11pt] flex flex-row gap-x-2">
+                    <div @click="routeToFollowerList" class="hover:underline cursor-pointer">{{ followingCountText }}</div>
+                    <span>|</span>
+                    <div @click="routeToFollowingList" class="hover:underline cursor-pointer">{{ followerCountText }}</div>
+                </div>
             </div>
-            <div class="absolute top-[9.8rem] ml-[0.95rem] text-[11pt]">{{ brief }}</div>
-        </div>
-        <div class="text-[11pt] flex flex-row gap-x-2 absolute right-3 top-[6.25rem]">
-            <div @click="routeToFollowerList" class="hover:underline cursor-pointer">{{ followingCountText }}</div>
-            <span>|</span>
-            <div @click="routeToFollowingList" class="hover:underline cursor-pointer">{{ followerCountText }}</div>
-        </div>
-        <div>
-            <div v-if="!isCurUser" @click="toggleFollowState"
-                :class="{ 'bg-gray-300': state.user.following, 'bg-blue-500': !state.user.following, 'text-black': state.user.following, 'text-white': !state.user.following }"
-                class="absolute bottom-3 right-3  text-[11pt] px-5 py-[0.3rem] rounded-full cursor-pointer">
-                <div v-if="!state.loading"> {{ state.user.following ? '已订阅' : '订阅' }}</div>
-                <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
+            <div class="flex flex-row gap-x-1 items-center">
+                <div @click="routeToProfile" class=" font-bold text-[12pt] hover:underline cursor-pointer">
+                    {{ state.user.nickname }}
+                    <i class="bi bi-patch-check-fill verify text-[10pt] text-blue-500" v-if="state.user.verified"></i>
+                </div>
+            </div>
+            <div class="flex flex-row flex-nowrap items-center">
+                <div class="webkit-box-1 text-[10pt] basis-4/5">{{ brief }}</div>
+                <div v-if="!isCurUser" @click="toggleFollowState"
+                    :class="followBtnClass"
+                    class="basis-1/5 h-auto py-[0.3rem] rounded-full cursor-pointer text-center text-[11pt]">
+                    <div v-if="!state.loading"> {{ state.user.following ? '已订阅' : '订阅' }}</div>
+                    <IconLoading v-else class="'h-5 w-5 text-white'"></IconLoading>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-.m-container {
+.white-bg {
     background-color: white !important;
-
 }
 </style>
 
@@ -52,6 +54,13 @@ const state = reactive({
 })
 
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
+
+const followBtnClass = computed(() => ({
+    'bg-blue-500': !state.user.isFollowing,
+    'bg-gray-300': state.user.isFollowing,
+    'text-white': !state.user.isFollowing,
+    'text-zinc-700': state.user.isFollowing
+}))
 
 const brief = computed(() => {
     const remark = state.user.remark

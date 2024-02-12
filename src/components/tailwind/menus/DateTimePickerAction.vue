@@ -53,8 +53,8 @@
                     </div>
 
                     <div v-for="i in daysCountOfPickedMonth"
-                        :class="[state.pickedDate == i ? 'text-white bg-blue-500' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '' : 'm-disabled']"
-                        @click="canPickThisDay(i) ? state.pickedDate = i : ''"
+                        :class="[state.pickedDay == i ? 'text-white bg-blue-500' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '' : 'm-disabled']"
+                        @click="canPickThisDay(i) ? state.pickedDay = i : ''"
                         class="rounded-full w-[2.5rem] h-[2.5rem] flex justify-center items-center btn-no-select">
                         {{ i }}
                     </div>
@@ -147,6 +147,7 @@
 <script setup>
 import { computed, reactive, onMounted, onUnmounted } from 'vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
+import { standardTime } from '@/utils/formatUtils'
 
 const props = defineProps(['showTimePicker', 'showDatePicker', 'validDateTimeRange', 'noteMsg', 'curPickedTime'])
 const emits = defineEmits(['closeWithOk', 'closeWithClear'])
@@ -157,19 +158,15 @@ const state = reactive({
     weekNames: ['一', '二', '三', '四', '五', '六', '日'],
     pickedYear: 1970,
     pickedMonth: 1,
-    pickedDate: 1,
+    pickedDay: 1,
     pickedHour: 8,
     pickedMinute: 0,
     validDateTimeRange: props.validDateTimeRange
 })
 
 const formattedPickedDateTime = computed(() => {
-    const formattedYear = state.pickedYear
-    const formattedMonth = state.pickedMonth < 10 ? `0${state.pickedMonth}` : state.pickedMonth
-    const formattedDate = state.pickedDate < 10 ? `0${state.pickedDate}` : state.pickedDate
-    const formattedHour = state.pickedHour < 10 ? `0${state.pickedHour}` : state.pickedHour
-    const formattedMinute = state.pickedMinute < 10 ? `0${state.pickedMinute}` : state.pickedMinute
-    return `${formattedYear}-${formattedMonth}-${formattedDate} ${formattedHour}:${formattedMinute}`
+    const dateTime = new Date(state.pickedYear, state.pickedMonth - 1, state.pickedDay, state.pickedHour, state.pickedMinute, 0, 0)
+    return standardTime(dateTime.valueOf())
 })
 
 const canPickMonthBefore = computed(() => {
@@ -215,7 +212,7 @@ function canPickThisDay(day){
 function chooseFirstValidDay(){
     for(let i = 1; i <= daysCountOfPickedMonth.value; i++){
         if(canPickThisDay(i)){
-            state.pickedDate = i
+            state.pickedDay = i
             break
         }
     }
@@ -262,7 +259,7 @@ function closeAndClear(){
 }
 
 function closeAndOk(){
-    const pickedTimestamps = new Date(state.pickedYear, state.pickedMonth - 1, state.pickedDate, state.pickedHour, state.pickedMinute).getTime()
+    const pickedTimestamps = new Date(state.pickedYear, state.pickedMonth - 1, state.pickedDay, state.pickedHour, state.pickedMinute).getTime()
     emits('closeWithOk', { timestamps: pickedTimestamps })
 }
 
@@ -270,7 +267,7 @@ onMounted(() => {
     const now = props.curPickedTime ? new Date(props.curPickedTime) : new Date()
     state.pickedYear = now.getFullYear()
     state.pickedMonth = now.getMonth() + 1
-    state.pickedDate = now.getDate()
+    state.pickedDay = now.getDate()
     state.pickedHour = now.getHours()
     state.pickedMinute = now.getMinutes()
 

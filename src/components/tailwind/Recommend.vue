@@ -16,7 +16,7 @@
                         <div class="nickname">{{ user.nickname }}</div>
                         <i class="bi bi-patch-check-fill verify text-blue-500" v-if="user.verified"></i>
                     </div>
-                    <div class="brief">{{ user.brief }}</div>
+                    <div class="brief text-[10pt] webkit-box-2">{{ user.brief }}</div>
                 </div>
             </div>
         </div>
@@ -27,6 +27,7 @@
                 <li
                     class="py-3 px-4 hover:bg-gray-100 text-[11pt] hover:last:rounded-[8px] active:bg-gray-200"
                     v-for="value in state.threading"
+                    @click="routeToSearch(value.key)"
                     :key="value.rank">
                     <span>{{ value.key }}<span v-if="value.rank <= 3">🔥</span></span>
                     <div class="text-[10pt] text-gray-400 pl-4">热度{{ humanizedNumber(value.score)}}</div>
@@ -48,15 +49,6 @@
     font-size: 12pt;
 }
 
-.brief {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    font-size: 10pt;
-}
-
 .bi {
     font-size: 11pt;
 }
@@ -68,7 +60,9 @@ import Avatar from '@/components/tailwind/Avatar.vue'
 import { getHotSearch } from '@/api.js'
 import { store } from '@/store'
 import { humanizedNumber } from '@/utils/formatUtils'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     users: [],
@@ -87,6 +81,10 @@ async function doGetHotSearch(){
         store.setErrorMsg(e.message)
         console.error(e)
     }
+}
+
+function routeToSearch(key){
+    router.push({ name: 'search', query: { key: btoa(encodeURIComponent(key)) }})
 }
 
 doGetHotSearch()

@@ -1,5 +1,6 @@
 <template>
-    <div @click="toggleSubAction"
+    <div
+        @click="toggleSubAction"
         class="flex relative flex-row justify-between items-center">
         <div class="flex flex-rows justify-start items-center gap-x-3">
             <span class="material-icons-round no-hover">{{ curActiveAction.icon }}</span>
@@ -11,8 +12,10 @@
             <div @click="updateVisibility(action.code)"
                 class="flex flex-row gap-4 justify-left items-center py-[0.6rem] px-3 text-start last:rounded-b-[7px] first:rounded-t-[7px]"
                 v-for="action in state.actions" :key="action.id" :index="action.id"
-                :class="[action.code == props.post.status ? 'bg-blue-100 hover:bg-blue-100':'hover:bg-gray-100 active:bg-gray-200']">
-                <span class="material-icons-round no-hover" :class="[action.code == props.post.status? 'text-blue-500' : '']">
+                :class="[action.code == props.post.status ? 'bg-blue-100 hover:bg-blue-100' : 'hover:bg-gray-100 active:bg-gray-200']">
+                <span
+                    class="material-icons-round no-hover"
+                    :class="[action.code == props.post.status ? 'text-blue-500' : '']">
                     {{ action.icon }}
                 </span>
                 <div class="btn-no-select">{{ action.name }}</div>
@@ -22,10 +25,10 @@
 </template>
 
 <style scoped>
-
-.text-10-pt{
+.text-10-pt {
     font-size: 10pt !important;
 }
+
 .material-icons-round {
     padding: 0;
     font-size: 16pt;
@@ -51,7 +54,7 @@ const { dismissPostMenus } = inject('dismissPostMenus')
 const state = reactive({
     actions: [
         { id: 1, name: '公开', code: 'PUBLIC', icon: 'public' },
-        { id: 2, name: '公共时间线内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock' },
+        { id: 2, name: '探索页内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock' },
         { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'people_outline' },
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people' },
         // { id: 5, name: '指定用户可见', code: 'ONLY_SPECIFIED' },

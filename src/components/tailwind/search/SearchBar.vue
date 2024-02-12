@@ -4,7 +4,7 @@
             class="flex flex-row border-btm justify-start items-center gap-x-1 px-[0.5rem] text-[11pt] py-2 w-[calc(100%*5/13)]">
             <div
                 @click="routeTo()"
-                v-tooltip:full="'返回'"
+                title="返回"
                 class="material-icons-round cursor-pointer text-[12pt]">
                 arrow_back_ios
             </div>
@@ -25,7 +25,9 @@
                     maxlength="20"
                     class="w-full h-full border-[1px] border-l-0 rounded-r-full px-2 focus:outline-none" />
             </div>
-            <div v-tooltip:quarter="state.headerConfig.iconTooltip" v-if="state.headerConfig.showMenu">
+            <div
+                :title="state.headerConfig.iconTooltip"
+                v-if="state.headerConfig.showMenu">
                 <span
                     v-if="state.headerConfig.menuIcon"
                     @click="handleAction"

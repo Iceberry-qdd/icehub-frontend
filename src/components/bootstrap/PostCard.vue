@@ -26,7 +26,7 @@
                     <i class="bi bi-patch-check-fill verify mb-1" v-if="state.post.user.verified"></i>
                 </div>
                 <div class="post-time">
-                    <div>{{ state.post.plan ? `将于${formattedTime}发布` : formattedTime }}</div>
+                    <div :title="standardTime(state.post.createdTime)">{{ state.post.plan ? `将于${formattedTime}发布` : formattedTime }}</div>
                     <div v-if="state.post.status != 'PUBLIC'">• {{ postStatus }}</div>
                     <div v-if="state.post.updatedTime">• 已编辑</div>
                 </div>
@@ -39,8 +39,7 @@
             <p class="card-text" id="content" :class="[state.shrinkContent ? 'max-height-50vh' : '']">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
-            <RepostCard
-                v-if="state.post.rootId && !state.post.plan" :postId="state.post.rootId"
+            <RepostCard v-if="state.post.rootId && !state.post.plan" :postId="state.post.rootId"
                 class="z-index-96 relative">
             </RepostCard>
         </div>
@@ -440,12 +439,11 @@
 </style>
 
 <script setup>
-import { humanizedNumber } from '@/utils/formatUtils'
+import { humanizedNumber, standardTime, humanizedTime } from '@/utils/formatUtils'
 import { computed, onMounted, reactive, ref, provide, defineAsyncComponent } from 'vue'
 import { likeAPost, dislikeAPost, getUserInfoByNickname, getImageUrlIgnoreHidden } from '@/api'
 import { useRouter } from 'vue-router'
 import { store } from '@/store'
-import { humanizedTime } from '@/utils/formatUtils.js'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
@@ -596,7 +594,7 @@ const postStatus = computed(() => {
     const status = state.post.status
     const statusMap = new Map([
         ['PUBLIC', '公开'],
-        ['NOT_TIMELINE', '公共时间线上隐藏'],
+        ['NOT_TIMELINE', '探索页内隐藏'],
         ['ONLY_FOLLOWER', '订阅者可见'],
         ['ONLY_CO_FOLLOWER', '互相订阅者可见'],
         ['ONLY_SPECIFIED', '指定用户可见'],

@@ -41,23 +41,16 @@ export function humanizedTime(timestamps) {
     return postTime
 }
 
+const dateTimeFormatOptions = {
+    localeMatcher: 'best fit',
+    dateStyle: 'medium',
+    timeStyle: 'medium',
+    hour12: false
+}
+const intlDateTimeFormat = new Intl.DateTimeFormat(undefined, dateTimeFormatOptions)
 export function standardTime(timestamps) {
     const date = new Date(timestamps)
-    const Y = date.getFullYear()
-    const M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
-    const D = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
-    const h = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
-    const m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
-    const s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
-    return `${Y}-${M}-${D} ${h}:${m}:${s}`
-}
-
-export function guid() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[]xy/g, function (c) {
-        const r = Math.random() * 16 | 0
-        const v = c == 'x' ? r : (r & 0x3 | 0x8)
-        return v.toString(16)
-    })
+    return intlDateTimeFormat.format(date)
 }
 
 export function calcBgColor(string) {
@@ -97,13 +90,14 @@ export function getDateTimeRange(start, step, unit) {
     return [start, end]
 }
 
-const intlNumberFormat = new Intl.NumberFormat("en-US",
-    {
-        notation: "compact",
-        maximumFractionDigits: 1,
-        compactDisplay: "short",
-        roundingMode: "floor"
-    })
+const numberFormatOptions = {
+    localeMatcher: 'best fit',
+    notation: "compact",
+    maximumFractionDigits: 1,
+    compactDisplay: "short",
+    roundingMode: "floor"
+}
+const intlNumberFormat = new Intl.NumberFormat(undefined, numberFormatOptions)
 export function humanizedNumber(number) {
     return intlNumberFormat.format(number)
 }

@@ -3,13 +3,13 @@
         <div id="h" class="flex flex-row justify-between text-[15pt] items-center px-[1rem] w-[calc(100%*5/13)]"
             :class="[!state.noBorder ? 'border-btm' : '']">
             <div class="text-[15pt] h-full flex flex-row items-center">
-                <div @click="routeBackTo" v-if="props.goBack" v-tooltip:full="'返回'"
+                <div @click="routeBackTo" v-if="props.goBack" title="返回"
                     class="material-icons-round cursor-pointer text-[14pt] mr-[0.5rem]">
                     arrow_back_ios
                 </div>
                 <div class="text-[14pt] font-bold">{{ props.title }}</div>
             </div>
-            <div v-tooltip:quarter="props.iconTooltip" v-if="props.showMenu">
+            <div :title="props.iconTooltip" v-if="props.showMenu">
                 <span
                     v-if="props.menuIcon"
                     @click="handleAction"

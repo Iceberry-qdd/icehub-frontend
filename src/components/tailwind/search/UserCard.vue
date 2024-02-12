@@ -21,19 +21,12 @@
                 {{ state.user.nickname }}
                 <i class="text-[10pt] bi bi-patch-check-fill verify text-blue-500" v-if="state.user.verified"></i>
             </div>
-            <div class="text-[10pt] break-all brief">{{ state.user.remark }}</div>
+            <div class="text-[10pt] break-all webkit-box-1">{{ state.user.remark }}</div>
         </div>
     </div>
 </template>
 
 <style scoped>
-.brief {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-}
 </style>
 
 <script setup>

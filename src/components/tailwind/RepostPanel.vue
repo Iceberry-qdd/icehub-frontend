@@ -1,16 +1,20 @@
 <template>
     <div @click.self="dismiss"
         class="z-[111] flex flex-row justify-center items-center fixed left-0 right-0 top-0 bottom-0 bg-[#00000066]">
-        <div class="flex flex-col flex-nowrap justify-between w-[40%] max-h-[60%] p-4 bg-white rounded-[8px] overflow-y-auto" :class="[state.showVisibilityPanel ? 'min-h-[38%]' : 'min-h-[28%]']">
+        <div class="flex flex-col flex-nowrap justify-between w-[40%] max-h-[60%] p-4 bg-white rounded-[8px] overflow-y-auto"
+            :class="[state.showVisibilityPanel ? 'min-h-[38%]' : 'min-h-[28%]']">
             <div class="flex flex-row justify-between items-center">
                 <div class="flex flex-row items-center gap-x-2">
                     <img v-if="state.curUser.avatarUrl" :src="avatar" class="w-[2.5rem] h-[2.5rem] rounded-[8px]" />
-                    <div v-else class="flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-[8px] cursor-default bg-blue-500">
+                    <div v-else
+                        class="flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-[8px] cursor-default bg-blue-500">
                         <div class="text-white text-[14pt] font-bold">{{ state.curUser.nickname.charAt(0) }}</div>
                     </div>
                     <div class="flex flex-row gap-4 h-full justify-center items-center">
                         <span class="text-[13pt] font-bold cursor-default">{{ state.curUser.nickname }}</span>
-                        <div @click="toggleVisibilityAction" class="relative flex flex-row gap-x-1 items-center text-[11pt] text-[#3b82f6] border-[#3b82f6] border-2 py-[0.1rem] px-3 rounded-full min-w-[4rem] cursor-pointer">
+                        <div
+                            @click="toggleVisibilityAction"
+                            class="relative flex flex-row gap-x-1 items-center text-[11pt] text-[#3b82f6] border-[#3b82f6] border-2 py-[0.1rem] px-3 rounded-full min-w-[4rem] cursor-pointer">
                             <span>{{ curVisibility.name }}</span>
                             <VisibilityForPostEditorAction
                                 class="absolute top-[2rem] text-black z-[99]"
@@ -25,20 +29,30 @@
                 </div>
 
                 <div @click="reposting"
-                    :class="[state.loading?'cursor-not-allowed bg-gray-400':'bg-blue-500 cursor-pointer']"
+                    :class="[state.loading ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-500 cursor-pointer']"
                     class="text-white px-5 py-1 rounded-full text-[11pt] font-bold">
                     <IconLoading v-if="state.loading" class="'h-5 w-5 text-white'"></IconLoading>
                     <span v-else>转发</span>
                 </div>
             </div>
             <div class="pt-2 ml-[3rem] grow">
-                <textarea v-model="state.data.content" @keydown="resize" :disabled="state.loading"
+                <textarea
+                    v-model="state.data.content"
+                    @keydown="resize"
+                    :disabled="state.loading"
                     :class="{ 'text-gray-400': state.loading, 'cursor-not-allowed': state.loading }"
                     class="focus:outline-none overflow-y-hidden tracking-wide resize-none text-lg leading-6 text-justify min-w-full max-w-full min-h-fit bg-transparent"
-                    maxlength="512" placeholder="写点什么吧~" id="review-input" name="review"></textarea>
+                    maxlength="300"
+                    placeholder="写点什么吧~"
+                    id="review-input"
+                    name="review">
+                </textarea>
             </div>
-            <RepostCard v-if="state.parentPost" class="ml-[3rem] cursor-default pointer-events-none"
-                :post="state.parentPost"></RepostCard>
+            <RepostCard
+                v-if="state.parentPost"
+                class="ml-[3rem] cursor-default pointer-events-none"
+                :post="state.parentPost">
+            </RepostCard>
         </div>
     </div>
 </template>
@@ -65,8 +79,10 @@ import { posting } from '@/api.js'
 import { store } from '@/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/websocket.js'
+import { useRoute } from 'vue-router'
 import VisibilityForPostEditorAction from '@/components/tailwind/menus/VisibilityForPostEditorAction.vue'
 
+const route = useRoute()
 const props = defineProps(['post'])
 const emits = defineEmits(['dismiss', 'postingNew'])
 const { postingNew } = inject('postingNew')
@@ -75,6 +91,7 @@ const state = reactive({
     loading: false,
     parentPost: props.post,
     data: {
+        allowReview: true,
         content: null,
         top: false,
         attachmentsUrl: [],
@@ -87,11 +104,25 @@ const state = reactive({
     showVisibilityPanel: false,
     visibilityActions: [
         { id: 1, name: '公开', code: 'PUBLIC', icon: 'public', picked: false },
-        { id: 2, name: '公共时间线内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock', picked: false },
+        { id: 2, name: '探索页内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock', picked: false },
         { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'people_outline', picked: false },
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people', picked: false },
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock', picked: false },
     ]
+})
+
+/**
+ * 当处于以下情况任何之一时，判定为需要触发PostingNew方法
+ * 1. 当前路由组件name为Explore且转发帖子可见性为'PUBLIC';
+ * 2. 当前组件路由参数包含nickname且值等于当前登录用户nickname属性
+ * 3. 当前路由组件name为Index
+ */
+const doPostingNew = computed(() => {
+    const exploreRoute = route.name === 'explore'
+    const publicStatus = state.data.status === 'PUBLIC'
+    const sameNickname = route.params?.nickname === state.curUser.nickname
+    const indexRoute = route.name === 'index'
+    return sameNickname || (exploreRoute && publicStatus) || indexRoute
 })
 
 function resize() {
@@ -113,7 +144,7 @@ async function reposting() {
     try {
         if (state.parentPost.plan) throw new Error('该帖子尚未发布，无法进行转发操作')
         state.data.parentId = state.parentPost.id
-        state.data.rootId = state.parentPost.root ? state.parentPost.root.id : state.parentPost.id
+        state.data.rootId = state.parentPost.root?.id ?? state.parentPost.id
         state.data.userId ??= state.curUser.id
         const response = await posting(state.data)
         if (!response.ok) throw new Error((await response.json()).error)
@@ -124,9 +155,9 @@ async function reposting() {
         state.data.content = null
         store.setSuccessMsg('转发成功')
         // 发布通知
-        const receiverId = state.parentPost.root == null ? state.parentPost.user.id : state.parentPost.root.user.id
+        const receiverId = state.parentPost?.root?.user?.id ?? state.parentPost.user.id
         // ws.sendToOneQueue(new MsgPack(result.id, state.curUser.id, 'REPOST', receiverId),'interact')
-        if (state.data.status.code !== 'PUBLIC') {
+        if (doPostingNew.value) {
             postingNew(result)
         }
         dismiss()

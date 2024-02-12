@@ -14,7 +14,7 @@
 
         <Banner
             :user="state.user"
-            @click="state.user && state.user.bannerUrl ? showSlide([state.user.bannerUrl], 0) : () => { }"
+            @click="state.user && state.user.bannerUrl ? showSlide([state.user.bannerUrl], 0) : ''"
             class="w-full h-[20rem] object-cover">
         </Banner>
         <div class="-translate-y-[2.5rem]">

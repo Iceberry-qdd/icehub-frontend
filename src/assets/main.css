@@ -95,6 +95,22 @@ img.pic.img-fluid{
     user-select: none;
 }
 
+.webkit-box-1{
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.webkit-box-2{
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

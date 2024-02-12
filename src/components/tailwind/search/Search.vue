@@ -9,8 +9,7 @@
         </div>
         <div>
             <div class="text-[13pt] font-bold px-2 py-2" v-if="showUsers">用户</div>
-            <div
-                v-for = "(searches, index) in state.apiSearch" :index = "index">
+            <div v-for = "(searches, index) in state.apiSearch" :key="index">
                 <div v-if="index === 'USER' && onlySearchUser">
                     <FollowItem
                         v-for="search in searches"
@@ -77,7 +76,7 @@
 <script setup>
 import { defineAsyncComponent } from 'vue'
 import SearchBar from '@/components/tailwind/search/SearchBar.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { reactive, computed, onMounted, onUnmounted, provide } from 'vue'
 import { globalSearch } from '@/api.js'
 import { store } from '@/store'
@@ -88,6 +87,7 @@ const Review = defineAsyncComponent(() => import('@/components/tailwind/Review.v
 const FollowItem = defineAsyncComponent(() => import('@/components/tailwind/FollowItem.vue'))
 
 const router = useRouter()
+const route = useRoute()
 const state = reactive({
     prompt: {
         key: undefined,
@@ -132,7 +132,7 @@ async function routeTo({ url }) {
         state.prompt.type = []
         state.prompt.pageIndex = 0
         state.apiSearch = {}
-        await router.back()
+        router.back()
     } else {
         await router.push(url)
     }
@@ -228,6 +228,13 @@ function postingNew(post) {
 
 onMounted(() => {
     window.addEventListener('scroll', fetchMoreSameSearch)
+    const key = route.query?.key
+    if (key) {
+        const validTypeList = [...state.prompt.typeMap.entries()]
+            .filter(([_, { fetch }]) => fetch === true)
+            .map(([k, _]) => k)
+        search({ key: decodeURIComponent(atob(key)), type: validTypeList })
+    }
 })
 
 onUnmounted(() => {

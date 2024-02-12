@@ -4,7 +4,12 @@
             <down @click="state.isShowMenu = true" theme="outline" size="24" fill="#333" :strokeWidth="2" />
         </button>
         <Transition name="fade">
-            <PostMenus :id="`pm-${props.post.id}`" class="post-menus" :post="state.post" v-if="state.isShowMenu"></PostMenus>
+            <PostMenus
+                :id="`pm-${props.post.id}`"
+                class="post-menus"
+                :post="state.post"
+                v-if="state.isShowMenu">
+            </PostMenus>
         </Transition>
         <div class="user-info d-flex">
             <Transition name="fade">
@@ -15,11 +20,19 @@
                     class="user-info-pop">
                 </UserInfoPop>
             </Transition>
-            <a @mouseenter="state.showUserInfoPop = true" class="position-relative no-underline" @click="showUserProfile(state.post.user.id)">
-                <Avatar :user="state.post.user" class="w-[2.5rem] h-[2.5rem] rounded-[8px] text-[14pt]" @click="routeToUserProfile"></Avatar>
+            <a
+                @mouseenter="state.showUserInfoPop = true"
+                class="position-relative no-underline"
+                @click="showUserProfile(state.post.user.id)">
+                <Avatar
+                    :user="state.post.user"
+                    class="w-[2.5rem] h-[2.5rem] rounded-[8px] text-[14pt]"
+                    @click="routeToUserProfile">
+                </Avatar>
             </a>
             <div class="user-text">
-                <div @click="routeToUserProfile" class="nickname cursor-pointer hover:underline flex flex-row items-center gap-1">
+                <div @click="routeToUserProfile"
+                    class="nickname cursor-pointer hover:underline flex flex-row items-center gap-1">
                     <div>{{ state.post.user.nickname }}</div>
                     <i class="bi bi-patch-check-fill verify" v-if="state.post.user.verified"></i>
                 </div>
@@ -35,7 +48,11 @@
             <p class="card-text" id="content">
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.post.content"></VueShowdown>
             </p>
-            <RepostCard v-if="state.post.rootId && !state.post.plan" :postId="state.post.rootId" class="repostCard"></RepostCard>
+            <RepostCard
+                v-if="state.post.rootId && !state.post.plan"
+                :postId="state.post.rootId"
+                class="repostCard">
+            </RepostCard>
         </div>
         <div class="card-pics container" v-if="hasPics">
             <div
@@ -57,7 +74,11 @@
                     </div>
                 </Transition>
                 <div class="absolute w-full h-full flex flex-row justify-center items-center z-[99]" v-if = "pic.hidden">
-                    <div @click="getImageUrlIgnoreNSFW(pic.id)" class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">已隐藏</div>
+                    <div
+                        @click="getImageUrlIgnoreNSFW(pic.id)"
+                        class="white-text text-[11pt] black-80-bg h-fit w-fit py-2 px-3 rounded-[8px] cursor-pointer">
+                        已隐藏
+                    </div>
                 </div>
                 <img
                     loading="lazy"
@@ -66,7 +87,8 @@
                     :class="mPicClass"
                     :src="getImageUrl(pic, idx)"
                     :alt="pic.altText">
-                <div @click="playAnimateImage(idx)"
+                <div
+                    @click="playAnimateImage(idx)"
                     v-if="pic.contentType == 'image/gif' && !state.showOriginUrl[idx]"
                     class="absolute flex justify-center items-center w-full h-full top-0 right-0 text-white cursor-pointer">
                     <IconGif class="w-[2.5rem] h-[2.5rem] rounded-full bg-[#000000BB] gif"></IconGif>
@@ -109,49 +131,50 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.scheduled-card{
+.scheduled-card {
     z-index: 98 !important;
     background-color: #e5e7eb88 !important;
     pointer-events: none;
 }
 
-.alt-icon{
+.alt-icon {
     widows: 1.6rem;
     height: 1.6rem;
 }
 
-.fade-enter-active{
+.fade-enter-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-leave-active{
+.fade-leave-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-enter-from{
+.fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to{
+.fade-leave-to {
     opacity: 0;
 }
-.fade-translate-enter-active{
+
+.fade-translate-enter-active {
     transition: translate 0.3s ease-in-out;
 }
 
-.fade-translate-leave-active{
+.fade-translate-leave-active {
     transition: translate 0.3s ease-in-out;
 }
 
-.fade-translate-enter-from{
+.fade-translate-enter-from {
     translate: 0 100%;
 }
 
-.fade-translate-leave-to{
+.fade-translate-leave-to {
     translate: 0 100%;
 }
 
-.altTextContainer::-webkit-scrollbar{
+.altTextContainer::-webkit-scrollbar {
     display: none;
     width: 0 !important;
     height: 0 !important;
@@ -159,37 +182,39 @@
     background: transparent;
 }
 
-.m-cursor-text{
+.m-cursor-text {
     cursor: text;
 }
 
-.pdg-1{
+.pdg-1 {
     padding: 0.25rem;
 }
 
-.btm-1{
+.btm-1 {
     bottom: 0.3rem;
 }
 
-.rgt-1{
+.rgt-1 {
     right: 0.3rem;
 }
 
-.z-index-100{
+.z-index-100 {
     z-index: 100 !important;
 }
 
-#post-menus{
+#post-menus {
     z-index: 102;
 }
-.black-80-bg{
+
+.black-80-bg {
     background-color: #000000AA !important;
 }
 
-.black-85-bg{
+.black-85-bg {
     background-color: #000000BB !important;
 }
-.white-text{
+
+.white-text {
     color: white !important;
 }
 
@@ -293,7 +318,7 @@
     right: 3%;
 }
 
-.post-menus{
+.post-menus {
     z-index: 100;
     position: absolute;
     height: auto;
@@ -362,36 +387,36 @@
     background-color: cadetblue !important;
 }
 
-.font-16{
+.font-16 {
     font-size: 16pt;
 }
 
-.rounded-16{
+.rounded-16 {
     border-radius: 8px;
 }
 
-.no-underline{
+.no-underline {
     text-decoration: none;
 }
 
-.m-pic{
+.m-pic {
     width: 100%;
     object-fit: cover;
     border-radius: 4px;
     transition: transform 400ms;
 }
 
-.m-ratio-1{
+.m-ratio-1 {
     aspect-ratio: 1 / 1;
 }
 
-.m-max-h-\[90vh\]{
+.m-max-h-\[90vh\] {
     max-height: 90vh;
 }
 </style>
 
 <script setup>
-import { computed, reactive, onMounted, provide, defineAsyncComponent } from 'vue'
+import { computed, reactive, provide, defineAsyncComponent } from 'vue'
 import { likeAPost, dislikeAPost, getImageUrlIgnoreHidden } from '@/api.js'
 import router from '@/route.js'
 import { store } from '@/store.js'
@@ -500,9 +525,9 @@ const cardMaskClass = computed(() => ({
 
 const gridColCount = computed(() => {
     const picCount = state.post.attachmentsUrl.length
-    if(picCount === 0) return 0
-    if(picCount === 1) return 1
-    if((picCount > 1 && picCount <= 2) || picCount == 4) return 2
+    if (picCount === 0) return 0
+    if (picCount === 1) return 1
+    if ((picCount > 1 && picCount <= 2) || picCount == 4) return 2
     return 3
 })
 
@@ -530,7 +555,7 @@ const postStatus = computed(() => {
     const status = state.post.status
     const statusMap = new Map([
         ['PUBLIC', '公开'],
-        ['NOT_TIMELINE', '公共时间线上隐藏'],
+        ['NOT_TIMELINE', '探索页内隐藏'],
         ['ONLY_FOLLOWER', '订阅者可见'],
         ['ONLY_CO_FOLLOWER', '互相订阅者可见'],
         ['ONLY_SPECIFIED', '指定用户可见'],
@@ -539,7 +564,7 @@ const postStatus = computed(() => {
     return statusMap.get(status)
 })
 
-async function getImageUrlIgnoreNSFW(imageId){
+async function getImageUrlIgnoreNSFW(imageId) {
     const postId = state.post.id
     try {
         const response = await getImageUrlIgnoreHidden(postId, imageId)
@@ -549,7 +574,7 @@ async function getImageUrlIgnoreNSFW(imageId){
 
         const imageIndex = state.post.attachmentsUrl.findIndex(it => it.id === imageId)
 
-        if(imageIndex != -1){
+        if (imageIndex != -1) {
             state.post.attachmentsUrl[imageIndex] = result
         }
     } catch (e) {
@@ -558,19 +583,19 @@ async function getImageUrlIgnoreNSFW(imageId){
     }
 }
 
-function dismissPostMenus(){
+function dismissPostMenus() {
     state.isShowMenu = false
 }
 
-function deletePostOnUi(){
+function deletePostOnUi() {
     router.back()
 }
 
-function deleteAllPostsOfUserOnUi(){
+function deleteAllPostsOfUserOnUi() {
     router.back()
 }
 
-function postingNew(post){
+function postingNew(post) {
     // Ignore this method body, nothing todo.
 }
 
