@@ -2,8 +2,9 @@
 module.exports = {
     important: false,
     content: [
-        "./index.html",
-        "./src/components/tailwind/**/*.{vue,js,ts,jsx,tsx}"
+        "./src/authApp/**/*.{vue,js,ts,jsx,tsx}",
+        "./src/indexApp/**/*.{vue,js,ts,jsx,tsx}",
+        "./src/components/**/*.{vue,js,ts,jsx,tsx}",
     ],
     theme: {
         extend: {},
