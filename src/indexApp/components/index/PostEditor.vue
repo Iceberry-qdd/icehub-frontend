@@ -24,12 +24,12 @@
                     v-else
                     id="post-input"
                     v-model="state.content"
-                    class="focus:outline-none leading-6 overflow-hidden p-2 resize-none rounded text-[14pt] text-justify tracking-wide w-full"
+                    class="break-all focus:outline-none leading-6 overflow-hidden p-2 resize-none rounded text-[14pt] text-justify tracking-wide w-full"
                     :maxlength="state.maxContentWordCount + 50"
                     rows="3"
                     placeholder="发布帖子"
                     name="post"
-                    @keydown="resize">
+                    @input="resize">
                 </textarea>
             </div>
             <div class="flex flex-row justify-between px-2">
@@ -314,9 +314,9 @@ const submitPostBtnClass = computed(() => ({
 }))
 
 function resize() {
-    const input = document.getElementById('post-input')
-    input.style.height = `${input.scrollHeight}px`
-    //FIXME 当删除内容时无法自动调整大小
+    const textarea = document.getElementById('post-input')
+    textarea.style.height = 'auto'
+    textarea.style.height = `${textarea.scrollHeight}px`
 }
 
 async function submitPost() {

@@ -73,6 +73,10 @@ markdown p code{
     border-radius: 6px;
 }
 
+markdown code{
+    margin: 0 0.25rem;
+}
+
 markdown pre{
     background-color: #f6f8fa;
     font-size:10pt;

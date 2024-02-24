@@ -2,7 +2,7 @@
     <div
         class="bg-[#00000066] bottom-0 fixed flex flex-row items-center justify-center left-0 right-0 top-0 z-[111]"
         @click.self="dismiss">
-        <div class="bg-white max-h-[60%] min-h-[20%] overflow-y-auto p-4 rounded-[8px] w-[40%]">
+        <div class="bg-white max-h-[80%] min-h-[20%] overflow-y-auto p-4 rounded-[8px] w-[40%]">
             <ReviewCard :review="props.parentReview"></ReviewCard>
             <ReviewEditor
                 :post="state.post"

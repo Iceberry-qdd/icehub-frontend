@@ -35,13 +35,21 @@
                     </div>
                 </div>
 
-                <div
-                    :class="[state.loading ? 'cursor-not-allowed bg-gray-400' : 'bg-blue-500 cursor-pointer']"
-                    class="font-bold px-5 py-1 rounded-full text-[11pt] text-white"
-                    @click="reposting">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconLoading v-if="state.loading" class="'h-5 text-white' w-5"></IconLoading>
-                    <span v-else>转发</span>
+                <div class="flex flex-row gap-x-4 items-center">
+                    <div
+                        class="select-none text-[10pt]"
+                        :class="leftWordCountClass"
+                        :title="leftWordCount < 0 ? `超出${-leftWordCount}字` : ''">
+                        {{ leftWordCount }}
+                    </div>
+                    <div
+                        :class="submitPostBtnClass"
+                        class="font-bold px-5 py-1 rounded-full text-[11pt] text-white"
+                        @click="reposting">
+                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                        <IconLoading v-if="state.loading" class="'h-5 text-white' w-5"></IconLoading>
+                        <span v-else>转发</span>
+                    </div>
                 </div>
             </div>
             <div class="grow ml-[3rem] pt-2">
@@ -51,11 +59,12 @@
                     v-model="state.data.content"
                     :disabled="state.loading"
                     :class="{ 'text-gray-400': state.loading, 'cursor-not-allowed': state.loading }"
-                    class="bg-transparent focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden resize-none text-justify text-lg tracking-wide"
-                    maxlength="300"
+                    class="bg-transparent break-all focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden resize-none text-justify text-lg tracking-wide"
+                    :maxlength="state.maxContentWordCount + 50"
+                    rows="2"
                     placeholder="写点什么吧~"
                     name="review"
-                    @keydown="resize">
+                    @input="resize">
                 </textarea>
             </div>
             <RepostCard
@@ -125,7 +134,8 @@ const state = reactive({
         { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'people_outline', picked: false },
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people', picked: false },
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock', picked: false },
-    ]
+    ],
+    maxContentWordCount: 300
 })
 
 /**
@@ -143,10 +153,32 @@ const doPostingNew = computed(() => {
 })
 
 function resize() {
-    const input = document.getElementById('review-input')
-    input.style.height = `${input.scrollHeight}px`
-    //FIXME 当删除内容时无法自动调整大小
+    const textarea = document.getElementById('review-input')
+    textarea.style.height = 'auto'
+    textarea.style.height = `${textarea.scrollHeight}px`
 }
+
+const leftWordCount = computed(() => {
+    return state.maxContentWordCount - (state.data.content?.length ?? 0)
+})
+
+const leftWordCountClass = computed(() => ({
+    'text-blue-500': leftWordCount.value >= 0,
+    'text-red-500': leftWordCount.value < 0,
+    'hidden': leftWordCount.value === state.maxContentWordCount
+}))
+
+const isValidContentLength = computed(() => {
+    return leftWordCount.value >= 0 && leftWordCount.value < state.maxContentWordCount
+})
+
+const submitPostBtnClass = computed(() => ({
+    'bg-blue-500': isValidContentLength.value,
+    'cursor-pointer': isValidContentLength.value,
+    'bg-gray-300': !isValidContentLength.value,
+    'cursor-not-allowed': !isValidContentLength.value,
+    'pointer-events-none': !isValidContentLength.value
+}))
 
 function dismiss() {
     emits('dismiss')

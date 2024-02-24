@@ -9,7 +9,7 @@
             <div class="flex flex-row items-end justify-between">
                 <Avatar
                     :user="state.user"
-                    class="border-[0.2rem] border-white h-[3.5rem] rounded-[8px] text-[16pt] w-[3.5rem]">
+                    class="border-[0.2rem] border-white h-[3.5rem] rounded-[8px] text-[3.5rem] w-[3.5rem]">
                 </Avatar>
                 <div class="flex flex-row gap-x-2 text-[11pt]">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
@@ -52,7 +52,7 @@ import { followUser, unFollowUser } from '@/indexApp/js/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { store } from '@/indexApp/js/store.js'
 import { useRouter } from 'vue-router'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
 

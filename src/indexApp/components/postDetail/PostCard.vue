@@ -44,7 +44,7 @@
                 @click="routeToUser(state.post.user.nickname)">
                 <Avatar
                     :user="state.post.user"
-                    class="h-[2.5rem] rounded-[8px] text-[14pt] w-[2.5rem]">
+                    class="h-[2.5rem] rounded-[8px] text-[2.5rem] w-[2.5rem]">
                 </Avatar>
             </a>
             <div class="z-[97]">
@@ -263,7 +263,7 @@ import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { VueShowdown } from 'vue-showdown'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 const PostMenus = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostMenus.vue')) //NOTE 组件字母小写会导致hmr失效
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))

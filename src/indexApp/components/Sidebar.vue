@@ -12,7 +12,7 @@
                     v-if="menu.routeTo == '/profile'"
                     :user="state.user"
                     rounded
-                    class="h-1.7 rounded-full w-1.7">
+                    class="h-[1.7rem] rounded-full text-[1.7rem] w-[1.7rem]">
                 </Avatar>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <span v-else class="material-icons-round no-hover p-0 rounded-none">{{ menu.icon }}</span>
@@ -40,7 +40,7 @@ import { useRouter } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
 import { getUserInfoByNickname, queryCurUserUnreadNotifyCount } from '@/indexApp/js/api.js'
 import { ws } from '@/indexApp/js/websocket.js'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
 
 const router = useRouter()

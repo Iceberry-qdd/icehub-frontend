@@ -72,7 +72,7 @@
                                 class="flex flex-nowrap flex-row gap-x-4 items-center justify-start">
                                 <Avatar
                                     :user="suggest.content"
-                                    class="h-[2.8rem] rounded-[6px] text-[11pt] w-[2.8rem]">
+                                    class="h-[2.8rem] rounded-[6px] text-[2.8rem] w-[2.8rem]">
                                 </Avatar>
                                 <div class="flex flex-col flex-nowrap h-max items-start justify-start">
                                     <div class="font-bold text-[12pt] text-black">
@@ -178,7 +178,7 @@
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { reactive, watch, onMounted, onUnmounted } from 'vue'
 import { globalSearchSuggest } from '@/indexApp/js/api.js'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 
 const emits = defineEmits(['routeTo', 'search'])
 const props = defineProps({

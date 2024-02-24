@@ -3,7 +3,7 @@
         class="btn-no-select flex flex-rows gap-x-3 items-center justify-start"
         @click="showConfirmDialogBox">
         <span class="material-icons-round no-hover p-0 text-[16pt]">person_off</span>
-        <div>不喜欢此作者</div>
+        <div>不喜欢此用户</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmBDialogUi.show"

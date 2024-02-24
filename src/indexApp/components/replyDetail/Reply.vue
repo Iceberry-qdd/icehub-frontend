@@ -26,7 +26,7 @@
                     <div class="relative z-10">
                         <Avatar
                             :user="state.reply.user"
-                            class="h-[2.5rem] rounded-[6px] w-[2.5rem]"
+                            class="h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]"
                             @mouseenter="state.showUserInfoPop = true"
                             @click="routeToUser(state.reply.user.nickname)">
                         </Avatar>
@@ -142,7 +142,7 @@ import { useRouter } from 'vue-router'
 import UserInfoPop from '@/indexApp/components/postDetail/UserInfoPop.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import ReviewPanel from '@/indexApp/components/replyDetail/ReviewPanel.vue'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 
 const router = useRouter()
 const props = defineProps({

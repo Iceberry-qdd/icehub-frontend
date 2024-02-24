@@ -34,7 +34,7 @@
         <div class="-translate-y-[2.5rem]">
             <Avatar
                 :user="state.user"
-                class="h-[5rem] rounded-lg translate-x-[1rem] w-[5rem]">
+                class="h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]">
             </Avatar>
             <div class="text-info">
                 <div class="form-floating mb-3">
@@ -227,7 +227,7 @@ import { store } from '@/indexApp/js/store.js'
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 
 const router = useRouter()

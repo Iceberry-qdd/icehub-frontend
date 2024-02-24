@@ -7,7 +7,7 @@
                     <div class="relative z-10">
                         <Avatar
                             :user="props.review.user"
-                            class="cursor-default h-[2.5rem] rounded-[6px] w-[2.5rem]">
+                            class="cursor-default h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]">
                         </Avatar>
                     </div>
                     <div>
@@ -44,7 +44,7 @@
 <script setup>
 // 只包括评论和一层回复
 import { humanizedTime } from '@/indexApp/utils/formatUtils.js'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 
 const props = defineProps({
     /** 传入的评论对象 */

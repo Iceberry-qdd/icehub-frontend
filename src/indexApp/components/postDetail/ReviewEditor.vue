@@ -34,15 +34,15 @@
                 </div>
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <textarea
-                    id="review-input"
+                    :id="state.textAreaId"
                     v-model="state.content"
                     :disabled="state.loading"
                     :class="{ 'text-gray-400': state.loading }"
-                    class="bg-transparent focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden pr-2 resize-none text-justify text-lg tracking-wide"
-                    maxlength="300"
+                    class="bg-transparent break-all focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden pr-2 resize-none text-justify text-lg tracking-wide"
+                    :maxlength="state.maxContentWordCount + 50"
+                    rows="2"
                     placeholder="发布评论"
-                    name="review"
-                    @keydown="resize">
+                    @input="resize">
                 </textarea>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <div v-if="state.content.length > 0" class="flex flex-row items-center justify-between">
@@ -89,11 +89,20 @@
                     </div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <div v-else class="flex flex-row gap-x-2 items-center" />
-                    <div
-                        :class="[state.loading ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-[#0d6efd]']"
-                        class="px-6 py-[0.4rem] rounded-full text-sm text-white"
-                        @click="submitReview">
-                        <span>发布</span>
+                    <div class="flex flex-row gap-x-4 items-center">
+                        <div
+                            class="select-none text-[10pt]"
+                            :class="leftWordCountClass"
+                            :title="leftWordCount < 0 ? `超出${-leftWordCount}字` : ''">
+                            {{ leftWordCount }}
+                        </div>
+                        <div
+
+                            :class="submitPostBtnClass"
+                            class="px-6 py-[0.4rem] rounded-full text-sm text-white"
+                            @click="submitReview">
+                            <span>发布</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -131,15 +140,31 @@ const props = defineProps({
         type: Object,
         required: false,
         default: undefined
+    },
+    /** 时间线条位置 */
+    // eslint-disable-next-line vue/no-unused-properties
+    tieLocation: {
+        type: String,
+        required: false,
+        default: ''
+    },
+    /** 是否从ReviewPanel触发 */
+    // eslint-disable-next-line vue/no-unused-properties
+    fromReviewPanel: {
+        type: Boolean,
+        required: true
     }
 })
 const { newReview } = inject('newReview')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     content: '',
     loading: false,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
-    showEmojiPanel: false
+    showEmojiPanel: false,
+    maxContentWordCount: 300,
+    textAreaId: props.fromReviewPanel ? 'reply-input' : 'review-input'
 })
 
 const replyTo = computed(() => {
@@ -189,10 +214,33 @@ const avatar = computed(() => {
 })
 
 function resize() {
-    const input = document.getElementById('review-input')
-    input.style.height = `${input.scrollHeight}px`
+    const textarea = document.getElementById(state.textAreaId)
+    textarea.style.height = 'auto'
+    textarea.style.height = `${textarea.scrollHeight}px`
     //FIXME 当删除内容时无法自动调整大小
 }
+
+const leftWordCount = computed(() => {
+    return state.maxContentWordCount - state.content.length
+})
+
+const leftWordCountClass = computed(() => ({
+    'text-blue-500': leftWordCount.value >= 0,
+    'text-red-500': leftWordCount.value < 0,
+    'hidden': leftWordCount.value === state.maxContentWordCount
+}))
+
+const isValidContentLength = computed(() => {
+    return leftWordCount.value >= 0 && leftWordCount.value < state.maxContentWordCount
+})
+
+const submitPostBtnClass = computed(() => ({
+    'bg-blue-500': isValidContentLength.value,
+    'cursor-pointer': isValidContentLength.value,
+    'bg-gray-300': !isValidContentLength.value,
+    'cursor-not-allowed': !isValidContentLength.value,
+    'pointer-events-none': !isValidContentLength.value
+}))
 
 function insertEmoji({ unified }) {
     const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))

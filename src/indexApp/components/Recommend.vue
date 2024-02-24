@@ -12,7 +12,7 @@
                 :key="user.nickname"
                 class="active:bg-blue-300/60 cursor-pointer flex flex-row gap-x-4 hover:bg-blue-200 p-2 rounded-[8px]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <Avatar :user="user" class="h-[54px] rounded-[8px] text-[16pt] w-[54px]"></Avatar>
+                <Avatar :user="user" class="h-[54px] rounded-[8px] text-[54px] w-[54px]"></Avatar>
                 <div class="w-[calc(100%-54px-1rem)]">
                     <div class="flex flex-row gap-x-1 items-center">
                         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
@@ -63,7 +63,7 @@
 
 <script setup>
 import { reactive } from 'vue'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 import { getHotSearch } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'

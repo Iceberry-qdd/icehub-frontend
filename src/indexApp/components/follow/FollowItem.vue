@@ -2,7 +2,7 @@
     <div class="border-b-[1px] flex flex-nowrap flex-row gap-x-3 items-start justify-center p-2">
         <Avatar
             :user="props.user"
-            class="flex-initial h-[3rem] object-cover rounded-[8px] text-[18pt] w-[3rem]"
+            class="flex-initial h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
             @click="routeToUserProfile">
         </Avatar>
         <div class="flex-auto">
@@ -49,7 +49,7 @@ import { reactive, computed } from 'vue'
 import { followUser, unFollowUser } from '@/indexApp/js/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { useRouter } from 'vue-router'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 import { store } from '@/indexApp/js/store.js'
 
 const props = defineProps({

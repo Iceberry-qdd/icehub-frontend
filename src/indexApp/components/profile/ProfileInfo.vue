@@ -2,7 +2,7 @@
     <div>
         <Avatar
             :user="props.user"
-            class="border-[4px] border-white h-[5rem] rounded-lg text-[18pt] translate-x-[1rem] w-[5rem]"
+            class="border-[4px] border-white h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]"
             @click="props.user && props.user.avatarUrl ? showSlide([props.user.avatarUrl], 0) : () => { }">
         </Avatar>
         <div class="flex flex-col gap-y-1 px-[1rem]">
@@ -118,7 +118,7 @@ import IconLocation from '@/components/icons/IconLocation.vue'
 import IconWebsite from '@/components/icons/IconWebsite.vue'
 import IconEmail from '@/components/icons/IconEmail.vue'
 import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 import { standardDate } from '@/indexApp/utils/formatUtils.js'
 
 const router = useRouter()

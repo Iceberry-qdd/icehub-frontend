@@ -11,7 +11,7 @@
             class="bg-blue-500 flex items-center justify-center"
             v-bind="$attrs">
             <!-- eslint-disable-next-line vue/static-class-names-order, vue/singleline-html-element-content-newline -->
-            <div class="text-white font-bold text-[100%]">{{ props.user?.nickname.charAt(0) }}</div>
+            <div class="text-white font-bold text-[45%]">{{ props.user?.nickname.charAt(0) }}</div>
         </div>
     </div>
 </template>

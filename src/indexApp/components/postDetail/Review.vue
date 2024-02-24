@@ -27,7 +27,7 @@
                     <div class="relative z-10">
                         <Avatar
                             :user="state.review.user"
-                            class="h-[2.5rem] rounded-[6px] w-[2.5rem]"
+                            class="h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]"
                             @mouseenter="state.showUserInfoPop = true"
                             @click="routeToUser(state.review.user.nickname)">
                         </Avatar>
@@ -166,7 +166,7 @@ import { store } from '@/indexApp/js/store.js'
 import { Like, Message, MoreTwo } from '@icon-park/vue-next'
 import { useRouter } from 'vue-router'
 import { VueShowdown } from 'vue-showdown'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))

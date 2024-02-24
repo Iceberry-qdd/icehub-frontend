@@ -135,10 +135,12 @@
                 <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
                 <div id="brand-name" class="font-bold text-2xl">{{ state.appName }}</div>
             </div>
-            <div>
-                <span class="font-bold text-[2rem]">{{ state.nickname }}</span>
-                <span class="text-[11pt]">，欢迎回来！</span>
-            </div>
+            <Avatar
+                class="box-content h-[5rem] object-cover rounded-[8px] text-[5rem] w-[5rem]"
+                :user="{nickname: state.nickname}">
+            </Avatar>
+            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+            <div class="font-bold text-[1rem]">{{ state.nickname }}</div>
             <button
                 type="button"
                 name="login"
@@ -165,7 +167,7 @@
                 type="button"
                 name="login"
                 class="bg-black p-2 rounded-full shadow-blue-200/50 shadow-lg text-[11pt] text-white w-64"
-                @click="toggleLogin(null, true)">
+                @click="toggleLogin('', true)">
                 <span>登录其它账号</span>
             </button>
         </div>
@@ -174,9 +176,10 @@
 
 <script setup>
 import { getPublicKey, login, register } from '@/authApp/js/api.js'
-import { store } from '@/authApp/js/store.js'
+import { store } from '@/indexApp/js/store.js'
 import { JSEncrypt } from 'jsencrypt'
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted, defineAsyncComponent } from 'vue'
+const Avatar = defineAsyncComponent(() => import('@/components/Avatar.vue'))
 
 const state = reactive({
     nickname: "",
@@ -197,7 +200,7 @@ function toggleRegister() {
     state.registerPanel = true
 }
 
-function toggleLogin(username, refresh = false) {
+function toggleLogin(username = "", refresh = false) {
     if (refresh) {
         top.location = `http://${window.document.location.host}/auth.html`
         return
@@ -239,7 +242,8 @@ async function tryLogin(skipEncodePassword) {
         if (!state.publicKey) { await getPK() }
 
         const encryptedPK = skipEncodePassword ? state.password : encodePwd(state.publicKey, state.password)
-        const response = await login(state.nickname, encryptedPK)
+        const authorization = `Basic ${btoa(`${encodeURIComponent(state.nickname)}:${encryptedPK}`)}`
+        const response = await login(authorization)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const token = await response.text()

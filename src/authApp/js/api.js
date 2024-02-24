@@ -3,17 +3,15 @@ const TOKEN = localStorage.getItem('TOKEN')
 
 /**
  * 用户登录
- * @param {string} nickname 用户名
- * @param {string} password 密码
+ * @param {string} authorization token
  * @returns 登录结果
  */
-export function login(nickname, password) {
-    const authorizationHeader = `Basic ${btoa(`${encodeURIComponent(nickname)}:${password}`)}`
+export function login(authorization) {
     return fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
             'Content-Type': "application/json",
-            'Authorization': authorizationHeader
+            'Authorization': authorization
         },
         redirect: 'follow',
         credentials: 'same-origin'

@@ -11,7 +11,7 @@
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <PostCard v-if="state.post" :post="state.post"></PostCard>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <ReviewEditor v-if="allowReview" :post="state.post"></ReviewEditor>
+        <ReviewEditor v-if="allowReview" :post="state.post" :from-review-panel="false"></ReviewEditor>
         <div
             v-if="!allowReview && state.post"
             class="bg-[#e8f0ff] cursor-default flex gap-2 h-[3rem] items-center justify-left my-[2%] p-4 rounded-lg translate-x-[2%] w-[96%]">

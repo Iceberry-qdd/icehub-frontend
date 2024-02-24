@@ -29,7 +29,7 @@ const state = reactive({
 
 const followText = computed(() => {
     const { following, nickname } = state.user
-    return following ? `不再订阅${nickname}` : `订阅${nickname}`
+    return following ? `不再订阅此用户` : `订阅此用户`
 })
 
 const followIcon = computed(() => {

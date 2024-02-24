@@ -8,7 +8,7 @@
             <div class="flex flex-row gap-x-2 items-center px-2 text-[11pt]">
                 <Avatar
                     :user="state.post.user"
-                    class="cursor-default h-[1.5rem] rounded-[4px] w-[1.5rem]">
+                    class="cursor-default h-[1.5rem] rounded-[4px] text-[1.5rem] w-[1.5rem]">
                 </Avatar>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="font-bold">{{ state.post.user.nickname }}</div>
@@ -86,7 +86,7 @@ import { useRouter } from 'vue-router'
 import IconGif from '@/components/icons/IconGif.vue'
 import { VueShowdown } from 'vue-showdown'
 import { getPostById } from '@/indexApp/js/api.js'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 
 const router = useRouter()
 const props = defineProps({

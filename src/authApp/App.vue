@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <GlobalBanner></GlobalBanner>
+        <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
         <Auth></Auth>
     </div>
 </template>
@@ -31,6 +31,7 @@ main {
 import { onMounted, onUnmounted, reactive, defineAsyncComponent } from 'vue'
 import Auth from '@/authApp/components/Auth.vue'
 import 'material-icons/iconfont/round.css'
+import { store } from '@/indexApp/js/store.js'
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 
 onMounted(() => {

@@ -9,7 +9,7 @@
                     v-for="user in state.users"
                     :key="user.id"
                     :user="user"
-                    class="-translate-x-1 border-4 border-solid border-white h-9 rounded-full text-[11pt] w-9">
+                    class="-translate-x-1 border-4 border-solid border-white h-9 rounded-full text-[2.25rem] w-9">
                 </Avatar>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
@@ -21,7 +21,7 @@
 
 <script setup>
 import { reactive } from 'vue'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 
 const emits = defineEmits(['closeGlobalRefresh'])
 const state = reactive({

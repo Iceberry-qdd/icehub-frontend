@@ -7,7 +7,7 @@
         <div class="-translate-y-1/2 flex flex-row items-center justify-center w-full">
             <Avatar
                 :user="props.user"
-                class="border-[0.2rem] border-white box-content h-[3.5rem] object-cover rounded-[8px] text-[18pt] w-[3.5rem]">
+                class="border-[0.2rem] border-white box-content h-[3.5rem] object-cover rounded-[8px] text-[3.5rem] w-[3.5rem]">
             </Avatar>
         </div>
         <div class="-translate-y-[1.5rem] flex flex-col items-center justify-center w-full">
@@ -48,7 +48,7 @@
 
 <script setup>
 import { reactive } from 'vue'
-import Avatar from '@/indexApp/components/Avatar.vue'
+import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
 
