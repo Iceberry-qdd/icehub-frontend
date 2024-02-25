@@ -199,6 +199,13 @@ const props = defineProps({
     curPickedTime: {
         type: Number,
         required: true
+    },
+    /** 提示消息 */
+    // eslint-disable-next-line vue/no-unused-properties
+    noteMsg: {
+        type: String,
+        required: false,
+        default: ''
     }
 })
 const emits = defineEmits(['closeWithOk', 'closeWithClear'])

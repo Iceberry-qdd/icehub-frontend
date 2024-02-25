@@ -11,15 +11,15 @@
                     class="border-[0.2rem] border-white box-content h-[3.5rem] object-cover rounded-[8px] text-[3.5rem] w-[3.5rem]">
                 </Avatar>
                 <div
+                    v-if="!isSelf"
                     :class="followBtnClass"
                     class="btn-no-select flex flex-row h-[1.8rem] items-center justify-center min-w-[4.5rem] px-3 rounded-full text-[11pt]"
                     @click.stop="state.isFollowing ? doUnFollowUser() : doFollowUser()">
-                    {{ state.isFollowing ? '取消' : '' }}订阅
+                    {{ followButtonText }}
                 </div>
             </div>
             <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
-                <div
-                    class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
+                <div class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
                     {{ state.user.nickname }}
                 </div>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
@@ -50,8 +50,12 @@ const props = defineProps({
 const state = reactive({
     user: props.user,
     loading: true,
-    isFollowing: props.user.following
+    isFollowing: props.user.following,
+    isFollower: props.user.follower,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
 })
+
+const isSelf = computed(() => state.curUser.id === props.user.id)
 
 const followBtnClass = computed(() => ({
     'bg-blue-500': !state.isFollowing,
@@ -59,6 +63,11 @@ const followBtnClass = computed(() => ({
     'text-white': !state.isFollowing,
     'text-zinc-700': state.isFollowing
 }))
+
+const followButtonText = computed(() => {
+    if (state.isFollowing && state.isFollower) return '相互订阅'
+    return state.isFollowing ? '已订阅' : '订阅'
+})
 
 async function doFollowUser() {
     state.loading = true

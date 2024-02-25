@@ -1,5 +1,7 @@
 <template>
-    <div class="border-b-[1px] flex flex-nowrap flex-row gap-x-3 items-start justify-center p-2">
+    <div
+        :class="itemClass"
+        class="border-b-[1px] flex flex-nowrap flex-row gap-x-3 items-start p-2">
         <Avatar
             :user="props.user"
             class="flex-initial h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
@@ -21,13 +23,14 @@
             <div class="brief text-[10pt]">{{ brief(props.user.remark) }}</div>
         </div>
         <div
+            v-if="!isSelf"
             :class="buttonClass"
-            class="cursor-pointer flex-initial font-bold place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[5rem]"
+            class="cursor-pointer flex-initial font-bold place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
             @click="toggleFollowState">
             <div
                 v-if="!state.loading"
                 class="text-center">
-                {{ state.isFollowing ? '已订阅' : '订阅' }}
+                {{ buttonText }}
             </div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
@@ -67,7 +70,9 @@ const router = useRouter()
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     loading: false,
-    isFollowing: props.user.following
+    isFollowing: props.user.following,
+    isFollower: props.user.follower,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
 })
 
 const buttonClass = computed(() => ({
@@ -76,6 +81,18 @@ const buttonClass = computed(() => ({
     'text-black': state.isFollowing,
     'text-white': !state.isFollowing
 }))
+
+const buttonText = computed(() => {
+    if(state.isFollowing && state.isFollower) return '相互订阅'
+    return state.isFollowing ? '已订阅' : '订阅'
+})
+
+const itemClass = computed(() => ({
+    'justify-center': !isSelf.value,
+    'justify-start': isSelf.value
+}))
+
+const isSelf = computed(() => state.curUser.id === props.user.id)
 
 function routeToUserProfile() {
     router.push({ name: 'profile', params: { nickname: props.user.nickname } })

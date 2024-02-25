@@ -44,9 +44,9 @@ const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     user: null,
     menus: [
-        { id: 1, name: '我的订阅', isActive: route.params == 'followingList', routeTo: `/following/${route.params.nickname}` },
-        { id: 2, name: '订阅我的', isActive: route.params == 'followerList', routeTo: `/follower/${route.params.nickname}` },
-        { id: 3, name: '共同订阅', isActive: route.params == 'coFollowingList', routeTo: `/coFollow/${route.params.nickname}` }
+        { id: 1, name: '我的订阅', isActive: route.name == 'followingList', routeTo: `/following/${route.params.nickname}` },
+        { id: 2, name: '订阅我的', isActive: route.name == 'followerList', routeTo: `/follower/${route.params.nickname}` },
+        { id: 3, name: '共同订阅', isActive: route.name == 'coFollowingList', routeTo: `/coFollow/${route.params.nickname}` }
     ],
     headerConfig: {
         title: route.params.nickname,
@@ -65,11 +65,11 @@ const menuText = computed(() => {
     return '他'
 })
 
-watch(() => state.user, (newVal, oldVal) => {
-    if (oldVal == null || newVal != null) {
-        state.menus.forEach(menu => { menu.name = menu.name.replace('我', menuText.value) })
-    }
-})
+// watch(() => state.user, (newVal, oldVal) => {
+//     if (oldVal == null || newVal != null) {
+//         state.menus.forEach(menu => { menu.name = menu.name.replace('我', menuText.value) })
+//     }
+// })
 
 const isMyself = computed(() => { return state.curUser.id == state.user.id })
 
@@ -92,8 +92,9 @@ async function getUserInfo(nickname) {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     const username = route.params.nickname
-    getUserInfo(username)
+    await getUserInfo(username)
+    state.menus.forEach(menu => { menu.name = menu.name.replace('我', menuText.value) })
 })
 </script>

@@ -12,10 +12,10 @@
                 <div
                     v-if="!isMyself && !props.user.blocking && !props.user.blocked"
                     class="bg-blue-500 cursor-pointer font-bold px-5 py-[0.325rem] rounded-full text-white"
-                    :class="{ 'bg-gray-300': state.isFollowing, 'bg-blue-500': !state.isFollowing, 'text-black': state.isFollowing, 'text-white': !state.isFollowing }"
+                    :class="followButtonClass"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div v-if="!state.loading"> {{ state.isFollowing ? '已订阅' : '订阅' }}</div>
+                    <div v-if="!state.loading">{{ followButtonText }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
                 </div>
@@ -182,6 +182,18 @@ const followingCountText = computed(() => {
 })
 
 const isMyself = computed(() => { return props.user.id == state.curUser.id })
+
+const followButtonText = computed(() => {
+    if(props.user.following && props.user.follower) return '相互订阅'
+    return props.user.following ? '已订阅' : '订阅'
+})
+
+const followButtonClass = computed(() => ({
+    'bg-gray-300': state.isFollowing,
+    'bg-blue-500': !state.isFollowing,
+    'text-black': state.isFollowing,
+    'text-white': !state.isFollowing 
+}))
 
 function routeTo(routeName, routeParam) {
     router.push({ name: routeName, params: { nickname: routeParam } })

@@ -30,14 +30,14 @@
             </div>
             <div class="flex flex-nowrap flex-row items-center">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="basis-4/5 text-[10pt] webkit-box-1">{{ brief }}</div>
+                <div class="basis-3/4 text-[10pt] webkit-box-1">{{ brief }}</div>
                 <div
                     v-if="!isCurUser"
                     :class="followBtnClass"
-                    class="basis-1/5 cursor-pointer h-auto py-[0.3rem] rounded-full text-[11pt] text-center"
+                    class="basis-1/4 cursor-pointer h-auto py-[0.3rem] rounded-full text-[11pt] text-center"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div v-if="!state.loading"> {{ state.user.following ? '已订阅' : '订阅' }}</div>
+                    <div v-if="!state.loading"> {{ followButtonText }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
                 </div>
@@ -75,10 +75,10 @@ const state = reactive({
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500': !state.user.isFollowing,
-    'bg-gray-300': state.user.isFollowing,
-    'text-white': !state.user.isFollowing,
-    'text-zinc-700': state.user.isFollowing
+    'bg-blue-500': !state.user.following,
+    'bg-gray-300': state.user.following,
+    'text-white': !state.user.following,
+    'text-zinc-700': state.user.following
 }))
 
 const brief = computed(() => {
@@ -103,6 +103,11 @@ const followerCountText = computed(() => {
     if (isMyself.value == true) return `我的订阅 ${followerCount}`
     if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
     return `他的订阅 ${followerCount}`
+})
+
+const followButtonText = computed(() => {
+    if(state.user.following && state.user.follower) return '相互订阅'
+    return state.user.following ? '已订阅' : '订阅'
 })
 
 function toggleFollowState() {

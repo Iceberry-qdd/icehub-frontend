@@ -57,11 +57,11 @@
                 </div>
                 <div class="flex flex-row gap-x-[0.5rem] text-[9pt] text-gray-400">
                     <div :title="standardDateTime(state.post.createdTime)">
-                        <!-- eslint-disable-next-line vue/multiline-html-element-content-newline -->
-                        {{ state.post.plan ? `将于${formattedTime}发布` : formattedTime }}</div>
-                    <!-- eslint-disable-next-line vue/multiline-html-element-content-newline vue/singleline-html-element-content-newline -->
+                        {{ state.post.plan ? `将于${formattedTime}发布` : formattedTime }}
+                    </div>
+                    <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="state.post.status != 'PUBLIC'">• {{ postStatus }}</div>
-                    <!-- eslint-disable-next-line vue/multiline-html-element-content-newline vue/singleline-html-element-content-newline -->
+                    <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="state.post.updatedTime">• 已编辑</div>
                 </div>
             </div>

@@ -16,16 +16,6 @@
     </div>
 </template>
 
-<style scoped>
-.h-1\.7{
-    height: 1.7rem;
-}
-
-.w-1\.7{
-    width: 1.7rem;
-}
-</style>
-
 <script setup>
 import { computed } from 'vue'
 
