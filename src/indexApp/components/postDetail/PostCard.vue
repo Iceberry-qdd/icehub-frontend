@@ -49,12 +49,11 @@
             </a>
             <div class="z-[97]">
                 <div
-                    class="cursor-pointer flex flex-row font-bold gap-1 hover:underline hover:underline-offset-4 items-center"
+                    class="cursor-pointer flex flex-row font-bold gap-x-1 hover:underline hover:underline-offset-4 items-center"
                     @click="routeToUser(state.post.user.nickname)">
                     <div>{{ state.post.user.nickname }}</div>
-                    <i
-                        v-if="state.post.user.verified"
-                        class="bi-patch-check-fill mb-1 mr-[0.3rem] text-[1rem] text-blue-500" />
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <IconVerify v-if="state.post.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
                 </div>
                 <div class="flex flex-row gap-x-[0.5rem] text-[9pt] text-gray-400">
                     <div :title="standardDateTime(state.post.createdTime)">
@@ -268,6 +267,7 @@ const PostMenus = defineAsyncComponent(() => import('@/indexApp/components/postD
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const RepostPanel = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostPanel.vue'))
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
 const route = useRoute()

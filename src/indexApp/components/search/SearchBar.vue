@@ -75,11 +75,13 @@
                                     class="h-[2.8rem] rounded-[6px] text-[2.8rem] w-[2.8rem]">
                                 </Avatar>
                                 <div class="flex flex-col flex-nowrap h-max items-start justify-start">
-                                    <div class="font-bold text-[12pt] text-black">
-                                        {{ suggest.content.nickname }}
-                                        <i
-                                            v-if="suggest.content.verified"
-                                            class="bi bi-patch-check-fill text-[10pt] text-blue-500 verify" />
+                                    <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
+                                        <div
+                                            class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
+                                            {{ suggest.content.nickname }}
+                                        </div>
+                                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                                        <IconVerify v-if="suggest.content.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
                                     </div>
                                     <div class="font-light text-[10pt] text-gray-500 webkit-box-1">
                                         {{ suggest.content.verifiedInfo || suggest.content.remark || '这个人什么也没写' }}
@@ -179,6 +181,7 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import { reactive, watch, onMounted, onUnmounted } from 'vue'
 import { globalSearchSuggest } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const emits = defineEmits(['routeTo', 'search'])
 const props = defineProps({

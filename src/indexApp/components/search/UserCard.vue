@@ -17,11 +17,13 @@
                     {{ state.isFollowing ? '取消' : '' }}订阅
                 </div>
             </div>
-            <div class="font-bold text-[14pt]">
-                {{ state.user.nickname }}
-                <i
-                    v-if="state.user.verified"
-                    class="bi bi-patch-check-fill text-[10pt] text-blue-500 verify" />
+            <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
+                <div
+                    class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
+                    {{ state.user.nickname }}
+                </div>
+                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                <IconVerify v-if="state.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="break-all text-[10pt] webkit-box-1">{{ state.user.remark }}</div>
@@ -35,6 +37,7 @@ import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { store } from '@/indexApp/js/store.js'
 import { followUser, unFollowUser } from '@/indexApp/js/api.js'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const props = defineProps({
     /** 传入的用户对象 */

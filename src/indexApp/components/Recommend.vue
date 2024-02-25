@@ -16,9 +16,9 @@
                 <div class="w-[calc(100%-54px-1rem)]">
                     <div class="flex flex-row gap-x-1 items-center">
                         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                        <div class="nickname">{{ user.nickname }}</div>
+                        <div class="font-bold text-[12pt] webkit-box-1">{{ user.nickname }}</div>
                         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                        <i v-if="user.verified" class="bi bi-patch-check-fill text-blue-500 verify" />
+                        <IconVerify v-if="user.verified" class="h-[0.9rem] shrink-0 text-blue-500 w-[0.9rem]"></IconVerify>
                     </div>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="brief text-[10pt] webkit-box-2">{{ user.brief }}</div>
@@ -45,22 +45,6 @@
     </div>
 </template>
 
-<style scoped>
-.nickname {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    font-weight: bold;
-    font-size: 12pt;
-}
-
-.bi {
-    font-size: 11pt;
-}
-</style>
-
 <script setup>
 import { reactive } from 'vue'
 import Avatar from '@/components/Avatar.vue'
@@ -68,6 +52,7 @@ import { getHotSearch } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
 import { useRouter } from 'vue-router'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)

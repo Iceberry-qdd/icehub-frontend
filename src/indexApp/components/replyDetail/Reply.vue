@@ -32,13 +32,14 @@
                         </Avatar>
                     </div>
                     <div class="z-20">
-                        <div
-                            class="cursor-pointer font-bold hover:underline text-[12pt]"
-                            @click="routeToUser(state.reply.user.nickname)">
-                            {{ state.reply.user.nickname }}
-                            <i
-                                v-if="state.reply.user.verified"
-                                class="bi bi-patch-check-fill relative text-[10pt] text-blue-500 verify" />
+                        <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
+                            <div
+                                class="font-bold hover:underline hover:underline-offset-4 text-[12pt]"
+                                @click="routeToUser(state.reply.user.nickname)">
+                                {{ state.reply.user.nickname }}
+                            </div>
+                            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                            <IconVerify v-if="state.reply.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
                         </div>
                         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                         <div class="text-[11pt]" @click="routeToUser(replyTo)">
@@ -143,6 +144,7 @@ import UserInfoPop from '@/indexApp/components/postDetail/UserInfoPop.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import ReviewPanel from '@/indexApp/components/replyDetail/ReviewPanel.vue'
 import Avatar from '@/components/Avatar.vue'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
 const props = defineProps({

@@ -34,7 +34,7 @@ npm run build
 ```
 
 > [!NOTE]
-> For production builds, create a new file called .env.production with the same contents as the [.env.development](https://github.com/Iceberry-qdd/icehub-frontend/blob/main/.env.development) file or configure the key-value pairs yourself.
+> For production builds, create a new file called `.env.production` with the same contents as the [.env.development](./.env.development) file or configure the key-value pairs yourself.
 
 ## Todo
 Below are some of the features that are in the works or planned for the near future, a full list is detailed in the [Icehub-frontend v1.0 plan](https://github.com/users/Iceberry-qdd/projects/2):
@@ -44,6 +44,9 @@ Below are some of the features that are in the works or planned for the near fut
 - [ ] https://github.com/Iceberry-qdd/icehub-frontend/issues/2
 
 - [ ] https://github.com/Iceberry-qdd/icehub-frontend/issues/11
+
+## Code of conduct
+See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## License
 Licensed under the [MIT](LICENSE.txt) license.

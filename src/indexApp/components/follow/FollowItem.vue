@@ -5,14 +5,17 @@
             class="flex-initial h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
             @click="routeToUserProfile">
         </Avatar>
-        <div class="flex-auto">
-            <div
-                class="cursor-pointer font-bold hover:underline text-[14pt]"
-                @click="routeToUserProfile">
-                {{ props.user.nickname }}
-                <i
-                    v-show="props.user.verified == true"
-                    class="bi bi-patch-check-fill text-[11pt] text-blue-500 verify" />
+        <div>
+            <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
+                <div
+                    class="font-bold hover:underline hover:underline-offset-4 text-[14pt]"
+                    @click="routeToUserProfile">
+                    {{ props.user.nickname }}
+                </div>
+                <IconVerify
+                    v-if="props.user.verified"
+                    class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                </IconVerify>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="brief text-[10pt]">{{ brief(props.user.remark) }}</div>
@@ -51,6 +54,7 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import { useRouter } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import { store } from '@/indexApp/js/store.js'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const props = defineProps({
     /** 用户对象 */

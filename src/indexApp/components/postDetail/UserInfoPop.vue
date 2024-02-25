@@ -24,9 +24,9 @@
                     class="cursor-pointer font-bold hover:underline text-[12pt]"
                     @click="routeToProfile">
                     {{ state.user.nickname }}
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <i v-if="state.user.verified" class="bi bi-patch-check-fill text-[10pt] text-blue-500 verify" />
                 </div>
+                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                <IconVerify v-if="state.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
             </div>
             <div class="flex flex-nowrap flex-row items-center">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
@@ -55,6 +55,7 @@ import { useRouter } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const props = defineProps({
     /** 传入的用户对象 */

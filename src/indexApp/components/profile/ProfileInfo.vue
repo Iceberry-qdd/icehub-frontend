@@ -44,7 +44,7 @@
             </div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-if="props.user.verified == true" class="flex flex-row gap-x-2 items-center">
-                <IconVerify class="text-[13pt]"></IconVerify>
+                <IconVerify class="h-[1rem] text-blue-500 w-[1rem]"></IconVerify>
                 <div>{{ props.user.verifiedInfo }}</div>
             </div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
