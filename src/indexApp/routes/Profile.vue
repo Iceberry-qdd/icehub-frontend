@@ -3,8 +3,7 @@
     <div
         v-if="state.user"
         id="profile"
-        class="relative"
-        @wheel="toggleHeaderIcon">
+        class="relative">
         <Header
             v-if="state.user"
             :width="state.headerConfig.width"
@@ -17,14 +16,21 @@
             @handle-action="handleAction">
         </Header>
 
+        <Transition name="fade">
+            <ProfileMenu
+                v-if="state.showProfileMenus"
+                :user="state.user"
+                class="fixed right-[calc(100%*4/13+1rem)] top-[1rem] z-[102]">
+            </ProfileMenu>
+        </Transition>
+
         <Banner
             :user="state.user"
             class="h-[20rem] object-cover w-full"
             @click="state.user && state.user.bannerUrl ? showSlide([state.user.bannerUrl], 0) : ''">
         </Banner>
         <div class="-translate-y-[2.5rem]">
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <ProfileInfo :user="state.user" @unblock-user="unblockUser"></ProfileInfo>
+            <ProfileInfo :user="state.user"></ProfileInfo>
             <div
                 v-if="state.user.blocking"
                 class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
@@ -49,6 +55,22 @@
 </template>
 
 <style scoped>
+.fade-enter-active {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.fade-enter-from {
+    opacity: 0;
+}
+
+.fade-leave-to {
+    opacity: 0;
+}
+
 .material-icons-round:hover {
     background-color: transparent;
 }
@@ -64,18 +86,18 @@ import Header from '@/indexApp/components/Header.vue'
 import ProfileInfo from '@/indexApp/components/profile/ProfileInfo.vue'
 import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
 import { reactive, onMounted, onUnmounted, computed, provide } from 'vue'
-import { getUserPosts, getUserInfoByNickname, deleteOneBlacklist } from '@/indexApp/js/api.js'
+import { getUserPosts, getUserInfoByNickname } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import Banner from '@/indexApp/components/Banner.vue'
+import ProfileMenu from '@/indexApp/components/profile/ProfileMenu.vue'
 
-const router = useRouter()
 const route = useRoute()
 const user = JSON.parse(localStorage.getItem("CUR_USER"))
 const isCurUser = computed(() => {
     return route.params.nickname == user.nickname
 })
-const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
+
 const state = reactive({
     user: null,
     posts: [],
@@ -86,13 +108,14 @@ const state = reactive({
     headerConfig: {
         title: route.params.nickname,
         goBack: !isCurUser.value,
-        showMenu: isCurUser.value,
-        menuIcon: isCurUser.value ? 'create' : '',
-        iconTooltip: '编辑个人资料'
+        showMenu: true,
+        menuIcon: 'more_horiz',
+        iconTooltip: '更多选项'
     },
     isPostLoading: true,
     lastWheelDirection: 0,
-    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    showProfileMenus: false
 })
 
 async function getPosts() {
@@ -142,50 +165,31 @@ function fetchNewPost() {
     }
 }
 
-function toggleHeaderIcon(event) {
-    // TODO implement it.
-    if (!showUnImpl) return
-    if (event.pageY > 718 && event.deltaY > 0 && state.lastWheelDirection <= 0) {
-        state.lastWheelDirection = event.deltaY
-        state.headerConfig.menuIcon = 'date_range'
-        state.headerConfig.iconTooltip = '搜索帖子'
-    } else if (event.pageY < 718 && event.deltaY < 0 && state.lastWheelDirection > 0) {
-        state.lastWheelDirection = event.deltaY
-        state.headerConfig.menuIcon = isCurUser.value ? 'create' : ''
-        state.headerConfig.iconTooltip = '编辑个人资料'
-    }
-}
-
 function postingNew(post) {
     state.posts.unshift(post)
 }
 
-async function unblockUser() {
-    try {
-        const response = await deleteOneBlacklist('USER', state.user.id, state.curUser.id)
-        if (!response.ok) throw new Error((await response.json()).error)
-
-        const result = await response.json()
-        if (result) {
-            await getUser(state.user.id)
-            await getPosts()
-            store.setSuccessMsg('已将该用户解除屏蔽')
-        } else {
-            throw new Error("解除屏蔽失败！")
-        }
-    } catch (e) {
+async function refreshProfileOnUi(){
+    try{
+        await getUser(state.user.id)
+        await getPosts()
+    }catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
     }
 }
 
 function handleAction() {
-    router.push('/profile/edit')
+    state.showProfileMenus = true
 }
 
 function showSlide(images, idx) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
     store.showSlide(images, idx)
+}
+
+function dismissProfileMenus() {
+    state.showProfileMenus = false
 }
 
 onMounted(async () => {
@@ -197,14 +201,15 @@ onMounted(async () => {
         await getPosts()
     }
     window.addEventListener('scroll', fetchNewPost)
-    window.addEventListener('wheel', toggleHeaderIcon)
 })
 
 onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewPost)
-    window.removeEventListener('wheel', toggleHeaderIcon)
     store.clearSelectUser()
 })
 
+
+provide('dismissProfileMenus', { dismissProfileMenus: dismissProfileMenus })
 provide('postingNew', { postingNew })
+provide('refreshProfileOnUi', { refreshProfileOnUi: refreshProfileOnUi })
 </script>

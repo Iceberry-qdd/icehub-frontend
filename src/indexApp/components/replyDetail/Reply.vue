@@ -56,8 +56,11 @@
                     </div>
                 </div>
             </div>
-            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="pl-[4rem] text-[12pt]"> {{ state.reply.content }} </div>
+
+            <div class="overflow-x-hidden pl-[4rem] text-[12pt]">
+                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.reply.content"></VueShowdown>
+            </div>
             <div class="flex flex-row justify-between pl-[4rem] z-20">
                 <button
                     type="button"
@@ -145,6 +148,7 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import ReviewPanel from '@/indexApp/components/replyDetail/ReviewPanel.vue'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
+import { VueShowdown } from 'vue-showdown'
 
 const router = useRouter()
 const props = defineProps({

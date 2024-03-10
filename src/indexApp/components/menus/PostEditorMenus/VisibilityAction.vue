@@ -1,7 +1,7 @@
 <template>
     <div
         id="VisibilityAction"
-        class="bg-white min-h-max min-w-max ring-1 ring-slate-900/5 rounded-[6px] shadow-lg">
+        class="bg-white min-h-max min-w-[12rem] ring-1 ring-slate-900/5 rounded-[6px] shadow-lg">
         <div
             v-for="action in state.visibilityActions"
             :key="action.id"
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, onUnmounted } from 'vue'
+import { reactive, onMounted, onUnmounted, computed } from 'vue'
 
 const emits = defineEmits(['pickedVisibility', 'dismissVisibilityAction'])
 const props = defineProps({
@@ -34,6 +34,12 @@ const props = defineProps({
     ui: {
         type: Array,
         required: true
+    },
+    /** 触发该组件的元素id，用于检测点击事件关闭用 */
+    switchId: {
+        type:String,
+        required: false,
+        default: undefined
     }
 })
 
@@ -44,19 +50,23 @@ const state = reactive({
 })
 
 function pickedVisibility(action) {
-    emits('pickedVisibility', [action.code, action.name, action.icon])
+    emits('pickedVisibility', action)
 }
 
 onMounted(() => {
-    const VisibilityAction = document.querySelector('#VisibilityAction')
-    document.querySelector('#app').addEventListener('click', function (event) {
-        if (!VisibilityAction.contains(event.target)) {
-            emits('dismissVisibilityAction')
-        }
-    })
+    if(props.switchId){
+        const visibilityAction = document.querySelector(`#${props.switchId}`)
+        document.querySelector('#app').addEventListener('click', function (event) {
+            if (!visibilityAction.contains(event.target)) {
+                emits('dismissVisibilityAction')
+            }
+        })
+    }
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', () => { })
+    if(props.switchId){
+        document.querySelector('#app').removeEventListener('click', () => { })
+    }
 })
 </script>

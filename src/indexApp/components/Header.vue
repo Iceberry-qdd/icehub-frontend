@@ -15,8 +15,10 @@
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="font-bold text-[14pt]">{{ props.title }}</div>
             </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.showMenu" :title="props.iconTooltip">
+            <div
+                v-if="props.showMenu"
+                id="header-opt"
+                :title="props.iconTooltip">
                 <span
                     v-if="props.menuIcon"
                     class="material-icons-round text-[14pt]"

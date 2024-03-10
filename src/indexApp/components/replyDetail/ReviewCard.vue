@@ -1,7 +1,7 @@
 <template>
     <div class="border-b-[1px] border-gray-100 flex flex-col px-[1rem] py-[1rem] relative">
-        <div class="absolute bg-gray-200 left-[2.7rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
-        <div class="flex flex-row items-center justify-between pl-[0.5rem]">
+        <div class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+        <div class="flex flex-row items-center justify-between">
             <div class="flex flex-row gap-x-4 items-center">
                 <div class="relative z-10">
                     <Avatar
@@ -22,8 +22,10 @@
                 <div class='text-[10pt] text-gray-400'>{{ humanizedTime(props.review.createdTime) }}</div>
             </div>
         </div>
-        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="pl-[4rem] text-[12pt]"> {{ props.review.content }} </div>
+        <div class="pl-[3.5rem] text-[12pt]">
+            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+            <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.review.content"></VueShowdown>
+        </div>
     </div>
 </template>
 
@@ -43,6 +45,7 @@
 import { humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
+import { VueShowdown } from 'vue-showdown'
 
 const props = defineProps({
     /** 传入的评论对象 */

@@ -107,8 +107,8 @@
 </style>
 
 <script setup>
-import { reactive, computed } from 'vue'
-import { followUser, unFollowUser } from '@/indexApp/js/api.js'
+import { reactive, computed, inject } from 'vue'
+import { followUser, unFollowUser, deleteOneBlacklist } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
@@ -121,6 +121,7 @@ import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 import Avatar from '@/components/Avatar.vue'
 import { standardDate } from '@/indexApp/utils/formatUtils.js'
 
+const { refreshProfileOnUi } = inject('refreshProfileOnUi')
 const router = useRouter()
 const props = defineProps({
     /** 传入的用户对象 */
@@ -129,7 +130,6 @@ const props = defineProps({
         required: true
     }
 })
-const emits = defineEmits(['unblockUser'])
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
@@ -189,7 +189,7 @@ const followButtonText = computed(() => {
 })
 
 const followButtonClass = computed(() => ({
-    'bg-gray-300': state.isFollowing,
+    'bg-gray-200': state.isFollowing,
     'bg-blue-500': !state.isFollowing,
     'text-black': state.isFollowing,
     'text-white': !state.isFollowing 
@@ -247,9 +247,26 @@ function showSlide(images, idx) {
     store.showSlide(images, idx)
 }
 
-function unblockUser() {
-    emits('unblockUser')
-    state.confirmBDialogUi.show = false
+async function unblockUser() {
+    try {
+        state.confirmBDialogUi.loading.show = true
+        const response = await deleteOneBlacklist('USER', props.user.id, state.curUser.id)
+        if (!response.ok) throw new Error((await response.json()).error)
+
+        const result = await response.json()
+        if (result) {
+            store.setSuccessMsg('已解除屏蔽此用户')
+            refreshProfileOnUi()
+            state.confirmBDialogUi.show = false
+        } else {
+            throw new Error("解除屏蔽失败！")
+        }
+    } catch (e) {
+        store.setErrorMsg(e.message)
+        console.error(e)
+    }finally{
+        state.confirmBDialogUi.loading = false
+    }
 }
 
 function choose(args) {

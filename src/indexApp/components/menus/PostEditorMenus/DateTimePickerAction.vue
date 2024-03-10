@@ -170,7 +170,7 @@
 }
 
 .m-disabled:hover {
-    background-color: transparent;
+    background-color: transparent !important;
 }
 </style>
 

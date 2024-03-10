@@ -49,7 +49,7 @@
                 class="bg-[#fecdd3] hover:bg-[#fecdd3] icon">
             </AtSign>
         </div>
-        <div class="w-full">
+        <div class="notify-container">
             <div>
                 <img
                     v-if="state.from.avatarUrl"
@@ -76,12 +76,18 @@
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-if="state.type == 'REVIEW'" class="content">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="py-1">{{ state.content.content }}</div>
+                <div class="py-1">
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.content.content"></VueShowdown>
+                </div>
             </div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-if="state.type == 'REPOST'" class="content">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="py-2">{{ state.content.content }}</div>
+                <div class="py-2">
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.content.content"></VueShowdown>
+                </div>
                 <RepostCard :post-id="state.content.parentId"></RepostCard>
             </div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
@@ -91,7 +97,10 @@
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-if="state.type == 'REVIEW_LIKE'" class="content">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="py-1">{{ state.content.content }}</div>
+                <div class="py-1">
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.content.content"></VueShowdown>
+                </div>
             </div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-if="state.type == 'USER_FOLLOW'" class="content">
@@ -169,6 +178,14 @@
 .content {
     font-size: 11pt;
 }
+
+.notify-container:has(markdown){
+    width: calc(100% - 2rem - 1rem);
+}
+
+.notify-container:not(:has(markdown)){
+    width: 100%;
+}
 </style>
 
 <script setup>
@@ -178,6 +195,7 @@ import { humanizedTime, standardDateTime } from '@/indexApp/utils/formatUtils.js
 import { useRouter } from 'vue-router'
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const UserProfileCard = defineAsyncComponent(() => import('@/indexApp/components/notify/UserProfileCard.vue'))
+import { VueShowdown } from 'vue-showdown'
 
 const router = useRouter()
 const props = defineProps({

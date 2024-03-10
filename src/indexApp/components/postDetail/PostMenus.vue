@@ -1,75 +1,75 @@
 <template>
-    <div>
-        <div
-            :id="`pm-${props.post.id}`"
-            class="bg-white flex flex-col max-w-[18rem] min-w-[12rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
-            <LinkCopyAction
-                v-if="showLinkCopyAction"
-                :link="generateLink"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-            </LinkCopyAction>
-
-            <PosterGenerateAction
-                v-if="showUnImpl && showGeneratePoster"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-                <!-- TODO implement it. -->
-            </PosterGenerateAction>
-
-            <BookmarkAction
-                v-if="showBookmarkAction"
-                :post="state.post"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-            </BookmarkAction>
-
-            <FollowingAction
-                v-if="showFollowAction"
-                :user="state.post.user"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-            </FollowingAction>
-
-            <BlockPostAction
-                v-if="showBlockPostAction"
-                :post="state.post"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-            </BlockPostAction>
-
-            <BlockUserAction
-                v-if="showBlockUserAction"
-                :post="state.post"
-                :user="state.post.user"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-            </BlockUserAction>
-
-            <ReportPostProblemAction
-                v-if="showUnImpl && showReportAction"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-                <!-- TODO implement it. -->
-            </ReportPostProblemAction>
-
-            <VisibilityAction
-                v-if="showVisibilityAction"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-                :post="state.post">
-            </VisibilityAction>
-
-            <CloseReviewAction
-                v-if="showCloseReviewAction"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-                :post="state.post">
-            </CloseReviewAction>
-
-            <AdminOperationAction
-                v-if="showUnImpl && showAdminAction"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-                <!-- TODO implement it. -->
-            </AdminOperationAction>
-
-            <DeletePostAction
-                v-if="showDeletePostAction"
-                :post="state.post"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px] text-red-500">
-            </DeletePostAction>
-        </div>
+    <div
+        :id="`pm-${props.post.id}`"
+        class="bg-white flex flex-col max-w-[18rem] min-w-[12rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
+        <LinkCopyAction
+            v-if="showLinkCopyAction"
+            :link="generateLink"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+        </LinkCopyAction>
+    
+        <PosterGenerateAction
+            v-if="showUnImpl && showGeneratePoster"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            <!-- TODO implement it. -->
+        </PosterGenerateAction>
+    
+        <BookmarkAction
+            v-if="showBookmarkAction"
+            :post="state.post"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+        </BookmarkAction>
+    
+        <FollowingAction
+            v-if="showFollowAction"
+            :user="state.post.user"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+        </FollowingAction>
+    
+        <BlockPostAction
+            v-if="showBlockPostAction"
+            :post="state.post"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+        </BlockPostAction>
+    
+        <BlockUserAction
+            v-if="showBlockUserAction"
+            :post="state.post"
+            :user="state.post.user"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+        </BlockUserAction>
+    
+        <ReportPostProblemAction
+            v-if="showUnImpl && showReportAction"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            <!-- TODO implement it. -->
+        </ReportPostProblemAction>
+    
+        <VisibilityAction
+            v-if="showVisibilityAction"
+            id="post-menus-visibility-action"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]"
+            :post="state.post"
+            @show-sub-action="showVisibilitySubAction">
+        </VisibilityAction>
+    
+        <CloseReviewAction
+            v-if="showCloseReviewAction"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]"
+            :post="state.post">
+        </CloseReviewAction>
+        
+        <AdminOperationAction
+            v-if="showUnImpl && showAdminAction"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            <!-- TODO implement it. -->
+        </AdminOperationAction>
+    
+        <DeletePostAction
+            v-if="showDeletePostAction"
+            :post="state.post"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px] text-red-500">
+        </DeletePostAction>
     </div>
 </template>
 
@@ -116,7 +116,8 @@ const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     user: props.post.user,
-    post: props.post
+    post: props.post,
+    showVisibilitySubAction: false
 })
 
 const generateLink = computed(() => {
@@ -136,48 +137,52 @@ const isPlannedPost = computed(() => {
 })
 
 const showLinkCopyAction = computed(() => {
-    return isPlannedPost.value == false
+    return isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
 const showGeneratePoster = computed(() => {
-    return isPlannedPost.value == false
+    return isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
 const showBookmarkAction = computed(() => {
-    return isPlannedPost.value == false && isMySelf.value == false
+    return isPlannedPost.value == false && isMySelf.value == false && state.showVisibilitySubAction == false
 })
 
 const showFollowAction = computed(() => {
-    return isMySelf.value == false && isPlannedPost.value == false
+    return isMySelf.value == false && isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
 const showBlockPostAction = computed(() => {
-    return isMySelf.value == false && isPlannedPost.value == false
+    return isMySelf.value == false && isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
 const showAdminAction = computed(() => {
-    return isAdmin.value == true && isPlannedPost.value == false
+    return isAdmin.value == true && isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
 const showBlockUserAction = computed(() => {
-    return isMySelf.value == false && isPlannedPost.value == false
+    return isMySelf.value == false && isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
 const showReportAction = computed(() => {
-    return isMySelf.value == false && isPlannedPost.value == false
+    return isMySelf.value == false && isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
 const showVisibilityAction = computed(() => {
-    return isMySelf.value == true && isPlannedPost.value == false
-})
-
-const showDeletePostAction = computed(() => {
     return isMySelf.value == true
 })
 
-const showCloseReviewAction = computed(() => {
-    return state.curUser.id === state.post.user.id && isPlannedPost.value == false
+const showDeletePostAction = computed(() => {
+    return isMySelf.value == true && state.showVisibilitySubAction == false
 })
+
+const showCloseReviewAction = computed(() => {
+    return state.curUser.id === state.post.user.id && isPlannedPost.value == false && state.showVisibilitySubAction == false
+})
+
+function showVisibilitySubAction(){
+    state.showVisibilitySubAction = true
+}
 
 function handlePostMenusDismiss(event) {
     const postMenus = document.querySelector(`#pm-${props.post.id}`)

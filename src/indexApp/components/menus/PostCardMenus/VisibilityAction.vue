@@ -1,43 +1,54 @@
 <template>
     <div
-        class="flex flex-row items-center justify-between relative"
-        @click="toggleSubAction">
-        <div class="flex flex-rows gap-x-3 items-center justify-start">
+        class="flex flex-row items-center justify-between"
+        @click="showSubAction">
+        <div
+            v-show="!state.showSubAction"
+            class="flex flex-rows gap-x-3 items-center justify-start">
             <span class="material-icons-round no-hover p-0 text-[16pt]">{{ curActiveAction.icon }}</span>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="btn-no-select">更改可见范围</div>
         </div>
-        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="material-icons-round no-hover p-0 rotate-180 text-[10pt]">arrow_back_ios</div>
-        <div
-            v-if="state.showSubActions == true"
-            class="absolute bg-white right-[-11rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg w-full"
-            @blur="toggleSubAction">
-            <div
-                v-for="action in state.actions"
-                :key="action.id"
-                class="first:rounded-t-[7px] flex flex-row gap-4 items-center justify-left last:rounded-b-[7px] px-3 py-[0.6rem] text-start"
-                :index="action.id"
-                :class="[action.code == props.post.status ? 'bg-blue-100 hover:bg-blue-100' : 'hover:bg-gray-100 active:bg-gray-200']"
-                @click="updateVisibility(action.code)">
-                <span
-                    class="material-icons-round no-hover p-0 text-[16pt]"
-                    :class="[action.code == props.post.status ? 'text-blue-500' : '']">
-                    {{ action.icon }}
-                </span>
-                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="btn-no-select">{{ action.name }}</div>
-            </div>
-        </div>
+
+        <Transition name="fade">
+            <VisibilityChoiceAction
+                v-if="state.showSubAction"
+                class="absolute left-0 top-0 z-[99]"
+                :visibility="state.post.status"
+                :ui="state.actions"
+                @picked-visibility="updateVisibility">
+            </VisibilityChoiceAction>
+        </Transition>
     </div>
 </template>
+
+<style scoped>
+.fade-enter-active {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-enter-from {
+    opacity: 0;
+}
+
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
 
 <script setup>
 import { reactive, computed } from 'vue'
 import { modifyPostVisibility } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { inject } from 'vue'
+import VisibilityChoiceAction from '@/indexApp/components/menus/PostEditorMenus/VisibilityAction.vue'
 
+const { dismissPostMenus } = inject('dismissPostMenus')
+const emits = defineEmits(['showSubAction'])
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -45,7 +56,6 @@ const props = defineProps({
         required: true
     }
 })
-const { dismissPostMenus } = inject('dismissPostMenus')
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
@@ -58,7 +68,7 @@ const state = reactive({
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock' },
     ],
     post: props.post,
-    showSubActions: false
+    showSubAction: false
 })
 
 function dismiss() { dismissPostMenus() }
@@ -68,12 +78,12 @@ const curActiveAction = computed(() => {
     return activeActions.length > 0 ? activeActions[0] : state.actions[0]
 })
 
-async function updateVisibility(newStatus) {
-    if (state.post.status == newStatus) return
-    const originStatus = state.post.status
-
+async function updateVisibility({ code }) {
     try {
-        state.post.status = newStatus
+        if (state.post.status == code) return
+        const originStatus = state.post.status
+
+        state.post.status = code
         const response = await modifyPostVisibility(state.post, originStatus)
         if (!response.ok) throw new Error(await response.json().error)
 
@@ -89,8 +99,8 @@ async function updateVisibility(newStatus) {
     }
 }
 
-function toggleSubAction() {
-    const lastState = state.showSubActions
-    state.showSubActions = !lastState
+function showSubAction() {
+    state.showSubAction = true
+    emits('showSubAction')
 }
 </script>

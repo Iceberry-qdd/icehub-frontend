@@ -70,6 +70,7 @@
 
 #sidebar-l {
     border-right: 1px solid #EEEEEE;
+    overflow-x: hidden;
 }
 
 #sidebar-r {
@@ -79,11 +80,13 @@
     top: 0;
     height: 100vh;
     z-index: 0;
+    overflow-x: hidden;
 }
 
 #main {
     min-width: 0;
     z-index: 1;
+    overflow-x: hidden;
 }
 
 .mr-20 {

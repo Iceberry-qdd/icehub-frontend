@@ -77,7 +77,7 @@ const state = reactive({
 
 const buttonClass = computed(() => ({
     'bg-blue-500': !state.isFollowing,
-    'bg-gray-300': state.isFollowing,
+    'bg-gray-200': state.isFollowing,
     'text-black': state.isFollowing,
     'text-white': !state.isFollowing
 }))

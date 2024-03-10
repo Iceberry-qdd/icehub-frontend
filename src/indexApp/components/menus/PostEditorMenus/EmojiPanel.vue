@@ -57,9 +57,16 @@
 
 <script setup>
 import { reactive, onMounted, onUnmounted } from 'vue'
-import emojiPack from 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.0.0/+esm'
+import emojiPack from 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/+esm'
 
 const emits = defineEmits(['insertEmojiCode', 'dismissEmojiPanel'])
+const props = defineProps({
+        /** 触发该组件的元素id，用于检测点击事件关闭用 */
+    switchId: {
+        type:String,
+        required:true
+    }
+})
 
 const categoryZh = {
     'Smileys & Emotion': '表情与角色',
@@ -109,7 +116,7 @@ function emojiCode(unified){
 }
 
 onMounted(() => {
-    const emojiPanel = document.querySelector('#emojiPanel')
+    const emojiPanel = document.querySelector(`#${props.switchId}`)
     document.querySelector('#app').addEventListener('click', function (event) {
         if (emojiPanel && !emojiPanel.contains(event.target)) {
             emits('dismissEmojiPanel')

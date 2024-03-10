@@ -39,7 +39,7 @@ const state = reactive({
         show: false,
         title: '确定要屏蔽此用户吗？屏蔽后可在黑名单界面查看',
         confirmButton: {
-            text: '屏蔽',
+            text: '确定屏蔽',
             color: 'rgb(239 68 68)',
             bgColor: 'rgb(254 226 226)',
             selected: false

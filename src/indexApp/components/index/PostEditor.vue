@@ -24,7 +24,7 @@
                     v-else
                     id="post-input"
                     v-model="state.content"
-                    class="break-all focus:outline-none leading-6 overflow-hidden p-2 resize-none rounded text-[14pt] text-justify tracking-wide w-full"
+                    class="break-all focus:outline-none leading-6 overflow-hidden p-2 pr-0 resize-none rounded text-[1rem] text-justify tracking-wide w-full"
                     :maxlength="state.maxContentWordCount + 50"
                     rows="3"
                     placeholder="发布帖子"
@@ -65,7 +65,7 @@
                     </div>
 
                     <div
-                        id="VisibilityAction"
+                        id="post-editor-visibilityAction"
                         class="flex-col relative">
                         <div
                             class="flex"
@@ -80,6 +80,7 @@
                         <Transition name="fade">
                             <VisibilityAction
                                 v-if="state.showVisibilityPanel"
+                                switch-id="post-editor-visibilityAction"
                                 class="absolute top-[2.5rem] z-[99]"
                                 :visibility="state.data.status"
                                 :ui="state.visibilityActionData"
@@ -119,7 +120,7 @@
                     <!-- <at-sign theme="outline" size="18" fill="#333" :strokeWidth="3" /> -->
 
                     <div
-                        id="emojiPanel"
+                        id="post-editor-emoji-panel"
                         class="flex-col relative">
                         <div
                             class="flex"
@@ -134,6 +135,7 @@
                         <Transition name="fade">
                             <EmojiPanel
                                 v-if="state.showEmojiPanel"
+                                switch-id="post-editor-emoji-panel"
                                 class="absolute min-h-max min-w-max top-[2.5rem] z-[99]"
                                 @dismiss-emoji-panel="dismissEmojiPanel"
                                 @insert-emoji-code="insertEmoji">
@@ -141,12 +143,9 @@
                         </Transition>
                     </div>
 
-                    <div
-                        id="long-article"
-                        @click="state.showMarkdownPanel = !state.showMarkdownPanel">
+                    <div id="long-article">
                         <span
                             v-if="showUnImpl"
-                            :class="[state.showMarkdownPanel ? 'active' : '']"
                             title="长文章"
                             class="material-icons-round">
                             <!-- TODO implement it. -->
@@ -161,6 +160,17 @@
                             class="material-icons-round">
                             <!-- TODO implement it. -->
                             equalizer
+                        </span>
+                    </div>
+
+                    <div
+                        id="preview"
+                        @click="state.showMarkdownPanel = !state.showMarkdownPanel">
+                        <span
+                            :class="[state.showMarkdownPanel ? 'active' : '']"
+                            title="预览"
+                            class="material-icons-round">
+                            visibility
                         </span>
                     </div>
                 </div>
@@ -326,7 +336,6 @@ async function submitPost() {
         if (leftWordCount.value < 0) throw new Error('您发布的帖子内容超出长度限制！')
 
         state.isLoading = true
-        state.data.type = state.showMarkdownPanel == true ? 'MARKDOWN' : 'NORMAL'
         state.data.content = state.content
         for (let i = 0; i < 9; i++) {
             if (state.imgList.length <= i) break
@@ -343,19 +352,7 @@ async function submitPost() {
         const response = state.data.createdTime ? await postingPlan(state.data) : await posting(state.data)
         if (!response.ok) throw new Error((await response.json()).error)
         state.result = await response.json()
-
-        //防止重复提交上一次的内容
-        state.content = ''
-        state.imgList = []
-        state.showImagePanel = false
-        state.data.allowReview = true
-        state.data.content = ''
-        state.data.top = false
-        state.data.attachmentsUrl = []
-        state.data.createdTime = null
-        state.top = false
-        state.data.status = 'PUBLIC'
-
+        reset()
         postingNew(state.result)
     } catch (err) {
         store.setErrorMsg(err.message)
@@ -363,6 +360,20 @@ async function submitPost() {
     } finally {
         state.isLoading = false
     }
+}
+
+//防止重复提交上一次的内容
+function reset(){
+    state.content = ''
+    state.imgList = []
+    state.showImagePanel = false
+    state.data.allowReview = true
+    state.data.content = ''
+    state.data.top = false
+    state.data.attachmentsUrl = []
+    state.data.createdTime = null
+    state.top = false
+    state.data.status = 'PUBLIC'
 }
 
 function clickFileSelector() {
@@ -397,8 +408,8 @@ function insertEmoji({ unified }) {
     state.content = state.content.concat(emoji)
 }
 
-function pickVisibility(args) {
-    state.data.status = args[0]
+function pickVisibility(action) {
+    state.data.status = action.code
     state.showVisibilityPanel = false
 }
 
@@ -428,10 +439,4 @@ function dismissVisibilityAction() {
 function dismissEmojiPanel() {
     state.showEmojiPanel = false
 }
-
-watch(() => state.showMarkdownPanel, (newVal) => {
-    if (newVal == true) {
-        renderMath()
-    }
-})
 </script>

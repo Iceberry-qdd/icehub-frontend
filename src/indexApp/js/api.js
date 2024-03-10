@@ -808,6 +808,11 @@ export function globalSearch(word, pageSize, pageIndex, type = ['USER', 'POST', 
     })
 }
 
+/**
+ * 获取热搜榜数据
+ * @param {Number} count 热搜榜条数，取值范围[1-20]
+ * @returns 获取到的热搜榜条数
+ */
 export function getHotSearch(count){
     return fetch(`${BASE_URL}/search/hot?n=${count}`,{
         method: 'GET',
@@ -817,5 +822,21 @@ export function getHotSearch(count){
         },
         redirect: 'follow',
         credentials: 'same-origin'
+    })
+}
+
+/**
+ * 退出登录
+ */
+export function logout(){
+    return fetch(`${BASE_URL}/auth/logout`,{
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin',
+        cache: 'no-cache'
     })
 }

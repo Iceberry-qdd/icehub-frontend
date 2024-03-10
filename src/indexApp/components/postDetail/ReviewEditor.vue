@@ -2,17 +2,17 @@
     <div>
         <div
             v-if="!state.loading"
-            class="flex flex-row gap-x-[1rem] px-[1.5rem] py-[1rem] relative"
+            class="flex flex-row gap-x-[1rem] px-[1rem] py-[1rem] relative"
             :class="[props.fromReviewPanel ? '' : 'border-gray-100 border-b-[1px]']">
             <div
                 v-if="props.tieLocation == 'mid'"
-                class="absolute bg-gray-200 h-full left-[2.7rem] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-full left-[2.2rem] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="props.tieLocation == 'top'"
-                class="absolute bg-gray-200 left-[2.7rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="props.tieLocation == 'bottom'"
-                class="-z-0 absolute bg-gray-200 h-[2.5rem] left-[2.7rem] timeline-bottom top-0 w-[0.15rem]" />
+                class="-z-0 absolute bg-gray-200 h-[2.5rem] left-[2.2rem] timeline-bottom top-0 w-[0.15rem]" />
             <div class="h-fit z-10">
                 <img
                     v-if="state.curUser.avatarUrl"
@@ -32,13 +32,21 @@
                     回复
                     <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
                 </div>
+                <VueShowdown
+                    v-if="state.showMarkdownPanel == true"
+                    tag="markdown"
+                    :extensions="['exts']"
+                    :markdown="state.content"
+                    class="min-h-[3rem]">
+                </VueShowdown>
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <textarea
+                    v-else
                     :id="state.textAreaId"
                     v-model="state.content"
                     :disabled="state.loading"
                     :class="{ 'text-gray-400': state.loading }"
-                    class="bg-transparent break-all focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden pr-2 resize-none text-justify text-lg tracking-wide"
+                    class="bg-transparent break-all focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden pr-2 resize-none text-[1rem] text-justify tracking-wide"
                     :maxlength="state.maxContentWordCount + 50"
                     rows="2"
                     placeholder="发布评论"
@@ -47,44 +55,42 @@
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <div v-if="state.content.length > 0" class="flex flex-row items-center justify-between">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <div v-if="!state.loading" class="flex flex-row gap-x-2 items-center">
+                    <div v-if="!state.loading" class="flex flex-row gap-x-1 items-center">
                         <!-- TODO implement it. -->
-                        <AddPicture
-                            v-if="showUnImpl"
-                            theme="outline"
-                            size="20"
-                            fill="#333"
-                            :stroke-width="3">
-                        </AddPicture>
-                        <!-- TODO implement it. -->
-                        <LocalTwo
-                            v-if="showUnImpl"
-                            theme="outline"
-                            size="20"
-                            class="icon"
-                            fill="#333"
-                            :stroke-width="4">
-                        </LocalTwo>
-                        <div class="flex-col relative">
+                        <div v-if="showUnImpl">
+                            <span
+                                title="添加图片"
+                                class="material-icons-round text-[1.25rem]">
+                                add_photo_alternate
+                            </span>
+                        </div>
+                        <div
+                            :id="emojiSwitchId"
+                            class="flex-col relative">
                             <div
-                                class="flex"
+                                title="表情面板"
+                                class="material-icons-round no-hover text-[1.25rem]"
+                                :class="EmojiIconActiveClass"
                                 @click="state.showEmojiPanel = !state.showEmojiPanel">
-                                <GrinningFaceWithOpenMouth
-                                    title="表情面板"
-                                    theme="outline"
-                                    size="18"
-                                    fill="#333"
-                                    :stroke-width="3">
-                                </GrinningFaceWithOpenMouth>
+                                mood
                             </div>
                             <Transition name="fade">
                                 <EmojiPanel
                                     v-if="state.showEmojiPanel"
                                     id="emojiPanel"
+                                    :switch-id="emojiSwitchId"
                                     class="absolute min-h-max min-w-max top-[2.5rem] z-[99]"
+                                    @dismiss-emoji-panel="dismissEmojiPanel"
                                     @insert-emoji-code="insertEmoji">
                                 </EmojiPanel>
                             </Transition>
+                        </div>
+                        <div
+                            :class="previewIconActiveClass"
+                            title="预览"
+                            class="material-icons-round no-hover text-[1.25rem]"
+                            @click="state.showMarkdownPanel = !state.showMarkdownPanel">
+                            visibility
                         </div>
                     </div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
@@ -122,10 +128,10 @@
 import { reactive, computed, inject } from 'vue'
 import { reviewing } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { AddPicture, LocalTwo, GrinningFaceWithOpenMouth } from '@icon-park/vue-next'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import EmojiPanel from '@/indexApp/components/menus/PostEditorMenus/EmojiPanel.vue'
+import { VueShowdown } from 'vue-showdown'
 
 const emits = defineEmits(['dismiss'])
 const props = defineProps({
@@ -163,13 +169,33 @@ const state = reactive({
     loading: false,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     showEmojiPanel: false,
+    showMarkdownPanel: false,
     maxContentWordCount: 300,
-    textAreaId: props.fromReviewPanel ? 'reply-input' : 'review-input'
+    textAreaId: props.fromReviewPanel ? 'reply-input' : 'review-input',
 })
+
+const emojiSwitchId = computed(() => {
+    return props.fromReviewPanel ? 'reply-editor-emoji-panel' : 'review-editor-emoji-panel'
+})
+const previewIconActiveClass = computed(() => ({
+    'text-blue-500': state.showMarkdownPanel,
+    'bg-blue-200': state.showMarkdownPanel,
+    'hover:bg-gray-200': !state.showMarkdownPanel
+}))
+
+const EmojiIconActiveClass = computed(() => ({
+    'text-blue-500': state.showEmojiPanel,
+    'bg-blue-200': state.showEmojiPanel,
+    'hover:bg-gray-200': !state.showEmojiPanel
+}))
 
 const replyTo = computed(() => {
     return props.parent?.user?.nickname || props.post?.user?.nickname || '神秘用户'
 })
+
+function dismissEmojiPanel() {
+    state.showEmojiPanel = false
+}
 
 async function submitReview() {
     if (state.loading == true) {
