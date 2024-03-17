@@ -13,17 +13,12 @@
             <div
                 v-if="props.tieLocation == 'bottom'"
                 class="-z-0 absolute bg-gray-200 h-[2.5rem] left-[2.2rem] timeline-bottom top-0 w-[0.15rem]" />
+
             <div class="h-fit z-10">
-                <img
-                    v-if="state.curUser.avatarUrl"
-                    :src="avatar"
-                    class="cursor-default h-[2.5rem] max-w-none rounded-[6px] w-[2.5rem]" />
-                <div
-                    v-else
-                    class="bg-blue-500 cursor-default flex h-[2.5rem] items-center justify-center rounded-[6px] w-[2.5rem]">
-                    <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="font-bold text-[14pt] text-white">{{ state.curUser.nickname.charAt(0) }}</div>
-                </div>
+                <Avatar
+                    :user="state.curUser"
+                    class="h-[2.5rem] max-w-none rounded-[6px] w-[2.5rem]">
+                </Avatar>
             </div>
             <div class="w-full">
                 <div
@@ -132,6 +127,7 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import EmojiPanel from '@/indexApp/components/menus/PostEditorMenus/EmojiPanel.vue'
 import { VueShowdown } from 'vue-showdown'
+import Avatar from '@/components/Avatar.vue'
 
 const emits = defineEmits(['dismiss'])
 const props = defineProps({

@@ -542,7 +542,7 @@ export function updatePost(post) {
  * @returns 该图片的完整链接
  */
 export function getImageUrlIgnoreHidden(postId, imageId) {
-    return fetch(`${BASE_URL}/post/attachment?pid=${postId}&attrId=${imageId}&ih=true`, {
+    return fetch(`${BASE_URL}/post/image?pid=${postId}&attrId=${imageId}&ih=true`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,

@@ -5,16 +5,10 @@
         <div class="bg-white flex flex-col flex-nowrap justify-between max-h-[80%] min-h-[30%] overflow-y-auto p-4 rounded-[8px] w-[40%]">
             <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row gap-x-2 items-center">
-                    <img
-                        v-if="state.curUser.avatarUrl"
-                        :src="avatar"
-                        class="h-[2.5rem] rounded-[8px] w-[2.5rem]" />
-                    <div
-                        v-else
-                        class="bg-blue-500 cursor-default flex h-[2.5rem] items-center justify-center rounded-[8px] w-[2.5rem]">
-                        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                        <div class="font-bold text-[14pt] text-white">{{ state.curUser.nickname.charAt(0) }}</div>
-                    </div>
+                    <Avatar
+                        :user="state.curUser"
+                        class="h-[2.5rem] rounded-[8px] w-[2.5rem]">
+                    </Avatar>
                     <div class="flex flex-row gap-4 h-full items-center justify-center">
                         <span class="cursor-default font-bold text-[13pt]">{{ state.curUser.nickname }}</span>
                     </div>
@@ -145,6 +139,7 @@ import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
+import Avatar from '@/components/Avatar.vue'
 import VisibilityAction from '@/indexApp/components/menus/PostEditorMenus/VisibilityAction.vue'
 import { VueShowdown } from 'vue-showdown'
 const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/PostEditorMenus/EmojiPanel.vue'))

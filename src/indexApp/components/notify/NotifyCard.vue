@@ -50,19 +50,10 @@
             </AtSign>
         </div>
         <div class="notify-container">
-            <div>
-                <img
-                    v-if="state.from.avatarUrl"
-                    class="h-[2rem] mb-2 relative rounded-full w-[2rem] z-[97]"
-                    :src="avatar(state.from.nickname, state.from.avatarUrl)"
-                    @click.self="routeToUserProfile(state.from)" />
-                <div
-                    v-else
-                    class="bg-blue-500 flex h-[2rem] items-center justify-center mb-2 reactive rounded-full w-[2rem] z-[97]">
-                    <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="font-bold text-[12pt] text-white">{{ state.from.nickname.charAt(0) }}</div>
-                </div>
-            </div>
+            <Avatar
+                class="h-[2rem] mb-2 relative rounded-full w-[2rem] z-[97]"
+                :user="state.from">
+            </Avatar>
             <div class="brief">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="event-text">{{ brief }}</div>
@@ -193,6 +184,7 @@ import { computed, reactive, watch, defineAsyncComponent } from 'vue'
 import { Like, Message, Share, PeoplePlusOne, AtSign } from '@icon-park/vue-next'
 import { humanizedTime, standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import { useRouter } from 'vue-router'
+import Avatar from '@/components/Avatar.vue'
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const UserProfileCard = defineAsyncComponent(() => import('@/indexApp/components/notify/UserProfileCard.vue'))
 import { VueShowdown } from 'vue-showdown'

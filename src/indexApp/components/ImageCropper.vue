@@ -14,12 +14,12 @@
             <div class="absolute bottom-[5%] cursor-pointer dialog-card fex-row flex gap-0 rounded-full">
                 <div
                     v-if="state.ctx"
-                    class="hover:bg-gray-300 px-4 py-2 rounded-l-full"
+                    class="first:rounded-l-full hover:bg-gray-300 hover:first:rounded-l-full hover:last:rounded-r-full last:rounded-r-full px-4 py-2"
                     @click="isGif ? getGif() : getClippedPic()">
                     确定
                 </div>
                 <div
-                    class="hover:bg-gray-300 px-4 py-2 rounded-r-full"
+                    class="first:rounded-l-full hover:bg-gray-300 hover:first:rounded-l-full hover:last:rounded-r-full last:rounded-r-full px-4 py-2"
                     @click="dismiss">
                     取消
                 </div>

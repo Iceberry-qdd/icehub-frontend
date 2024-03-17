@@ -17,15 +17,16 @@
         </div>
         <div class="absolute flex flex-col h-screen items-center justify-center w-screen">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-for="(url, index) in state.imgs" :key="index">
-                <img
-                    v-show="index == state.activeIndex && url.originUrl"
-                    class="max-h-screen max-w-screen"
-                    :src="url.originUrl" />
-                <img
-                    v-show="index == state.activeIndex && !url.originUrl && url.previewUrl"
-                    class="max-h-screen max-w-screen min-h-[25rem] min-w-[25rem]"
-                    :src="url.previewUrl" />
+            <div v-for="(img, index) in state.imgs" :key="index">
+                <picture>
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <source :srcset="`${img.url}?width=${innerWidth}`" type="image/webp" />
+                    <img
+                        v-show="index == state.activeIndex"
+                        :style="{ 'background-image': `url(${img.thumb})` }"
+                        class="bg-center bg-cover bg-no-repeat max-h-screen max-w-screen"
+                        :src="img.thumb" />
+                </picture>
             </div>
         </div>
         <div
@@ -53,17 +54,28 @@
 
 <script setup>
 import { store } from '@/indexApp/js/store.js'
-import { reactive } from 'vue'
-import IconAltOn from '@/components/icons/IconAltOn.vue';
+import { computed, onMounted, onUnmounted, reactive } from 'vue'
+import IconAltOn from '@/components/icons/IconAltOn.vue'
 
 const state = reactive({
     imgs: store.SLIDE_DATA.urls,
     activeIndex: store.SLIDE_DATA.curIdx,
-    showAlt:false
+    showAlt: false
 })
 
 function close() {
     store.dismissSlide()
-    document.querySelector("body").removeAttribute("style", "overflow:hidden")
 }
+
+const innerWidth = computed(() => {
+    return window.innerWidth
+})
+
+onMounted(() => {
+    document.querySelector("body").setAttribute("style", "overflow:hidden")
+})
+
+onUnmounted(() => {
+    document.querySelector("body").removeAttribute("style", "overflow:hidden")
+})
 </script>

@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/max-lines-per-block -->
 <template>
     <div
         class="border-b-[1px] pb-[0] pt-[1rem] px-[1rem] relative rounded-none"
@@ -87,13 +88,13 @@
             <RepostCard
                 v-if="state.post.rootId && !state.post.plan"
                 :post-id="state.post.rootId"
-                class="relative z-[96]">
+                class="mt-[0.5rem] relative z-[96]">
             </RepostCard>
             <div
                 v-if="hasPics"
                 class="bottom-[0.5rem] flex flex-row flex-wrap gap-[0.3rem] mt-[0.5rem]">
                 <div
-                    v-for="(pic, idx) in state.post.attachmentsUrl"
+                    v-for="(pic, idx) in state.post.images"
                     :key="idx"
                     :style="wrapperWidth"
                     class="overflow-hidden relative rounded-[4px] z-[97]">
@@ -115,17 +116,21 @@
                         class="absolute flex flex-row h-full items-center justify-center w-full z-[99]">
                         <div
                             class="bg-black/75 cursor-pointer h-fit px-3 py-2 rounded-[8px] text-[11pt] text-white w-fit"
-                            @click="getImageUrlIgnoreNSFW(pic.id)">
+                            @click="getImageUrlIgnoreNSFW(idx)">
                             已隐藏
                         </div>
                     </div>
-                    <img
-                        loading="lazy"
-                        class="duration-[400ms] hover:scale-[1.2] object-cover pic rounded-[4px] transition-transform w-full"
-                        :class="mPicClass"
-                        :src="getImageUrl(pic, idx)"
-                        :alt="pic.altText"
-                        @click="showSlide(state.post.attachmentsUrl, idx)" />
+                    <picture @click="showSlide(state.post.images, idx)">
+                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                        <source :srcset="getImageUrl(pic)" type="image/webp" />
+                        <img
+                            :style="{'background-image': `url(${pic.thumb})`}"
+                            :class="mPicClass"
+                            loading="lazy"
+                            class="duration-[400ms] hover:scale-[1.2] object-cover pic rounded-[4px] transition-transform w-full"
+                            :src="pic.thumb"
+                            :alt="pic.altText" />
+                    </picture>
                     <div
                         v-if="pic.contentType == 'image/gif' && !state.showOriginUrl[idx]"
                         class="absolute cursor-pointer h-full items-center justify-center right-0 text-white top-0 w-full"
@@ -135,16 +140,6 @@
                 </div>
             </div>
         </div>
-
-        <!--
-          <div class="mb-[0.5rem] ml-[2.8rem] z-[96]" v-if="hasTags">
-          <div class="row row-cols-auto gx-3">
-          <div class="col" v-for="tag in state.post.tags">
-          <span class="badge bg-primary" id="badge"># {{ tag }}</span>
-          </div>
-          </div>
-          </div>
-        -->
 
         <div
             v-if="!state.post.plan"
@@ -243,11 +238,6 @@
     -webkit-appearance: none;
     background: transparent;
 }
-
-/* #badge {
-    border-radius: 4rem !important;
-    background-color: cadetblue !important;
-} */
 </style>
 
 <!-- eslint-disable vue/no-ref-object-reactivity-loss -->
@@ -293,7 +283,7 @@ const state = reactive({
 })
 
 const gridColCount = computed(() => {
-    const picCount = state.post.attachmentsUrl.length
+    const picCount = state.post.images?.length || 0
     if (picCount === 0) return 0
     if (picCount === 1) return 1
     if ((picCount > 1 && picCount <= 2) || picCount == 4) return 2
@@ -333,12 +323,14 @@ const cardButtonClass = reactive({
 const mPicClass = reactive({
     'aspect-square': gridColCount.value !== 1,
     'max-h-[90vh]': gridColCount.value === 1,
+    'bg-no-repeat': true,
+    'bg-cover': true,
+    'bg-center': true
 })
 
-function getImageUrl(image, idx) {
-    const { originUrl, previewUrl } = image || [null, null]
-    if (state.showOriginUrl[idx] == true) { return originUrl }
-    return previewUrl || originUrl
+function getImageUrl(image) {
+    const { url, hidden } = image
+    return hidden ? url : `${image.url}?width=560`
 }
 
 function routeToPost(postId) {
@@ -398,12 +390,11 @@ async function toggleLike() {
 function repostIt() { state.showRepostPanel = true }
 
 function showSlide(images, idx) {
-    document.querySelector("body").setAttribute("style", "overflow:hidden")
     store.showSlide(images, idx)
 }
 
 const hasPics = computed(() => {
-    return state.post.attachmentsUrl.length != 0
+    return state.post.images?.length !== undefined
 })
 
 const hasTags = computed(() => {
@@ -451,18 +442,16 @@ const postStatus = computed(() => {
     return statusMap.get(status)
 })
 
-async function getImageUrlIgnoreNSFW(imageId) {
+async function getImageUrlIgnoreNSFW(index) {
     const postId = state.post.id
     try {
-        const response = await getImageUrlIgnoreHidden(postId, imageId)
+        const response = await getImageUrlIgnoreHidden(postId, index)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
 
-        const imageIndex = state.post.attachmentsUrl.findIndex(it => it.id === imageId)
-
-        if (imageIndex != -1) {
-            state.post.attachmentsUrl[imageIndex] = result
+        if(result){
+            state.post.images[index] = result
         }
     } catch (e) {
         store.setErrorMsg(e.message)

@@ -37,11 +37,15 @@
                         已隐藏
                     </div>
                 </div>
-                <img
-                    v-if="state.post.attachmentsUrl.length > 0"
-                    loading="lazy"
-                    :src="getCoverImageUrl(state.post.attachmentsUrl[0])"
-                    class="h-[15rem] img-fluid object-cover pic rounded-b-[8px] w-full" />
+                <picture v-if="state.post.images.length > 0">
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <source :srcset="getImageUrl(state.post.images[0])" type="image/webp" />
+                    <img
+                        loading="lazy"
+                        :style="{ 'background-image': `url(${state.post.images[0].thumb})` }"
+                        :src="state.post.images[0].thumb"
+                        class="bg-center bg-cover bg-no-repeat h-[15rem] img-fluid object-cover pic rounded-b-[8px] w-full" />
+                </picture>
                 <div
                     v-if="isGifCover && !isCoverHidden"
                     class="absolute cursor-pointer flex h-full items-center justify-center right-0 text-white top-0 w-full">
@@ -118,18 +122,19 @@ function routeToUserProfile() {
     router.push({ name: 'postDetail', params: { id: state.post.id } })
 }
 
-function getCoverImageUrl(attachment) {
-    return attachment.previewUrl || attachment.originUrl
+function getImageUrl(image) {
+    const { url, hidden } = image
+    return hidden ? url : `${image.url}?width=600`
 }
 
 const isCoverHidden = computed(() => {
-    if (!state.post.attachmentsUrl[0]) return false
-    else return state.post.attachmentsUrl[0].hidden
+    if (!state.post.images[0]) return false
+    else return state.post.images[0].hidden
 })
 
 const isGifCover = computed(() => {
-    if (!state.post.attachmentsUrl[0]) return false
-    else return state.post.attachmentsUrl[0].contentType == 'image/gif'
+    if (!state.post.images[0]) return false
+    else return state.post.images[0].contentType == 'image/gif'
 })
 
 function setSuitableHeight() {
