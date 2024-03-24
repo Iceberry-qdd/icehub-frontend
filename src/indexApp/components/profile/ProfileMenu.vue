@@ -41,23 +41,20 @@
     </div>
 </template>
 
-<style scoped>
-
-</style>
-
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import ProfileChangeAction from '@/indexApp/components/menus/UserProfileMenus/ProfileChangeAction.vue'
-import CalendarSearchAction from '@/indexApp/components/menus/UserProfileMenus/CalendarSearchAction.vue'
-import ShareLinkAction from '@/indexApp/components/menus/UserProfileMenus/ShareLinkAction.vue'
-import VerifyApplyAction from '@/indexApp/components/menus/UserProfileMenus/VerifyApplyAction.vue'
-import ProfileLockAction from '@/indexApp/components/menus/UserProfileMenus/ProfileLockAction.vue'
-import LogoutAction from '@/indexApp/components/menus/UserProfileMenus/LogoutAction.vue'
-import ProfileBlockAction from '@/indexApp/components/menus/UserProfileMenus/ProfileBlockAction.vue'
+import ProfileChangeAction from '@/indexApp/components/menus/userProfileMenus/ProfileChangeAction.vue'
+import CalendarSearchAction from '@/indexApp/components/menus/userProfileMenus/CalendarSearchAction.vue'
+import ShareLinkAction from '@/indexApp/components/menus/userProfileMenus/ShareLinkAction.vue'
+import VerifyApplyAction from '@/indexApp/components/menus/userProfileMenus/VerifyApplyAction.vue'
+import ProfileLockAction from '@/indexApp/components/menus/userProfileMenus/ProfileLockAction.vue'
+import LogoutAction from '@/indexApp/components/menus/userProfileMenus/LogoutAction.vue'
+import ProfileBlockAction from '@/indexApp/components/menus/userProfileMenus/ProfileBlockAction.vue'
 import { computed, reactive, onMounted, onUnmounted, inject } from 'vue'
 
 const { dismissProfileMenus } = inject('dismissProfileMenus')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
+const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
 const props = defineProps({
     /** 用户对象 */
     user: {
@@ -65,8 +62,6 @@ const props = defineProps({
         required: true
     }
 })
-
-const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
 
 const state = reactive({
     actionVisMap: new Map([

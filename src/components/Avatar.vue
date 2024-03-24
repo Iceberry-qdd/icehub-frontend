@@ -46,7 +46,7 @@ const noPicBgClass = computed(() => {
 
 const noPicAvatarClass = computed(() => {
     const emoji = props.user?.avatar?.emoji?.emoji
-    return emoji ? emoji : props.user?.nickname.charAt(0)
+    return emoji ? emoji : props.user.nickname.charAt(0).toUpperCase()
     
 })
 

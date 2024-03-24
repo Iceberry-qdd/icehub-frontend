@@ -181,6 +181,14 @@ function deleteAllPostsOfUserOnUi() {
     router.back()
 }
 
+function deleteReviewOnUi(reviewId){
+    if (!reviewId) return
+    const preDeleteReviewIndex = state.reviews.findIndex(it => it.id == reviewId)
+    if (preDeleteReviewIndex != -1) {
+        state.reviews.splice(preDeleteReviewIndex, 1)
+    }
+}
+
 function postingNew(post) {
     // Ignore this method body, nothing todo.
 }
@@ -189,6 +197,6 @@ provide('dismissPostMenus', { dismissPostMenus })
 provide('deletePostOnUi', { deletePostOnUi })
 provide('postingNew', { postingNew })
 provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
-
+provide('deleteReviewOnUi', { deleteReviewOnUi })
 provide('newReview', { newReview })
 </script>

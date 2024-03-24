@@ -29,13 +29,14 @@
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, provide } from 'vue'
 import { getReviewById } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import Review from '@/indexApp/components/postDetail/Review.vue'
-import { useRoute } from 'vue-router'
+import { useRouter,useRoute } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
 
+const router = useRouter()
 const route = useRoute()
 const state = reactive({
     review: null,
@@ -65,8 +66,14 @@ async function getReview(id) {
     }
 }
 
+function deleteReviewOnUi() {
+    router.back()
+}
+
 onMounted(() => {
     const reviewId = route.params.id
     getReview(reviewId)
 })
+
+provide('deleteReviewOnUi', { deleteReviewOnUi })
 </script>

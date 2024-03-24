@@ -5,14 +5,14 @@
                 id="imgWrapper"
                 class="flex flex-row items-center justify-center relative w-full">
                 <div
-                    v-if="state.imageInfo.hidden == 'true'"
+                    v-if="state.imageInfo.hidden == true"
                     class="absolute backdrop-blur-xl bg-white/5 h-full w-full" />
                 <img
                     :src="state.image"
                     class="image-picker max-h-[90vh] max-w-full object-cover" />
                 <div class="absolute bottom-0 flex flex-row gap-2 p-2 right-0">
                     <button
-                        v-if="state.imageInfo.hidden == 'false'"
+                        v-if="state.imageInfo.hidden == false"
                         type="button"
                         title="标记为敏感内容">
                         <IconFlagOn
@@ -72,7 +72,7 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { onMounted, onUnmounted, reactive } from 'vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 import IconAltOff from '@/components/icons/IconAltOff.vue'
 import IconFlagOn from '@/components/icons/IconFlagOn.vue'
@@ -95,7 +95,7 @@ const props = defineProps({
         required: true
     }
 })
-const emits = defineEmits(['closeImageEditor'])
+const emits = defineEmits(['closeImageEditor', 'toggleHidden'])
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
@@ -107,7 +107,8 @@ const state = reactive({
 
 function toggleHiddenFlag() {
     const lastState = state.imageInfo.hidden
-    state.imageInfo.hidden = lastState == 'false' ? 'true' : 'false'
+    state.imageInfo.hidden = !lastState
+    emits('toggleHidden', {hidden: state.imageInfo.hidden})
 }
 
 function toggleAltFlag() {
@@ -125,4 +126,12 @@ function dismissImageEditPanel() {
 function resize(){
     // TODO Not implement
 }
+
+onMounted(() => {
+    document.querySelector("body").setAttribute("style", "overflow:hidden")
+})
+
+onUnmounted(() => {
+    document.querySelector("body").removeAttribute("style")
+})
 </script>

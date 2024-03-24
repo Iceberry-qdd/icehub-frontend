@@ -232,6 +232,14 @@ function postingNew(post) {
     })
 }
 
+function deleteReviewOnUi(reviewId){
+    if (!reviewId || !state.apiSearch['REVIEW']) return
+    const preDeleteReviewIndex = state.apiSearch['REVIEW'].findIndex(it => it.content.id == reviewId)
+    if (preDeleteReviewIndex != -1) {
+        state.apiSearch['REVIEW'].splice(preDeleteReviewIndex, 1)
+    }
+}
+
 onMounted(() => {
     window.addEventListener('scroll', fetchMoreSameSearch)
     const key = route.query?.key
@@ -250,4 +258,5 @@ onUnmounted(() => {
 provide('deletePostOnUi', { deletePostOnUi })
 provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
 provide('postingNew', { postingNew })
+provide('deleteReviewOnUi', { deleteReviewOnUi })
 </script>

@@ -22,9 +22,18 @@
                 <div class='text-[10pt] text-gray-400'>{{ humanizedTime(props.review.createdTime) }}</div>
             </div>
         </div>
-        <div class="pl-[3.5rem] text-[12pt]">
+        <div class="ml-[3.5rem] relative text-[12pt]">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.review.content"></VueShowdown>
+            <ImageGrid
+                v-if="props.review.images?.length"
+                :id="props.review.id"
+                :images="props.review.images"
+                type="review"
+                class="bottom-[0.5rem] pt-[0.5rem] relative z-[20]"
+                @real-image="handleRealImage">
+            </ImageGrid>
+            <div class="absolute bg-transparent h-full top-0 w-full z-[21]" />
         </div>
     </div>
 </template>
@@ -46,6 +55,7 @@ import { humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
+import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 
 const props = defineProps({
     /** 传入的评论对象 */
@@ -55,4 +65,8 @@ const props = defineProps({
         required: true
     }
 })
+
+function handleRealImage({index, image}){
+    // Do nothing
+}
 </script>

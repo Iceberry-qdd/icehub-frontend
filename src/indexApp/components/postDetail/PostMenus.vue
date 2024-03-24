@@ -91,17 +91,17 @@
 
 <script setup>
 import { reactive, computed, onMounted, onUnmounted, inject } from 'vue'
-import BookmarkAction from '@/indexApp/components/menus/PostCardMenus/BookmarkAction.vue'
-import FollowingAction from '@/indexApp/components/menus/PostCardMenus/FollowingAction.vue'
-import LinkCopyAction from '@/indexApp/components/menus/PostCardMenus/LinkCopyAction.vue'
-import VisibilityAction from '@/indexApp/components/menus/PostCardMenus/VisibilityAction.vue'
-import DeletePostAction from '@/indexApp/components/menus/PostCardMenus/DeletePostAction.vue'
-import BlockPostAction from '@/indexApp/components/menus/PostCardMenus/BlockPostAction.vue'
-import BlockUserAction from '@/indexApp/components/menus/PostCardMenus/BlockUserAction.vue'
-import PosterGenerateAction from '@/indexApp/components/menus/PostCardMenus/PosterGenerateAction.vue'
-import AdminOperationAction from '@/indexApp/components/menus/PostCardMenus/AdminOperationAction.vue'
-import ReportPostProblemAction from '@/indexApp/components/menus/PostCardMenus/ReportPostProblemAction.vue'
-import CloseReviewAction from '@/indexApp/components/menus/PostCardMenus/CloseReviewAction.vue'
+import BookmarkAction from '@/indexApp/components/menus/postCardMenus/BookmarkAction.vue'
+import FollowingAction from '@/indexApp/components/menus/postCardMenus/FollowingAction.vue'
+import LinkCopyAction from '@/indexApp/components/menus/postCardMenus/LinkCopyAction.vue'
+import VisibilityAction from '@/indexApp/components/menus/postCardMenus/VisibilityAction.vue'
+import DeletePostAction from '@/indexApp/components/menus/postCardMenus/DeletePostAction.vue'
+import BlockPostAction from '@/indexApp/components/menus/postCardMenus/BlockPostAction.vue'
+import BlockUserAction from '@/indexApp/components/menus/postCardMenus/BlockUserAction.vue'
+import PosterGenerateAction from '@/indexApp/components/menus/postCardMenus/PosterGenerateAction.vue'
+import AdminOperationAction from '@/indexApp/components/menus/postCardMenus/AdminOperationAction.vue'
+import ReportPostProblemAction from '@/indexApp/components/menus/postCardMenus/ReportPostProblemAction.vue'
+import CloseReviewAction from '@/indexApp/components/menus/postCardMenus/CloseReviewAction.vue'
 
 const props = defineProps({
     /** 传入的帖子对象 */

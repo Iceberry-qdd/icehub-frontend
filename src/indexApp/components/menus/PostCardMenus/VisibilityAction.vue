@@ -45,7 +45,7 @@ import { reactive, computed } from 'vue'
 import { modifyPostVisibility } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { inject } from 'vue'
-import VisibilityChoiceAction from '@/indexApp/components/menus/PostEditorMenus/VisibilityAction.vue'
+import VisibilityChoiceAction from '@/indexApp/components/menus/postEditorMenus/VisibilityAction.vue'
 
 const { dismissPostMenus } = inject('dismissPostMenus')
 const emits = defineEmits(['showSubAction'])

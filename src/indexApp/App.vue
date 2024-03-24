@@ -157,7 +157,7 @@ async function curUser() {
         console.error(e)
         localStorage.removeItem('TOKEN')
         localStorage.removeItem('CUR_USER')
-        self.location = 'auth.html'
+        location = `${window.origin}/auth.html?url=${window.location.pathname}`
     }
 }
 

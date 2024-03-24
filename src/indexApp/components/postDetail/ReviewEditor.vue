@@ -41,21 +41,39 @@
                     v-model="state.content"
                     :disabled="state.loading"
                     :class="{ 'text-gray-400': state.loading }"
-                    class="bg-transparent break-all focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden pr-2 resize-none text-[1rem] text-justify tracking-wide"
+                    class="bg-transparent break-all focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden resize-none text-[1rem] text-justify tracking-wide"
                     :maxlength="state.maxContentWordCount + 50"
                     rows="2"
                     placeholder="发布评论"
                     @input="resize">
                 </textarea>
+                <Transition name="fade">
+                    <ImagePickerAction
+                        v-if="state.imgList.length > 0"
+                        :img-list="state.imgList"
+                        :images-info="state.imageListInfo">
+                    </ImagePickerAction>
+                </Transition>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <div v-if="state.content.length > 0" class="flex flex-row items-center justify-between">
+                <div v-if="state.content.length > 0" class="flex flex-row items-center justify-between mt-2">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <div v-if="!state.loading" class="flex flex-row gap-x-1 items-center">
                         <!-- TODO implement it. -->
-                        <div v-if="showUnImpl">
+                        <input
+                            v-show="false"
+                            id="imgFile"
+                            type="file"
+                            name="imgFile"
+                            multiple="true"
+                            accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
+                            @change="clickFileSelector" />
+                        <div
+                            v-if="showUnImpl"
+                            @click="preChoosePics">
                             <span
                                 title="添加图片"
-                                class="material-icons-round text-[1.25rem]">
+                                class="material-icons-round text-[1.25rem]"
+                                :class="[hasImage ? 'active' : '']">
                                 add_photo_alternate
                             </span>
                         </div>
@@ -119,15 +137,35 @@
     </div>
 </template>
 
+<style scoped>
+.fade-enter-active {
+    transition: opacity 0.15s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: opacity 0.15s ease-in-out;
+}
+
+.fade-enter-from {
+    opacity: 0;
+}
+
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
+
+<!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { reactive, computed, inject } from 'vue'
-import { reviewing } from '@/indexApp/js/api.js'
+import { reactive, computed, inject, defineAsyncComponent, ref } from 'vue'
+import { reviewing, uploadImages } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
-import EmojiPanel from '@/indexApp/components/menus/PostEditorMenus/EmojiPanel.vue'
+import EmojiPanel from '@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
+const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
 const emits = defineEmits(['dismiss'])
 const props = defineProps({
@@ -160,6 +198,17 @@ const props = defineProps({
 const { newReview } = inject('newReview')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
+const imageListInfo = ref([
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" }
+    ])
 const state = reactive({
     content: '',
     loading: false,
@@ -168,6 +217,9 @@ const state = reactive({
     showMarkdownPanel: false,
     maxContentWordCount: 300,
     textAreaId: props.fromReviewPanel ? 'reply-input' : 'review-input',
+    imgList: [],
+    imageListInfo: imageListInfo,
+    images: null
 })
 
 const emojiSwitchId = computed(() => {
@@ -211,12 +263,26 @@ async function submitReview() {
             'parentId': props.parent?.id,
             'userId': state.curUser.id
         }
+
+        if (state.imgList.length > 0) {
+            const response = await uploadImages(state.imgList)
+            //if (!response.ok) throw new Error(response)
+            state.images = JSON.parse(response)
+
+            for (let i = 0; i < state.images.length; i++) {
+                state.images[i].hidden = state.imageListInfo[i].hidden
+                state.images[i].altText = state.imageListInfo[i].altText
+            }
+            data.images = state.images
+        }
+
         const response = await reviewing(data)
         if (!response.ok) throw new Error((await response.json()).error)
         const result = await response.json()
         newReview({ review: result })
         state.content = ''
         emits('dismiss')
+        reset()
 
         const reviewId = result.id
         const receiverId = !data.parentId ? props.post.user.id : props.parent.user.id
@@ -267,5 +333,39 @@ const submitPostBtnClass = computed(() => ({
 function insertEmoji({ unified }) {
     const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
     state.content = state.content.concat(emoji)
+}
+
+function clickFileSelector() {
+    const imgFileSelector = document.getElementById("imgFile")
+    imgFileSelector.click()
+    const imgs = Array.of(...imgFileSelector.files)
+
+    if (imgs.length == 0) return
+    state.imgList.push(...imgs)
+
+    if (state.imgList.length > 9) { store.setWarningMsg('最多仅支持上传9张图片！') }
+
+    while (state.imgList.length > 9) { state.imgList.pop() }
+}
+
+function preChoosePics() {
+    choosePics()
+}
+
+function choosePics() {
+    const imgFileSelector = document.getElementById("imgFile")
+    imgFileSelector.click()
+}
+
+const hasImage = computed(() => {
+    return state.imgList.length > 0
+})
+
+//防止重复提交上一次的内容
+function reset(){
+    state.content = ''
+    state.imgList = []
+    state.imageListInfo = imageListInfo
+    state.images = null
 }
 </script>

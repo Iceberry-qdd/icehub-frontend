@@ -140,9 +140,9 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
-import VisibilityAction from '@/indexApp/components/menus/PostEditorMenus/VisibilityAction.vue'
+import VisibilityAction from '@/indexApp/components/menus/postEditorMenus/VisibilityAction.vue'
 import { VueShowdown } from 'vue-showdown'
-const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/PostEditorMenus/EmojiPanel.vue'))
+const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 
 const route = useRoute()
 const props = defineProps({

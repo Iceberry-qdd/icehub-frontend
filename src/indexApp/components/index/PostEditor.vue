@@ -31,6 +31,14 @@
                     name="post"
                     @input="resize">
                 </textarea>
+                <Transition name="fade">
+                    <ImagePickerAction
+                        v-if="hasImage"
+                        class="mb-2 ml-2"
+                        :img-list="state.imgList"
+                        :images-info="state.imageListInfo">
+                    </ImagePickerAction>
+                </Transition>
             </div>
             <div class="flex flex-row justify-between px-2">
                 <div class="content-center flex flex-row gap-x-1 items-center justify-start text-base">
@@ -40,7 +48,7 @@
                         type="file"
                         name="imgFile"
                         multiple="true"
-                        accept="image/*"
+                        accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
                         @change="clickFileSelector" />
                     <div
                         id="imagePickerAction"
@@ -51,17 +59,10 @@
                             <span
                                 title="添加图片"
                                 class="material-icons-round"
-                                :class="[hasImage || state.showImagePanel ? 'active' : '']">
+                                :class="[hasImage ? 'active' : '']">
                                 add_photo_alternate
                             </span>
                         </div>
-                        <Transition name="fade">
-                            <ImagePickerAction
-                                v-if="state.showImagePanel == true"
-                                :img-list="state.imgList"
-                                :images-info="state.data.imagesInfo">
-                            </ImagePickerAction>
-                        </Transition>
                     </div>
 
                     <div
@@ -249,10 +250,10 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import { VueShowdown } from 'vue-showdown'
 import { renderMath } from '@/indexApp/js/katexConfig.js'
 import { getDateTimeRange } from '@/indexApp/utils/formatUtils.js'
-const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/PostEditorMenus/EmojiPanel.vue'))
-const VisibilityAction = defineAsyncComponent(() => import('@/indexApp/components/menus/PostEditorMenus/VisibilityAction.vue'))
-const DateTimePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/PostEditorMenus/DateTimePickerAction.vue'))
-const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/PostEditorMenus/ImagePickerAction.vue'))
+const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
+const VisibilityAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/VisibilityAction.vue'))
+const DateTimePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/DateTimePickerAction.vue'))
+const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
 const { postingNew } = inject('postingNew')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
@@ -260,28 +261,27 @@ const state = reactive({
     maxContentWordCount: 300,
     content: "",
     imgList: [],
+    imageListInfo: [
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" },
+        { hidden: false, altText: null, contentType: "" }
+    ],
     isLoading: false,
     result: "",
-    showImagePanel: false,
     data: {
         allowReview: true,
         content: "",
         top: false,
-        attachmentsUrl: [],
+        images: null,
         type: "NORMAL",
         status: 'PUBLIC',
         createdTime: null,
-        imagesInfo: [
-            { hidden: "false", altText: "", contentType: "" },
-            { hidden: "false", altText: "", contentType: "" },
-            { hidden: "false", altText: "", contentType: "" },
-            { hidden: "false", altText: "", contentType: "" },
-            { hidden: "false", altText: "", contentType: "" },
-            { hidden: "false", altText: "", contentType: "" },
-            { hidden: "false", altText: "", contentType: "" },
-            { hidden: "false", altText: "", contentType: "" },
-            { hidden: "false", altText: "", contentType: "" }
-        ],
         userId: JSON.parse(localStorage.getItem("CUR_USER")).id
     },
     showVisibilityPanel: false,
@@ -337,16 +337,16 @@ async function submitPost() {
 
         state.isLoading = true
         state.data.content = state.content
-        for (let i = 0; i < 9; i++) {
-            if (state.imgList.length <= i) break
-            const mediaType = state.imgList[i].type
-            state.data.imagesInfo[i].contentType = mediaType
-        }
-
+        
         if (state.imgList.length > 0) {
-            const response = await uploadImages(state.imgList, state.data.imagesInfo)
+            const response = await uploadImages(state.imgList)
             //if (!response.ok) throw new Error(response)
-            state.data.attachmentsUrl = JSON.parse(response)
+            state.data.images = JSON.parse(response)
+
+            for (let i = 0; i < state.data.images.length; i++) {
+                state.data.images[i].hidden = state.imageListInfo[i].hidden
+                state.data.images[i].altText = state.imageListInfo[i].altText
+            }
         }
 
         const response = state.data.createdTime ? await postingPlan(state.data) : await posting(state.data)
@@ -370,7 +370,7 @@ function reset(){
     state.data.allowReview = true
     state.data.content = ''
     state.data.top = false
-    state.data.attachmentsUrl = []
+    state.data.images = null
     state.data.createdTime = null
     state.top = false
     state.data.status = 'PUBLIC'

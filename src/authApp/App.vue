@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
-        <Auth></Auth>
+        <Auth @referer="referer"></Auth>
     </div>
 </template>
 
@@ -28,11 +28,26 @@ main {
 </style>
 
 <script setup>
-import { onMounted, onUnmounted, reactive, defineAsyncComponent } from 'vue'
+import { onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 import Auth from '@/authApp/components/Auth.vue'
 import 'material-icons/iconfont/round.css'
 import { store } from '@/indexApp/js/store.js'
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
+
+function referer() {
+    if (window.location.search && window.location.search.includes('url=')) {
+        const referer = window.location.search.substring(1)
+            .split('&')
+            .find(it => it.substring(0, it.indexOf('=')) === 'url')
+            .split('=')
+            .at(1)
+        window.location = `${window.location.origin}${referer}`
+        return
+    }
+
+    window.location = window.location.origin
+    return
+}
 
 onMounted(() => {
     document.getElementById('pre-loading').style.display = 'none'
@@ -40,6 +55,11 @@ onMounted(() => {
     window.addEventListener('popstate', function () {
         history.pushState(null, null, document.URL)
     })
+
+    const token = localStorage.getItem('TOKEN')
+    if (token) {
+        referer()
+    }
 })
 
 onUnmounted(() => {

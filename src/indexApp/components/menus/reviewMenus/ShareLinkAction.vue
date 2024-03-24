@@ -2,9 +2,9 @@
     <div
         class="flex flex-rows gap-x-3 items-center justify-start"
         @click="handleClick">
-        <span class="material-icons-round no-hover p-0 text-[1.2rem]">share</span>
+        <span class="material-icons-round no-hover p-0 text-[16pt]">copy</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">分享该用户</div>
+        <div class="btn-no-select">复制链接</div>
     </div>
 </template>
 
@@ -12,9 +12,9 @@
 import { inject } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 
-const { dismissProfileMenus }  = inject('dismissProfileMenus')
+const { dismissReviewMenus }  = inject('dismissReviewMenus')
 const props = defineProps({
-    /** 该用户主页的链接 */
+    /** 该评论的链接 */
     link: {
         type: String,
         required: true
@@ -32,12 +32,12 @@ function copyLinkV1() {
         el.select()
         document.execCommand('copy')
         document.body.removeChild(el)
-        store.setSuccessMsg('分享链接已复制至剪贴板！')
+        store.setSuccessMsg('已复制至剪贴板！')
     } catch (e) {
         store.setErrorMsg(e.message)
         console.log(e)
     }finally{
-        dismissProfileMenus()
+        dismissReviewMenus()
     }
 }
 
@@ -61,7 +61,7 @@ async function copyLinkV2() {
         store.setErrorMsg('链接复制失败！')
         console.log(e)
     }finally{
-        dismissProfileMenus()
+        dismissReviewMenus()
     }
 }
 </script>

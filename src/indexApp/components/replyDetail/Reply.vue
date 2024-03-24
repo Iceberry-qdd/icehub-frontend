@@ -1,19 +1,19 @@
 <template>
     <div>
-        <div class="border-b-[1px] border-gray-100 flex flex-col gap-y-4 px-[1rem] py-[1rem] relative">
+        <div class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 px-[1rem] py-[1rem] relative">
             <div
                 v-if="state.tieSub == 'mid'"
-                class="absolute bg-gray-200 h-full left-[2.7rem] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-full left-[2.2rem] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="state.tieSub == 'top'"
-                class="absolute bg-gray-200 left-[2.7rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="state.tieSub == 'bottom'"
-                class="absolute bg-gray-200 h-[2.5rem] left-[2.7rem] timeline-bottom top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-[2.5rem] left-[2.2rem] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
                 class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(state.reply.id)" />
-            <div class="flex flex-row items-center justify-between pl-[0.5rem]">
+            <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row gap-x-4 items-center relative">
                     <Transition name="fade">
                         <UserInfoPop
@@ -57,17 +57,34 @@
                 </div>
             </div>
 
-            <div class="overflow-x-hidden pl-[4rem] text-[12pt]">
+            <div class="overflow-x-hidden pl-[3.5rem] text-[12pt]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.reply.content"></VueShowdown>
+                <ImageGrid
+                    v-if="state.reply.images?.length"
+                    :id="state.reply.id"
+                    :images="state.reply.images"
+                    type="review"
+                    class="bottom-[0.5rem] pt-[0.5rem] relative z-[20]"
+                    @real-image="handleRealImage">
+                </ImageGrid>
             </div>
-            <div class="flex flex-row justify-between pl-[4rem] z-20">
+            <div class="flex flex-row justify-between pl-[3.5rem] z-20">
                 <button
+                    :id="`rmb-${state.reply.id}`"
                     type="button"
+                    title="更多"
                     class="btn flex flex-row gap-x-2 items-center op text-[11pt]"
                     @click="toggleMenu">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <MoreTwo theme="outline" size="20" fill="#333" :stroke-width="3"></MoreTwo>
+                    <More theme="outline" size="20" fill="#333" :stroke-width="3"></More>
+                    <Transition name="fade">
+                        <ReviewMenu
+                            v-if="state.showReplyMenu"
+                            class="absolute bottom-[1rem]"
+                            :review="state.reply">
+                        </ReviewMenu>
+                    </Transition>
                 </button>
                 <button
                     type="button"
@@ -102,7 +119,7 @@
             </div>
             <div
                 v-if="showMoreReplyButton"
-                class="hover:underline ml-[4rem] text-[#0d6efd] text-[11pt] z-20"
+                class="hover:underline ml-[3.5rem] text-[#0d6efd] text-[11pt] z-[19]"
                 :class="[state.isLoading ? 'pointer-events-none' : 'cursor-pointer']">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <IconLoading v-if="state.isLoading == true" class="h-5 text-slate-500 w-5"></IconLoading>
@@ -137,18 +154,20 @@
 
 <script setup>
 // 只包括回复，单独从Review复制出来
-import { computed, reactive } from 'vue'
+import { computed, reactive, defineAsyncComponent, provide } from 'vue'
 import { humanizedTime, humanizedNumber, standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import { dislikeAReview, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { Like, Message, MoreTwo } from '@icon-park/vue-next'
+import { Like, Message, More } from '@icon-park/vue-next'
 import { useRouter } from 'vue-router'
-import UserInfoPop from '@/indexApp/components/postDetail/UserInfoPop.vue'
+import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import ReviewPanel from '@/indexApp/components/replyDetail/ReviewPanel.vue'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
+const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewMenu.vue'))
+const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
+const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 
 const router = useRouter()
 const props = defineProps({
@@ -192,7 +211,8 @@ const state = reactive({
     tieSub: props.tieSub,
     showUserInfoPop: false,
     isLoading: false,
-    showReplyPanel: false
+    showReplyPanel: false,
+    showReplyMenu: false
 })
 
 const replyTo = computed(() => {
@@ -266,6 +286,16 @@ function routeToReplyDetail(replyId) {
 }
 
 function toggleMenu(){
-    // TODO Not implement
+    state.showReplyMenu = true
 }
+
+function handleRealImage({index, image}){
+    state.reply.images[index] = image
+}
+
+function dismissReplyMenus() {
+    state.showReplyMenu = false
+}
+
+provide('dismissReviewMenus', { dismissReviewMenus: dismissReplyMenus })
 </script>

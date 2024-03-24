@@ -181,6 +181,7 @@ import { JSEncrypt } from 'jsencrypt'
 import { reactive, onMounted, defineAsyncComponent } from 'vue'
 const Avatar = defineAsyncComponent(() => import('@/components/Avatar.vue'))
 
+const emits = defineEmits(['referer'])
 const state = reactive({
     nickname: "",
     password: "",
@@ -202,7 +203,7 @@ function toggleRegister() {
 
 function toggleLogin(username = "", refresh = false) {
     if (refresh) {
-        top.location = `http://${window.document.location.host}/auth.html`
+        location = `${window.location.origin}/auth.html`
         return
     }
 
@@ -249,8 +250,7 @@ async function tryLogin(skipEncodePassword) {
         const token = await response.text()
         localStorage.setItem("TOKEN", token)
         store.setSuccessMsg("登录成功！")
-        self.location = 'index'
-        window.history.forward(1);
+        emits('referer')
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -300,21 +300,17 @@ async function tryRegister() {
 }
 
 onMounted(() => {
-    const token = localStorage.getItem('TOKEN')
-    if(token){
-        self.location = 'index'
-        return
-    }
     const queryParams = window.document.location.search
+            .substring(1)
+            .split('&')
+            .find(it => it.substring(0, it.indexOf('=')) === 'ph')
     if (!queryParams) {
         toggleLogin()
         return
     }
 
     try {
-        const quickLoginData = queryParams.substring(1, queryParams.length)
-            .split('&')
-            .filter(it => it.substring(0, it.indexOf('=')) === 'ph')
+        const quickLoginData = queryParams
             .map(it => it.substring(it.indexOf('=') + 1, it.length))
             .map(it => atob(it))
             .map(it => { return { u: decodeURIComponent(it.split(':')[0]), p: it.split(':')[1] } })[0]

@@ -33,6 +33,7 @@ const state = reactive({
     post: null
 })
 
+// TODO 退出时保存用户的评论草稿
 function dismiss() {
     emits('dismiss')
     document.querySelector("body").removeAttribute("style")

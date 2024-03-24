@@ -90,55 +90,14 @@
                 :post-id="state.post.rootId"
                 class="mt-[0.5rem] relative z-[96]">
             </RepostCard>
-            <div
+            <ImageGrid
                 v-if="hasPics"
-                class="bottom-[0.5rem] flex flex-row flex-wrap gap-[0.3rem] mt-[0.5rem]">
-                <div
-                    v-for="(pic, idx) in state.post.images"
-                    :key="idx"
-                    :style="wrapperWidth"
-                    class="overflow-hidden relative rounded-[4px] z-[97]">
-                    <IconAltOn
-                        v-if="pic.altText && state.showAltText[idx] == false"
-                        class="absolute bg-black/75 bottom-[0.3rem] box-content cursor-pointer h-[1.2rem] p-[0.25rem] right-[0.3rem] rounded-full w-[1.2rem] z-[100]"
-                        @mouseenter="state.showAltText[idx] = true">
-                    </IconAltOn>
-                    <Transition name="alt">
-                        <div
-                            v-if="pic.altText && state.showAltText[idx]"
-                            class="absolute altTextContainer bg-black/75 bottom-0 break-words cursor-text h-fit leading-[1.5rem] max-h-full overflow-scroll p-3 text-[11pt] text-justify text-white w-full z-[100]"
-                            @mouseleave="state.showAltText[idx] = false">
-                            {{ pic.altText }}
-                        </div>
-                    </Transition>
-                    <div
-                        v-if="pic.hidden"
-                        class="absolute flex flex-row h-full items-center justify-center w-full z-[99]">
-                        <div
-                            class="bg-black/75 cursor-pointer h-fit px-3 py-2 rounded-[8px] text-[11pt] text-white w-fit"
-                            @click="getImageUrlIgnoreNSFW(idx)">
-                            已隐藏
-                        </div>
-                    </div>
-                    <picture @click="showSlide(state.post.images, idx)">
-                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                        <source :srcset="getImageUrl(pic)" type="image/webp" />
-                        <img
-                            :style="{'background-image': `url(${pic.thumb})`}"
-                            :class="mPicClass"
-                            loading="lazy"
-                            class="duration-[400ms] hover:scale-[1.2] object-cover pic rounded-[4px] transition-transform w-full"
-                            :src="pic.thumb"
-                            :alt="pic.altText" />
-                    </picture>
-                    <div
-                        v-if="pic.contentType == 'image/gif' && !state.showOriginUrl[idx]"
-                        class="absolute cursor-pointer h-full items-center justify-center right-0 text-white top-0 w-full"
-                        @click="playAnimateImage(idx)">
-                        <IconGif class="bg-[#000000BB] h-[2.5rem] rounded-full text-white w-[2.5rem]"></IconGif>
-                    </div>
-                </div>
-            </div>
+                :id="state.post.id"
+                :images="state.post.images"
+                type="post"
+                class="bottom-[0.5rem]  mt-[0.5rem]"
+                @real-image="handleRealImage">
+            </ImageGrid>
         </div>
 
         <div
@@ -214,45 +173,20 @@
 .fade-leave-to {
     opacity: 0;
 }
-
-.alt-enter-active {
-    transition: translate 0.3s ease-in-out;
-}
-
-.alt-leave-active {
-    transition: translate 0.3s ease-in-out;
-}
-
-.alt-enter-from {
-    translate: 0 100%;
-}
-
-.alt-leave-to {
-    translate: 0 100%;
-}
-
-.altTextContainer::-webkit-scrollbar {
-    display: none;
-    width: 0 !important;
-    height: 0 !important;
-    -webkit-appearance: none;
-    background: transparent;
-}
 </style>
 
 <!-- eslint-disable vue/no-ref-object-reactivity-loss -->
 <script setup>
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import { computed, onMounted, reactive, ref, provide, defineAsyncComponent } from 'vue'
-import { likeAPost, dislikeAPost, getUserInfoByNickname, getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
+import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/indexApp/js/api.js'
 import { useRouter, useRoute } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
 import { Down, Like, Message, Share } from '@icon-park/vue-next'
-import IconGif from '@/components/icons/IconGif.vue'
-import IconAltOn from '@/components/icons/IconAltOn.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
+import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 const PostMenus = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostMenus.vue')) //NOTE 组件字母小写会导致hmr失效
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
@@ -272,32 +206,18 @@ const cardMask = ref()
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     post: props.post,
-    showOriginUrl: [false, false, false, false, false, false, false, false, false],
     reaction: [false, props.post.liked, false],
     showUserInfoPop: false,
     isShowMenu: false,
-    showAltText: [false, false, false, false, false, false, false, false, false],
     user: JSON.parse(localStorage.getItem("CUR_USER")),
     shrinkContent: false,
     showRepostPanel: false
-})
-
-const gridColCount = computed(() => {
-    const picCount = state.post.images?.length || 0
-    if (picCount === 0) return 0
-    if (picCount === 1) return 1
-    if ((picCount > 1 && picCount <= 2) || picCount == 4) return 2
-    return 3
 })
 
 const isIndentBody = computed(() => {
     const isPostDetailRoute = route.name === 'postDetail'
     const isMarkdown = state.post.type === 'MARKDOWN'
     return !isPostDetailRoute && !isMarkdown
-})
-
-const wrapperWidth = reactive({
-    width: `calc((100% - 0.3rem * ${gridColCount.value - 1}) / ${gridColCount.value})`
 })
 
 const cardContainerClass = reactive({
@@ -320,20 +240,7 @@ const cardButtonClass = reactive({
     'mr-0': !isIndentBody.value
 })
 
-const mPicClass = reactive({
-    'aspect-square': gridColCount.value !== 1,
-    'max-h-[90vh]': gridColCount.value === 1,
-    'bg-no-repeat': true,
-    'bg-cover': true,
-    'bg-center': true
-})
-
-function getImageUrl(image) {
-    const { url, hidden } = image
-    return hidden ? url : `${image.url}?width=560`
-}
-
-function routeToPost(postId) {
+function routeToPost(postId, hash = undefined) {
     store.setSelectPost(state.post)
     router.push({ name: 'postDetail', params: { id: postId } })
 }
@@ -389,10 +296,6 @@ async function toggleLike() {
 
 function repostIt() { state.showRepostPanel = true }
 
-function showSlide(images, idx) {
-    store.showSlide(images, idx)
-}
-
 const hasPics = computed(() => {
     return state.post.images?.length !== undefined
 })
@@ -427,8 +330,6 @@ const cardMaskClass = computed(() => ({
     'bg-transparent': !state.shrinkContent
 }))
 
-function playAnimateImage(idx) { state.showOriginUrl[idx] = true }
-
 const postStatus = computed(() => {
     const status = state.post.status
     const statusMap = new Map([
@@ -442,23 +343,6 @@ const postStatus = computed(() => {
     return statusMap.get(status)
 })
 
-async function getImageUrlIgnoreNSFW(index) {
-    const postId = state.post.id
-    try {
-        const response = await getImageUrlIgnoreHidden(postId, index)
-        if (!response.ok) throw new Error((await response.json()).error)
-
-        const result = await response.json()
-
-        if(result){
-            state.post.images[index] = result
-        }
-    } catch (e) {
-        store.setErrorMsg(e.message)
-        console.error(e)
-    }
-}
-
 function setSuitableHeight() {
     if (state.post.type == 'MARKDOWN' && cardMask.value.clientHeight > window.innerHeight / 2) {
         state.shrinkContent = true
@@ -467,6 +351,10 @@ function setSuitableHeight() {
 
 function dismissPostMenus() {
     state.isShowMenu = false
+}
+
+function handleRealImage({index, image}){
+    state.post.images[index] = image
 }
 
 provide('dismissPostMenus', { dismissPostMenus })

@@ -4,7 +4,7 @@
         @click="showConfirmDialogBox">
         <span class="material-icons-round no-hover p-0 text-[16pt] text-red-500">delete</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">删除此内容</div>
+        <div class="btn-no-select text-red-500">删除此内容</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmDialogBoxUi.show"
@@ -16,24 +16,25 @@
 </template>
 
 <script setup>
-import { reactive, inject } from 'vue'
-import { deleteOnePost } from '@/indexApp/js/api.js'
+import { reactive, inject, computed } from 'vue'
+import { deleteOneReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 
 const props = defineProps({
-    /** 传入的帖子对象 */
-    post: {
+    /** 传入的评论对象 */
+    review: {
         type: Object,
         required: true
     }
 })
-const { deletePostOnUi } = inject('deletePostOnUi')
+const { deleteReviewOnUi } = inject('deleteReviewOnUi')
+const { deleteReplyOnUi } = inject('deleteReplyOnUi')
 
 const state = reactive({
     confirmDialogBoxUi: {
         show: false,
-        title: '确定要删除此帖子吗？',
+        title: '确定要删除此评论吗？',
         confirmButton: {
             text: '删除',
             color: 'rgb(239 68 68)',
@@ -52,6 +53,14 @@ const state = reactive({
             color: 'rgb(239 68 68)'
         }
     }
+})
+
+const isReview = computed(() => {
+    return props.review.parentId === null
+})
+
+const isReply = computed(() => {
+    return props.review.parentId !== null
 })
 
 function showConfirmDialogBox() {
@@ -78,18 +87,26 @@ function choose(args) {
 async function deleteIt() {
     try {
         toggleDialogLoading(true)
-        const response = await deleteOnePost(props.post)
+        const response = await deleteOneReview(props.review.id)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
         if (result == false) throw new Error("删除失败！")
         store.setSuccessMsg("已删除！")
-        deletePostOnUi(props.post.id)
+
+        if (isReply.value) {
+            deleteReplyOnUi(props.review.id)
+        }
+
+        if (isReview.value) {
+            deleteReviewOnUi(props.review.id)
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
     } finally {
         toggleDialogLoading(false)
+        dismissConfirmDialogBox()
     }
 }
 </script>

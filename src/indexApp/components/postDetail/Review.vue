@@ -1,20 +1,20 @@
 <template>
     <div>
         <div
-            class="border-b-[1px] border-gray-100 cursor-pointer flex flex-col gap-y-4 hover:bg-[#f5f5f5] px-[1rem] py-[1rem] relative">
+            class="border-b-[1px] border-gray-100 cursor-pointer flex flex-col gap-y-2 hover:bg-[#f5f5f5] px-[1rem] py-[1rem] relative">
             <div
                 v-if="tieSub == 'mid'"
-                class="absolute bg-gray-200 h-full left-[2.7rem] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-full left-[2.2rem] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="tieSub == 'top'"
-                class="absolute bg-gray-200 left-[2.7rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="tieSub == 'bottom'"
-                class="absolute bg-gray-200 h-[2.5rem] left-[2.7rem] timeline-bottom top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-[2.5rem] left-[2.2rem] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
                 class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(review.id)" />
-            <div class="flex flex-row items-center justify-between pl-[0.5rem]">
+            <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row gap-x-4 items-center relative">
                     <Transition name="fade">
                         <UserInfoPop
@@ -57,17 +57,34 @@
                     </div>
                 </div>
             </div>
-            <div class="pl-[4rem] text-[12pt]">
+            <div class="pl-[3.5rem] text-[12pt]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.review.content"></VueShowdown>
+                <ImageGrid
+                    v-if="state.review.images?.length"
+                    :id="state.review.id"
+                    :images="state.review.images"
+                    type="review"
+                    class="bottom-[0.5rem] pt-[0.5rem] relative z-[20]"
+                    @real-image="handleRealImage">
+                </ImageGrid>
             </div>
-            <div class="flex flex-row justify-between pl-[4rem] z-20">
+            <div class="flex flex-row justify-between pl-[3.5rem] z-20">
                 <button
+                    :id="`rmb-${state.review.id}`"
                     type="button"
-                    class="btn flex flex-row gap-x-2 items-center op text-[11pt]"
+                    title="更多"
+                    class="btn flex flex-row gap-x-2 items-center op relative text-[11pt]"
                     @click="toggleMenu">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <MoreTwo theme="outline" size="20" fill="#333" :stroke-width="3"></MoreTwo>
+                    <More theme="outline" size="20" fill="#333" :stroke-width="3"></More>
+                    <Transition name="fade">
+                        <ReviewMenu
+                            v-if="state.showReviewMenu"
+                            class="absolute bottom-0"
+                            :review="state.review">
+                        </ReviewMenu>
+                    </Transition>
                 </button>
                 <button
                     type="button"
@@ -164,17 +181,20 @@
 import { computed, reactive, onMounted, provide, defineAsyncComponent } from 'vue'
 import { dislikeAReview, getSubReviewById, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { Like, Message, MoreTwo } from '@icon-park/vue-next'
-import { useRouter } from 'vue-router'
+import { Like, Message, More } from '@icon-park/vue-next'
+import { useRouter, useRoute } from 'vue-router'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
+import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 const Reply = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/Reply.vue'))
+const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewMenu.vue'))
 import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
+const route = useRoute()
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -198,6 +218,7 @@ const state = reactive({
     lastTimestamp: new Date().getTime(),
     showUserInfoPop: false,
     showReplyPanel: false,
+    showReviewMenu: false    
 })
 
 const replyTo = computed(() => {
@@ -289,12 +310,33 @@ function newReview({ review }) {
 }
 
 function toggleMenu(){
-    //TODO Not implement
+    state.showReviewMenu = true
+}
+
+function handleRealImage({index, image}){
+    state.review.images[index] = image
+}
+
+function dismissReviewMenus() {
+    state.showReviewMenu = false
 }
 
 onMounted(() => {
     getReply()
 })
 
+function deleteReplyOnUi(replyId){
+    if (!replyId) return
+    const preDeleteReplyIndex = state.replies.findIndex(it => it.id == replyId)
+    if (preDeleteReplyIndex != -1) {
+        state.replies.splice(preDeleteReplyIndex, 1)
+    }
+    if(route.name === 'replyDetail'){
+        router.back()
+    }
+}
+
+provide('dismissReviewMenus', { dismissReviewMenus: dismissReviewMenus })
 provide('newReview', { newReview })
+provide('deleteReplyOnUi', { deleteReplyOnUi: deleteReplyOnUi })
 </script>

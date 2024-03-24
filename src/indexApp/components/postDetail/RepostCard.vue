@@ -37,7 +37,7 @@
                         已隐藏
                     </div>
                 </div>
-                <picture v-if="state.post.images.length > 0">
+                <picture v-if="state.post.images?.length">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <source :srcset="getImageUrl(state.post.images[0])" type="image/webp" />
                     <img
@@ -128,12 +128,12 @@ function getImageUrl(image) {
 }
 
 const isCoverHidden = computed(() => {
-    if (!state.post.images[0]) return false
+    if (!state.post.images) return false
     else return state.post.images[0].hidden
 })
 
 const isGifCover = computed(() => {
-    if (!state.post.images[0]) return false
+    if (!state.post.images) return false
     else return state.post.images[0].contentType == 'image/gif'
 })
 

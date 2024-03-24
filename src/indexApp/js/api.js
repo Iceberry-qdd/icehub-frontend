@@ -43,16 +43,12 @@ export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
  * @param {array} filesInfo 图片数组描述信息
  * @returns Promise<any>
  */
-export function uploadImages(files, filesInfo) {
+export function uploadImages(files) {
     return new Promise((resolve, reject) => {
         let formData = new FormData()
         for (let i = 0; i < files.length; i++) {
             formData.append('files', files[i], files[i].name)
         }
-
-        const filesInfoStr = JSON.stringify(filesInfo)
-
-        formData.append('filesInfo', new Blob([filesInfoStr], { type: 'application/json' }))
 
         const xhr = new XMLHttpRequest()
         xhr.withCredentials = true;
@@ -536,13 +532,14 @@ export function updatePost(post) {
 }
 
 /**
- * 查询给定图片的完整链接，忽略hidden警告
- * @param {string} postId 帖子id
- * @param {int} imageId 图片id
- * @returns 该图片的完整链接
+ * 查询给定图片的原图链接，忽略hidden警告
+ * @param {string} id type的id
+ * @param {int} imageId 图片id，即该图片所在的数组的下标
+ * @param {String} type 何种类型的id, post | review
+ * @returns 该图片的原始链接
  */
-export function getImageUrlIgnoreHidden(postId, imageId) {
-    return fetch(`${BASE_URL}/post/image?pid=${postId}&attrId=${imageId}&ih=true`, {
+export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
+    return fetch(`${BASE_URL}/${type}/image?id=${id}&attrId=${imageId}&ih=true`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -838,5 +835,21 @@ export function logout(){
         redirect: 'follow',
         credentials: 'same-origin',
         cache: 'no-cache'
+    })
+}
+
+/**
+ * 根据id删除评论
+ * @param {String} id 评论id
+ * @returns 删除结果，true | false
+ */
+export function deleteOneReview(id){
+    return fetch(`${BASE_URL}/review/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': TOKEN,
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
     })
 }
