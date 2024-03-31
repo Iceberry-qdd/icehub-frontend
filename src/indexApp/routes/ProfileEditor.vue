@@ -7,7 +7,7 @@
             :show-menu="state.headerConfig.showMenu"
             :menu-icon="state.headerConfig.menuIcon"
             :icon-tooltip="state.headerConfig.iconTooltip"
-            @handle-action="handleAction">
+            @handle-action="handleSubmit">
         </Header>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div v-if="state.isLoading == true" class="loading">
@@ -17,23 +17,23 @@
         <div class="h-[20.7rem] relative w-full">
             <div class="banner-cover">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <span class="material-icons-round" @click="showImageCropper('banner')"> edit </span>
+                <span class="material-icons-round" @click="showImageChangeProper('banner')"> edit </span>
             </div>
             <div class="avatar-cover">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <span class="material-icons-round" @click="showImageCropper('avatar')"> edit </span>
+                <span class="material-icons-round" @click="showImageChangeProper('avatar')"> edit </span>
             </div>
         </div>
 
         <div class="absolute top-[56px] w-[calc(100%*5/13)]">
             <Banner
-                :user="state.user"
-                class="h-[20.7rem] object-center object-cover w-full">
+                :user="state.newUser"
+                class="h-[20.7rem] object-center object-cover w-full z-[1]">
             </Banner>
         </div>
-        <div class="-translate-y-[2.5rem]">
+        <div class="-translate-y-[2.5rem] relative z-[97]">
             <Avatar
-                :user="state.user"
+                :user="state.newUser"
                 class="h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]">
             </Avatar>
             <div class="text-info">
@@ -135,6 +135,22 @@
                 </div>
             </div>
         </div>
+        <Teleport to="#app">
+            <ImageChangeProper
+                v-if="state.imageChangeProper.show"
+                :from="state.imageChangeProper.from"
+                @dismiss="state.imageChangeProper.show = false"
+                @select="handleImageChangeProperSelect">
+            </ImageChangeProper>
+        </Teleport>
+        <Teleport to="#app">
+            <EmojiAvatarEditor
+                v-if="state.imageChangeProper.select === 'emoji'"
+                :avatar="state.newUser.avatar"
+                @dismiss="state.imageChangeProper.select = undefined"
+                @avatar="setAvatar">
+            </EmojiAvatarEditor>
+        </Teleport>
     </div>
 </template>
 
@@ -220,15 +236,18 @@
 }
 </style>
 
+<!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { reactive, computed, watch, ref, onUnmounted } from 'vue'
+import { reactive, computed, watch, ref, onUnmounted, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
+const ImageChangeProper = defineAsyncComponent(() => import('@/indexApp/components/profile/ImageChangeProper.vue'))
+const EmojiAvatarEditor = defineAsyncComponent(() => import('@/indexApp/components/profile/EmojiAvatarEditor.vue'))
 
 const router = useRouter()
 const state = reactive({
@@ -258,6 +277,11 @@ const state = reactive({
         menuIcon: 'done',
         iconTooltip: '提交资料',
         width: 0
+    },
+    imageChangeProper: {
+        show: false,
+        from: 'avatar',
+        select: undefined
     }
 })
 
@@ -269,7 +293,7 @@ function showImageCropper(mode) {
     document.querySelector("body").setAttribute("style", "overflow:hidden")
 }
 
-function handleAction() {
+function handleSubmit() {
     state.newUser.gender = selected.value
     submitProfile()
 }
@@ -435,6 +459,34 @@ const isWebsiteValid = computed(() => {
 
     return { 'class': 'is-invalid', 'msg': '暂不支持您输入的网站！' }
 })
+
+function showImageChangeProper(from) {
+    state.imageChangeProper.show = true
+    state.imageChangeProper.from = from
+}
+
+function handleImageChangeProperSelect({ select }) {
+    state.imageChangeProper.select = select
+}
+
+watch(() => state.imageChangeProper.select, (newVal, oldVal) => {
+    if (newVal === 'restore') {
+        switch (state.imageChangeProper.from) {
+            case 'avatar':
+                state.newUser.avatar = null
+                break;
+            case 'banner':
+                state.newUser.banner = null
+                break;
+            default:
+                break;
+        }
+    }
+})
+
+function setAvatar({ avatar }) {
+    state.newUser.avatar = avatar
+}
 
 onUnmounted(() => {
     store.clearCroppedImage()

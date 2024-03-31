@@ -14,7 +14,7 @@
         <div
             v-else
             class="flex items-center justify-center"
-            :class="noPicBgClass"
+            :style="{'background-color': props.user?.avatar?.emoji?.bgColor || '#3b82f6'}"
             v-bind="$attrs">
             <!-- eslint-disable-next-line vue/static-class-names-order, vue/singleline-html-element-content-newline -->
             <div class="text-white font-bold text-[45%]">{{ noPicAvatarClass }}</div>
@@ -37,11 +37,6 @@ const props = defineProps({
         type: Object,
         required: true
     }
-})
-
-const noPicBgClass = computed(() => {
-    const bgColor = props.user?.avatar?.emoji?.bgColor
-    return bgColor ? `bg-[${bgColor}]` : 'bg-blue-500'
 })
 
 const noPicAvatarClass = computed(() => {

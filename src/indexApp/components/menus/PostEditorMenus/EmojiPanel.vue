@@ -1,7 +1,7 @@
 <template>
-    <div class="bg-white max-h-[18rem] min-h-[8rem] overflow-x-hidden overflow-y-scroll panel pr-[1px] px-1 ring-1 ring-slate-900/5 rounded-[6px] shadow-lg">
+    <div class="bg-white overflow-x-hidden overflow-y-scroll panel pr-[1px] px-1 rounded-[6px]">
         <div
-            v-if="state.historyEmojis.length > 0"
+            v-if="showHistory"
             class="bg-white border-b-[1px] category gap-1 grid grid-cols-7 px-2 py-2 sticky top-0 z-[99]">
             <button
                 v-for="(emoji, index) in state.historyEmojis"
@@ -19,11 +19,13 @@
             <div v-for="(emojiList, catalogue) in state.emojiMap" :key="catalogue">
                 <div
                     :id="catalogue"
-                    :class="[state.historyEmojis.length > 0 ? 'top-[2.8rem]' : 'top-0']"
+                    :class="[showHistory ? 'top-[2.8rem]' : 'top-0']"
                     class="backdrop-blur-sm bg-[#FFFFFFDD] px-2 py-1 sticky text-[11pt] z-[98]">
                     {{ categoryZh[catalogue] }}
                 </div>
-                <div class="gap-2 grid grid-cols-6 p-2">
+                <div
+                    :style="{'grid-template-columns': `repeat(${props.column}, minmax(0, 1fr))`}"
+                    class="gap-2 grid pl-1">
                     <button
                         v-for="(emoji) in emojiList"
                         :key="emoji.unified"
@@ -55,16 +57,29 @@
 }
 </style>
 
+<!-- eslint-disable vue/no-unused-properties -->
 <script setup>
-import { reactive, onMounted, onUnmounted } from 'vue'
+import { reactive, onMounted, onUnmounted, computed } from 'vue'
 import emojiPack from 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/+esm'
 
 const emits = defineEmits(['insertEmojiCode', 'dismissEmojiPanel'])
 const props = defineProps({
-        /** 触发该组件的元素id，用于检测点击事件关闭用 */
+    /** 触发该组件的元素id，用于检测点击事件关闭用 */
     switchId: {
         type:String,
         required:true
+    },
+    /** 是否显示历史记录行 */
+    showHistory: {
+        type: Boolean,
+        required: false,
+        default: true
+    },
+    /** 每行表情个数，支持取值范围[1,12] */
+    column: {
+        type:Number,
+        required: false,
+        default: 6
     }
 })
 
@@ -90,8 +105,14 @@ const state = reactive({
     historyEmojis: JSON.parse(localStorage.getItem('historyEmoji')) || []
 })
 
+const showHistory = computed(() => {
+    return state.historyEmojis.length > 0 && props.showHistory
+})
+
 function chooseEmoji(emoji) {
-    storeEmojiToLocalStorage(emoji)
+    if(showHistory.value){
+        storeEmojiToLocalStorage(emoji)
+    }
     emits('insertEmojiCode', emoji)
 }
 
@@ -116,6 +137,7 @@ function emojiCode(unified){
 }
 
 onMounted(() => {
+    if(!props.switchId) return
     const emojiPanel = document.querySelector(`#${props.switchId}`)
     document.querySelector('#app').addEventListener('click', function (event) {
         if (emojiPanel && !emojiPanel.contains(event.target)) {

@@ -92,7 +92,7 @@
                                     v-if="state.showEmojiPanel"
                                     id="emojiPanel"
                                     :switch-id="emojiSwitchId"
-                                    class="absolute min-h-max min-w-max top-[2.5rem] z-[99]"
+                                    class="absolute max-h-[18rem] min-h-[8rem] min-w-max ring-1 ring-slate-900/5 shadow-lg top-[2.5rem] z-[99]"
                                     @dismiss-emoji-panel="dismissEmojiPanel"
                                     @insert-emoji-code="insertEmoji">
                                 </EmojiPanel>
