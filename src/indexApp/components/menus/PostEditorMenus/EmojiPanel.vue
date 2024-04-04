@@ -1,20 +1,19 @@
 <template>
     <div class="bg-white overflow-x-hidden overflow-y-scroll panel pr-[1px] px-1 rounded-[6px]">
         <div
-            v-if="showHistory"
+            v-if="props.showHistory && state.historyEmojis.length > 0"
             class="bg-white border-b-[1px] category gap-1 grid grid-cols-7 px-2 py-2 sticky top-0 z-[99]">
             <button
-                v-for="(emoji, index) in state.historyEmojis"
+                v-for="(unified, index) in state.historyEmojis"
                 :key="index"
                 type="button"
-                :title="emoji.short_name"
                 class="aria-selected border border-transparent cursor-pointer flex focus:bg-[#cfe2ff] h-[2rem] hover:bg-[#f1f3f4] items-center justify-center p-1 rounded-[8px] w-[2rem]"
-                @click="chooseEmoji(emoji)">
-                <span>{{ emojiCode(emoji.unified) }}</span>
+                @click="chooseEmoji(unified)">
+                <span>{{ emojiCode({ unified: unified }) }}</span>
             </button>
         </div>
 
-        <div class="">
+        <div class="relative">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-for="(emojiList, catalogue) in state.emojiMap" :key="catalogue">
                 <div
@@ -24,16 +23,34 @@
                     {{ categoryZh[catalogue] }}
                 </div>
                 <div
+                    id="emojiGrid"
                     :style="{'grid-template-columns': `repeat(${props.column}, minmax(0, 1fr))`}"
                     class="gap-2 grid pl-1">
                     <button
                         v-for="(emoji) in emojiList"
+                        :id="emoji.unified"
                         :key="emoji.unified"
                         type="button"
-                        :title="emoji.name"
-                        class="border border-transparent cursor-pointer flex focus:bg-[#cfe2ff] h-[2.5rem] hover:bg-[#f1f3f4] items-center justify-center p-1 rounded-[8px] text-[16pt] w-[2.5rem]"
-                        @click="chooseEmoji(emoji)">
-                        <span>{{ emojiCode(emoji.unified) }}</span>
+                        :title="emoji.short_name"
+                        class="border border-transparent cursor-pointer flex flex-col focus:bg-[#cfe2ff] h-[2.5rem] hover:bg-[#f1f3f4] items-center justify-center p-1 relative rounded-[8px] text-[16pt] w-[2.5rem]"
+                        @mouseenter.self="toggleSkinPanel(emoji, true)"
+                        @mouseleave.self="toggleSkinPanel(emoji, false)">
+                        <span @click="chooseEmoji(emoji.unified)">{{ emojiCode(emoji) }}</span>
+                        <Transition name="fade">
+                            <div
+                                v-if="emoji.skin_variations && state.showSkinPanel[emoji.unified]"
+                                id="skinPanel"
+                                :style="skinPanelStyle(emoji.unified)"
+                                class="absolute bg-white bottom-full flex flex-row flex-wrap gap-1 px-1 py-1 ring-1 ring-gray-100 rounded-[8px] shadow-md w-[calc(2rem*5+0.25rem*4+0.5rem)] z-[98]">
+                                <div
+                                    v-for="(skinVariation, skinCode) in emoji.skin_variations"
+                                    :key="skinVariation.unified"
+                                    class="box-border flex focus:bg-[#cfe2ff] h-[2rem] hover:bg-[#f1f3f4] items-center justify-center p-2 rounded-[8px] w-[2rem]"
+                                    @click.self="chooseEmoji(skinVariation.unified)">
+                                    {{ emojiCode(emoji, skinCode) }}
+                                </div>
+                            </div>
+                        </Transition>
                     </button>
                 </div>
             </div>
@@ -54,6 +71,22 @@
     -webkit-appearance: none;
     background: #00000033;
     border-radius: 9999px;
+}
+
+.fade-enter-active {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-enter-from {
+    opacity: 0;
+}
+
+.fade-leave-to {
+    opacity: 0;
 }
 </style>
 
@@ -100,40 +133,69 @@ const emojis = category.reduce((obj, key) => (
     obj[key] = emojiPack.filter(e => e.category === key && e.has_img_apple === true)
         .sort((a, b) => a.sort_order - b.sort_order),
     obj), {})
+const showSkinPanel = emojiPack.filter(emoji => emoji?.skin_variations).map(emoji => {return {unified: emoji.unified, show: false}})
+
 const state = reactive({
     emojiMap: emojis,
-    historyEmojis: JSON.parse(localStorage.getItem('historyEmoji')) || []
+    historyEmojis: JSON.parse(localStorage.getItem('historyEmoji')) || [],
+    showSkinPanel: showSkinPanel
 })
 
 const showHistory = computed(() => {
     return state.historyEmojis.length > 0 && props.showHistory
 })
 
-function chooseEmoji(emoji) {
-    if(showHistory.value){
-        storeEmojiToLocalStorage(emoji)
+function chooseEmoji(unified) {
+    if(props.showHistory){
+        storeEmojiToLocalStorage(unified)
     }
-    emits('insertEmojiCode', emoji)
+    emits('insertEmojiCode', unified)
 }
 
-function storeEmojiToLocalStorage(emoji) {
+function storeEmojiToLocalStorage(unified) {
     const KEY = 'historyEmoji'
-    let historyEmojis = state.historyEmojis
-    while (historyEmojis.length >= 7) {
-        historyEmojis.pop()
+    
+    while (state.historyEmojis.length >= 7) {
+        state.historyEmojis.pop()
     }
-    historyEmojis.unshift(emoji)
 
-    const obj = {}
-    historyEmojis = historyEmojis.reduce((total, next) => {
-        obj[next.name] ? '' : obj[next.name] = true && total.push(next)
-        return total
-    }, [])
-    localStorage.setItem(KEY, JSON.stringify(historyEmojis))
+    const index = state.historyEmojis.findIndex(it => it === unified)
+    if(index != -1){
+        state.historyEmojis.splice(index, 1)
+    }
+
+    state.historyEmojis.unshift(unified)
+    localStorage.setItem(KEY, JSON.stringify(state.historyEmojis))
 }
 
-function emojiCode(unified){
-    return String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
+function emojiCode({ unified, skin_variations }, selectSkin){
+    if(!selectSkin){
+        return String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
+    }
+
+    if(skin_variations && skin_variations[selectSkin]){
+        return String.fromCodePoint(...skin_variations[selectSkin].unified.split('-').map(it => `0x${it}`))
+    }
+}
+
+function skinPanelStyle(emojiBtnId){
+    const emojiBtnOffsetLeft = document.getElementById(emojiBtnId)?.offsetLeft
+    const emojiBtnOffsetWidth = document.getElementById(emojiBtnId)?.offsetWidth
+    const skinPanelOffsetLeft = document.getElementById('skinPanel')?.offsetLeft ?? -73 // 经测试，skinPanel.offsetLeft实际是个常量-73
+    const emojiGridOffsetWidth = document.getElementById('emojiGrid')?.offsetWidth
+
+    if(emojiBtnOffsetLeft + skinPanelOffsetLeft < 0){
+        return {'translate': `${-emojiBtnOffsetLeft - skinPanelOffsetLeft}px 0`}
+    }else if(emojiBtnOffsetLeft - skinPanelOffsetLeft + emojiBtnOffsetWidth > emojiGridOffsetWidth){
+        return {'translate': `${emojiGridOffsetWidth - emojiBtnOffsetLeft + skinPanelOffsetLeft - emojiBtnOffsetWidth}px 0`}
+    }
+    return {}
+}
+
+function toggleSkinPanel(emoji, show){
+    if(emoji.skin_variations){
+        state.showSkinPanel[emoji.unified] = show
+    }
 }
 
 onMounted(() => {

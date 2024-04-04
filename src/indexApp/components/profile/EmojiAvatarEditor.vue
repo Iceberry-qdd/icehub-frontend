@@ -37,7 +37,7 @@
                     背景颜色
                 </div>
             </div>
-            <div class="h-[calc(40rem-15rem-2.5rem)] overflow-x-hidden overflow-y-auto rounded-b-[8px]">
+            <div class="h-[calc(40rem-15rem-2.5rem)] overflow-x-hidden overflow-y-auto panel rounded-b-[8px]">
                 <EmojiPanel
                     v-if="state.showEmojiPanel"
                     switch-id=""
@@ -78,6 +78,20 @@ details>summary>.material-icons-round {
     bottom: 0;
     transition: transform 100ms ease-in-out;
 }
+
+.panel::-webkit-scrollbar {
+    width: 8px !important;
+    -webkit-appearance: none;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+.panel::-webkit-scrollbar-thumb {
+    width: 8px !important;
+    -webkit-appearance: none;
+    background: #00000033;
+    border-radius: 9999px;
+}
 </style>
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
@@ -109,7 +123,7 @@ const state = reactive({
     selectColor: props?.avatar?.emoji?.bgColor || '#3b82f6'
 })
 
-function insertEmojiCode({ unified }){
+function insertEmojiCode(unified){
     const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
     state.user.avatar.emoji.emoji = emoji
 }
