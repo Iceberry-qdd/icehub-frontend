@@ -3,7 +3,7 @@
         <Avatar
             :user="props.user"
             class="border-[4px] border-white h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]"
-            @click="props.user && props.user.avatarUrl ? showSlide([props.user.avatarUrl], 0) : () => { }">
+            @click="props.user?.avatar?.url ? showSlide([props.user.avatar], 0) : ''">
         </Avatar>
         <div class="flex flex-col gap-y-1 px-[1rem]">
             <div class="flex flex-nowrap flex-row justify-between">

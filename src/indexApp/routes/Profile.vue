@@ -11,7 +11,6 @@
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
             :menu-icon="state.headerConfig.menuIcon"
-            :menu-action="state.headerConfig.menuAction"
             :icon-tooltip="state.headerConfig.iconTooltip"
             @handle-action="handleAction">
         </Header>
@@ -27,7 +26,7 @@
         <Banner
             :user="state.user"
             class="h-[20rem] object-cover w-full"
-            @click="state.user && state.user.bannerUrl ? showSlide([state.user.bannerUrl], 0) : ''">
+            @click="state.user && state.user.banner ? showSlide([state.user.banner], 0) : ''">
         </Banner>
         <div class="-translate-y-[2.5rem]">
             <ProfileInfo :user="state.user"></ProfileInfo>

@@ -1,12 +1,12 @@
 <template>
     <div class="cursor-pointer">
-        <picture v-if="props.user?.avatar && !props.user?.avatar?.emoji">
+        <picture v-if="state.avatar && !props.user?.avatar?.emoji">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <source :srcset="`${props.user.avatar.url}?width=80`" type="image/webp" />
+            <source :srcset="srcset" type="image/webp" />
             <img
-                :style="{'background-image': `url(${props.user.avatar.thumb})`}"
-                :src="props.user.avatar.thumb"
-                class="bg-center bg-cover bg-no-repeat"
+                :style="{'background-image': `url(${state.avatar.thumb})`}"
+                :src="state.avatar.thumb"
+                class="bg-center bg-cover bg-no-repeat object-cover"
                 loading="lazy"
                 v-bind="$attrs"
                 @click="routeToProfile" />
@@ -22,8 +22,9 @@
     </div>
 </template>
 
+<!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { computed } from 'vue'
+import { computed, reactive, watch } from 'vue'
 
 // eslint-disable-next-line vue/no-unsupported-features
 defineOptions({
@@ -39,6 +40,10 @@ const props = defineProps({
     }
 })
 
+const state = reactive({
+    avatar: props.user.avatar
+})
+
 const noPicAvatarClass = computed(() => {
     const emoji = props.user?.avatar?.emoji?.emoji
     return emoji ? emoji : props.user.nickname.charAt(0).toUpperCase()
@@ -48,4 +53,20 @@ const noPicAvatarClass = computed(() => {
 function routeToProfile(){
     // TODO Not implement
 }
+
+const srcset = computed(() => {
+    if(props.user.avatar instanceof File){
+        return state.avatar.url
+    }else{
+        return `${state.avatar.url}?width=600`
+    }
+})
+
+watch(() => props.user.avatar, (newVal, oldVal) => {
+    if(props.user.avatar instanceof File){
+        let URL = window.URL || window.webkitURL
+        let imgUrl = URL.createObjectURL(props.user.avatar)
+        state.avatar = {thumb: imgUrl, url: imgUrl}
+    }
+})
 </script>

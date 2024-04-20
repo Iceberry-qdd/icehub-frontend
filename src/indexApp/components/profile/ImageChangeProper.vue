@@ -45,7 +45,7 @@ const fromText = computed(() => {
 const state = reactive({
     items: [
         { id: 1, name: '从文件选择', icon: 'add_photo_alternate', show: true, select: 'file' },
-        { id: 2, name: '使用表情', icon: 'face', show: props.from === 'avatar', select: 'emoji' },
+        { id: 2, name: '使用表情', icon: 'mood', show: props.from === 'avatar', select: 'emoji' },
         { id: 3, name: `恢复默认${fromText.value}`, icon: 'restore', show: true, select: 'restore' }
     ]
 })

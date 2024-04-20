@@ -179,7 +179,7 @@ const state = reactive({
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people', picked: false },
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock', picked: false },
     ],
-    maxContentWordCount: 300,
+    maxContentWordCount: 1000,
     showEmojiPanel: false
 })
 

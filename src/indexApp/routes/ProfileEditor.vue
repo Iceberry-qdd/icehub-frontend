@@ -39,7 +39,7 @@
             <div class="text-info">
                 <div class="form-floating mb-3">
                     <input
-                        id="floatingInput"
+                        id="nicknameInput"
                         v-model.trim="state.newUser.nickname"
                         type="text"
                         class="form-control"
@@ -47,7 +47,7 @@
                         placeholder="用户名"
                         required
                         @blur="checkUsernameValid" />
-                    <label for="floatingInput">用户名</label>
+                    <label for="nicknameInput">用户名</label>
                     <!-- <div class="valid-feedback">Looks good!</div> -->
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="invalid-feedback">{{ isUNameValid.msg }}</div>
@@ -64,28 +64,28 @@
                 </div>
                 <div class="form-floating mb-3">
                     <input
-                        id="floatingInput"
+                        id="cityInput"
                         v-model.trim="state.newUser.city"
                         type="text"
                         class="form-control"
                         placeholder="所在城市" />
-                    <label for="floatingInput">所在城市</label>
+                    <label for="cityInput">所在城市</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input
-                        id="floatingInput"
+                        id="ageInput"
                         v-model.trim="state.newUser.age"
                         type="number"
                         :class="isAgeValid.class"
                         class="form-control"
                         placeholder="年龄" />
-                    <label for="floatingInput">年龄</label>
+                    <label for="ageInput">年龄</label>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="invalid-feedback">{{ isAgeValid.msg }}</div>
                 </div>
                 <div class="form-floating mb-3">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <select v-model="selected" class="form-select">
+                    <select id="genderInput" v-model="selected" class="form-select">
                         <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
                         <option disabled value="">请选择性别</option>
                         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
@@ -95,46 +95,47 @@
                         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                         <option value="UNKNOWN">不设置</option>
                     </select>
-                    <label for="floatingInput">性别</label>
+                    <label for="genderInput">性别</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input
-                        id="floatingInput"
+                        id="emailInput"
                         v-model.trim="state.newUser.email"
                         type="email"
                         :class="isEmailValid.class"
                         class="form-control"
                         placeholder="电子邮件" />
-                    <label for="floatingInput">电子邮件</label>
+                    <label for="emailInput">电子邮件</label>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="invalid-feedback">{{ isEmailValid.msg }}</div>
                 </div>
                 <div class="form-floating mb-3">
                     <input
-                        id="floatingInput"
+                        id="phoneInput"
                         v-model.trim="state.newUser.phoneNumber"
                         type="tel"
                         :class="isPhoneNoValid.class"
                         class="form-control"
                         placeholder="手机号码" />
-                    <label for="floatingInput">手机号码</label>
+                    <label for="phoneInput">手机号码</label>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="invalid-feedback">{{ isPhoneNoValid.msg }}</div>
                 </div>
                 <div class="form-floating mb-3">
                     <input
-                        id="floatingInput"
+                        id="websiteInput"
                         v-model.trim="state.newUser.website"
                         type="url"
                         class="form-control"
                         :class="isWebsiteValid.class"
                         placeholder="个人网站" />
-                    <label for="floatingInput">个人网站</label>
+                    <label for="websiteInput">个人网站</label>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="invalid-feedback">{{ isWebsiteValid.msg }}</div>
                 </div>
             </div>
         </div>
+        <!-- TODO 此组件有时dom已加载，但显示不出来 -->
         <Teleport to="#app">
             <ImageChangeProper
                 v-if="state.imageChangeProper.show"
@@ -150,6 +151,15 @@
                 @dismiss="state.imageChangeProper.select = undefined"
                 @avatar="setAvatar">
             </EmojiAvatarEditor>
+        </Teleport>
+        <Teleport to="#app">
+            <ImageCropper
+                v-if="state.imageChangeProper.select === 'file'"
+                :mode="state.cropper.mode"
+                :aspect-ratio="state.cropper.aspectRatio"
+                @image-file="handleImageFile"
+                @dismiss="state.imageChangeProper.select = undefined">
+            </ImageCropper>
         </Teleport>
     </div>
 </template>
@@ -248,26 +258,14 @@ import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 const ImageChangeProper = defineAsyncComponent(() => import('@/indexApp/components/profile/ImageChangeProper.vue'))
 const EmojiAvatarEditor = defineAsyncComponent(() => import('@/indexApp/components/profile/EmojiAvatarEditor.vue'))
+const ImageCropper = defineAsyncComponent(() => import('@/indexApp/components/profile/ImageCropper.vue'))
 
 const router = useRouter()
 const state = reactive({
+    /** 校验对比信息用，旧数据 */
     user: JSON.parse(localStorage.getItem("CUR_USER")),
-    newUser: {
-        id: JSON.parse(localStorage.getItem("CUR_USER")).id,
-        nickname: JSON.parse(localStorage.getItem("CUR_USER")).nickname,
-        avatarUrl: null,
-        bannerUrl: null,
-        age: JSON.parse(localStorage.getItem("CUR_USER")).age,
-        gender: JSON.parse(localStorage.getItem("CUR_USER")).gender,
-        address: JSON.parse(localStorage.getItem("CUR_USER")).address,
-        email: JSON.parse(localStorage.getItem("CUR_USER")).email,
-        city: JSON.parse(localStorage.getItem("CUR_USER")).city,
-        phoneNumber: JSON.parse(localStorage.getItem("CUR_USER")).phoneNumber,
-        website: JSON.parse(localStorage.getItem("CUR_USER")).website,
-        remark: JSON.parse(localStorage.getItem("CUR_USER")).remark
-    },
-    newAvatar: null,
-    newBanner: null,
+    /** 校验对比信息用 新数据*/
+    newUser: JSON.parse(localStorage.getItem("CUR_USER")),
     isLoading: false,
     isUsernameExisted: false,
     headerConfig: {
@@ -282,16 +280,14 @@ const state = reactive({
         show: false,
         from: 'avatar',
         select: undefined
+    },
+    cropper: {
+        mode: 'aspectRatio',
+        aspectRatio: 1
     }
 })
 
 const selected = ref(state.user.gender)
-
-function showImageCropper(mode) {
-    store.setCroppedImageMode(mode)
-    store.showImageCropper()
-    document.querySelector("body").setAttribute("style", "overflow:hidden")
-}
 
 function handleSubmit() {
     state.newUser.gender = selected.value
@@ -316,20 +312,15 @@ async function submitProfile() {
     state.isLoading = true
     try {
         //FIXME 提交前检查是否修改过
-        // if(state.newUser == state.user){
-        //     store.setWarningMsg("您没有更改资料中的任何一项，因此您的个人资料将保持现状！")
-        //     return
-        // }
+        if(state.user.nickname !== state.newUser.nickname){
+            checkUsernameValid()
+            if (state.isUsernameExisted) throw new Error('该用户名已被使用！')
+        }
 
-        checkUsernameValid()
-        if (state.isUsernameExisted) throw new Error('该用户名已被使用！')
-
-        state.newAvatar = store.CROPPED_IMAGE.avatar
-        state.newBanner = store.CROPPED_IMAGE.banner
-        if (state.newAvatar) {
+        if (state.newUser.avatar instanceof File) {
             await uploadAvatar()
         }
-        if (state.newBanner) {
+        if (state.newUser.banner instanceof File) {
             await uploadBanner()
         }
 
@@ -349,50 +340,18 @@ async function submitProfile() {
 }
 
 async function uploadAvatar() {
-    try {
-        const data = {
-            type: state.newAvatar.split(',')[0].replace('data:', '').replace(';base64', ''),
-            data: state.newAvatar.split(',')[1],
-        }
-        const response = await uploadUserAvatar(data)
+        const response = await uploadUserAvatar(state.newUser.avatar)
         if (!response.ok) throw new Error((await response.json()).error)
 
-        state.newUser.avatarUrl = await response.json()
-    } catch (e) {
-        store.setErrorMsg(e.message)
-        console.error(e)
-    }
+        state.newUser.avatar = (await response.json())[0]
 }
 
 async function uploadBanner() {
-    try {
-        const data = {
-            type: state.newBanner.split(',')[0].replace('data:', '').replace(';base64', ''),
-            data: state.newBanner.split(',')[1],
-        }
-        const response = await uploadUserBanner(data)
+        const response = await uploadUserBanner(state.newUser.banner)
         if (!response.ok) throw new Error((await response.json()).error)
 
-        state.newUser.bannerUrl = await response.json()
-    } catch (e) {
-        store.setErrorMsg(e.message)
-        console.error(e)
-    }
+        state.newUser.banner = (await response.json())[0]
 }
-
-watch(() => store.CROPPED_IMAGE.banner, (newVal, oldVal) => {
-    state.user.bannerUrl = {
-        previewUrl: newVal,
-        originUrl: newVal
-    }
-})
-
-watch(() => store.CROPPED_IMAGE.avatar, (newVal, oldVal) => {
-    state.user.avatarUrl = {
-        previewUrl: newVal,
-        originUrl: newVal
-    }
-})
 
 const isUNameValid = computed(() => {
     if (state.newUser.nickname == state.user.nickname) {
@@ -404,6 +363,7 @@ const isUNameValid = computed(() => {
         return { 'class': 'is-invalid', 'msg': '此用户名已被使用！' }
     }
 })
+
 const isAgeValid = computed(() => {
     if (!state.newUser.age || state.newUser.age == state.user.age) {
         return { 'class': '', 'msg': '' }
@@ -463,6 +423,17 @@ const isWebsiteValid = computed(() => {
 function showImageChangeProper(from) {
     state.imageChangeProper.show = true
     state.imageChangeProper.from = from
+    switch (from) {
+        case 'avatar':
+            state.cropper.aspectRatio = 1
+            break
+        case 'banner':
+            state.cropper.aspectRatio = 1.5
+            break
+        default:
+            state.cropper.aspectRatio = 1
+            break
+    }
 }
 
 function handleImageChangeProperSelect({ select }) {
@@ -483,6 +454,19 @@ watch(() => state.imageChangeProper.select, (newVal, oldVal) => {
         }
     }
 })
+
+function handleImageFile({ file }){
+    switch (state.imageChangeProper.from) {
+        case 'avatar':
+            state.newUser.avatar = file
+            break;
+        case 'banner':
+            state.newUser.banner = file
+            break;
+        default:
+            break;
+    }
+}
 
 function setAvatar({ avatar }) {
     state.newUser.avatar = avatar

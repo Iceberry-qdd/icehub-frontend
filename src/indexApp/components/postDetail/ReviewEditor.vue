@@ -17,7 +17,7 @@
             <div class="h-fit z-10">
                 <Avatar
                     :user="state.curUser"
-                    class="h-[2.5rem] max-w-none rounded-[6px] w-[2.5rem]">
+                    class="h-[2.5rem] max-w-none rounded-[6px] text-[2.5rem] w-[2.5rem]">
                 </Avatar>
             </div>
             <div class="w-full">
@@ -215,7 +215,7 @@ const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     showEmojiPanel: false,
     showMarkdownPanel: false,
-    maxContentWordCount: 300,
+    maxContentWordCount: 1000,
     textAreaId: props.fromReviewPanel ? 'reply-input' : 'review-input',
     imgList: [],
     imageListInfo: imageListInfo,

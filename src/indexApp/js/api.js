@@ -315,16 +315,13 @@ export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
 
 /**
  * 上传用户banner图
- * @param {string} data 以base64编码的图片数据
+ * @param {string} file 图片文件
  * @returns 用户的新banner图信息
  */
-export function uploadUserBanner(data) {
+export function uploadUserBanner(file) {
     let formData = new FormData()
-    const fileInfo = JSON.stringify({ hidden: false, altText: '', contentType: data.type })
-    const image = JSON.stringify(data)
-    formData.append('file', new Blob([image], { type: 'application/json' }))
-    formData.append('fileInfo', new Blob([fileInfo], { type: 'application/json' }))
-    return fetch(`${BASE_URL}/object/upload/image/banner`, {
+    formData.append('files', file, file.name)
+    return fetch(`${BASE_URL}/object/upload/image`, {
         method: 'POST',
         headers: {
             'Authorization': TOKEN
@@ -337,16 +334,13 @@ export function uploadUserBanner(data) {
 
 /**
  * 上传用户avatar图
- * @param {string} data 以base64编码的图片数据
+ * @param {string} file 图片文件
  * @returns 用户的新avatar图信息
  */
-export function uploadUserAvatar(data) {
+export function uploadUserAvatar(file) {
     let formData = new FormData()
-    const fileInfo = JSON.stringify({ hidden: false, altText: '', contentType: data.type })
-    const image = JSON.stringify(data)
-    formData.append('file', new Blob([image], { type: 'application/json' }))
-    formData.append('fileInfo', new Blob([fileInfo], { type: 'application/json' }))
-    return fetch(`${BASE_URL}/object/upload/image/avatar`, {
+    formData.append('files', file, file.name)
+    return fetch(`${BASE_URL}/object/upload/image`, {
         method: 'POST',
         headers: {
             'Authorization': TOKEN

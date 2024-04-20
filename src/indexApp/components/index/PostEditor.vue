@@ -258,7 +258,7 @@ const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/componen
 const { postingNew } = inject('postingNew')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
-    maxContentWordCount: 300,
+    maxContentWordCount: 1000,
     content: "",
     imgList: [],
     imageListInfo: [
