@@ -88,20 +88,44 @@
             <div
                 v-if="state.originImgFile"
                 class="basis-2/5 flex flex-col overflow-x-hidden overflow-y-auto relative">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <canvas ref="canvas" class="h-auto max-h-[20rem] object-contain p-3 w-full" />
-                <div class="content-start flex-1 gap-4 grid grid-cols-[repeat(4,3.5rem)] justify-center pb-3 place-items-center w-full">
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">rotate_left</div>
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">rotate_right</div>
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">rotate_90_degrees_cw</div>
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">rotate_90_degrees_ccw</div>
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">flip</div>
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">crop_rotate</div>
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">zoom_out_map</div>
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">transform</div>
-                    <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">lock</div>
+                <div
+                    v-if="!showUnImpl"
+                    class="flex h-[calc(100%-2.25rem-0.5rem*2)] items-center justify-center w-full">
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <canvas ref="canvas" class="h-auto max-h-full object-contain p-3 w-full" />
                 </div>
-                <div class="backdrop-blur-md border-t-[1px] bottom-0 flex flex-row gap-x-3 h-fit items-center justify-center py-2 rounded-br-[8px] sticky w-[calc(50rem*2/5)] w-full">
+                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                <canvas v-else ref="canvas" class="h-auto max-h-[20rem] object-contain p-3 w-full" />
+                <div
+                    v-if="showUnImpl"
+                    class="content-start flex-1 gap-4 grid grid-cols-[repeat(4,3.5rem)] justify-center pb-3 place-items-center w-full">
+                    <div class="flex flex-col gap-y-1 items-center justify-center">
+                        <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">rotate_90_degrees_ccw</div>
+                        <div class="text-[0.8rem] text-zinc-500">左旋90°</div>
+                    </div>
+                    <div class="flex flex-col gap-y-1 items-center justify-center">
+                        <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">rotate_90_degrees_cw</div>
+                        <div class="text-[0.8rem] text-zinc-500">右旋90°</div>
+                    </div>
+                    <div class="flex flex-col gap-y-1 items-center justify-center">
+                        <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">flip</div>
+                        <div class="text-[0.8rem] text-zinc-500">水平翻转</div>
+                    </div>
+                    <div class="flex flex-col gap-y-1 items-center justify-center">
+                        <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rotate-90 rounded-full">flip</div>
+                        <div class="text-[0.8rem] text-zinc-500">垂直翻转</div>
+                    </div>
+                    <div class="flex flex-col gap-y-1 items-center justify-center">
+                        <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">transform</div>
+                        <div class="text-[0.8rem] text-zinc-500">自由裁剪</div>
+                    </div>
+                    <div class="flex flex-col gap-y-1 items-center justify-center">
+                        <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">settings_backup_restore</div>
+                        <div class="text-[0.8rem] text-zinc-500">复原</div>
+                    </div>
+                    <!-- <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">lock</div> -->
+                </div>
+                <div class="backdrop-blur-md border-t-[1px] bottom-0 flex flex-row gap-x-3 h-fit items-center justify-center py-2 rounded-br-[8px] sticky w-full">
                     <div
                         class="active:bg-blue-500/75 bg-blue-500 cursor-pointer h-[2.25rem] hover:bg-blue-600 px-3 py-2 rounded-full text-[0.9rem] text-center text-white w-[40%]"
                         @click="applyImg">
@@ -138,6 +162,7 @@
 <script setup>
 import { reactive, computed, onMounted,onUnmounted, ref } from 'vue'
 
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const props = defineProps({
     /** 裁剪后图像的宽高比 */
     aspectRatio: {
@@ -187,7 +212,8 @@ const state = reactive({
         width: 400,
         height: 400
     },
-    originImgFile: props.originImgFile
+    originImgFile: props.originImgFile,
+    originImageRotate: 0
 })
 
 const pointSize = computed(() => ({
@@ -438,7 +464,7 @@ function initCropper(){
  * 将canvas中的图片转换为File对象
  */
 function applyImg(){
-    updateCanvas(state.mask.width * state.picZoomRatio, state.mask.height * state.picZoomRatio)
+    updateCanvas(horizontalLineLength.value * state.picZoomRatio, verticalLineLength.value * state.picZoomRatio)
     const base64Img = canvas.value.toDataURL(state.originImgFile.type)
     const base64Data = atob(base64Img.split(',')[1])
     let len = base64Data.length

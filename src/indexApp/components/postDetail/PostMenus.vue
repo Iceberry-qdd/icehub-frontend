@@ -2,6 +2,11 @@
     <div
         :id="`pm-${props.post.id}`"
         class="bg-white flex flex-col max-w-[18rem] min-w-[12rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
+        <PinAction
+            v-if="isMySelf"
+            class="action first:rounded-t-[8px] last:rounded-b-[8px]"
+            :post="state.post">
+        </PinAction>
         <LinkCopyAction
             v-if="showLinkCopyAction"
             :link="generateLink"
@@ -102,6 +107,7 @@ import PosterGenerateAction from '@/indexApp/components/menus/postCardMenus/Post
 import AdminOperationAction from '@/indexApp/components/menus/postCardMenus/AdminOperationAction.vue'
 import ReportPostProblemAction from '@/indexApp/components/menus/postCardMenus/ReportPostProblemAction.vue'
 import CloseReviewAction from '@/indexApp/components/menus/postCardMenus/CloseReviewAction.vue'
+import PinAction from '@/indexApp/components/menus/postCardMenus/PinAction.vue'
 
 const props = defineProps({
     /** 传入的帖子对象 */

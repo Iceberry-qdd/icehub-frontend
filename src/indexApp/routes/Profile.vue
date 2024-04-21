@@ -100,6 +100,7 @@ const isCurUser = computed(() => {
 const state = reactive({
     user: null,
     posts: [],
+    postIdSet: new Set(),
     pageIndex: 1,
     pageSize: 10,
     lastTimestamp: Date.now(),
@@ -124,6 +125,15 @@ async function getPosts() {
         if (!response.ok) throw new Error((await response.json()).error)
 
         const { content, totalPages } = await response.json()
+
+        for(let i = 0; i < content.length; i++){
+            if(state.postIdSet.has(content[i].id)){
+                // 如果之前已经查询出该置顶帖子，则再次查询到时，不需要再展示置顶标识
+                content[i].top = false 
+            }else {
+                state.postIdSet.add(content[i].id)
+            }
+        }
         state.posts.push(...content)
         state.totalPages = totalPages
         if (content.length > 1) {
@@ -191,6 +201,21 @@ function dismissProfileMenus() {
     state.showProfileMenus = false
 }
 
+function pinPostOnUi(postId, newTop){
+    const preDelIndex = state.posts.findIndex(it => it.id === postId)
+    if(preDelIndex< 0 || preDelIndex >= state.posts.length) return
+
+    if(!newTop){
+        state.posts[preDelIndex].top = newTop
+        return
+    }
+
+    const removedPostArr = state.posts.splice(preDelIndex, 1)
+    if(removedPostArr.length != 1) return
+    removedPostArr[0].top = newTop
+    state.posts.unshift(removedPostArr[0])
+}
+
 onMounted(async () => {
     const nickname = route.params.nickname
 
@@ -211,4 +236,5 @@ onUnmounted(() => {
 provide('dismissProfileMenus', { dismissProfileMenus: dismissProfileMenus })
 provide('postingNew', { postingNew })
 provide('refreshProfileOnUi', { refreshProfileOnUi: refreshProfileOnUi })
+provide('pinPostOnUi', { pinPostOnUi: pinPostOnUi })
 </script>

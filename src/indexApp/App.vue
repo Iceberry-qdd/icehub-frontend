@@ -19,7 +19,6 @@
             id="container"
             :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }">
             <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
-            <ImageCropper v-if="store.SHOW_IMAGE_CROPPER"></ImageCropper>
             <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
             <div
                 v-if="state.basis[0] > 0"
@@ -121,7 +120,6 @@ import GlobalProgressIndicator from '@/components/GlobalProgressIndicator.vue'
 const GlobalNotifyBanner = defineAsyncComponent(() => import('@/components/GlobalNotifyBanner.vue'))
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 const ImageSlide2 = defineAsyncComponent(() => import('@/indexApp/components/ImageSlide2.vue'))
-const ImageCropper = defineAsyncComponent(() => import('@/indexApp/components/ImageCropper.vue'))
 
 const route = useRoute()
 const router = useRouter()

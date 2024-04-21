@@ -143,16 +143,12 @@
                 @dismiss="state.imageChangeProper.show = false"
                 @select="handleImageChangeProperSelect">
             </ImageChangeProper>
-        </Teleport>
-        <Teleport to="#app">
             <EmojiAvatarEditor
                 v-if="state.imageChangeProper.select === 'emoji'"
                 :avatar="state.newUser.avatar"
                 @dismiss="state.imageChangeProper.select = undefined"
                 @avatar="setAvatar">
             </EmojiAvatarEditor>
-        </Teleport>
-        <Teleport to="#app">
             <ImageCropper
                 v-if="state.imageChangeProper.select === 'file'"
                 :mode="state.cropper.mode"

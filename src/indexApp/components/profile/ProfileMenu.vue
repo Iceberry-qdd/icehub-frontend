@@ -70,7 +70,7 @@ const state = reactive({
         [ShareLinkAction.__name, !props.user.blocking && !props.user.blocked],
         [VerifyApplyAction.__name, props.user.id === curUser.id && showUnImpl],
         [ProfileLockAction.__name, props.user.id === curUser.id && showUnImpl],
-        [ProfileBlockAction.__name, props.user.id !== curUser.id],
+        [ProfileBlockAction.__name, props.user.id !== curUser.id && showUnImpl],
         [LogoutAction.__name, props.user.id === curUser.id],
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示
     ])

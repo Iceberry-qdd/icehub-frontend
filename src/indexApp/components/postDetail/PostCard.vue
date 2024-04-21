@@ -4,6 +4,12 @@
         class="border-b-[1px] pb-[0] pt-[1rem] px-[1rem] relative rounded-none"
         :class="cardContainerClass">
         <div
+            v-if="showPinTop"
+            class="-translate-y-2 flex flex-row gap-x-1 items-center justify-start">
+            <div class="material-icons-round p-0 text-[1rem]">push_pin</div>
+            <div class="text-[0.825rem] text-zinc-500">已置顶</div>
+        </div>
+        <div
             v-if="$route.name !== 'postDetail'"
             id="card-mask"
             ref="cardMask"
@@ -13,7 +19,7 @@
         <button
             :id="`pmb-${state.post.id}`"
             type="button"
-            class="absolute border-0 btn-no-select content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center outline-none py-[0.5rem] right-[3%] z-[97]">
+            class="absolute border-0 btn-no-select content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center outline-none py-[0.5rem] right-[3%] top-[0.5rem] z-[97]">
             <Down
                 theme="outline"
                 size="24"
@@ -302,6 +308,9 @@ const hasPics = computed(() => {
 
 const hasTags = computed(() => {
     return state.post.tags != undefined && state.post.tags.length != 0
+})
+const showPinTop = computed(() => {
+    return state.post.top && route.name === 'profile'
 })
 
 const isLiked = computed(() => { return state.post.liked })

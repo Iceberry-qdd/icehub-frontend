@@ -12,7 +12,7 @@ export function getTimeline(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/timeline/public?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -30,7 +30,7 @@ export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -118,7 +118,7 @@ export function likeAPost(postId) {
     return fetch(`${BASE_URL}/post/like/${postId}`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -134,7 +134,7 @@ export function dislikeAPost(postId) {
     return fetch(`${BASE_URL}/post/like/${postId}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -150,7 +150,7 @@ export function getUserInfoById(id) {
     return fetch(`${BASE_URL}/user/${id}`, {
         method: 'GET',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -166,7 +166,7 @@ export function getUserInfoByNickname(nickname) {
     return fetch(`${BASE_URL}/user/${nickname}`, {
         method: 'GET',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -182,7 +182,7 @@ export function getPostById(id) {
     return fetch(`${BASE_URL}/post/${id}`, {
         method: 'GET',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -201,7 +201,7 @@ export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -254,7 +254,7 @@ export function getSubReviewById(id, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -270,7 +270,7 @@ export function likeAReview(reviewId) {
     return fetch(`${BASE_URL}/review/like/${reviewId}`, {
         method: 'PUT',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -286,7 +286,7 @@ export function dislikeAReview(reviewId) {
     return fetch(`${BASE_URL}/review/like/${reviewId}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
         redirect: 'follow',
         credentials: 'same-origin'
@@ -804,8 +804,8 @@ export function globalSearch(word, pageSize, pageIndex, type = ['USER', 'POST', 
  * @param {Number} count 热搜榜条数，取值范围[1-20]
  * @returns 获取到的热搜榜条数
  */
-export function getHotSearch(count){
-    return fetch(`${BASE_URL}/search/hot?n=${count}`,{
+export function getHotSearch(count) {
+    return fetch(`${BASE_URL}/search/hot?n=${count}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -819,8 +819,8 @@ export function getHotSearch(count){
 /**
  * 退出登录
  */
-export function logout(){
-    return fetch(`${BASE_URL}/auth/logout`,{
+export function logout() {
+    return fetch(`${BASE_URL}/auth/logout`, {
         method: 'POST',
         headers: {
             'Authorization': TOKEN,
@@ -837,12 +837,30 @@ export function logout(){
  * @param {String} id 评论id
  * @returns 删除结果，true | false
  */
-export function deleteOneReview(id){
+export function deleteOneReview(id) {
     return fetch(`${BASE_URL}/review/${id}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': TOKEN,
+            'Authorization': TOKEN
         },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+export function togglePin(id, oldPin, newPin) {
+    const requestBody = {
+        id: id,
+        oldPin: oldPin,
+        newPin: newPin
+    }
+    return fetch(`${BASE_URL}/post/pin`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody),
         redirect: 'follow',
         credentials: 'same-origin'
     })
