@@ -6,10 +6,14 @@
             <img
                 id="brand-img"
                 src="../../assets/logo.svg"
-                @click="testSendPublicNotify" />
+                @click="routeTo('index')" />
         </a>
-        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="font-bold text-2xl">{{ state.appName }}</div>
+        <div
+            class="cursor-pointer font-bold text-2xl"
+            @click="routeTo('index')">
+            Icehub
+            <span class="align-middle bg-blue-500 font-light px-1 py-[0.1rem] rounded-md text-[0.6rem] text-white">{{ state.version }}</span>
+        </div>
     </div>
 </template>
 
@@ -25,10 +29,12 @@
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { store } from '@/indexApp/js/store.js'
 import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
-    appName: import.meta.env.VITE_APP_TITLE
+    version: import.meta.env.VITE_APP_VERSION
 })
 
 function testSendPublicNotify() {
@@ -44,5 +50,9 @@ function testSendPublicNotify() {
         "read": false
     })
     // ws.sendToTopic(new MsgPack("网络暂不可用，请检查您的互联网连接！","ADMIN", 'SYS_NOTIFY_ERROR', "ALL"))
+}
+
+function routeTo(name){
+    router.push({'name': name})
 }
 </script>

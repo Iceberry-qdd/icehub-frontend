@@ -100,7 +100,7 @@ const isCurUser = computed(() => {
 const state = reactive({
     user: null,
     posts: [],
-    postIdSet: new Set(),
+    pinnedIdTop: new Set(),
     pageIndex: 1,
     pageSize: 10,
     lastTimestamp: Date.now(),
@@ -126,12 +126,12 @@ async function getPosts() {
 
         const { content, totalPages } = await response.json()
 
-        for(let i = 0; i < content.length; i++){
-            if(state.postIdSet.has(content[i].id)){
-                // 如果之前已经查询出该置顶帖子，则再次查询到时，不需要再展示置顶标识
-                content[i].top = false 
-            }else {
-                state.postIdSet.add(content[i].id)
+        for(let i = content.length - 1; i >= 0; i--){
+            if(state.pinnedIdTop.has(content[i].id)){
+                // 如果之前已经查询出该置顶帖子，则再次查询到时，不再显示
+                content.splice(i, 1)
+            }else if(content[i].top){
+                state.pinnedIdTop.add(content[i].id)
             }
         }
         state.posts.push(...content)
@@ -231,7 +231,6 @@ onUnmounted(() => {
     window.removeEventListener('scroll', fetchNewPost)
     store.clearSelectUser()
 })
-
 
 provide('dismissProfileMenus', { dismissProfileMenus: dismissProfileMenus })
 provide('postingNew', { postingNew })

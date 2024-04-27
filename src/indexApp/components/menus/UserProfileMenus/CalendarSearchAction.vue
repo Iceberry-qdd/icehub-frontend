@@ -1,9 +1,9 @@
 <template>
     <div
         class="flex flex-rows gap-x-3 items-center justify-start">
-        <span class="material-icons-round no-hover p-0 text-[1.2rem]">date_range</span>
+        <span class="material-icons-round no-hover p-0 text-[1.2rem]">search</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">日历视图</div>
+        <div class="btn-no-select">高级搜索</div>
     </div>
 </template>
 

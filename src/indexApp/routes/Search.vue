@@ -12,19 +12,19 @@
             <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
             <div v-if="showUsers" class="font-bold px-2 py-2 text-[13pt]">用户</div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-for="(searches, index) in state.apiSearch" :key="index">
-                <div v-if="index === 'USER' && onlySearchUser">
+            <div v-for="(searches, typeKey) in state.apiSearch" :key="typeKey">
+                <div v-if="typeKey.startsWith('USER') && onlySearchUser">
                     <FollowItem
                         v-for="search in searches"
                         :key="search.content.id"
                         :user="search.content">
                     </FollowItem>
                 </div>
-                <div v-else-if="index === 'USER'">
+                <div v-else-if="typeKey.startsWith('USER')">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <UserCardSlide :searches="searches" @route-to="routeTo"></UserCardSlide>
                 </div>
-                <div v-if="index === 'POST'">
+                <div v-else-if="typeKey.startsWith('POST')">
                     <TransitionGroup>
                         <PostCard
                             v-for="search in searches"
@@ -33,7 +33,7 @@
                         </PostCard>
                     </TransitionGroup>
                 </div>
-                <div v-if="index === 'REVIEW'">
+                <div v-else-if="typeKey.startsWith('REVIEW')">
                     <TransitionGroup>
                         <Review
                             v-for="search in searches"
@@ -96,7 +96,7 @@ const router = useRouter()
 const route = useRoute()
 const state = reactive({
     prompt: {
-        key: undefined,
+        key: decodeSearchKeyOnRoute(),
         typeMap: new Map([
             ['ALL', { zh: '全部', routePrefix: '', icon: 'history', fetch: false, show: true, once: false }],
             ['HISTORY', { zh: '历史', routePrefix: '', icon: 'history', fetch: false, show: false, once: false }],
@@ -114,7 +114,7 @@ const state = reactive({
 })
 
 const showUsers = computed(() => {
-    return state.apiSearch && Object.keys(state.apiSearch).includes('USER')
+    return state.apiSearch && Object.keys(state.apiSearch).findIndex(it => it.startsWith('USER')) !== -1
 })
 
 const showFooterLoading = computed(() => {
@@ -165,10 +165,12 @@ async function doSearch() {
 
         const result = await response.json()
         Object.keys(result).forEach(type => {
-            if (!state.apiSearch.hasOwnProperty(type)) {
-                state.apiSearch[type] = []
+            // 使用`type + 当前查询页码`作为最后的type，解决: https://github.com/Iceberry-qdd/icehub-frontend/issues/65
+            const typeKey = `${type}-${state.prompt.pageIndex}`
+            if (!state.apiSearch.hasOwnProperty(typeKey)) {
+                state.apiSearch[typeKey] = []
             }
-            state.apiSearch[type].push(...result[type].filter(it => it.content != null))
+            state.apiSearch[typeKey].push(...result[type].filter(it => it.content != null))
         })
 
         state.hasMore = false
@@ -202,52 +204,80 @@ function fetchMoreSameSearch() {
     }
 }
 
-function deletePostOnUi(postId) {
-    if (!postId || !state.apiSearch['POST']) return
-    const preDeletePostIndex = state.apiSearch['POST'].findIndex(it => it.content.id == postId)
-    if (preDeletePostIndex != -1) {
-        state.apiSearch['POST'].splice(preDeletePostIndex, 1)
+/**
+ * 根据baseType和id匹配单个内容，然后删除
+ * @param {string} id 内容id
+ * @param {string} baseType 要删除的基本类型，POST | REVIEW | USER
+ */
+function deleteOneOnUiBtBaseType(id, baseType) {
+    if (!id || Object.keys(state.apiSearch).findIndex(it => it.startsWith(baseType)) === -1) return
+
+    const {typeKey, index:preDeleteIndex} = findItemIndex(baseType, id)
+    if (preDeleteIndex != -1) {
+        state.apiSearch[typeKey].splice(preDeleteIndex, 1)
     }
 }
 
-function deleteAllPostsOfUserOnUi(userId) {
+/**
+ * 返回含有`item.id`的state.apiSearch[`${baseType}-${state.prompt.pageIndex}`]列表(L)中查找到的`typeKey`
+ * (即`${baseType}-${state.prompt.pageIndex}`)和item在L中的下标
+ * @param {string} baseType 要查找的基础类型，如'USER-0'的基础类型为USER
+ * @param {number} id 要查找项的下标
+ * @returns {{typeKey: string | undefined; index: number;}} 真实类型typeKey和item的id
+ * @summary 若未找到，则返回的typeKey为undefined，index为-1
+ */
+function findItemIndex(baseType, id){
+    const validTypeKeys = Object.keys(state.apiSearch).filter(it => it.startsWith(baseType))
+
+    for (const typeKey of validTypeKeys) {
+        const index = state.apiSearch[typeKey].findIndex(it => it.content.id === id)
+        if(index !== -1) return {typeKey: typeKey, index: index}
+    }
+    return {typeKey: undefined, index: -1}
+}
+
+/**
+ * 根据baseType匹配userId的所有内容，然后删除
+ * @param {string} userId 用户id
+ * @param {string} baseType 要删除的基本类型，POST | REVIEW
+ */
+function deleteAllOfUserOnUiByBaseType(userId, baseType) {
     if (!userId) return
 
-    const preDeletePosts = state.apiSearch['POST'].filter(it => it.content.user.id == userId)
-    if (!preDeletePosts) {
-        store.setErrorMsg("删除失败，该帖子不存在！")
-        return
+    const validTypeKeys = Object.keys(state.apiSearch).filter(it => it.startsWith(baseType))
+    for (const typeKey of validTypeKeys) {
+        const items = state.apiSearch[typeKey]
+        for(let i = items.length - 1; i >= 0; i--){
+            const isUserAndHit = baseType === 'USER' && items[i].content.id === userId         
+            const isNotUserAndHit = baseType !== 'USER' && items[i].content.user.id === userId
+            if(isUserAndHit || isNotUserAndHit){
+                state.apiSearch[typeKey].splice(i, 1)
+            }   
+        }
     }
-
-    preDeletePosts.forEach(post => {
-        const index = state.posts.indexOf(post)
-        state.apiSearch['POST'].splice(index, 1)
-    })
 }
 
 function postingNew(post) {
-    state.apiSearch['POST'].unshift({
+    // POST-0 指向最开始插入一条帖子
+    state.apiSearch['POST-0'].unshift({
         type: 'POST',
         content: post
     })
 }
 
-function deleteReviewOnUi(reviewId){
-    if (!reviewId || !state.apiSearch['REVIEW']) return
-    const preDeleteReviewIndex = state.apiSearch['REVIEW'].findIndex(it => it.content.id == reviewId)
-    if (preDeleteReviewIndex != -1) {
-        state.apiSearch['REVIEW'].splice(preDeleteReviewIndex, 1)
-    }
+function decodeSearchKeyOnRoute(){
+    const key = route.query?.key
+    return key ? decodeURIComponent(atob(key)) : undefined
 }
 
 onMounted(() => {
     window.addEventListener('scroll', fetchMoreSameSearch)
-    const key = route.query?.key
+    const key = decodeSearchKeyOnRoute()
     if (key) {
         const validTypeList = [...state.prompt.typeMap.entries()]
             .filter(([_, { fetch }]) => fetch === true)
             .map(([k, _]) => k)
-        search({ key: decodeURIComponent(atob(key)), type: validTypeList })
+        search({ key: key, type: validTypeList })
     }
 })
 
@@ -255,8 +285,10 @@ onUnmounted(() => {
     window.removeEventListener('scroll', fetchMoreSameSearch)
 })
 
-provide('deletePostOnUi', { deletePostOnUi })
-provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
 provide('postingNew', { postingNew })
-provide('deleteReviewOnUi', { deleteReviewOnUi })
+provide('deletePostOnUi', { deletePostOnUi: (postId) => deleteOneOnUiBtBaseType(postId, 'POST') })
+provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi: (userId) => deleteAllOfUserOnUiByBaseType(userId, 'POST') })
+provide('deleteReviewOnUi', { deleteReviewOnUi: (review) => deleteOneOnUiBtBaseType(review, 'REVIEW') })
+provide('deleteAllReviewsOfUserOnUi', { deleteAllReviewsOfUserOnUi: (userId) => deleteAllOfUserOnUiByBaseType(userId, 'REVIEW') })
+provide('deleteAllUsersOfUserOnUi', { deleteAllUsersOfUserOnUi: (userId) => deleteAllOfUserOnUiByBaseType(userId, 'USER') })
 </script>

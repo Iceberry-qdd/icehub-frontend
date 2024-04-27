@@ -329,6 +329,7 @@ function handleAction(){
 
 onMounted(() => {
     document.querySelector('#app').addEventListener('click', handleDismissSuggestPanel)
+    state.prompt = props.prompt.key || ''
 })
 
 onUnmounted(() => {

@@ -32,7 +32,9 @@ const props = defineProps({
         required: true 
     }
 })
-const { deleteAllPostsOfUserOnUi } = inject('deleteAllPostsOfUserOnUi')
+const { deleteAllPostsOfUserOnUi } = inject('deleteAllPostsOfUserOnUi', {'deleteAllPostsOfUserOnUi': () => {}})
+const { deleteAllReviewsOfUserOnUi } = inject('deleteAllReviewsOfUserOnUi', {'deleteAllReviewsOfUserOnUi': () => {}})
+const { deleteAllUsersOfUserOnUi } = inject('deleteAllUsersOfUserOnUi', {'deleteAllUsersOfUserOnUi': () => {}})
 
 const state = reactive({
     confirmBDialogUi: {
@@ -91,11 +93,13 @@ async function blockThisUser() {
         store.setSuccessMsg('将为您减少该用户的内容!')
 
         props.post ? deleteAllPostsOfUserOnUi(props.post.user.id) : dismissConfirmDialogBox()
+        deleteAllReviewsOfUserOnUi(props.post.user.id) // 供Search组件使用
+        deleteAllUsersOfUserOnUi(props.post.user.id) // 供Search组件使用
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
     } finally {
-        toggleDialogLoading(false)
+        dismissConfirmDialogBox()
     }
 }
 </script>

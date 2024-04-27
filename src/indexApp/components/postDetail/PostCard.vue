@@ -6,7 +6,9 @@
         <div
             v-if="showPinTop"
             class="-translate-y-2 flex flex-row gap-x-1 items-center justify-start">
+            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="material-icons-round p-0 text-[1rem]">push_pin</div>
+            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="text-[0.825rem] text-zinc-500">已置顶</div>
         </div>
         <div
