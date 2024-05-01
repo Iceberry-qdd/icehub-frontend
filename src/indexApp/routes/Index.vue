@@ -28,6 +28,15 @@
             :cur-page-index="state.pageIdx"
             :total-pages="state.totalPages">
         </PostsTimeline>
+        <div
+            id="footer"
+            class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
+            <IconLoading
+                v-if="hasMore || state.isLoading"
+                class="h-5 text-slate-500 w-5">
+            </IconLoading>
+            <span v-else>没有更多了</span>
+        </div>
     </div>
 </template>
 
@@ -71,8 +80,9 @@ import Header from '@/indexApp/components/Header.vue'
 import { getUserTimeline } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import PostEditor from '@/indexApp/components/index/PostEditor.vue'
-import { computed, onMounted, onUnmounted, reactive, provide } from 'vue'
+import { computed, onMounted, reactive, provide, onBeforeUnmount } from 'vue'
 import GlobalRefresh from '@/components/GlobalRefresh.vue'
+import IconLoading from '@/components/icons/IconLoading.vue'
 
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
@@ -113,18 +123,17 @@ async function getData() {
     }
 }
 
+const hasMore = computed(() => {
+    return state.pageIdx < state.totalPages
+})
+
 function fetchNewPost() {
-    if (state.pageIdx >= state.totalPages) return
-
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    const clientHeight = document.documentElement.clientHeight
-    const scrollHeight = document.documentElement.scrollHeight
-
-    if (scrollTop + clientHeight >= scrollHeight) {
-        setTimeout(() => {
-            getData()
-        }, 1000)
+    if (!hasMore.value){
+        footerObserver.unobserve(document.querySelector('#footer'))
+        return
     }
+
+    getData()
 }
 
 function postingNew(post) {
@@ -135,13 +144,21 @@ const isShowGlobalNotifyBannerMsg = computed(() => {
     return store.GLOBAL_NOTIFY_BANNER_MSG.length > 0
 })
 
+const options = {root: null, rootMargin: '0px', threshold: 0}
+
+const footerObserver = new IntersectionObserver((entries) => {
+    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
+        fetchNewPost()
+    }
+}, options)
+
 onMounted(() => {
     getData()
-    window.addEventListener('scroll', fetchNewPost)
+    footerObserver.observe(document.querySelector('#footer'))
 })
 
-onUnmounted(() => {
-    window.removeEventListener('scroll', fetchNewPost)
+onBeforeUnmount(() => {
+    footerObserver.unobserve(document.querySelector('#footer'))
 })
 
 provide('postingNew', { postingNew })

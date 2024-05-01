@@ -7,12 +7,6 @@
                 :post="post">
             </PostCard>
         </TransitionGroup>
-        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div id="footer" class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <IconLoading v-if="hasMore || props.isLoading" class="h-5 text-slate-500 w-5"></IconLoading>
-            <span v-else>没有更多了</span>
-        </div>
     </div>
 </template>
 
@@ -37,8 +31,7 @@
 
 <script setup>
 import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
-import { reactive, computed, provide } from 'vue'
-import IconLoading from '@/components/icons/IconLoading.vue'
+import { reactive, provide } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 
 const props = defineProps({
@@ -46,31 +39,11 @@ const props = defineProps({
     posts: {
         type: Array,
         required: true
-    },
-    /** 房前分页页码 */
-    curPageIndex: {
-        type: Number,
-        required: true
-    },
-    /** 总页数 */
-    totalPages: {
-        type: Number,
-        required: true
-    },
-    /** 是否处于加载状态 */
-    // eslint-disable-next-line vue/no-unused-properties
-    isLoading: {
-        type: Boolean,
-        required: true
     }
 })
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     posts: props.posts
-})
-
-const hasMore = computed(() => {
-    return props.curPageIndex < props.totalPages
 })
 
 function deletePostOnUi(postId) {

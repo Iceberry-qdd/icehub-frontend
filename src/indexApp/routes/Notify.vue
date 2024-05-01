@@ -35,7 +35,7 @@
                 id="footer"
                 class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
                 <IconLoading
-                    v-if="hasMore || state.loading == true"
+                    v-if="hasMore || state.isLoading == true"
                     class="h-5 text-slate-500 w-5">
                 </IconLoading>
                 <span v-else>没有更多了</span>
@@ -117,7 +117,7 @@
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { computed, onMounted, onUnmounted, reactive } from 'vue'
+import { computed, onMounted, onBeforeUnmount, reactive } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import NotifyCard from '@/indexApp/components/notify/NotifyCard.vue'
 import { getUsersNotifyList, markNotifyRead, markAllNotifyRead } from '@/indexApp/js/api.js'
@@ -140,7 +140,7 @@ const state = reactive({
     pageSize: 10,
     lastTimestamp: new Date().getTime(),
     totalPages: 0,
-    loading: false,
+    isLoading: false,
     confirmBDialogUi: {
         show: false,
         title: '确定要已读全部消息吗？(已读后不可撤回)',
@@ -169,21 +169,16 @@ const hasMore = computed(() => {
 })
 
 function fetchNewList() {
-    if (state.pageIndex >= state.totalPages) return
-
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    const clientHeight = document.documentElement.clientHeight
-    const scrollHeight = document.documentElement.scrollHeight
-
-    if (scrollTop + clientHeight >= scrollHeight) {
-        setTimeout(() => {
-            fetchNotify()
-        }, 1000)
+    if (!hasMore.value){
+        footerObserver.unobserve(document.querySelector('#footer'))
+        return
     }
+
+    fetchNotify()
 }
 
 async function fetchNotify() {
-    state.loading = true
+    state.isLoading = true
     try {
         const response = await getUsersNotifyList(state.pageIndex, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).error)
@@ -199,7 +194,7 @@ async function fetchNotify() {
         store.setErrorMsg("无法获取消息列表！")
         console.error(e)
     } finally {
-        state.loading = false
+        state.isLoading = false
     }
 }
 
@@ -283,12 +278,20 @@ function handleAction() {
     state.confirmBDialogUi.show = true
 }
 
+const options = {root: null, rootMargin: '0px', threshold: 0}
+
+const footerObserver = new IntersectionObserver((entries) => {
+    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
+        fetchNewList()
+    }
+}, options)
+
 onMounted(() => {
     fetchNotify()
-    window.addEventListener('scroll', fetchNewList)
+    footerObserver.observe(document.querySelector('#footer'))
 })
 
-onUnmounted(() => {
-    window.removeEventListener('scroll', fetchNewList)
+onBeforeUnmount(() => {
+    footerObserver.unobserve(document.querySelector('#footer'))
 })
 </script>

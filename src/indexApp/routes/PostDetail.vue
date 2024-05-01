@@ -33,7 +33,7 @@
             id="footer"
             class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
             <IconLoading
-                v-if="state.isLoading == true"
+                v-if="state.isLoading || hasMore"
                 class="h-5 text-slate-500 w-5">
             </IconLoading>
             <span v-else>没有更多了</span>
@@ -66,7 +66,7 @@
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { onMounted, reactive, onUnmounted, computed, provide } from 'vue'
+import { onMounted, reactive, computed, provide, onBeforeUnmount } from 'vue'
 import { getPostById, getPostReviews } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
@@ -138,36 +138,18 @@ async function getReviews() {
 }
 
 function fetchNewReview() {
-    if (state.pageIndex >= state.totalPages) return
-
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    const clientHeight = document.documentElement.clientHeight
-    const scrollHeight = document.documentElement.scrollHeight
-
-    if (scrollTop + clientHeight >= scrollHeight) {
-        setTimeout(() => {
-            getReviews()
-        }, 1000)
+    if (!hasMore.value){
+        footerObserver.unobserve(document.querySelector('#footer'))
+        return
     }
+
+    getReviews()
 }
 
 function newReview({ review }) {
     state.post.reviewCount++;
     state.reviews.unshift(review)
 }
-
-onMounted(async () => {
-    const postId = route.params.id
-    if (!state.post) { await getPost(postId) }
-
-    await getReviews()
-    window.addEventListener('scroll', fetchNewReview)
-})
-
-onUnmounted(() => {
-    window.removeEventListener('scroll', fetchNewReview)
-})
-
 
 function dismissPostMenus() {
     state.isShowMenu = false
@@ -192,6 +174,26 @@ function deleteReviewOnUi(reviewId){
 function postingNew(post) {
     // Ignore this method body, nothing todo.
 }
+
+const options = {root: null, rootMargin: '0px', threshold: 0}
+
+const footerObserver = new IntersectionObserver((entries) => {
+    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
+        fetchNewReview()
+    }
+}, options)
+
+onMounted(async () => {
+    const postId = route.params.id
+    if (!state.post) { await getPost(postId) }
+
+    await getReviews()
+    footerObserver.observe(document.querySelector('#footer'))
+})
+
+onBeforeUnmount(() => {
+    footerObserver.unobserve(document.querySelector('#footer'))
+})
 
 provide('dismissPostMenus', { dismissPostMenus })
 provide('deletePostOnUi', { deletePostOnUi })

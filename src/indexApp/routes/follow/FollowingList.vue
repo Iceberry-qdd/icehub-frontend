@@ -9,7 +9,7 @@
             id="footer"
             class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
             <IconLoading
-                v-if="hasMore"
+                v-if="hasMore || state.isLoading"
                 class="h-5 text-slate-500 w-5">
             </IconLoading>
             <span v-else>没有更多了</span>
@@ -32,7 +32,8 @@ const state = reactive({
     pageSize: 10,
     totalPages: 0,
     lastTimestamp: new Date().getTime(),
-    nickname: null
+    nickname: null,
+    isLoading: false
 })
 
 const hasMore = computed(() => {
@@ -40,6 +41,7 @@ const hasMore = computed(() => {
 })
 
 async function getFollowing() {
+    state.isLoading = true
     try {
         const response = await getUserInfoByNickname(state.nickname)
         if (!response.ok) throw new Error((await response.json()).error)
@@ -57,31 +59,36 @@ async function getFollowing() {
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
+    } finally{
+        state.isLoading = false
     }
 }
 
 function fetchNewList() {
-    if (state.pageIndex >= state.totalPages) return
-
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    const clientHeight = document.documentElement.clientHeight
-    const scrollHeight = document.documentElement.scrollHeight
-
-    if (scrollTop + clientHeight >= scrollHeight) {
-        setTimeout(() => {
-            getFollowing()
-        }, 1000)
+    if (!hasMore.value){
+        footerObserver.unobserve(document.querySelector('#footer'))
+        return
     }
+
+    getFollowing()
 }
+
+const options = {root: null, rootMargin: '0px', threshold: 0}
+
+const footerObserver = new IntersectionObserver((entries) => {
+    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
+        fetchNewList()
+    }
+}, options)
 
 onMounted(() => {
     const nickname = route.params.nickname
     state.nickname = nickname
     getFollowing()
-    window.addEventListener('scroll', fetchNewList)
+    footerObserver.observe(document.querySelector('#footer'))
 })
 
 onUnmounted(() => {
-    window.removeEventListener('scroll', fetchNewList)
+    footerObserver.unobserve(document.querySelector('#footer'))
 })
 </script>

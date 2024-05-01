@@ -49,7 +49,7 @@
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { reactive, computed, onMounted, onUnmounted, provide } from 'vue'
+import { reactive, computed, onMounted, onBeforeUnmount, provide } from 'vue'
 import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
 import { store } from '@/indexApp/js/store.js'
 import { getMarkPostList } from '@/indexApp/js/api.js'
@@ -96,15 +96,12 @@ async function getPostList() {
 }
 
 function fetchNewPost() {
-    if (state.pageIndex >= state.totalPages) return
-
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    const clientHeight = document.documentElement.clientHeight
-    const scrollHeight = document.documentElement.scrollHeight
-
-    if (scrollTop + clientHeight >= scrollHeight) {
-        setTimeout(() => { getPostList() }, 1000)
+    if (!hasMore.value){
+        footerObserver.unobserve(document.querySelector('#footer'))
+        return
     }
+
+    getPostList()
 }
 
 function deleteBookmarkOnUi(postId) {
@@ -142,13 +139,21 @@ function postingNew(post) {
     state.posts.unshift(post)
 }
 
+const options = {root: null, rootMargin: '0px', threshold: 0}
+
+const footerObserver = new IntersectionObserver((entries) => {
+    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
+        fetchNewPost()
+    }
+}, options)
+
 onMounted(() => {
     getPostList()
-    window.addEventListener('scroll', fetchNewPost)
+    footerObserver.observe(document.querySelector('#footer'))
 })
 
-onUnmounted(() => {
-    window.removeEventListener('scroll', fetchNewPost)
+onBeforeUnmount(() => {
+    footerObserver.unobserve(document.querySelector('#footer'))
 })
 
 provide('deleteBookmarkOnUi', { deleteBookmarkOnUi })

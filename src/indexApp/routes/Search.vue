@@ -21,8 +21,11 @@
                     </FollowItem>
                 </div>
                 <div v-else-if="typeKey.startsWith('USER')">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <UserCardSlide :searches="searches" @route-to="routeTo"></UserCardSlide>
+                    <UserCardSlide
+                        v-if="searches"
+                        :searches="searches"
+                        @route-to="routeTo">
+                    </UserCardSlide>
                 </div>
                 <div v-else-if="typeKey.startsWith('POST')">
                     <TransitionGroup>
@@ -48,8 +51,10 @@
             v-if="state.prompt.key"
             id="footer"
             class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <IconLoading v-if="showFooterLoading" class="h-5 text-slate-500 w-5"></IconLoading>
+            <IconLoading
+                v-if="state.hasMore || state.isLoading"
+                class="h-5 text-slate-500 w-5">
+            </IconLoading>
             <span v-else>没有更多了</span>
         </div>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
@@ -80,7 +85,7 @@
 </style>
 
 <script setup>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, onBeforeUnmount } from 'vue'
 import SearchBar from '@/indexApp/components/search/SearchBar.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { reactive, computed, onMounted, onUnmounted, provide } from 'vue'
@@ -115,10 +120,6 @@ const state = reactive({
 
 const showUsers = computed(() => {
     return state.apiSearch && Object.keys(state.apiSearch).findIndex(it => it.startsWith('USER')) !== -1
-})
-
-const showFooterLoading = computed(() => {
-    return state.hasMore || state.isLoading
 })
 
 const onlySearchUser = computed(() => {
@@ -189,19 +190,14 @@ async function doSearch() {
 }
 
 function fetchMoreSameSearch() {
-    if (!state.hasMore) return
-
-    const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
-    const clientHeight = document.documentElement.clientHeight
-    const scrollHeight = document.documentElement.scrollHeight
-
-    if (scrollTop + clientHeight >= scrollHeight) {
-        setTimeout(() => {
-            const lastPageIndex = state.prompt.pageIndex
-            state.prompt.pageIndex = lastPageIndex + 1
-            doSearch()
-        }, 1000)
+    if (!state.hasMore){
+        footerObserver.unobserve(document.querySelector('#footer'))
+        return
     }
+    
+    const lastPageIndex = state.prompt.pageIndex
+    state.prompt.pageIndex = lastPageIndex + 1
+    doSearch()
 }
 
 /**
@@ -270,19 +266,34 @@ function decodeSearchKeyOnRoute(){
     return key ? decodeURIComponent(atob(key)) : undefined
 }
 
+const options = {root: null, rootMargin: '0px', threshold: 0}
+
+const footerObserver = new IntersectionObserver((entries) => {
+    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
+        fetchMoreSameSearch()
+    }
+}, options)
+
 onMounted(() => {
-    window.addEventListener('scroll', fetchMoreSameSearch)
     const key = decodeSearchKeyOnRoute()
     if (key) {
         const validTypeList = [...state.prompt.typeMap.entries()]
-            .filter(([_, { fetch }]) => fetch === true)
-            .map(([k, _]) => k)
+        .filter(([_, { fetch }]) => fetch === true)
+        .map(([k, _]) => k)
         search({ key: key, type: validTypeList })
+    }
+
+    const footer = document.querySelector('#footer')
+    if(footer){
+        footerObserver.observe(footer)
     }
 })
 
-onUnmounted(() => {
-    window.removeEventListener('scroll', fetchMoreSameSearch)
+onBeforeUnmount(() => {
+    const footer = document.querySelector('#footer')
+    if(footer){
+        footerObserver.unobserve(footer)
+    }
 })
 
 provide('postingNew', { postingNew })
