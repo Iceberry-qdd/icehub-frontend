@@ -27,7 +27,7 @@
             <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.review.content"></VueShowdown>
             <ImageGrid
                 v-if="props.review.images?.length"
-                :id="props.review.id"
+                :id="`img-${props.review.id}`"
                 :images="props.review.images"
                 type="review"
                 class="bottom-[0.5rem] pt-[0.5rem] relative z-[20]"

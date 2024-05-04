@@ -22,7 +22,7 @@
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <textarea
                     v-else
-                    id="post-input"
+                    ref="postInput"
                     v-model="state.content"
                     class="break-all focus:outline-none leading-6 overflow-hidden p-2 pr-0 resize-none rounded text-[1rem] text-justify tracking-wide w-full"
                     :maxlength="state.maxContentWordCount + 50"
@@ -36,6 +36,7 @@
                         v-if="hasImage"
                         class="mb-2 ml-2"
                         :img-list="state.imgList"
+                        :selector="imgFile"
                         :images-info="state.imageListInfo">
                     </ImagePickerAction>
                 </Transition>
@@ -44,14 +45,14 @@
                 <div class="content-center flex flex-row gap-x-1 items-center justify-start text-base">
                     <input
                         v-show="false"
-                        id="imgFile"
+                        ref="imgFile"
                         type="file"
                         name="imgFile"
                         multiple="true"
                         accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
                         @change="clickFileSelector" />
                     <div
-                        id="imagePickerAction"
+                        id="image-picker-action"
                         class="flex-col relative">
                         <div
                             class="flex"
@@ -66,7 +67,7 @@
                     </div>
 
                     <div
-                        id="post-editor-visibilityAction"
+                        id="post-editor-visibility-action"
                         class="flex-col relative">
                         <div
                             class="flex"
@@ -81,7 +82,7 @@
                         <Transition name="fade">
                             <VisibilityAction
                                 v-if="state.showVisibilityPanel"
-                                switch-id="post-editor-visibilityAction"
+                                switch-id="post-editor-visibility-action"
                                 class="absolute top-[2.5rem] z-[99]"
                                 :visibility="state.data.status"
                                 :ui="state.visibilityActionData"
@@ -92,7 +93,7 @@
                     </div>
 
                     <div
-                        id="dateTimePickerAction"
+                        id="datetime-picker-action"
                         class="flex-col relative">
                         <div
                             class="flex"
@@ -243,12 +244,11 @@
 </style>
 
 <script setup>
-import { computed, reactive, watch, inject, defineAsyncComponent } from 'vue'
+import { computed, reactive, inject, defineAsyncComponent, ref } from 'vue'
 import { uploadImages, posting, postingPlan } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { VueShowdown } from 'vue-showdown'
-import { renderMath } from '@/indexApp/js/katexConfig.js'
 import { getDateTimeRange } from '@/indexApp/utils/formatUtils.js'
 const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 const VisibilityAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/VisibilityAction.vue'))
@@ -257,6 +257,8 @@ const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/componen
 
 const { postingNew } = inject('postingNew')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
+const postInput = ref()
+const imgFile = ref()
 const state = reactive({
     maxContentWordCount: 1000,
     content: "",
@@ -324,9 +326,8 @@ const submitPostBtnClass = computed(() => ({
 }))
 
 function resize() {
-    const textarea = document.getElementById('post-input')
-    textarea.style.height = 'auto'
-    textarea.style.height = `${textarea.scrollHeight}px`
+    postInput.value.style.height = 'auto'
+    postInput.value.style.height = `${postInput.value.scrollHeight}px`
 }
 
 async function submitPost() {
@@ -377,9 +378,8 @@ function reset(){
 }
 
 function clickFileSelector() {
-    const imgFileSelector = document.getElementById("imgFile")
-    imgFileSelector.click()
-    const imgs = Array.of(...imgFileSelector.files)
+    imgFile.value.click()
+    const imgs = Array.of(...imgFile.value.files)
 
     if (imgs.length == 0) return
     state.imgList.push(...imgs)
@@ -399,8 +399,7 @@ function preChoosePics() {
 }
 
 function choosePics() {
-    const imgFileSelector = document.getElementById("imgFile")
-    imgFileSelector.click()
+    imgFile.value.click()
 }
 
 function insertEmoji(unified) {

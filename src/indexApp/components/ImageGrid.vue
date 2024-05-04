@@ -133,26 +133,24 @@ const mPicClass = reactive({
     'bg-center': true
 })
 
+const typeId = computed(() => props.id.replace('img-', ''))
+
 function isGif(url){
     return url && !url.startsWith('data') && url.toLowerCase().endsWith('.gif')
 }
 
 async function getImageUrlIgnoreNSFW(index) {
     try {
-        if(!props.id || !props.type){
+        if(!typeId.value || !props.type){
             throw new Error('The id or type is empty!')
         }
-        const response = await getImageUrlIgnoreHidden(props.id, index, props.type)
+        const response = await getImageUrlIgnoreHidden(typeId.value, index, props.type)
         if (!response.ok) throw new Error((await response.json()).error)
 
         const result = await response.json()
 
         emits('realImage', {index: index, image: result})
         state.showRealImage[index] = true
-
-        // if(result){
-        //     state.post.images[index] = result
-        // }
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)

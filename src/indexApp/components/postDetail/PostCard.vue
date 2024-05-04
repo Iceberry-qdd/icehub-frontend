@@ -100,7 +100,7 @@
             </RepostCard>
             <ImageGrid
                 v-if="hasPics"
-                :id="state.post.id"
+                :id="`img-${state.post.id}`"
                 :images="state.post.images"
                 type="post"
                 class="bottom-[0.5rem]  mt-[0.5rem]"

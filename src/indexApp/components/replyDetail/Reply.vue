@@ -62,7 +62,7 @@
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.reply.content"></VueShowdown>
                 <ImageGrid
                     v-if="state.reply.images?.length"
-                    :id="state.reply.id"
+                    :id="`img-${state.reply.id}`"
                     :images="state.reply.images"
                     type="review"
                     class="bottom-[0.5rem] pt-[0.5rem] relative z-[20]"

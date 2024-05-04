@@ -11,7 +11,7 @@
         </div>
         <UserCard
             v-for="search in props.searches"
-            :id="search.content.id"
+            :id="`u-${search.content.id}`"
             :key="search.content.id"
             class="cursor-pointer delay-100 grow-0 h-[12.5rem] hover:shadow-lg shrink-0 snap-start transition-shadow user-card w-[calc(50%-1rem)]"
             :user="search.content"
@@ -101,22 +101,22 @@ const rightLimitObserver = new IntersectionObserver((entries) => {
 onMounted(() => {
     state.limit.left.observeId = props.searches.at(0).content.id
     if(state.limit.left.observeId){
-        leftLimitObserver.observe(document.querySelector(`#${state.limit.left.observeId}`))
+        leftLimitObserver.observe(container.value.querySelector(`#u-${state.limit.left.observeId}`))
     }
-
+    
     state.limit.right.observeId = props.searches.at(-1).content.id
     if(state.limit.right.observeId){
-        rightLimitObserver.observe(document.querySelector(`#${state.limit.right.observeId}`))
+        rightLimitObserver.observe(container.value.querySelector(`#u-${state.limit.right.observeId}`))
     }
 })
 
 onBeforeUnmount(() => {
     if(state.limit.left.observeId){
-        leftLimitObserver.unobserve(document.querySelector(`#${state.limit.left.observeId}`))
+        leftLimitObserver.unobserve(container.value.querySelector(`#u-${state.limit.left.observeId}`))
     }
 
     if(state.limit.right.observeId){
-        rightLimitObserver.unobserve(document.querySelector(`#${state.limit.right.observeId}`))
+        rightLimitObserver.unobserve(container.value.querySelector(`#u-${state.limit.right.observeId}`))
     }
 })
 </script>

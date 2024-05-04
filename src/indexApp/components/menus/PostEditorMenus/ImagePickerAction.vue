@@ -11,7 +11,7 @@
                 @toggle-hidden="toggleHidden">
             </ImageEditor>
         </Teleport>
-        <div id="imagePanel">
+        <div id="image-panel">
             <div class="gap-2 grid grid-cols-3 grid-rows-1">
                 <div
                     v-for="(item, key) in state.imgList"
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { reactive, watch } from 'vue'
+import { reactive } from 'vue'
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconError from '@/components/icons/IconError.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
@@ -64,8 +64,13 @@ const props = defineProps({
         required: true
     },
     /** 图片信息列表 */
-    imagesInfo:{
+    imagesInfo: {
         type: Array,
+        required: true
+    },
+    /** 传入的文件选择器 */
+    selector: {
+        type:Object,
         required: true
     }
 })
@@ -97,8 +102,7 @@ function editImage(imageIndex) {
 }
 
 function choosePics() {
-    const imgFileSelector = document.getElementById("imgFile")
-    imgFileSelector.click()
+    props.selector.click()
 }
 
 function closeImageEditor(args) {

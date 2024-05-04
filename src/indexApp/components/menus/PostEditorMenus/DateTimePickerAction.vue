@@ -330,7 +330,7 @@ onMounted(() => {
     state.pickedHour = now.getHours()
     state.pickedMinute = now.getMinutes()
 
-    const dateTimePickerAction = document.querySelector('#dateTimePickerAction')
+    const dateTimePickerAction = document.querySelector('#datetime-picker-action')
     document.querySelector('#app').addEventListener('click', function (event) {
         if (!dateTimePickerAction.contains(event.target)) {
             emits('closeWithClear')

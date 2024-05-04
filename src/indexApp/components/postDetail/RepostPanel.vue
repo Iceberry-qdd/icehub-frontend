@@ -99,7 +99,7 @@
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <textarea
                     v-else
-                    id="review-input"
+                    ref="reviewInput"
                     v-model="state.data.content"
                     :disabled="state.loading"
                     :class="{ 'text-gray-400': state.loading, 'cursor-not-allowed': state.loading }"
@@ -132,7 +132,7 @@
 </style>
 
 <script setup>
-import { reactive, onMounted, onUnmounted, computed, inject, defineAsyncComponent } from 'vue'
+import { reactive, onMounted, onUnmounted, computed, inject, defineAsyncComponent, ref } from 'vue'
 import RepostCard from '@/indexApp/components/postDetail/RepostCard.vue'
 import { posting } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
@@ -145,6 +145,7 @@ import { VueShowdown } from 'vue-showdown'
 const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 
 const route = useRoute()
+const reviewInput = ref()
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -198,9 +199,8 @@ const doPostingNew = computed(() => {
 })
 
 function resize() {
-    const textarea = document.getElementById('review-input')
-    textarea.style.height = 'auto'
-    textarea.style.height = `${textarea.scrollHeight}px`
+    reviewInput.value.style.height = 'auto'
+    reviewInput.value.style.height = `${reviewInput.value.scrollHeight}px`
 }
 
 const leftWordCount = computed(() => {

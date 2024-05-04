@@ -20,7 +20,9 @@
                     class="h-[2.5rem] max-w-none rounded-[6px] text-[2.5rem] w-[2.5rem]">
                 </Avatar>
             </div>
-            <div class="w-full">
+            <div
+                ref="panel"
+                class="w-full">
                 <div
                     v-if="state.content.length > 0"
                     class="mb-2 text-[11pt]">
@@ -51,6 +53,7 @@
                     <ImagePickerAction
                         v-if="state.imgList.length > 0"
                         :img-list="state.imgList"
+                        :selector="imgFile"
                         :images-info="state.imageListInfo">
                     </ImagePickerAction>
                 </Transition>
@@ -61,7 +64,7 @@
                         <!-- TODO implement it. -->
                         <input
                             v-show="false"
-                            id="imgFile"
+                            ref="imgFile"
                             type="file"
                             name="imgFile"
                             multiple="true"
@@ -167,6 +170,8 @@ import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
+const panel = ref()
+const imgFile = ref()
 const emits = defineEmits(['dismiss'])
 const props = defineProps({
     /** 传入的帖子对象，与parent二选一传递 */
@@ -302,7 +307,7 @@ const avatar = computed(() => {
 })
 
 function resize() {
-    const textarea = document.getElementById(state.textAreaId)
+    const textarea = panel.value.querySelector(`#${state.textAreaId}`)
     textarea.style.height = 'auto'
     textarea.style.height = `${textarea.scrollHeight}px`
     //FIXME 当删除内容时无法自动调整大小
@@ -336,9 +341,8 @@ function insertEmoji({ unified }) {
 }
 
 function clickFileSelector() {
-    const imgFileSelector = document.getElementById("imgFile")
-    imgFileSelector.click()
-    const imgs = Array.of(...imgFileSelector.files)
+    imgFile.value.click()
+    const imgs = Array.of(...imgFile.value.files)
 
     if (imgs.length == 0) return
     state.imgList.push(...imgs)
@@ -353,8 +357,7 @@ function preChoosePics() {
 }
 
 function choosePics() {
-    const imgFileSelector = document.getElementById("imgFile")
-    imgFileSelector.click()
+    imgFile.value.click()
 }
 
 const hasImage = computed(() => {
