@@ -86,10 +86,6 @@ img.pic.img-fluid{
     border-radius: 99rem;
 }
 
-.katex {
-    font: normal 1.1em KaTeX_Math, Times New Roman, serif !important;
-}
-
 .btn-no-select{
     user-select: none;
 }
