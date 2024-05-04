@@ -163,7 +163,7 @@ const state = reactive({
     data: {
         allowReview: true,
         content: '',
-        top: false,
+        isTop: false,
         attachmentsUrl: [],
         type: 'REPOST',
         parentId: null,

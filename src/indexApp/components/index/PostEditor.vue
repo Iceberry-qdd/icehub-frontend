@@ -279,7 +279,7 @@ const state = reactive({
     data: {
         allowReview: true,
         content: "",
-        top: false,
+        isTop: false,
         images: null,
         type: "NORMAL",
         status: 'PUBLIC',
@@ -370,10 +370,9 @@ function reset(){
     state.showImagePanel = false
     state.data.allowReview = true
     state.data.content = ''
-    state.data.top = false
+    state.data.isTop = false
     state.data.images = null
     state.data.createdTime = null
-    state.top = false
     state.data.status = 'PUBLIC'
 }
 
