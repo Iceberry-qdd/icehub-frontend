@@ -5,25 +5,21 @@
             :key="user.id"
             :user="user">
         </FollowItem>
-        <div
-            id="footer"
-            class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-            <IconLoading
-                v-if="hasMore || state.isLoading"
-                class="h-5 text-slate-500 w-5">
-            </IconLoading>
-            <span v-else>没有更多了</span>
-        </div>
+        <Footer
+            :is-loading="state.isLoading"
+            :has-more="hasMore"
+            @fetch-more="fetchNewList">
+        </Footer>
     </div>
 </template>
     
 <script setup>
-import { reactive, onMounted, computed, onBeforeUnmount } from 'vue'
+import { reactive, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
 import { getUserInfoByNickname, getFollowerList } from '@/indexApp/js/api.js'
 import FollowItem from '@/indexApp/components/follow/FollowItem.vue'
-import IconLoading from '@/components/icons/IconLoading.vue'
+import Footer from '@/indexApp/components/Footer.vue'
 
 const route = useRoute()
 const state = reactive({
@@ -65,30 +61,12 @@ async function getFollower() {
 }
 
 function fetchNewList() {
-    if (!hasMore.value){
-        footerObserver.unobserve(document.querySelector('#footer'))
-        return
-    }
-
     getFollower()
 }
-
-const options = {root: null, rootMargin: '0px', threshold: 0}
-
-const footerObserver = new IntersectionObserver((entries) => {
-    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
-        fetchNewList()
-    }
-}, options)
 
 onMounted(() => {
     const nickname = route.params.nickname
     state.nickname = nickname
     getFollower()
-    footerObserver.observe(document.querySelector('#footer'))
-})
-
-onBeforeUnmount(() => {
-    footerObserver.unobserve(document.querySelector('#footer'))
 })
 </script>

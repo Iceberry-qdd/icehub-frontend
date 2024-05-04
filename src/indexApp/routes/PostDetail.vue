@@ -29,15 +29,11 @@
                 </Review>
             </TransitionGroup>
         </div>
-        <div
-            id="footer"
-            class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-            <IconLoading
-                v-if="state.isLoading || hasMore"
-                class="h-5 text-slate-500 w-5">
-            </IconLoading>
-            <span v-else>没有更多了</span>
-        </div>
+        <Footer
+            :is-loading="state.isLoading"
+            :has-more="hasMore"
+            @fetch-more="fetchNewReview">
+        </Footer>
     </div>
 </template>
 
@@ -66,15 +62,15 @@
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { onMounted, reactive, computed, provide, onBeforeUnmount } from 'vue'
+import { onMounted, reactive, computed, provide } from 'vue'
 import { getPostById, getPostReviews } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
 import Review from '@/indexApp/components/postDetail/Review.vue'
 import ReviewEditor from '@/indexApp/components/postDetail/ReviewEditor.vue'
-import IconLoading from '@/components/icons/IconLoading.vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
 import { useRouter, useRoute } from 'vue-router'
+import Footer from '@/indexApp/components/Footer.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -138,11 +134,6 @@ async function getReviews() {
 }
 
 function fetchNewReview() {
-    if (!hasMore.value){
-        footerObserver.unobserve(document.querySelector('#footer'))
-        return
-    }
-
     getReviews()
 }
 
@@ -175,24 +166,11 @@ function postingNew(post) {
     // Ignore this method body, nothing todo.
 }
 
-const options = {root: null, rootMargin: '0px', threshold: 0}
-
-const footerObserver = new IntersectionObserver((entries) => {
-    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
-        fetchNewReview()
-    }
-}, options)
-
 onMounted(async () => {
     const postId = route.params.id
     if (!state.post) { await getPost(postId) }
 
     await getReviews()
-    footerObserver.observe(document.querySelector('#footer'))
-})
-
-onBeforeUnmount(() => {
-    footerObserver.unobserve(document.querySelector('#footer'))
 })
 
 provide('dismissPostMenus', { dismissPostMenus })

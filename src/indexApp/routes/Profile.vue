@@ -44,20 +44,13 @@
             </div>
             <PostsTimeline
                 v-else
-                :is-loading="state.isPostLoading"
-                :posts="state.posts"
-                :cur-page-index="state.pageIndex"
-                :total-pages="state.totalPages">
+                :posts="state.posts">
             </PostsTimeline>
-            <div
-                id="footer"
-                class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-                <IconLoading
-                    v-if="hasMore || state.isLoading"
-                    class="h-5 text-slate-500 w-5">
-                </IconLoading>
-                <span v-else>没有更多了</span>
-            </div>
+            <Footer
+                :is-loading="state.isPostLoading"
+                :has-more="hasMore"
+                @fetch-more="fetchNewPost">
+            </Footer>
         </div>
     </div>
 </template>
@@ -93,13 +86,13 @@
 import Header from '@/indexApp/components/Header.vue'
 import ProfileInfo from '@/indexApp/components/profile/ProfileInfo.vue'
 import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
-import { reactive, onMounted, computed, provide, onBeforeUnmount } from 'vue'
+import { reactive, onMounted, computed, provide } from 'vue'
 import { getUserPosts, getUserInfoByNickname } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRoute } from 'vue-router'
 import Banner from '@/indexApp/components/Banner.vue'
 import ProfileMenu from '@/indexApp/components/profile/ProfileMenu.vue'
-import IconLoading from '@/components/icons/IconLoading.vue'
+import Footer from '@/indexApp/components/Footer.vue'
 
 const route = useRoute()
 const user = JSON.parse(localStorage.getItem("CUR_USER"))
@@ -175,11 +168,6 @@ async function getUser(nickname) {
 }
 
 function fetchNewPost() {
-    if (!hasMore.value){
-        footerObserver.unobserve(document.querySelector('#footer'))
-        return
-    }
-
     getPosts()
 }
 
@@ -225,14 +213,6 @@ function pinPostOnUi(postId, newTop){
     state.posts.unshift(removedPostArr[0])
 }
 
-const options = {root: null, rootMargin: '0px', threshold: 0}
-
-const footerObserver = new IntersectionObserver((entries) => {
-    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
-        fetchNewPost()
-    }
-}, options)
-
 onMounted(async () => {
     const nickname = route.params.nickname
 
@@ -241,11 +221,6 @@ onMounted(async () => {
     if (!state.user.blocked && !state.user.blocking) {
         await getPosts()
     }
-    footerObserver.observe(document.querySelector('#footer'))
-})
-
-onBeforeUnmount(() => {
-    footerObserver.unobserve(document.querySelector('#footer'))
 })
 
 provide('dismissProfileMenus', { dismissProfileMenus: dismissProfileMenus })

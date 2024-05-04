@@ -31,15 +31,11 @@
                     <NotifyCard v-if="msg.from && msg.content" :message="msg"></NotifyCard>
                 </div>
             </div>
-            <div
-                id="footer"
-                class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-                <IconLoading
-                    v-if="hasMore || state.isLoading == true"
-                    class="h-5 text-slate-500 w-5">
-                </IconLoading>
-                <span v-else>没有更多了</span>
-            </div>
+            <Footer
+                :is-loading="state.isLoading"
+                :has-more="hasMore"
+                @fetch-more="fetchNewList">
+            </Footer>
         </div>
     </div>
 </template>
@@ -117,13 +113,13 @@
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { computed, onMounted, onBeforeUnmount, reactive } from 'vue'
-import IconLoading from '@/components/icons/IconLoading.vue'
+import { computed, onMounted, reactive } from 'vue'
 import NotifyCard from '@/indexApp/components/notify/NotifyCard.vue'
 import { getUsersNotifyList, markNotifyRead, markAllNotifyRead } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRouter } from 'vue-router'
 import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+import Footer from '@/indexApp/components/Footer.vue'
 
 const router = useRouter()
 const state = reactive({
@@ -169,11 +165,6 @@ const hasMore = computed(() => {
 })
 
 function fetchNewList() {
-    if (!hasMore.value){
-        footerObserver.unobserve(document.querySelector('#footer'))
-        return
-    }
-
     fetchNotify()
 }
 
@@ -278,20 +269,7 @@ function handleAction() {
     state.confirmBDialogUi.show = true
 }
 
-const options = {root: null, rootMargin: '0px', threshold: 0}
-
-const footerObserver = new IntersectionObserver((entries) => {
-    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
-        fetchNewList()
-    }
-}, options)
-
 onMounted(() => {
     fetchNotify()
-    footerObserver.observe(document.querySelector('#footer'))
-})
-
-onBeforeUnmount(() => {
-    footerObserver.unobserve(document.querySelector('#footer'))
 })
 </script>

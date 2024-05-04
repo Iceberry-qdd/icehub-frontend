@@ -16,15 +16,11 @@
             :cur-page-index="state.pageIdx"
             :total-pages="state.totalPages">
         </PostsTimeline>
-        <div
-            id="footer"
-            class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-            <IconLoading
-                v-if="hasMore || state.isLoading"
-                class="h-5 text-slate-500 w-5">
-            </IconLoading>
-            <span v-else>没有更多了</span>
-        </div>
+        <Footer
+            :is-loading="state.isLoading"
+            :has-more="hasMore"
+            @fetch-more="fetchNewPost">
+        </Footer>
     </div>
 </template>
 
@@ -33,9 +29,9 @@ import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
 import Header from '@/indexApp/components/Header.vue'
 import { getTimeline } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { onMounted, computed, reactive, provide, onBeforeUnmount } from 'vue'
+import { onMounted, computed, reactive, provide } from 'vue'
 import { useRouter } from 'vue-router'
-import IconLoading from '@/components/icons/IconLoading.vue'
+import Footer from '@/indexApp/components/Footer.vue'
 
 const router = useRouter()
 const state = reactive({
@@ -79,11 +75,6 @@ const hasMore = computed(() => {
 })
 
 function fetchNewPost() {
-    if (!hasMore.value){
-        footerObserver.unobserve(document.querySelector('#footer'))
-        return
-    }
-
     getData()
 }
 
@@ -95,21 +86,8 @@ function postingNew(post) {
     state.posts.unshift(post)
 }
 
-const options = {root: null, rootMargin: '0px', threshold: 0}
-
-const footerObserver = new IntersectionObserver((entries) => {
-    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
-        fetchNewPost()
-    }
-}, options)
-
 onMounted(() => {
     getData()
-    footerObserver.observe(document.querySelector('#footer'))
-})
-
-onBeforeUnmount(() => {
-    footerObserver.unobserve(document.querySelector('#footer'))
 })
 
 provide('postingNew', { postingNew })

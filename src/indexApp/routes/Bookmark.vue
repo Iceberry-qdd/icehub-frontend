@@ -15,15 +15,11 @@
                 :post="post">
             </PostCard>
         </TransitionGroup>
-        <div
-            id="footer"
-            class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-            <IconLoading
-                v-if="hasMore || state.isLoading"
-                class="h-5 text-slate-500 w-5">
-            </IconLoading>
-            <span v-else>没有更多了</span>
-        </div>
+        <Footer
+            :is-loading="state.isLoading"
+            :has-more="hasMore"
+            @fetch-more="fetchNewPost">
+        </Footer>
     </div>
 </template>
 
@@ -49,11 +45,11 @@
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { reactive, computed, onMounted, onBeforeUnmount, provide } from 'vue'
+import { reactive, computed, onMounted, provide} from 'vue'
 import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
 import { store } from '@/indexApp/js/store.js'
 import { getMarkPostList } from '@/indexApp/js/api.js'
-import IconLoading from '@/components/icons/IconLoading.vue'
+import Footer from '@/indexApp/components/Footer.vue'
 
 const state = reactive({
     headerConfig: {
@@ -96,11 +92,6 @@ async function getPostList() {
 }
 
 function fetchNewPost() {
-    if (!hasMore.value){
-        footerObserver.unobserve(document.querySelector('#footer'))
-        return
-    }
-
     getPostList()
 }
 
@@ -139,21 +130,10 @@ function postingNew(post) {
     state.posts.unshift(post)
 }
 
-const options = {root: null, rootMargin: '0px', threshold: 0}
 
-const footerObserver = new IntersectionObserver((entries) => {
-    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
-        fetchNewPost()
-    }
-}, options)
 
 onMounted(() => {
     getPostList()
-    footerObserver.observe(document.querySelector('#footer'))
-})
-
-onBeforeUnmount(() => {
-    footerObserver.unobserve(document.querySelector('#footer'))
 })
 
 provide('deleteBookmarkOnUi', { deleteBookmarkOnUi })

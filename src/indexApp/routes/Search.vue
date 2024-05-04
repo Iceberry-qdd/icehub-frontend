@@ -47,16 +47,12 @@
                 </div>
             </div>
         </div>
-        <div
+        <Footer
             v-if="state.prompt.key"
-            id="footer"
-            class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
-            <IconLoading
-                v-if="state.hasMore || state.isLoading"
-                class="h-5 text-slate-500 w-5">
-            </IconLoading>
-            <span v-else>没有更多了</span>
-        </div>
+            :is-loading="state.isLoading"
+            :has-more="state.hasMore"
+            @fetch-more="fetchMoreSameSearch">
+        </Footer>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div v-else class="flex flex-nowrap h-[9.5rem] items-center justify-center mt-20 w-full">
             <!-- eslint-disable-next-line vue/html-self-closing -->
@@ -85,13 +81,13 @@
 </style>
 
 <script setup>
-import { defineAsyncComponent, onBeforeUnmount } from 'vue'
+import { defineAsyncComponent } from 'vue'
 import SearchBar from '@/indexApp/components/search/SearchBar.vue'
 import { useRouter, useRoute } from 'vue-router'
-import { reactive, computed, onMounted, onUnmounted, provide } from 'vue'
+import { reactive, computed, onMounted, provide } from 'vue'
 import { globalSearch } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import IconLoading from '@/components/icons/IconLoading.vue'
+import Footer from '@/indexApp/components/Footer.vue'
 const UserCardSlide = defineAsyncComponent(() => import('@/indexApp/components/search/UserCardSlide.vue'))
 const PostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostCard.vue'))
 const Review = defineAsyncComponent(() => import('@/indexApp/components/postDetail/Review.vue'))
@@ -190,11 +186,6 @@ async function doSearch() {
 }
 
 function fetchMoreSameSearch() {
-    if (!state.hasMore){
-        footerObserver.unobserve(document.querySelector('#footer'))
-        return
-    }
-    
     const lastPageIndex = state.prompt.pageIndex
     state.prompt.pageIndex = lastPageIndex + 1
     doSearch()
@@ -266,14 +257,6 @@ function decodeSearchKeyOnRoute(){
     return key ? decodeURIComponent(atob(key)) : undefined
 }
 
-const options = {root: null, rootMargin: '0px', threshold: 0}
-
-const footerObserver = new IntersectionObserver((entries) => {
-    if(entries[0].intersectionRatio > options.threshold && !state.isLoading){
-        fetchMoreSameSearch()
-    }
-}, options)
-
 onMounted(() => {
     const key = decodeSearchKeyOnRoute()
     if (key) {
@@ -281,18 +264,6 @@ onMounted(() => {
         .filter(([_, { fetch }]) => fetch === true)
         .map(([k, _]) => k)
         search({ key: key, type: validTypeList })
-    }
-
-    const footer = document.querySelector('#footer')
-    if(footer){
-        footerObserver.observe(footer)
-    }
-})
-
-onBeforeUnmount(() => {
-    const footer = document.querySelector('#footer')
-    if(footer){
-        footerObserver.unobserve(footer)
     }
 })
 
