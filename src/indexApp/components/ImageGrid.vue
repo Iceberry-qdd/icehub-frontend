@@ -167,7 +167,7 @@ function showSlide(idx) {
 function getImageUrl(image) {
     const { url, hidden } = image
     const size = state.gridImageWidth[gridColCount.value]
-    return hidden ? url : `${url}?width=${size}`
+    return hidden ? url : `${import.meta.env.VITE_OBJECT_BASE_URL}${url}?width=${size}`
 }
 
 function playAnimateImage(idx) {

@@ -58,7 +58,7 @@ const srcset = computed(() => {
     if(props.user.avatar instanceof File){
         return state.avatar.url
     }else{
-        return `${state.avatar.url}?width=600`
+        return `${import.meta.env.VITE_OBJECT_BASE_URL}${state.avatar.url}?width=600`
     }
 })
 

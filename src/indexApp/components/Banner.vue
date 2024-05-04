@@ -41,7 +41,7 @@ const srcset = computed(() => {
     if(props.user.banner instanceof File){
         return state.banner.url
     }else{
-        return `${state.banner.url}?width=600`
+        return `${import.meta.env.VITE_OBJECT_BASE_URL}${state.banner.url}?width=600`
     }
 })
 

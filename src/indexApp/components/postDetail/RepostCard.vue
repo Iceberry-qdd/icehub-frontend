@@ -124,7 +124,7 @@ function routeToUserProfile() {
 
 function getImageUrl(image) {
     const { url, hidden } = image
-    return hidden ? url : `${image.url}?width=600`
+    return hidden ? url : `${import.meta.env.VITE_OBJECT_BASE_URL}${image.url}?width=600`
 }
 
 const isCoverHidden = computed(() => {

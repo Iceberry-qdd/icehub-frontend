@@ -20,7 +20,7 @@
             <div v-for="(img, index) in state.imgs" :key="index">
                 <picture>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <source :srcset="`${img.url}?width=${innerWidth}`" type="image/webp" />
+                    <source :srcset="`${state.imageBaseUrl}${img.url}?width=${innerWidth}`" type="image/webp" />
                     <img
                         v-show="index == state.activeIndex"
                         :style="{ 'background-image': `url(${img.thumb})` }"
@@ -60,7 +60,8 @@ import IconAltOn from '@/components/icons/IconAltOn.vue'
 const state = reactive({
     imgs: store.SLIDE_DATA.urls,
     activeIndex: store.SLIDE_DATA.curIdx,
-    showAlt: false
+    showAlt: false,
+    imageBaseUrl: import.meta.env.VITE_OBJECT_BASE_URL
 })
 
 function close() {
