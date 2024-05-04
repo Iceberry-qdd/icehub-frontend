@@ -99,7 +99,7 @@ details>summary>.material-icons-round {
 import { reactive, onMounted, onUnmounted, computed } from 'vue'
 import Avatar from '@/components/Avatar.vue'
 import EmojiPanel from '@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'
-import palette from '@/indexApp/components/profile/tailwind-palette.json'
+import palette from '@/assets/tailwind-palette.json'
 
 const props = defineProps({
     /** 用户旧头像 */

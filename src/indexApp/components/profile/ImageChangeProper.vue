@@ -12,7 +12,7 @@
                     :key="item.id"
                     class="basis-1/3 flex flex-col gap-y-1 h-[8rem] items-center justify-center">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                    <div class="material-icons-round" @click="handleSelect(item.select)">{{ item.icon }}</div>
+                    <div class="material-icons-round text-[1.5rem]" @click="handleSelect(item.select)">{{ item.icon }}</div>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="text-[0.8rem] text-zinc-400">{{ item.name }}</div>
                 </div>

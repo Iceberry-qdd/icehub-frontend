@@ -295,12 +295,6 @@ async function reposting() {
     }
 }
 
-const avatar = computed(() => {
-    const { previewUrl, originUrl, contentType } = state.curUser.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
-
 const curVisibility = computed(() => {
     const filteredActions = state.visibilityActions.filter(it => it.code == state.data.status)
     return filteredActions.length > 0 ? filteredActions[0] : state.visibilityActions[0]

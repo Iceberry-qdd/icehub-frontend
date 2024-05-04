@@ -6,7 +6,7 @@
             class="bg-white flex h-2/3 items-center justify-center rounded-xl w-1/3">
             <div class="flex flex-col gap-y-4 items-center justify-center">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <a href="/index"><img src="/icon.svg" width="48" height="48" /></a>
+                <a href="/index"><img src="../../assets/logo.svg" width="48" height="48" /></a>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
                 <div id="brand-name" class="font-bold text-2xl">{{ state.appName }}</div>
                 <input 
@@ -77,7 +77,7 @@
             </button>
             <div class="flex flex-col gap-y-4 items-center justify-center">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <a href="/index"><img src="/icon.svg" width="48" height="48" /></a>
+                <a href="/index"><img src="@/assets/logo.svg" width="48" height="48" /></a>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
                 <div id="brand-name" class="font-bold text-2xl">{{ state.appName }}</div>
                 <input
@@ -131,7 +131,7 @@
             class="bg-white flex flex-col gap-y-4 h-2/3 items-center justify-center rounded-xl w-1/3">
             <div class="flex flex-col items-center justify-center mb-10">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <a href="/index"><img src="/icon.svg" width="48" height="48" /></a>
+                <a href="/index"><img src="@/assets/logo.svg" width="48" height="48" /></a>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
                 <div id="brand-name" class="font-bold text-2xl">{{ state.appName }}</div>
             </div>

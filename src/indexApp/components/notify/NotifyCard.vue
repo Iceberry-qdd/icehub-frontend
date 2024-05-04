@@ -242,16 +242,4 @@ function routeToUserProfile(user) {
 watch(() => props.message.read, function (newVal, oldVal) {
     state.read = newVal
 })
-
-function avatar(nickname, avatarUrl) {
-    const { previewUrl, originUrl, contentType } = avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-}
-
-function banner(bannerUrl) {
-    const { previewUrl, originUrl, contentType } = bannerUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-}
 </script>
