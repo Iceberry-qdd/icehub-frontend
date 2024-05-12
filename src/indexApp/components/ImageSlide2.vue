@@ -20,7 +20,7 @@
             <div v-for="(img, index) in state.imgs" :key="index">
                 <picture>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <source :srcset="`${state.imageBaseUrl}${img.url}?width=${innerWidth}`" type="image/webp" />
+                    <source :srcset="`${state.imageBaseUrl}${img.url}?max_width=${innerWidth}&max_height=${innerHeight}`" type="image/webp" />
                     <img
                         v-show="index == state.activeIndex"
                         :style="{ 'background-image': `url(${img.thumb})` }"
@@ -70,6 +70,10 @@ function close() {
 
 const innerWidth = computed(() => {
     return window.innerWidth
+})
+
+const innerHeight = computed(() => {
+    return window.innerHeight
 })
 
 onMounted(() => {

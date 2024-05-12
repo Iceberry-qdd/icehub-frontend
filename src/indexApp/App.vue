@@ -15,11 +15,13 @@
             :message="store.GLOBAL_NOTIFY_BANNER_MSG"
             @close-global-notify-banner="closeGlobalNotifyBannerMsg">
         </GlobalNotifyBanner>
+        <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
         <div
             id="container"
-            :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }">
+            ref="container"
+            :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }"
+            @wheel="handleScroll">
             <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
-            <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
             <div
                 v-if="state.basis[0] > 0"
                 id="sidebar-l"
@@ -30,7 +32,16 @@
             <div
                 v-if="state.basis[1] > 0"
                 id="main"
-                :style="{ 'flex-basis': state.basis[1] + '%' }">
+                class="relative"
+                :style="{ 'flex-basis': `${state.basis[1]}%` }">
+                <Transition name="fade">
+                    <BackToTop
+                        v-if="state.showBackToTop"
+                        :style="backToTopStyle"
+                        class="-translate-x-[calc(100%+1rem)] bottom-4 fixed z-[100]"
+                        @click="backToTop">
+                    </BackToTop>
+                </Transition>
                 <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
                 <router-view v-slot="{ Component }">
                     <keep-alive
@@ -43,8 +54,10 @@
                     </keep-alive>
                 </router-view>
             </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="state.basis[2] > 0" id="sidebar-r" :style="sidebarRStyle">
+            <div
+                v-if="state.basis[2] > 0"
+                id="sidebar-r"
+                :style="{ 'flex-basis': `${state.basis[2]}%` }">
                 <Recommend class="mr-20 p-4"></Recommend>
             </div>
         </div>
@@ -94,6 +107,26 @@
     ;
 }
 
+.fade-enter-active {
+    transition: bottom 0.15s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: bottom 0.15s ease-in-out;
+}
+
+.fade-enter-from {
+    bottom: -1rem;
+}
+
+.fade-enter-to {
+    bottom: 1rem;
+}
+
+.fade-leave-to {
+    bottom: -1rem;
+}
+
 #sidebar-r::-webkit-scrollbar {
     width: 0 !important;
     height: 100% !important;
@@ -107,7 +140,7 @@
 </style>
 
 <script setup>
-import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref } from 'vue'
 import Sidebar from '@/indexApp/components/Sidebar.vue'
 import Recommend from '@/indexApp/components/Recommend.vue'
 import Brand from '@/indexApp/components/Brand.vue'
@@ -117,12 +150,14 @@ import { ws } from '@/indexApp/js/websocket.js'
 import { useRoute, useRouter } from 'vue-router'
 import { NavigationFailureType, isNavigationFailure } from 'vue-router'
 import GlobalProgressIndicator from '@/components/GlobalProgressIndicator.vue'
+import BackToTop from '@/indexApp/components/BackToTop.vue'
 const GlobalNotifyBanner = defineAsyncComponent(() => import('@/components/GlobalNotifyBanner.vue'))
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 const ImageSlide2 = defineAsyncComponent(() => import('@/indexApp/components/ImageSlide2.vue'))
 
 const route = useRoute()
 const router = useRouter()
+const container = ref()
 const state = reactive({
     user: null,
     globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG,
@@ -130,12 +165,16 @@ const state = reactive({
     startRoute: false,
     showProgressIndicator: false,
     timeoutId: 0,
-    token: localStorage.getItem('TOKEN')
+    token: localStorage.getItem('TOKEN'),
+    showBackToTop: false
 })
 
-const sidebarRStyle = reactive({
-    flexBasis: `${state.basis[2]}%`,
-
+const backToTopStyle = computed(() => {
+    const totalBasis = state.basis.reduce((sum, item) => sum + item, 0)
+    const leftBasis = state.basis[0] + state.basis[1]
+    return {
+        'left': `${(leftBasis / totalBasis) * 100}%`
+    }
 })
 
 async function curUser() {
@@ -220,6 +259,16 @@ function closeProgressIndicator() {
     state.timeoutId = setTimeout(() => {
         state.showProgressIndicator = false
     }, 1100);
+}
+
+function backToTop(){
+    window.scrollTo({top: 0, behavior: 'smooth'})
+}
+
+function handleScroll(e){
+    const wheelDeltaY = e.wheelDeltaY
+    if(wheelDeltaY === 0) return
+    state.showBackToTop = wheelDeltaY > 0 && container.value.scrollHeight > window.innerHeight && window.scrollY > 0
 }
 
 curUser()

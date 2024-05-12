@@ -333,7 +333,7 @@ const submitPostBtnClass = computed(() => ({
     'pointer-events-none': !isValidContentLength.value
 }))
 
-function insertEmoji({ unified }) {
+function insertEmoji(unified) {
     const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
     state.content = state.content.concat(emoji)
 }
