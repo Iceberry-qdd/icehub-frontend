@@ -13,7 +13,9 @@
             </button>
         </div>
 
-        <div class="relative">
+        <div
+            ref="emojiContainer"
+            class="relative">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-for="(emojiList, catalogue) in state.emojiMap" :key="catalogue">
                 <div
@@ -23,12 +25,12 @@
                     {{ categoryZh[catalogue] }}
                 </div>
                 <div
-                    id="emojiGrid"
+                    ref="emojiGrid"
                     :style="{'grid-template-columns': `repeat(${props.column}, minmax(0, 1fr))`}"
                     class="gap-2 grid pl-1">
                     <button
                         v-for="(emoji) in emojiList"
-                        :id="emoji.unified"
+                        :id="`e-${emoji.unified}`"
                         :key="emoji.unified"
                         type="button"
                         :title="emoji.short_name"
@@ -92,8 +94,9 @@
 
 <!-- eslint-disable vue/no-unused-properties -->
 <script setup>
-import { reactive, onMounted, onUnmounted, computed } from 'vue'
-import emojiPack from 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/+esm'
+import { reactive, onMounted, onUnmounted, computed, ref } from 'vue'
+// jsdelivr服务不稳定，选择本地打包进去：https://github.com/jsdelivr/jsdelivr/issues/18565
+import emojiPack from '@/assets/emoji-datasource-apple@15.1.2+esm.js'
 
 const emits = defineEmits(['insertEmojiCode', 'dismissEmojiPanel'])
 const props = defineProps({
@@ -115,7 +118,8 @@ const props = defineProps({
         default: 6
     }
 })
-
+const emojiGrid = ref()
+const emojiContainer = ref()
 const categoryZh = {
     'Smileys & Emotion': '表情与角色',
     'People & Body': '角色与人物',
@@ -179,10 +183,13 @@ function emojiCode({ unified, skin_variations }, selectSkin){
 }
 
 function skinPanelStyle(emojiBtnId){
-    const emojiBtnOffsetLeft = document.getElementById(emojiBtnId)?.offsetLeft
-    const emojiBtnOffsetWidth = document.getElementById(emojiBtnId)?.offsetWidth
-    const skinPanelOffsetLeft = document.getElementById('skinPanel')?.offsetLeft ?? -73 // 经测试，skinPanel.offsetLeft实际是个常量-73
-    const emojiGridOffsetWidth = document.getElementById('emojiGrid')?.offsetWidth
+    const emojiBtnEl = emojiContainer.value.querySelector(`#e-${emojiBtnId}`)
+    const skinPanelEl = emojiBtnEl.querySelector(`#skinPanel`)
+
+    const emojiBtnOffsetLeft = emojiBtnEl?.offsetLeft
+    const emojiBtnOffsetWidth = emojiBtnEl?.offsetWidth
+    const skinPanelOffsetLeft = skinPanelEl?.offsetLeft ?? -73 // 经测试，skinPanel.offsetLeft实际是个常量-73
+    const emojiGridOffsetWidth = emojiContainer.value?.offsetWidth
 
     if(emojiBtnOffsetLeft + skinPanelOffsetLeft < 0){
         return {'translate': `${-emojiBtnOffsetLeft - skinPanelOffsetLeft}px 0`}

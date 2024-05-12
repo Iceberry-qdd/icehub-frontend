@@ -71,7 +71,6 @@
                             accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
                             @change="clickFileSelector" />
                         <div
-                            v-if="showUnImpl"
                             @click="preChoosePics">
                             <span
                                 title="添加图片"
@@ -201,7 +200,6 @@ const props = defineProps({
     }
 })
 const { newReview } = inject('newReview')
-const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const imageListInfo = ref([
         { hidden: false, altText: null, contentType: "" },
