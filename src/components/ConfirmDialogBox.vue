@@ -1,7 +1,7 @@
 <template>
     <div
         id="confirmDialogBox"
-        class="bg-[#00000066] bottom-0 fixed flex flex-row items-center justify-center left-0 right-0 top-0 z-[111]"
+        class="bg-[#00000066] flex flex-row h-full items-center justify-center w-full z-[111]"
         @click.stop="">
         <div
             class="bg-white flex flex-col flex-nowrap gap-y-[1rem] items-center justify-between max-h-[75%] min-h-[8rem] overflow-y-auto p-6 rounded-[8px] w-[18rem]">
@@ -15,13 +15,13 @@
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-else class="flex flex-nowrap flex-row gap-x-[1rem]">
                 <div
-                    class="btn-no-select cursor-pointer px-4 py-[0.3rem] rounded-full text-[11pt]"
+                    class="btn-no-select cursor-pointer font-bold px-4 py-[0.3rem] rounded-full text-[11pt]"
                     :style="confirmButtonStyle"
                     @click="confirm">
                     {{ props.ui.confirmButton.text }}
                 </div>
                 <div
-                    class="btn-no-select cursor-pointer px-4 py-[0.3rem] rounded-full text-[11pt]"
+                    class="btn-no-select cursor-pointer font-bold px-4 py-[0.3rem] rounded-full text-[11pt]"
                     :style="cancelButtonStyle"
                     @click="cancel">
                     {{ props.ui.cancelButton.text }}

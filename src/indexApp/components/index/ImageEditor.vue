@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-[#00000066] bottom-0 fixed flex flex-row items-center justify-center left-0 right-0 top-0 z-[111]">
+    <div class="bg-[#00000066] flex flex-row h-full items-center justify-center w-full z-[111]">
         <div class="bg-white h-fit max-h-[90vh] overflow-y-auto relative rounded-[8px] w-[25%]">
             <div
                 id="imgWrapper"

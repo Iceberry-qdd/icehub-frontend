@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-[#00000066] fixed h-full w-full z-[101]"
+        class="bg-[#00000066] h-full w-full z-[101]"
         @click.self="!state.originImgFile ? emits('dismiss') : ''">
         <input
             v-show="false"
@@ -29,19 +29,19 @@
                         class="absolute bg-black/50 cursor-crosshair h-full left-0 top-0 w-full">
                         <div
                             :style="[pointSize, nwPointTranslate]"
-                            class="absolute bg-red-500 cursor-nw-resize z-[2]"
+                            class="absolute bg-white cursor-nw-resize z-[2]"
                             @mousedown="state.mode = 'zoom'; state.zoomType = 'nwp'" />
                         <div
                             :style="[pointSize, sePointTranslate]"
-                            class="absolute bg-red-500 cursor-se-resize z-[2]"
+                            class="absolute bg-white cursor-se-resize z-[2]"
                             @mousedown="state.mode = 'zoom'; state.zoomType = 'sep'" />
                         <div
                             :style="[pointSize, swPointTranslate]"
-                            class="absolute bg-red-500 cursor-sw-resize z-[2]"
+                            class="absolute bg-white cursor-sw-resize z-[2]"
                             @mousedown="state.mode = 'zoom'; state.zoomType = 'swp'" />
                         <div
                             :style="[pointSize, nePointTranslate]"
-                            class="absolute bg-red-500 cursor-ne-resize z-[2]"
+                            class="absolute bg-white cursor-ne-resize z-[2]"
                             @mousedown="state.mode = 'zoom'; state.zoomType = 'nep'" />
                     
                         <div
@@ -448,10 +448,20 @@ function initCropper(){
     state.se.left = state.se.top
 
     if(props.mode === 'aspectRatio'){
-        if(props.aspectRatio >= 1 && originImgOffsetWidth <= originImgOffsetHeight){
-            state.se.top = state.se.left / props.aspectRatio
+        if(props.aspectRatio >= 1){
+            if(state.se.top * props.aspectRatio > originImgOffsetWidth){
+                state.se.left = originImgOffsetWidth
+                state.se.top = state.se.left / props.aspectRatio
+            }else {
+                state.se.left = state.se.top * props.aspectRatio
+            }
         }else {
-            state.se.left = state.se.top * props.aspectRatio
+            if(state.se.left / props.aspectRatio > originImgOffsetHeight){
+                state.se.top = originImgOffsetHeight
+                state.se.left = state.se.top * props.aspectRatio
+            }else {
+                state.se.top = state.se.left / props.aspectRatio
+            }
         }
     }
 

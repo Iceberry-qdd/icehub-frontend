@@ -116,6 +116,7 @@
             <Teleport to="#app">
                 <RepostPanel
                     v-if="state.showRepostPanel"
+                    class="fixed top-0"
                     :post="state.post"
                     @dismiss="state.showRepostPanel = false">
                 </RepostPanel>

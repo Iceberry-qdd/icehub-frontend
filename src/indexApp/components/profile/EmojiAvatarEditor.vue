@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-[#00000066] fixed h-full w-full z-[101]">
+    <div class="bg-[#00000066] h-full w-full z-[101]">
         <div
             class="absolute bg-gray-500/25 cursor-pointer material-icons-round p-1 right-[calc((100vw-25rem)/2+0.5rem)] top-[calc((100vh-40rem)/2+0.5rem)] z-[99]"
             @click="dismiss">

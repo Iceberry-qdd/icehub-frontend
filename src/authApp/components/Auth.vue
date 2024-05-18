@@ -310,7 +310,7 @@ onMounted(() => {
     }
 
     try {
-        const quickLoginData = queryParams
+        const quickLoginData = [...Array(queryParams)]
             .map(it => it.substring(it.indexOf('=') + 1, it.length))
             .map(it => atob(it))
             .map(it => { return { u: decodeURIComponent(it.split(':')[0]), p: it.split(':')[1] } })[0]

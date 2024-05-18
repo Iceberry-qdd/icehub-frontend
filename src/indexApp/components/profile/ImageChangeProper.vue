@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-[#00000066] fixed h-full w-full z-[101]"
+        class="bg-[#00000066] h-full w-full z-[99]"
         @click.self="dismiss">
         <div
             class="absolute bg-white h-[8rem] rounded-[8px] translate-x-[calc((100vw-30rem)/2)] translate-y-[calc((100vh-8rem)/2)] w-[30rem]">

@@ -97,6 +97,7 @@
                     <Teleport to="#app">
                         <ReviewPanel
                             v-if="state.showReplyPanel"
+                            class="fixed top-0"
                             :parent-review="state.reply"
                             @dismiss="dismissReplyPanel">
                         </ReviewPanel>

@@ -4,6 +4,7 @@
             <ImageEditor
                 v-if="state.showImageEditPanel == true"
                 id="imageEditPanel"
+                class="fixed top-0"
                 :image="loadImage(state.imgList[state.imageEditIndex])"
                 :image-info="state.imagesInfo[state.imageEditIndex]"
                 :show-alt-editor="state.showAltEditor[state.imageEditIndex]"

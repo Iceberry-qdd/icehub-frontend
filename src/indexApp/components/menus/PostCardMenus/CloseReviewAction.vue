@@ -7,6 +7,7 @@
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmDialogBoxUi.show"
+                class="fixed top-0"
                 :ui="state.confirmDialogBoxUi"
                 @choice="choose">
             </ConfirmDialogBox>

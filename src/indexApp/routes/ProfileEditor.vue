@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <div class="absolute top-[56px] w-[calc(100%*5/13)]">
+        <div class="absolute top-[56px] w-full">
             <Banner
                 :user="state.newUser"
                 class="h-[20.7rem] object-center object-cover w-full z-[1]">
@@ -135,22 +135,24 @@
                 </div>
             </div>
         </div>
-        <!-- TODO 此组件有时dom已加载，但显示不出来 -->
         <Teleport to="#app">
             <ImageChangeProper
                 v-if="state.imageChangeProper.show"
+                class="fixed top-0"
                 :from="state.imageChangeProper.from"
                 @dismiss="state.imageChangeProper.show = false"
                 @select="handleImageChangeProperSelect">
             </ImageChangeProper>
             <EmojiAvatarEditor
                 v-if="state.imageChangeProper.select === 'emoji'"
+                class="fixed top-0"
                 :avatar="state.newUser.avatar"
                 @dismiss="state.imageChangeProper.select = undefined"
                 @avatar="setAvatar">
             </EmojiAvatarEditor>
             <ImageCropper
                 v-if="state.imageChangeProper.select === 'file'"
+                class="fixed top-0"
                 :mode="state.cropper.mode"
                 :aspect-ratio="state.cropper.aspectRatio"
                 @image-file="handleImageFile"
