@@ -88,7 +88,7 @@ const buttonText = computed(() => {
 })
 
 const itemClass = computed(() => ({
-    'justify-center': !isSelf.value,
+    'justify-between': !isSelf.value,
     'justify-start': isSelf.value
 }))
 

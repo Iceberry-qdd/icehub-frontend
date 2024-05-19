@@ -111,3 +111,36 @@ const intlNumberFormat = new Intl.NumberFormat(undefined, numberFormatOptions)
 export function humanizedNumber(number) {
     return intlNumberFormat.format(number)
 }
+
+const intlTextSegmenter = new Intl.Segmenter(undefined, { granularity: 'word', localeMatcher: 'best fit' })
+/**
+ * 使用segmenter取子字符串，结果包含preTag、postTag，长度计数时，不包含preTag、postTag
+ * @param {number} maxLen 最大字符串长度，必须为非负整数
+ * @param {number} offset 从第几个字符开始取，必须为非负整数
+ * @returns {string} 子字符串
+ */
+export function substringBySegmenter(text, maxLen, offset) {
+    maxLen = Math.min(text.length, Math.max(maxLen ?? text.length, 0))
+    offset = Math.min(Math.max(offset ?? 0, 0), maxLen)
+    const segArr = [...intlTextSegmenter.segment(text.substring(offset))]
+    let [result, index, lastResultLen] = ['', 0, 0]
+    const [preTag, postTag] = ['<em>', '</em>']
+
+    while (maxLen > 0 && index < segArr.length) {
+        const seg = segArr.at(index).segment
+        result += seg
+        maxLen -= seg.length
+        index++
+
+        if (result.includes(preTag, lastResultLen)) {
+            maxLen += preTag.length
+            lastResultLen = result.length
+        }
+        if (result.includes(postTag, lastResultLen)) {
+            maxLen += postTag.length
+            lastResultLen = result.length
+        }
+    }
+
+    return result
+}

@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
     <div class="h-[56px] sticky top-0 w-full z-[102]">
         <div
@@ -37,7 +38,7 @@
                 <span
                     v-if="state.headerConfig.menuIcon"
                     class="material-icons-round text-[14pt]"
-                    @click="handleAction">
+                    @click="handleClickMenu">
                     {{ state.headerConfig.menuIcon }}
                 </span>
             </div>
@@ -66,7 +67,7 @@
                             :class="[index === 'USER' ? 'h-[calc(2.8rem+1.4rem)]' : 'h-[3rem]']"
                             class="active:bg-gray-100 bg-white cursor-pointer flex hover:bg-gray-50 items-center justify-start px-4"
                             :index="suggest.content.id"
-                            @click="index === 'USER' ? routeTo(index, suggest.content.nickname) : search(suggest.content.content)">
+                            @click="index === 'USER' ? routeTo(index, suggest.content.nickname) : search(contentText(suggest.content.content, index))">
                             <div
                                 v-if="index === 'USER'"
                                 class="flex flex-nowrap flex-row gap-x-4 items-center justify-start">
@@ -76,9 +77,10 @@
                                 </Avatar>
                                 <div class="flex flex-col flex-nowrap h-max items-start justify-start">
                                     <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
+                                        <!-- eslint-disable-next-line vue/html-self-closing -->
                                         <div
-                                            class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
-                                            {{ suggest.content.nickname }}
+                                            class="font-bold hover:underline hover:underline-offset-4 text-[12pt]"
+                                            v-html="suggest.content.nickname">
                                         </div>
                                         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                                         <IconVerify v-if="suggest.content.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
@@ -91,7 +93,8 @@
                             <div
                                 v-else
                                 class="flex flex-row items-center justify-between w-full">
-                                <div>{{ suggest.content.content }}</div>
+                                <!-- eslint-disable-next-line vue/html-self-closing -->
+                                <div v-html="contentText(suggest.content.content, index)"></div>
                                 <div
                                     v-if="suggest.content.type === 'HISTORY'"
                                     class="close material-icons-round no-hover"
@@ -182,6 +185,7 @@ import { reactive, watch, onMounted, onUnmounted } from 'vue'
 import { globalSearchSuggest } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
+import { substringBySegmenter } from '@/indexApp/utils/formatUtils.js'
 
 const emits = defineEmits(['routeTo', 'search'])
 const props = defineProps({
@@ -202,6 +206,7 @@ const state = reactive({
         iconTooltip: '高级筛选'
     },
     prompt: '', // FIXME 此处当prompt是从热门推荐点击触发后传过来的，不会显示
+    maxPromptLen: 20,
     type: 'ALL',
     suggests: {
         show: false,
@@ -306,13 +311,13 @@ function routeTo(type, id) {
 }
 
 function search(word = state.prompt) {
-    state.prompt = word
-    storeSearchHistory(word)
+    state.prompt = word.replaceAll('<em>', '').replaceAll('</em>', '')
+    storeSearchHistory(state.prompt)
     const validTypeList = [...state.suggests.typeMap.keys()].filter(it => it !== 'ALL' && it !== 'HISTORY')
     const searchType = state.type === 'ALL' ? validTypeList : [state.type]
     state.toSearch = true
     state.suggests.show = false
-    emits('search', { key: word, type: searchType })
+    emits('search', { key: state.prompt, type: searchType })
 }
 
 function handleDismissSuggestPanel(event) {
@@ -323,8 +328,30 @@ function handleDismissSuggestPanel(event) {
     event.stopPropagation()
 }
 
-function handleAction(){
+function handleClickMenu(){
     // TODO Not implement
+}
+
+/**
+ * 将content转换为最终的显示文本
+ * @param {string} content 非user类型suggest的content
+ * @param {string} type 词条的类型
+ * @returns {string} 符合state.maxPromptLen限制且包含preTag、PostTag的词条
+ */
+function contentText(content, type){
+    if(type === 'HISTORY'){
+        return content
+    }
+
+    if(content.replaceAll('<em>', '').replaceAll('</em>', '').length <= state.maxPromptLen){
+        return content
+    }
+
+    if(content.indexOf('</em>') <= state.maxPromptLen){
+        return substringBySegmenter(content, state.maxPromptLen, 0)
+    }
+
+    return substringBySegmenter(content, state.maxPromptLen, content.indexOf('<em>'))
 }
 
 onMounted(() => {

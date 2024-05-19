@@ -41,12 +41,9 @@ function referer() {
             .find(it => it.substring(0, it.indexOf('=')) === 'url')
             .split('=')
             .at(1)
-        window.location = `${window.location.origin}${referer}`
+        window.location = `${window.location.origin}${decodeURIComponent(atob(referer))}`
         return
     }
-
-    window.location = window.location.origin
-    return
 }
 
 onMounted(() => {

@@ -1,6 +1,6 @@
 html,body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui,'Apple Color Emoji','Noto Color Emoji', sans-serif, 'Segoe UI' !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', system-ui,'Apple Color Emoji','Noto Color Emoji', sans-serif, 'Segoe UI' !important;
 }
 
 html::-webkit-scrollbar {
@@ -104,6 +104,12 @@ img.pic.img-fluid{
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
+}
+
+.suggests em {
+    font-style: normal;
+    font-weight:normal;
+    color: #3b82f6;
 }
 
 @tailwind base;

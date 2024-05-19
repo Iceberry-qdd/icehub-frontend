@@ -194,7 +194,7 @@ async function curUser() {
         console.error(e)
         localStorage.removeItem('TOKEN')
         localStorage.removeItem('CUR_USER')
-        location = `${window.origin}/auth.html?url=${window.location.pathname}`
+        location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
     }
 }
 
