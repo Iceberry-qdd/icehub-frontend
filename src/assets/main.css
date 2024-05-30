@@ -31,7 +31,7 @@ html::-webkit-scrollbar-thumb {
     translate: -50% -50%;
     width: 3rem;
     height: 3rem;
-    background-image: url('../assets/logo.svg');
+    background-image: url('/favicon.ico');
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;

@@ -19,31 +19,33 @@
         <div
             id="container"
             ref="container"
-            :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }"
+            class="flex-nowrap flex-row justify-center min-h-screen sm:flex"
+            :class="{ 'mt-10': isShowGlobalNotifyBannerMsg }"
             @wheel="handleScroll">
             <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
             <div
-                v-if="state.basis[0] > 0"
                 id="sidebar-l"
-                :style="{ 'flex-basis': state.basis[0] + '%' }">
-                <Brand></Brand>
-                <Sidebar id="menu"></Sidebar>
+                :class="{'main-route': isMainRoute}"
+                class="border-[#EEEEEE] border-[1px] flex flex-row flex-wrap lg:flex-[0.75] lg:justify-end sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
+                <Brand class="bg-white fixed lg:-translate-x-14 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
+                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                <Sidebar id="menu" class="h-fit lg:-translate-x-8 lg:max-w-[20rem] lg:min-w-[14rem] lg:mt-[6rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16"></Sidebar>
             </div>
             <div
-                v-if="state.basis[1] > 0"
                 id="main"
-                class="relative"
-                :style="{ 'flex-basis': `${state.basis[1]}%` }">
+                class="lg:flex-[1.15] max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] max-w-[64rem] min-w-0 overflow-x-hidden relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] z-[1]">
                 <Transition name="fade">
                     <BackToTop
                         v-if="state.showBackToTop"
                         :style="backToTopStyle"
-                        class="-translate-x-[calc(100%+1rem)] bottom-4 fixed z-[100]"
+                        class="-translate-x-[4rem] bottom-4 fixed z-[100]"
                         @click="backToTop">
                     </BackToTop>
                 </Transition>
                 <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
-                <router-view v-slot="{ Component }">
+                <router-view
+                    v-slot="{ Component }"
+                    class="sm-max-lg:border-[#EEEEEE] sm:max-lg:border-[1px] sm:max-lg:max-w-[36rem]">
                     <keep-alive
                         :max="8"
                         :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
@@ -55,58 +57,16 @@
                 </router-view>
             </div>
             <div
-                v-if="state.basis[2] > 0"
                 id="sidebar-r"
-                :style="{ 'flex-basis': `${state.basis[2]}%` }">
-                <Recommend class="mr-20 p-4"></Recommend>
+                ref="sidebarR"
+                class="border-[#EEEEEE] border-l-[1px] flex-1 h-screen max-lg:hidden overflow-y-scroll sticky top-0 z-0">
+                <Recommend class="max-w-[25rem] p-4"></Recommend>
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-#menu {
-    margin: 6rem 0rem 0 0;
-}
-
-#container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    min-height: 100vh;
-}
-
-.margin-top-10 {
-    margin-top: 2.5rem;
-}
-
-#sidebar-l {
-    border-right: 1px solid #EEEEEE;
-    overflow-x: hidden;
-}
-
-#sidebar-r {
-    border-left: 1px solid #EEEEEE;
-    overflow: hidden scroll;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    z-index: 0;
-    overflow-x: hidden;
-}
-
-#main {
-    min-width: 0;
-    z-index: 1;
-    overflow-x: hidden;
-}
-
-.mr-20 {
-    margin-right: 5rem
-        /* 80px */
-    ;
-}
-
 .fade-enter-active {
     transition: bottom 0.15s ease-in-out;
 }
@@ -127,15 +87,25 @@
     bottom: -1rem;
 }
 
-#sidebar-r::-webkit-scrollbar {
+:is(#sidebar-r, #sidebar-l)::-webkit-scrollbar {
     width: 0 !important;
     height: 100% !important;
     -webkit-appearance: none;
 }
 
-#sidebar-r::-webkit-scrollbar-thumb {
+:is(#sidebar-r, #sidebar-l)::-webkit-scrollbar-thumb {
     width: 6px !important;
     -webkit-appearance: none;
+}
+
+@media not all and (min-width: 640px) {
+    #sidebar-l:not(.main-route){
+        display: none;
+    }
+    
+    #sidebar-l:not(.main-route) + #main{
+        padding-bottom: 0;
+    }
 }
 </style>
 
@@ -158,10 +128,10 @@ const ImageSlide2 = defineAsyncComponent(() => import('@/indexApp/components/Ima
 const route = useRoute()
 const router = useRouter()
 const container = ref()
+const sidebarR = ref()
 const state = reactive({
     user: null,
     globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG,
-    basis: [40, 50, 40],
     startRoute: false,
     showProgressIndicator: false,
     timeoutId: 0,
@@ -170,10 +140,9 @@ const state = reactive({
 })
 
 const backToTopStyle = computed(() => {
-    const totalBasis = state.basis.reduce((sum, item) => sum + item, 0)
-    const leftBasis = state.basis[0] + state.basis[1]
+    const percent = 1 - ((sidebarR?.value?.clientWidth ?? 0) / window.innerWidth)
     return {
-        'left': `${(leftBasis / totalBasis) * 100}%`
+        'left': `${percent * 100}%`
     }
 })
 
@@ -247,12 +216,12 @@ watch(() => ws.connectState, function (newVal, oldVal) {
     }
 })
 
-watch(() => route.path, function (newVal, oldVal) {
-    if (newVal.startsWith('/setting')) {
-        state.basis = [40, 90, 0]
-    } else {
-        state.basis = [40, 50, 40]
-    }
+/**
+ * 判断当前路由是否为四大主界面
+ */
+const mainRouteSet = new Set(['index', 'explore', 'notify', 'profile'])
+const isMainRoute = computed(() => {
+    return mainRouteSet.has(route.name)
 })
 
 function closeProgressIndicator() {
@@ -261,13 +230,13 @@ function closeProgressIndicator() {
     }, 1100);
 }
 
-function backToTop(){
-    window.scrollTo({top: 0, behavior: 'smooth'})
+function backToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-function handleScroll(e){
+function handleScroll(e) {
     const wheelDeltaY = e.wheelDeltaY
-    if(wheelDeltaY === 0) return
+    if (wheelDeltaY === 0) return
     state.showBackToTop = wheelDeltaY > 0 && container.value.scrollHeight > window.innerHeight && window.scrollY > 0
 }
 

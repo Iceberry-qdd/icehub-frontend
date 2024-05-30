@@ -44,6 +44,8 @@ function referer() {
         window.location = `${window.location.origin}${decodeURIComponent(atob(referer))}`
         return
     }
+    window.location = window.location.origin
+    return
 }
 
 onMounted(() => {
