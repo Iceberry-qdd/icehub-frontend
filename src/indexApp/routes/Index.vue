@@ -1,6 +1,6 @@
 <template>
     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-    <div id="index" class="relative">
+    <div id="index">
         <Header
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
@@ -10,14 +10,17 @@
             :menu-action="state.headerConfig.menuAction"
             :icon-tooltip="state.headerConfig.iconTooltip">
         </Header>
-        <Transition>
-            <GlobalRefresh
-                v-if="state.isShowGlobalRefresh && showUnImpl"
-                class="-translate-x-1/2 fixed left-1/2 z-[99]"
-                :class="[isShowGlobalNotifyBannerMsg ? 'top[6.5rem]' : 'top-[4rem]']"
-                @close-global-refresh="state.isShowGlobalRefresh=false">
-            </GlobalRefresh>
-        </Transition>
+        
+        <div  
+            class="absolute content-center flex items-center justify-center pointer-events-none w-full z-[99]">
+            <Transition>
+                <GlobalRefresh
+                    v-if="state.isShowGlobalRefresh && showUnImpl"
+                    class="fixed h-auto top-[4rem]"
+                    @close-global-refresh="state.isShowGlobalRefresh=false">
+                </GlobalRefresh>
+            </Transition>
+        </div>
         <PostEditor
             @get-data="getData"
             @posting-new="postingNew">

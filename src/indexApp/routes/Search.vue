@@ -1,13 +1,11 @@
 <!-- eslint-disable vue/no-template-shadow -->
 <template>
     <div id="search">
-        <div class="header relative">
-            <SearchBar
-                :prompt="state.prompt"
-                @search="search"
-                @route-to="routeTo">
-            </SearchBar>
-        </div>
+        <SearchBar
+            :prompt="state.prompt"
+            @search="search"
+            @route-to="routeTo">
+        </SearchBar>
         <div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
             <div v-if="showUsers" class="font-bold px-2 py-2 text-[13pt]">用户</div>

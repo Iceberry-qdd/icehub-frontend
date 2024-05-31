@@ -1,51 +1,37 @@
 <template>
-    <div class="h-[56px] sticky top-0 w-full z-[102]">
-        <div
-            id="h"
-            class="flex flex-row items-center justify-between px-[1rem] text-[15pt] w-[calc(100%*5/13)]"
-            :class="[!state.noBorder ? 'border-btm' : '']">
-            <div class="flex flex-row h-full items-center text-[15pt]">
-                <div
-                    v-if="props.goBack"
-                    class="cursor-pointer material-icons-round mr-[0.5rem] text-[14pt]"
-                    title="返回"
-                    @click="routeBackTo">
-                    arrow_back_ios
-                </div>
-                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="font-bold text-[14pt]">{{ props.title }}</div>
-            </div>
+    <div
+        id="h"
+        class="backdrop-blur-xl bg-white/80 flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:pr-2 px-[1rem] sticky text-lg top-0 z-[104]"
+        :class="[!state.noBorder ? 'border-b-[1px] border-[#EEEEEE]' : '']">
+        <div class="flex flex-0 flex-row h-full items-center">
             <div
-                v-if="props.showMenu"
-                id="header-opt"
-                :title="props.iconTooltip">
-                <span
-                    v-if="props.menuIcon"
-                    class="material-icons-round text-[14pt]"
-                    @click="handleAction">
-                    {{ props.menuIcon }}
-                </span>
+                v-if="props.goBack"
+                class="cursor-pointer material-icons-round mr-[0.5rem] text-[1.125rem]"
+                title="返回"
+                @click="routeBackTo">
+                arrow_back_ios
             </div>
+            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+            <div class="font-bold">{{ props.title }}</div>
+        </div>
+        <!-- eslint-disable-next-line vue/html-self-closing -->
+        <slot></slot>
+        <div
+            v-if="props.showMenu"
+            id="header-opt"
+            :title="props.iconTooltip"
+            class="flex-0">
+            <span
+                v-if="props.menuIcon"
+                class="material-icons-round text-[1.125rem]"
+                @click="handleAction">
+                {{ props.menuIcon }}
+            </span>
         </div>
     </div>
 </template>
 
-<style scoped>
-#h {
-    background-color: rgb(255 255 255 / 84%);
-    backdrop-filter: blur(25px);
-    z-index: 104;
-    height: 56px;
-    position: fixed;
-}
-
-.border-btm {
-    border-bottom: 1px solid #EEEEEE;
-}
-</style>
-
 <!-- eslint-disable vue/no-unused-properties -->
-
 <script setup>
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
@@ -78,12 +64,6 @@ const props = defineProps({
         type: String,
         required: false,
         default: ''
-    },
-    /** Header组件的宽度 */
-    width: {
-        type: Number,
-        required: false,
-        default: 0
     },
     /** 是否隐藏下边框 */
     noBorder: {

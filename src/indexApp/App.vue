@@ -3,7 +3,7 @@
     <div v-if="state.user">
         <GlobalProgressIndicator
             v-if="state.showProgressIndicator"
-            class="fixed"
+            class="fixed z-[106]"
             :routing="state.startRoute"
             @close="closeProgressIndicator">
         </GlobalProgressIndicator>
@@ -21,31 +21,39 @@
             ref="container"
             class="flex-nowrap flex-row justify-center min-h-screen sm:flex"
             :class="{ 'mt-10': isShowGlobalNotifyBannerMsg }"
+            @touchmove="handleScroll"
             @wheel="handleScroll">
-            <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
             <div
                 id="sidebar-l"
                 :class="{'main-route': isMainRoute}"
-                class="border-[#EEEEEE] border-[1px] flex flex-row flex-wrap lg:flex-[0.75] lg:justify-end sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
-                <Brand class="bg-white fixed lg:-translate-x-14 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
+                class="border-[#EEEEEE] border-[1px] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-center sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
+                <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <Sidebar id="menu" class="h-fit lg:-translate-x-8 lg:max-w-[20rem] lg:min-w-[14rem] lg:mt-[6rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16"></Sidebar>
+                <Sidebar id="menu" class="h-fit lg:-translate-x-0 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16"></Sidebar>
             </div>
             <div
                 id="main"
-                class="lg:flex-[1.15] max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] max-w-[64rem] min-w-0 overflow-x-hidden relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] z-[1]">
-                <Transition name="fade">
-                    <BackToTop
-                        v-if="state.showBackToTop"
-                        :style="backToTopStyle"
-                        class="-translate-x-[4rem] bottom-4 fixed z-[100]"
-                        @click="backToTop">
-                    </BackToTop>
-                </Transition>
+                class="lg:flex-[1.15] max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] max-w-[64rem] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] z-[1]">
+                <div class="absolute flex items-start justify-center top-2 w-full z-[110]">
+                    <GlobalBanner
+                        v-if="store.GLOBAL_MSG.length > 0"
+                        class="fixed h-fit w-fit">
+                    </GlobalBanner>
+                </div>
+                <div class="absolute flex items-center justify-end px-4 w-full z-[100]">
+                    <Transition name="fade">
+                        <BackToTop
+                            v-if="state.showBackToTop"
+                            id="back-to-top"
+                            class="bottom-4 fixed max-sm:bottom-20 w-fit"
+                            @click="backToTop">
+                        </BackToTop>
+                    </Transition>
+                </div>
                 <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
                 <router-view
                     v-slot="{ Component }"
-                    class="sm-max-lg:border-[#EEEEEE] sm:max-lg:border-[1px] sm:max-lg:max-w-[36rem]">
+                    class="relative sm-max-lg:border-[#EEEEEE] sm:max-lg:border-[1px] sm:max-lg:max-w-[36rem] w-full">
                     <keep-alive
                         :max="8"
                         :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
@@ -58,7 +66,6 @@
             </div>
             <div
                 id="sidebar-r"
-                ref="sidebarR"
                 class="border-[#EEEEEE] border-l-[1px] flex-1 h-screen max-lg:hidden overflow-y-scroll sticky top-0 z-0">
                 <Recommend class="max-w-[25rem] p-4"></Recommend>
             </div>
@@ -106,6 +113,14 @@
     #sidebar-l:not(.main-route) + #main{
         padding-bottom: 0;
     }
+
+    #sidebar-l:not(.main-route) + #main #back-to-top{
+        bottom: 1rem;
+    }
+
+    .fade-enter-to {
+        bottom: 5rem;
+    }
 }
 </style>
 
@@ -128,7 +143,6 @@ const ImageSlide2 = defineAsyncComponent(() => import('@/indexApp/components/Ima
 const route = useRoute()
 const router = useRouter()
 const container = ref()
-const sidebarR = ref()
 const state = reactive({
     user: null,
     globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG,
@@ -137,13 +151,6 @@ const state = reactive({
     timeoutId: 0,
     token: localStorage.getItem('TOKEN'),
     showBackToTop: false
-})
-
-const backToTopStyle = computed(() => {
-    const percent = 1 - ((sidebarR?.value?.clientWidth ?? 0) / window.innerWidth)
-    return {
-        'left': `${percent * 100}%`
-    }
 })
 
 async function curUser() {
@@ -232,6 +239,7 @@ function closeProgressIndicator() {
 
 function backToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    state.showBackToTop = false
 }
 
 function handleScroll(e) {

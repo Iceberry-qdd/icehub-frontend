@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed flex flex-col-reverse gap-y-2 items-center justify-center pointer-events-none pt-4 w-full z-[110]">
+    <div class="flex flex-col-reverse gap-y-2 items-center justify-center pointer-events-none">
         <TransitionGroup name="banners">
             <GlobalBannerItem
                 v-for="message in state.messages"

@@ -1,53 +1,40 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
-    <div class="h-[56px] sticky top-0 w-full z-[102]">
-        <div
-            id="h"
-            class="border-btm flex flex-row gap-x-1 items-center justify-start px-[0.5rem] py-2 text-[11pt] w-[calc(100%*5/13)]">
-            <div
-                title="返回"
-                class="cursor-pointer material-icons-round text-[12pt]"
-                @click="routeTo()">
-                arrow_back_ios
-            </div>
-            <div class="flex flex-row h-full w-full">
-                <select
-                    id="type-select"
-                    v-model.trim="state.type"
-                    name="search-type"
-                    class="border-[1px] border-r-0 cursor-pointer focus:outline-none h-full pl-2 rounded-l-full">
-                    <option
-                        v-for="([k, { zh, show }]) in state.suggests.typeMap"
-                        v-show="show"
-                        :key="k"
-                        :value="k">
-                        {{ zh }}
-                    </option>
-                </select>
-                <input
-                    v-model="state.prompt"
-                    type="text"
-                    placeholder="搜你想搜的"
-                    maxlength="20"
-                    class="border-[1px] border-l-0 focus:outline-none h-full px-2 rounded-r-full w-full"
-                    @keyup.enter.exact="search()"
-                    @click.left="state.prompt ? () => { } : showSearchHistory()" />
-            </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="state.headerConfig.showMenu" :title="state.headerConfig.iconTooltip">
-                <span
-                    v-if="state.headerConfig.menuIcon"
-                    class="material-icons-round text-[14pt]"
-                    @click="handleClickMenu">
-                    {{ state.headerConfig.menuIcon }}
-                </span>
-            </div>
+    <Header
+        :title="state.headerConfig.title"
+        :go-back="state.headerConfig.goBack"
+        :show-menu="state.headerConfig.showMenu"
+        :menu-icon="state.headerConfig.menuIcon"
+        :icon-tooltip="state.headerConfig.iconTooltip"
+        class="max-sm:h-[56px] px-2 py-2">
+        <div class="flex flex-1 flex-row h-full text-sm">
+            <select
+                id="type-select"
+                v-model.trim="state.type"
+                name="search-type"
+                class="border-[1px] border-r-0 cursor-pointer focus:outline-none h-full pl-2 rounded-l-full">
+                <option
+                    v-for="([k, { zh, show }]) in state.suggests.typeMap"
+                    v-show="show"
+                    :key="k"
+                    :value="k">
+                    {{ zh }}
+                </option>
+            </select>
+            <input
+                v-model="state.prompt"
+                type="text"
+                placeholder="搜你想搜的"
+                maxlength="20"
+                class="border-[1px] border-l-0 focus:outline-none h-full px-2 rounded-r-full w-full"
+                @keyup.enter.exact="search()"
+                @click.left="state.prompt ? () => { } : showSearchHistory()" />
         </div>
         <Transition name="fade">
             <div
                 v-if="state.suggests.show"
                 id="search-suggest"
-                class="bg-white border-[1px] divide-y fixed flex flex-col left-[calc(100%*(8/13)/2+0.5rem)] max-h-[75vh] overflow-y-auto rounded-[8px] shadow-md top-[50px] w-[calc(100%*5/13-1rem)] z-[105]">
+                class="bg-white border-[1px] divide-y fixed flex flex-col max-h-[min(24rem,75vh)] overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-1rem)] z-[105]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <div v-if="state.suggests.hintSuggests" class="suggests">
                     <div
@@ -56,7 +43,7 @@
                         :index="index">
                         <div
                             :class="[index === 'HISTORY' ? 'flex' : 'hidden']"
-                            class="backdrop-blur-sm bg-gray-100/75 flex-row font-bold gap-x-2 h-[3rem] items-center justify-start px-4 sticky text-[14pt] text-black top-0">
+                            class="backdrop-blur-sm bg-gray-100/75 flex-row font-bold gap-x-2 h-[3rem] items-center justify-start px-4 sticky text-black top-0">
                             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                             <div class="material-icons-round no-hover">{{ state.suggests.typeMap.get(index).icon }}</div>
                             <div>{{ state.suggests.typeMap.get(index).zh }}</div>
@@ -79,13 +66,13 @@
                                     <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
                                         <!-- eslint-disable-next-line vue/html-self-closing -->
                                         <div
-                                            class="font-bold hover:underline hover:underline-offset-4 text-[12pt]"
+                                            class="font-bold hover:underline text-base"
                                             v-html="suggest.content.nickname">
                                         </div>
                                         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                                         <IconVerify v-if="suggest.content.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
                                     </div>
-                                    <div class="font-light text-[10pt] text-gray-500 webkit-box-1">
+                                    <div class="font-light text-[0.8rem] text-gray-500 webkit-box-1">
                                         {{ suggest.content.verifiedInfo || suggest.content.remark || '这个人什么也没写' }}
                                     </div>
                                 </div>
@@ -109,30 +96,18 @@
                     v-else-if="state.suggests.showLoading"
                     class="flex flex-col gap-y-2 h-[8rem] items-center justify-center">
                     <IconLoading class="h-5 text-slate-500 w-5"></IconLoading>
-                    <span class="text-[11pt]">{{ state.suggests.loadingText }}</span>
+                    <span class="text-base">{{ state.suggests.loadingText }}</span>
                 </div>
                 <div class="flex-col gap-y-1 h-[8rem] hidden items-center justify-center">
                     <span class="material-icons-round no-hover"> search_off </span>
-                    <span class="text-[11pt]">{{ state.suggests.failText }}</span>
+                    <span class="text-base">{{ state.suggests.failText }}</span>
                 </div>
             </div>
         </Transition>
-    </div>
+    </Header>
 </template>
 
 <style scoped>
-.border-btm {
-    border-bottom: 1px solid #EEEEEE;
-}
-
-#h {
-    background-color: rgb(255 255 255 / 84%);
-    backdrop-filter: blur(25px);
-    z-index: 104;
-    height: 56px;
-    position: fixed;
-}
-
 .fade-enter-active {
     transition: opacity 0.1s ease-in-out;
 }
@@ -186,6 +161,7 @@ import { globalSearchSuggest } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { substringBySegmenter } from '@/indexApp/utils/formatUtils.js'
+import Header from '@/indexApp/components/Header.vue'
 
 const emits = defineEmits(['routeTo', 'search'])
 const props = defineProps({
@@ -198,14 +174,13 @@ const props = defineProps({
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     headerConfig: {
-        title: '搜索',
-        goBack: false,
+        title: '',
+        goBack: true,
         showMenu: false,
         menuIcon: 'checklist',
-        width: 0,
         iconTooltip: '高级筛选'
     },
-    prompt: '', // FIXME 此处当prompt是从热门推荐点击触发后传过来的，不会显示
+    prompt: '',
     maxPromptLen: 20,
     type: 'ALL',
     suggests: {

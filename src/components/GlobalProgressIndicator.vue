@@ -1,5 +1,5 @@
 <template>
-    <div class="h-[2px] w-full z-[99]">
+    <div class="h-[2px] max-lg:h-[4px] w-full">
         <div
             class="bg-blue-500 duration-1000 h-[2px] transition-all w-0"
             :style="{width: `${props.routing ? state.progress: 100}%` }" />
