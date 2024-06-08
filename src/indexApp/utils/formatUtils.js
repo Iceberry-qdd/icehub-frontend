@@ -144,3 +144,39 @@ export function substringBySegmenter(text, maxLen, offset) {
 
     return result
 }
+
+/**
+ * 判断一个obj对象的具体类型
+ * @param {Object} obj object对象
+ * @param {Type} type 预测其类型
+ */
+export function isType(obj, type) {
+    return Object.prototype.toString.call(obj) === `[object ${type.name}]`
+}
+
+/**
+ * 将时间戳或Date返回为`Input[type=datetime-local]`组件支持的`YYYY-MM-DDThh:mm`格式
+ * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ */
+export function toDtPickerFormat(timestamp) {
+    const date = new Date(timestamp)
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getDate()).padStart(2, '0')}`
+}
+
+/**
+ * 将时间戳或Date返回为`Input[type=date]`组件支持的`YYYY-MM-DD`格式
+ * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ */
+export function toDatePickerFormat(timestamp) {
+    const date = new Date(timestamp)
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+}
+
+/**
+ * 将时间戳或Date返回为`Input[type=time]`组件支持的`hh:mm`格式
+ * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ */
+export function toTimePickerFormat(timestamp) {
+    const date = new Date(timestamp)
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getDate()).padStart(2, '0')}`
+}

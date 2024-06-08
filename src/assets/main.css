@@ -112,6 +112,10 @@ img.pic.img-fluid{
     color: #3b82f6;
 }
 
+* {
+   -webkit-tap-highlight-color: rgba(0, 0, 0, 0) 
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

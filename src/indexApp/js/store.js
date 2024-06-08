@@ -120,5 +120,9 @@ export const store = reactive({
     UNREAD_MSG_COUNT: 0,
     setUnreadMsgCount(count) {
         this.UNREAD_MSG_COUNT = count
+    },
+    MOBILE_MODE: false,
+    setMobileMode(isMobile) {
+        this.MOBILE_MODE = isMobile
     }
 })

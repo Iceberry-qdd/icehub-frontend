@@ -1,7 +1,7 @@
 <template>
     <div
         id="h"
-        class="backdrop-blur-xl bg-white/80 flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:pr-2 px-[1rem] sticky text-lg top-0 z-[104]"
+        class="backdrop-blur-xl bg-white/80 flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:px-2 px-[1rem] sticky text-lg top-0 z-[104]"
         :class="[!state.noBorder ? 'border-b-[1px] border-[#EEEEEE]' : '']">
         <div class="flex flex-0 flex-row h-full items-center">
             <div
@@ -12,7 +12,7 @@
                 arrow_back_ios
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="font-bold">{{ props.title }}</div>
+            <div class="font-bold max-sm:ml-2">{{ props.title }}</div>
         </div>
         <!-- eslint-disable-next-line vue/html-self-closing -->
         <slot></slot>

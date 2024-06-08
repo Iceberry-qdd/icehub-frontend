@@ -25,7 +25,7 @@
                 </div>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <span v-else class="material-icons-round max-lg:text-[1.5rem] max-sm:px-4 max-sm:py-1 max-sm:rounded-full max-sm:text-[1.25rem] no-hover p-0 rounded-none text-[1.75rem]">{{ menu.icon }}</span>
-                <span class="btn-no-select font-bold max-sm:leading-4 max-sm:text-[0.8rem] sm:max-lg:hidden text-lg">{{ menu.name }}</span>
+                <span class="btn-no-select font-bold max-sm:leading-4 max-sm:text-[0.8rem] sm:max-lg:hidden text-lg webkit-box-1">{{ menu.name }}</span>
             </div>
 
             <span

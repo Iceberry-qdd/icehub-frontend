@@ -22,19 +22,20 @@
             class="flex-nowrap flex-row justify-center min-h-screen sm:flex"
             :class="{ 'mt-10': isShowGlobalNotifyBannerMsg }"
             @touchmove="handleScroll"
+            @touchstart="touchStart"
             @wheel="handleScroll">
             <div
                 id="sidebar-l"
                 :class="{'main-route': isMainRoute}"
-                class="border-[#EEEEEE] border-[1px] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-center sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
-                <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
+                class="border-[#EEEEEE] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
+                <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-20 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <Sidebar id="menu" class="h-fit lg:-translate-x-0 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16"></Sidebar>
+                <Sidebar id="menu" class="h-fit lg:-translate-x-0 lg:mr-12 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16"></Sidebar>
             </div>
             <div
                 id="main"
-                class="lg:flex-[1.15] max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] max-w-[64rem] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] z-[1]">
-                <div class="absolute flex items-start justify-center top-2 w-full z-[110]">
+                class="lg:flex-[1.15] max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] max-w-[64rem] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] sm:z-[1]">
+                <div class="absolute flex items-start justify-center top-2 w-full z-[1001]">
                     <GlobalBanner
                         v-if="store.GLOBAL_MSG.length > 0"
                         class="fixed h-fit w-fit">
@@ -136,6 +137,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { NavigationFailureType, isNavigationFailure } from 'vue-router'
 import GlobalProgressIndicator from '@/components/GlobalProgressIndicator.vue'
 import BackToTop from '@/indexApp/components/BackToTop.vue'
+import { isType } from '@/indexApp/utils/formatUtils.js'
 const GlobalNotifyBanner = defineAsyncComponent(() => import('@/components/GlobalNotifyBanner.vue'))
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 const ImageSlide2 = defineAsyncComponent(() => import('@/indexApp/components/ImageSlide2.vue'))
@@ -150,7 +152,9 @@ const state = reactive({
     showProgressIndicator: false,
     timeoutId: 0,
     token: localStorage.getItem('TOKEN'),
-    showBackToTop: false
+    showBackToTop: false,
+    touchStartClientY: 0,
+    mediaQueryList: undefined
 })
 
 async function curUser() {
@@ -243,9 +247,23 @@ function backToTop() {
 }
 
 function handleScroll(e) {
-    const wheelDeltaY = e.wheelDeltaY
-    if (wheelDeltaY === 0) return
-    state.showBackToTop = wheelDeltaY > 0 && container.value.scrollHeight > window.innerHeight && window.scrollY > 0
+    let dy = 0
+    if (isType(e, TouchEvent)) {
+        dy = e.changedTouches.item(0).clientY - state.touchStartClientY
+    } else if (isType(e, WheelEvent)) {
+        dy = e.wheelDeltaY
+    }
+
+    if (dy === 0) return
+    state.showBackToTop = dy > 0 && container.value.scrollHeight > window.innerHeight && window.scrollY > 0
+}
+
+function touchStart(e) {
+    state.touchStartClientY = e.touches.item(0).clientY
+}
+
+function handleMediaChange(mq) {
+    store.MOBILE_MODE = mq.matches
 }
 
 curUser()
@@ -262,10 +280,14 @@ onMounted(() => {
             store.setErrorMsg('无法加载页面，您可以刷新重试！')
         }
     })
+    state.mediaQueryList = window.matchMedia('not all and (min-width: 640px)')
+    handleMediaChange(state.mediaQueryList)
+    state.mediaQueryList.addEventListener('change', handleMediaChange)
 })
 
 onUnmounted(() => {
     disconnectToWs()
     clearTimeout(state.timeoutId)
+    state.mediaQueryList.removeEventListener('change', handleMediaChange)
 })
 </script>

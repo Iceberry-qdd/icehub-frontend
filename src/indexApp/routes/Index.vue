@@ -2,7 +2,6 @@
     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
     <div id="index">
         <Header
-            :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
@@ -10,7 +9,6 @@
             :menu-action="state.headerConfig.menuAction"
             :icon-tooltip="state.headerConfig.iconTooltip">
         </Header>
-        
         <div  
             class="absolute content-center flex items-center justify-center pointer-events-none w-full z-[99]">
             <Transition>
@@ -21,10 +19,16 @@
                 </GlobalRefresh>
             </Transition>
         </div>
-        <PostEditor
-            @get-data="getData"
-            @posting-new="postingNew">
-        </PostEditor>
+        <Transition name="fade">
+            <PostEditor
+                v-show="!store.MOBILE_MODE || (store.MOBILE_MODE && state.isShowPostEditor)"
+                id="post-editor"
+                class="max-sm:fixed max-sm:h-[calc(100vh-2rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
+                @close="state.isShowPostEditor = false"
+                @get-data="getData"
+                @posting-new="postingNew">
+            </PostEditor>
+        </Transition>
         <PostsTimeline
             :is-loading="state.isLoading"
             :posts="state.posts"
@@ -36,6 +40,12 @@
             :has-more="hasMore"
             @fetch-more="fetchNewPost">
         </Footer>
+        <div
+            id="create-post-btn"
+            class="bg-blue-500 bottom-20 fixed material-icons-round no-hover p-3 right-4 shadow-blue-500/25 shadow-lg sm:hidden text-white z-[111]"
+            @click="state.isShowPostEditor = true">
+            create
+        </div>
     </div>
 </template>
 
@@ -71,6 +81,12 @@
         opacity: 0;
     }
 }
+
+@media not all and (min-width: 640px) {
+    #main:has(#back-to-top)>#index>#create-post-btn{
+        display: none;
+    }
+}
 </style>
 
 <script setup>
@@ -79,7 +95,7 @@ import Header from '@/indexApp/components/Header.vue'
 import { getUserTimeline } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import PostEditor from '@/indexApp/components/index/PostEditor.vue'
-import { computed, onMounted, reactive, provide } from 'vue'
+import { computed, onMounted, reactive, provide, watch } from 'vue'
 import GlobalRefresh from '@/components/GlobalRefresh.vue'
 import Footer from '@/indexApp/components/Footer.vue'
 
@@ -99,7 +115,8 @@ const state = reactive({
         iconTooltip: '公告'
     },
     isShowGlobalRefresh: true,
-    isLoading: false
+    isLoading: false,
+    isShowPostEditor: false
 })
 
 async function getData() {
@@ -136,6 +153,14 @@ function postingNew(post) {
 
 const isShowGlobalNotifyBannerMsg = computed(() => {
     return store.GLOBAL_NOTIFY_BANNER_MSG.length > 0
+})
+
+watch(() => state.isShowPostEditor, (newVal, oldVal) => {
+    if(newVal === true && oldVal === false){
+        document.querySelector("body").setAttribute("style", "overflow:hidden")
+    }else if(newVal === false && oldVal === true){
+        document.querySelector("body").removeAttribute("style")
+    }
 })
 
 onMounted(() => {

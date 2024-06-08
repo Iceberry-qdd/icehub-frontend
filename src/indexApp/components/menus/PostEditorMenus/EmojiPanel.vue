@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white overflow-x-hidden overflow-y-scroll panel pr-[1px] px-1 rounded-[6px]">
+    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] overflow-x-hidden overflow-y-scroll panel pr-[1px] px-1 rounded-[6px]">
         <div
             v-if="props.showHistory && state.historyEmojis.length > 0"
             class="bg-white border-b-[1px] category gap-1 grid grid-cols-7 px-2 py-2 sticky top-0 z-[99]">
@@ -38,7 +38,7 @@
                         @mouseenter.self="toggleSkinPanel(emoji, true)"
                         @mouseleave.self="toggleSkinPanel(emoji, false)">
                         <span @click="chooseEmoji(emoji.unified)">{{ emojiCode(emoji) }}</span>
-                        <Transition name="fade">
+                        <Transition name="skin-fade">
                             <div
                                 v-if="emoji.skin_variations && state.showSkinPanel[emoji.unified]"
                                 id="skinPanel"
@@ -75,19 +75,19 @@
     border-radius: 9999px;
 }
 
-.fade-enter-active {
+.skin-fade-enter-active {
     transition: opacity 0.3s ease-in-out;
 }
 
-.fade-leave-active {
+.skin-fade-leave-active {
     transition: opacity 0.3s ease-in-out;
 }
 
-.fade-enter-from {
+.skin-fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to {
+.skin-fade-leave-to {
     opacity: 0;
 }
 </style>
