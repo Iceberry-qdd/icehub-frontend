@@ -1,9 +1,9 @@
 <template>
-    <div
-        class="btn-no-select flex flex-rows gap-x-3 items-center justify-start"
-        @click="showConfirmDialogBox">
-        <span class="material-icons-round no-hover p-0 text-[16pt]">person_off</span>
-        <div>不喜欢此用户</div>
+    <div @click="showConfirmDialogBox">
+        <span class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            不喜欢此用户
+        </div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmBDialogUi.show"
@@ -30,12 +30,12 @@ const props = defineProps({
     /** 传入的用户对象 */
     user: {
         type: Object,
-        required: true 
+        required: true
     }
 })
-const { deleteAllPostsOfUserOnUi } = inject('deleteAllPostsOfUserOnUi', {'deleteAllPostsOfUserOnUi': () => {}})
-const { deleteAllReviewsOfUserOnUi } = inject('deleteAllReviewsOfUserOnUi', {'deleteAllReviewsOfUserOnUi': () => {}})
-const { deleteAllUsersOfUserOnUi } = inject('deleteAllUsersOfUserOnUi', {'deleteAllUsersOfUserOnUi': () => {}})
+const { deleteAllPostsOfUserOnUi } = inject('deleteAllPostsOfUserOnUi', { 'deleteAllPostsOfUserOnUi': () => { } })
+const { deleteAllReviewsOfUserOnUi } = inject('deleteAllReviewsOfUserOnUi', { 'deleteAllReviewsOfUserOnUi': () => { } })
+const { deleteAllUsersOfUserOnUi } = inject('deleteAllUsersOfUserOnUi', { 'deleteAllUsersOfUserOnUi': () => { } })
 
 const state = reactive({
     confirmBDialogUi: {

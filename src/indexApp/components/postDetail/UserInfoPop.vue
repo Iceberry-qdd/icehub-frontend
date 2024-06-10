@@ -1,17 +1,17 @@
 <template>
-    <div class="bg-white h-[12rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg w-[22rem]">
+    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
         <Banner
             :user="state.user"
-            class="h-[6rem] object-cover rounded-t-[8px] w-full"
+            class="h-[6rem] max-sm:aspect-[5/2] max-sm:h-auto max-sm:rounded-t-[0.75rem] object-cover rounded-t-[8px] w-full"
             @click="routeToProfile">
         </Banner>
-        <div class="-top-[calc(3.5rem/2)] h-[calc(6rem+3.5rem/2)] mx-[0.95rem] relative">
+        <div class="-mt-[calc(3.5rem/2)] flex-col gap-y-1 max-sm:flex max-sm:mb-4 mb-2 mx-4 relative">
             <div class="flex flex-row items-end justify-between">
                 <Avatar
                     :user="state.user"
                     class="border-[0.2rem] border-white h-[3.5rem] rounded-[8px] text-[3.5rem] w-[3.5rem]">
                 </Avatar>
-                <div class="flex flex-row gap-x-2 text-[11pt]">
+                <div class="flex flex-row gap-x-2 sm:text-[0.85rem]">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
                     <div class="cursor-pointer hover:underline" @click="routeToFollowerList">{{ followingCountText }}</div>
                     <span>|</span>
@@ -21,7 +21,7 @@
             </div>
             <div class="flex flex-row gap-x-1 items-center">
                 <div
-                    class="cursor-pointer font-bold hover:underline text-[12pt]"
+                    class="cursor-pointer font-bold hover:underline text-[1.1rem]"
                     @click="routeToProfile">
                     {{ state.user.nickname }}
                 </div>
@@ -29,12 +29,33 @@
                 <IconVerify v-if="state.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
             </div>
             <div class="flex flex-nowrap flex-row items-center">
-                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="basis-3/4 text-[10pt] webkit-box-1">{{ brief }}</div>
                 <div
-                    v-if="!isCurUser"
+                    :class="{'webkit-box-1': !store.MOBILE_MODE}"
+                    class="max-sm:flex-1 max-sm:max-h-[12rem] max-sm:overflow-y-auto sm:basis-3/4 sm:text-[0.85rem]">
+                    {{ brief }}
+                </div>
+                <div
+                    v-if="!isCurUser && !store.MOBILE_MODE"
                     :class="followBtnClass"
-                    class="basis-1/4 cursor-pointer h-auto py-[0.3rem] rounded-full text-[11pt] text-center"
+                    class="cursor-pointer h-auto py-[0.3rem] rounded-full sm:basis-1/4 text-center"
+                    @click="toggleFollowState">
+                    <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                    <div v-if="!state.loading"> {{ followButtonText }}</div>
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
+                </div>
+            </div>
+            <div class="flex flex-row gap-x-4 items-center justify-center">
+                <div
+                    :class="{'bg-blue-500 text-white': isCurUser, 'bg-gray-200 text-black': !isCurUser}"
+                    class="flex-1 py-2 rounded-full sm:hidden text-center"
+                    @click="routeToProfile(props.user.nickname)">
+                    查看个人资料
+                </div>
+                <div
+                    v-if="!isCurUser && store.MOBILE_MODE"
+                    :class="followBtnClass"
+                    class="cursor-pointer flex-1 py-2 rounded-full text-center"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="!state.loading"> {{ followButtonText }}</div>
@@ -47,7 +68,7 @@
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, onMounted, reactive, onUnmounted } from 'vue'
 import { followUser, unFollowUser } from '@/indexApp/js/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { store } from '@/indexApp/js/store.js'
@@ -64,6 +85,7 @@ const props = defineProps({
         required: true
     }
 })
+const emits = defineEmits(['closeUserInfoPop'])
 const router = useRouter()
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
@@ -164,4 +186,22 @@ async function unFollowAUser(userId) {
         state.loading = false
     }
 }
+
+onMounted(() => {
+    const dismissRouteToSet = new Set(['profile', 'followingList', 'followerList'])
+    router.afterEach((to, from) => {
+        if(dismissRouteToSet.has(to.name)){
+            emits('closeUserInfoPop')
+        }
+    })
+    if(store.MOBILE_MODE){
+        document.querySelector("body").setAttribute("style", "overflow:hidden")
+    }
+})
+
+onUnmounted(() => {
+    if(store.MOBILE_MODE){
+        document.querySelector("body").removeAttribute("style")
+    }
+})
 </script>

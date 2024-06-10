@@ -57,7 +57,6 @@ import IconAdd from '@/components/icons/IconAdd.vue'
 import IconError from '@/components/icons/IconError.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
 import ImageEditor from '@/indexApp/components/index/ImageEditor.vue'
-
 const props = defineProps({
     /** 传入的图片列表 */
     imgList: {
@@ -68,11 +67,6 @@ const props = defineProps({
     imagesInfo: {
         type: Array,
         required: true
-    },
-    /** 传入的文件选择器 */
-    selector: {
-        type:Object,
-        required: true
     }
 })
 
@@ -82,7 +76,8 @@ const state = reactive({
     imagesInfo: props.imagesInfo || [],
     showImageEditPanel: false,
     imageEditIndex: 0,
-    showAltEditor: [false, false, false, false, false, false, false, false, false]
+    showAltEditor: [false, false, false, false, false, false, false, false, false],
+    fileSelector: document.querySelector('#postEditorMenu Input[id="imgFile"]')
 })
 
 function loadImage(file) {
@@ -103,7 +98,7 @@ function editImage(imageIndex) {
 }
 
 function choosePics() {
-    props.selector.click()
+    state.fileSelector.click()
 }
 
 function closeImageEditor(args) {

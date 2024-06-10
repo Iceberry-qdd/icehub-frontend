@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <template>
     <div
-        class="border-b-[1px] pb-[0] pt-[1rem] px-[1rem] relative rounded-none"
+        class="border-b-[1px] max-sm:px-3 pb-[0] pt-[1rem] px-[1rem] relative rounded-none"
         :class="cardContainerClass">
         <div
             v-if="showPinTop"
@@ -31,26 +31,40 @@
                 @click="state.isShowMenu = true">
             </Down>
         </button>
-        <Transition name="fade">
-            <PostMenus
-                v-if="state.isShowMenu"
-                class="absolute cursor-pointer h-auto right-[3%] top-[1rem] z-[100]"
-                :post="state.post">
-            </PostMenus>
-        </Transition>
-        <div class="flex gap-[1rem]">
+        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+        <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+            <div
+                v-if="state.isShowMenu && store.MOBILE_MODE"
+                class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1000]" />
             <Transition name="fade">
-                <UserInfoPop
-                    v-if="state.showUserInfoPop"
-                    :user="state.post.user"
-                    class="absolute top-[1rem] z-[103]"
-                    @mouseleave="state.showUserInfoPop = false">
-                </UserInfoPop>
+                <PostMenus
+                    v-if="state.isShowMenu"
+                    class="absolute cursor-pointer h-auto max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-2 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1000] right-[3%] rounded-[8px] sm:max-w-[18rem] sm:min-w-[12rem] sm:top-[1rem] z-[100]"
+                    :post="state.post">
+                </PostMenus>
             </Transition>
+        </Teleport>
+        <div class="flex gap-x-[1rem]">
+            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+            <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                <div
+                    v-if="state.showUserInfoPop && store.MOBILE_MODE"
+                    class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
+                    @click="state.showUserInfoPop = false" />
+                <Transition name="fade">
+                    <UserInfoPop
+                        v-if="state.showUserInfoPop"
+                        :user="state.post.user"
+                        class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[103]"
+                        @mouseleave="state.showUserInfoPop = false"
+                        @close-user-info-pop="state.showUserInfoPop = false">
+                    </UserInfoPop>
+                </Transition>
+            </Teleport>
             <a
                 class="no-underline relative z-[97]"
-                @mouseenter="state.showUserInfoPop = true"
-                @click="routeToUser(state.post.user.nickname)">
+                @mouseenter="handleAvatarMouseenter()"
+                @click="handleAvatarClick()">
                 <Avatar
                     :user="state.post.user"
                     class="h-[2.5rem] rounded-[8px] text-[2.5rem] w-[2.5rem]">
@@ -76,7 +90,9 @@
             </div>
         </div>
 
-        <div :class="cardBodyClass">
+        <div
+            :class="cardBodyClass"
+            class="max-sm:pr-0">
             <div
                 v-if="state.shrinkContent"
                 class="-translate-x-1/2 -translate-y-full absolute bg-[#cfe2ffaa] cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[11pt] top-[calc(100%-50px)] z-[96]"
@@ -110,16 +126,18 @@
 
         <div
             v-if="!state.post.plan"
-            class="flex flex-row items-center justify-center z-[96]"
+            class="flex flex-row items-center justify-center max-sm:mr-0 z-[96]"
             :class="cardButtonClass"
             role="group">
             <Teleport to="#app">
-                <RepostPanel
-                    v-if="state.showRepostPanel"
-                    class="fixed top-0"
-                    :post="state.post"
-                    @dismiss="state.showRepostPanel = false">
-                </RepostPanel>
+                <Transition name="fade">
+                    <RepostPanel
+                        v-if="state.showRepostPanel"
+                        class="fixed top-0"
+                        :post="state.post"
+                        @dismiss="state.showRepostPanel = false">
+                    </RepostPanel>
+                </Transition>
             </Teleport>
             <button
                 type="button"
@@ -181,6 +199,25 @@
 
 .fade-leave-to {
     opacity: 0;
+}
+
+@media not all and (min-width: 640px) {
+    .fade-enter-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-leave-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-enter-from {
+        translate: 0 100%;
+    }
+
+    .fade-leave-to {
+        translate: 0 100%;
+        opacity: 1;
+    }
 }
 </style>
 
@@ -367,6 +404,20 @@ function dismissPostMenus() {
 
 function handleRealImage({index, image}){
     state.post.images[index] = image
+}
+
+function handleAvatarClick(){
+    if(!store.MOBILE_MODE){
+        routeToUser(state.post.user.nickname)
+    } else {
+        state.showUserInfoPop = true
+    }
+}
+
+function handleAvatarMouseenter(){
+    if(!store.MOBILE_MODE){
+        state.showUserInfoPop = true
+    }
 }
 
 provide('dismissPostMenus', { dismissPostMenus })

@@ -1,10 +1,9 @@
 <template>
     <div
-        class="flex flex-rows gap-x-3 items-center justify-start"
         @click="toggleFollow()">
-        <span class="material-icons-round no-hover p-0 text-[16pt]">{{ followIcon }}</span>
+        <span class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ followIcon }}</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">{{ followText }}</div>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">{{ followText }}</div>
     </div>
 </template>
 

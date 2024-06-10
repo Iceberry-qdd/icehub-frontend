@@ -12,7 +12,11 @@
                 arrow_back_ios
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="font-bold max-sm:ml-2">{{ props.title }}</div>
+            <div
+                v-if="props.title"
+                class="font-bold max-sm:ml-2">
+                {{ props.title }}
+            </div>
         </div>
         <!-- eslint-disable-next-line vue/html-self-closing -->
         <slot></slot>

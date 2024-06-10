@@ -1,9 +1,10 @@
 <template>
     <div
-        class="btn-no-select flex flex-rows gap-x-3 items-center justify-start"
         @click="showConfirmDialogBox">
-        <span class="material-icons-round no-hover p-0 text-[16pt]">{{ icon }}</span>
-        <div>{{ text }}</div>
+        <span class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ icon }}</span>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            {{ text }}
+        </div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmDialogBoxUi.show"

@@ -1,80 +1,85 @@
 <template>
     <div
         :id="`pm-${props.post.id}`"
-        class="bg-white flex flex-col max-w-[18rem] min-w-[12rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
-        <PinAction
-            v-if="isMySelf"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-            :post="state.post">
-        </PinAction>
-        <LinkCopyAction
-            v-if="showLinkCopyAction"
-            :link="generateLink"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-        </LinkCopyAction>
+        class="bg-white ring-1 ring-slate-900/5 shadow-lg">
+        <div class="bg-white flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
+            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+        </div>
+        <div class="flex flex-col max-sm:grid max-sm:grid-cols-4 max-sm:place-items-center">
+            <PinAction
+                v-if="isMySelf"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
+                :post="state.post">
+            </PinAction>
+            <LinkCopyAction
+                v-if="showLinkCopyAction"
+                :link="generateLink"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </LinkCopyAction>
     
-        <PosterGenerateAction
-            v-if="showUnImpl && showGeneratePoster"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            <PosterGenerateAction
+                v-if="showUnImpl && showGeneratePoster"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             <!-- TODO implement it. -->
-        </PosterGenerateAction>
+            </PosterGenerateAction>
     
-        <BookmarkAction
-            v-if="showBookmarkAction"
-            :post="state.post"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-        </BookmarkAction>
+            <BookmarkAction
+                v-if="showBookmarkAction"
+                :post="state.post"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </BookmarkAction>
     
-        <FollowingAction
-            v-if="showFollowAction"
-            :user="state.post.user"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-        </FollowingAction>
+            <FollowingAction
+                v-if="showFollowAction"
+                :user="state.post.user"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </FollowingAction>
     
-        <BlockPostAction
-            v-if="showBlockPostAction"
-            :post="state.post"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-        </BlockPostAction>
+            <BlockPostAction
+                v-if="showBlockPostAction"
+                :post="state.post"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </BlockPostAction>
     
-        <BlockUserAction
-            v-if="showBlockUserAction"
-            :post="state.post"
-            :user="state.post.user"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-        </BlockUserAction>
+            <BlockUserAction
+                v-if="showBlockUserAction"
+                :post="state.post"
+                :user="state.post.user"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </BlockUserAction>
     
-        <ReportPostProblemAction
-            v-if="showUnImpl && showReportAction"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            <ReportPostProblemAction
+                v-if="showUnImpl && showReportAction"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             <!-- TODO implement it. -->
-        </ReportPostProblemAction>
+            </ReportPostProblemAction>
     
-        <VisibilityAction
-            v-if="showVisibilityAction"
-            id="post-menus-visibility-action"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-            :post="state.post"
-            @show-sub-action="showVisibilitySubAction">
-        </VisibilityAction>
+            <VisibilityAction
+                v-if="showVisibilityAction"
+                id="post-menus-visibility-action"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
+                :post="state.post"
+                @show-sub-action="showVisibilitySubAction">
+            </VisibilityAction>
     
-        <CloseReviewAction
-            v-if="showCloseReviewAction"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-            :post="state.post">
-        </CloseReviewAction>
+            <CloseReviewAction
+                v-if="showCloseReviewAction"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
+                :post="state.post">
+            </CloseReviewAction>
         
-        <AdminOperationAction
-            v-if="showUnImpl && showAdminAction"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            <AdminOperationAction
+                v-if="showUnImpl && showAdminAction"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             <!-- TODO implement it. -->
-        </AdminOperationAction>
+            </AdminOperationAction>
     
-        <DeletePostAction
-            v-if="showDeletePostAction"
-            :post="state.post"
-            class="action first:rounded-t-[8px] last:rounded-b-[8px] text-red-500">
-        </DeletePostAction>
+            <DeletePostAction
+                v-if="showDeletePostAction"
+                :post="state.post"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px] text-red-500">
+            </DeletePostAction>
+        </div>
     </div>
 </template>
 
@@ -83,6 +88,13 @@
     padding: 0.5rem 0.75rem;
     width: 100%;
     text-align: start;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: start;
+    align-items: center;
+    column-gap: 0.75rem;
+    user-select: none;
 }
 
 .action:hover{
@@ -92,10 +104,29 @@
 .action:active{
     background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
+
+@media not all and (min-width: 640px) {
+    .action{
+        padding: 0.5rem 0;
+        width: auto;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        width: 100%;
+    }
+
+    .action:hover{
+        background-color: transparent;
+    }
+
+    .action:active{
+        background-color: transparent;
+    }
+}
 </style>
 
 <script setup>
 import { reactive, computed, onMounted, onUnmounted, inject } from 'vue'
+import { store } from '@/indexApp/js/store.js'
 import BookmarkAction from '@/indexApp/components/menus/postCardMenus/BookmarkAction.vue'
 import FollowingAction from '@/indexApp/components/menus/postCardMenus/FollowingAction.vue'
 import LinkCopyAction from '@/indexApp/components/menus/postCardMenus/LinkCopyAction.vue'
@@ -201,9 +232,15 @@ function handlePostMenusDismiss(event) {
 
 onMounted(() => {
     document.querySelector('#app').addEventListener('click', handlePostMenusDismiss)
+    if(store.MOBILE_MODE){
+        document.querySelector("body").setAttribute("style", "overflow:hidden")
+    }
 })
 
 onUnmounted(() => {
     document.querySelector('#app').removeEventListener('click', handlePostMenusDismiss)
+    if(store.MOBILE_MODE){
+        document.querySelector("body").removeAttribute("style")
+    }
 })
 </script>

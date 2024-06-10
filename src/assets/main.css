@@ -69,7 +69,7 @@ img.pic.img-fluid{
     user-select: none;
 }
 
-.material-icons-round:hover:not(.no-hover) {
+.material-icons-round:not(.no-hover,.sm\:no-hover):hover {
     background-color: #00000022;
 }
 

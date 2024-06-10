@@ -1,16 +1,17 @@
 <template>
-    <div
-        class="btn-no-select flex flex-rows gap-x-3 items-center justify-start"
-        @click="blockThisPost">
-        <span class="material-icons-round no-hover p-0 text-[16pt]">visibility_off</span>
-        <div>对此内容不感兴趣</div>
+    <div @click="blockThisPost">
+        <span
+            class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">visibility_off</span>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            {{ text }}
+        </div>
     </div>
 </template>
 
 <script setup>
 import { createOneBlacklist } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { inject, reactive } from 'vue'
+import { computed, inject, reactive } from 'vue'
 
 const props = defineProps({
     /** 传入的帖子对象 */
@@ -23,6 +24,10 @@ const { deletePostOnUi } = inject('deletePostOnUi')
 
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+})
+
+const text = computed(() => {
+    return `${!store.MOBILE_MODE ? '对此内容' : ''}不感兴趣`
 })
 
 async function blockThisPost() {

@@ -1,92 +1,63 @@
 <template>
     <div
-        class="bg-[#00000066] flex flex-row h-full items-center justify-center w-full z-[111]"
+        class="backdrop-blur-sm  bg-[#00000066]  h-full  max-sm:bg-white  max-sm:z-[1001]  w-full  z-[111]"
         @click.self="dismiss">
-        <div class="bg-white flex flex-col flex-nowrap justify-between max-h-[80%] min-h-[30%] overflow-y-auto p-4 rounded-[8px] w-[40%]">
+        <div
+            v-if="state.loading"
+            class="-translate-x-1/2 absolute bg-white h-full left-1/2 max-sm:fixed top-0 w-full z-[102]">
+            <div class="flex flex-col gap-2 h-full items-center justify-center">
+                <IconLoading class="-ml-1 h-6 mr-3 text-[#6b7280] w-6"></IconLoading>
+                <div class="text-[#6b7280] text-[11pt]">
+                    帖子发布中...
+                </div>
+            </div>
+        </div>
+        <Header
+            v-show="!state.loading"
+            class="sm:hidden"
+            :title="state.headerConfig.title"
+            :go-back="state.headerConfig.goBack"
+            :show-menu="state.headerConfig.showMenu"
+            :menu-icon="state.headerConfig.menuIcon"
+            :icon-tooltip="state.headerConfig.iconTooltip"
+            @handle-action="reposting">
+            <div class="flex font-bold gap-x-2 items-center justify-start w-full">
+                <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
+                <div class="close-btn material-icons-round" @click="dismiss">close</div>
+                <div>{{ state.showMarkdownPanel ? '预览' : '转发帖子' }}</div>
+            </div>
+        </Header>
+        <div class="bg-white flex flex-col flex-nowrap justify-between left-1/2 max-sm:h-[calc(100vh-2.5rem-48px)] max-sm:p-2 max-sm:rounded-none max-sm:w-screen overflow-y-auto p-4 rounded-[8px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:max-h-[80%] sm:min-h-[30%] top-1/2 w-[36rem]">
             <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row gap-x-2 items-center">
                     <Avatar
+                        v-if="!store.MOBILE_MODE"
                         :user="state.curUser"
                         class="h-[2.5rem] rounded-[8px] w-[2.5rem]">
                     </Avatar>
-                    <div class="flex flex-row gap-4 h-full items-center justify-center">
+                    <div
+                        v-if="!store.MOBILE_MODE"
+                        class="flex flex-row gap-4 h-full items-center justify-center">
                         <span class="cursor-default font-bold text-[13pt]">{{ state.curUser.nickname }}</span>
                     </div>
-                    <div
-                        v-if="state.data.content"
-                        class="flex flex-nowrap flex-row gap-x-1 items-center justify-start">
-                        <div
-                            id="repost-penal-visibility-action"
-                            class="flex relative"
-                            @click="state.showVisibilityPanel = !state.showVisibilityPanel">
-                            <span
-                                title="帖子可见范围"
-                                class="material-icons-round no-hover"
-                                :class="VisibilityIconActiveClass">
-                                {{ curVisibility.icon }}
-                            </span>
-                            <Transition name="fade">
-                                <VisibilityAction
-                                    v-if="state.showVisibilityPanel"
-                                    switch-id="repost-penal-visibility-action"
-                                    class="absolute min-h-max min-w-max text-black top-[2.5rem] z-[99]"
-                                    :visibility="state.data.status"
-                                    :ui="state.visibilityActions"
-                                    @dismiss-visibility-action="dismissVisibilityAction"
-                                    @picked-visibility="pickVisibility">
-                                </VisibilityAction>
-                            </Transition>
-                        </div>
-                        <div
-                            id="repost-panel-emoji-panel"
-                            class="flex-col relative">
-                            <div
-                                class="flex"
-                                @click="state.showEmojiPanel = !state.showEmojiPanel">
-                                <span
-                                    title="表情面板"
-                                    class="material-icons-round no-hover"
-                                    :class="EmojiIconActiveClass">
-                                    mood
-                                </span>
-                            </div>
-                            <Transition name="fade">
-                                <EmojiPanel
-                                    v-if="state.showEmojiPanel"
-                                    switch-id="repost-panel-emoji-panel"
-                                    class="absolute max-h-[18rem] min-h-[8rem] min-w-max ring-1 ring-slate-900/5 shadow-lg top-[2.5rem] z-[99]"
-                                    @dismiss-emoji-panel="dismissEmojiPanel"
-                                    @insert-emoji-code="insertEmoji">
-                                </EmojiPanel>
-                            </Transition>
-                        </div>
-                        <div
-                            title="预览"
-                            :class="previewIconActiveClass"
-                            class="material-icons-round no-hover"
-                            @click="state.showMarkdownPanel = !state.showMarkdownPanel">
-                            visibility
-                        </div>
-                    </div>
                 </div>
-                <div class="flex flex-row gap-x-4 items-center">
-                    <div
-                        class="select-none text-[10pt]"
-                        :class="leftWordCountClass"
-                        :title="leftWordCount < 0 ? `超出${-leftWordCount}字` : ''">
-                        {{ leftWordCount }}
-                    </div>
-                    <div
-                        :class="submitPostBtnClass"
-                        class="font-bold px-5 py-1 rounded-full text-[11pt] text-white"
-                        @click="reposting">
-                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                        <IconLoading v-if="state.loading" class="'h-5 text-white' w-5"></IconLoading>
-                        <span v-else>转发</span>
-                    </div>
-                </div>
+                <EditorMenu
+                    id="postEditorMenu"
+                    class="left-0"
+                    switch-from="repost-panel"
+                    :menu-set="state.menuSet"
+                    :visibility="state.data.status"
+                    :max-content-word-count="state.maxContentWordCount"
+                    :content-length="state.data.content.length"
+                    :show-markdown-panel="state.showMarkdownPanel"
+                    @insert-emoji="({emoji}) => {state.data.content = state.data.content.concat(emoji)}"
+                    @change-visibility="({visibility}) => {state.data.status = visibility}"
+                    @submit="reposting"
+                    @resize="resize"
+                    @preview="({isShow}) => {state.showMarkdownPanel = isShow}">
+                </EditorMenu>
             </div>
-            <div class="grow ml-[3rem] pt-1">
+            <div class="grow max-sm:ml-0 max-sm:pt-0 ml-[3rem] pt-1">
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <VueShowdown
                     v-if="state.showMarkdownPanel == true"
@@ -105,7 +76,7 @@
                     :class="{ 'text-gray-400': state.loading, 'cursor-not-allowed': state.loading }"
                     class="bg-transparent break-all focus:outline-none leading-6 overflow-y-hidden resize-none text-[1rem] text-justify tracking-wide w-full"
                     :maxlength="state.maxContentWordCount + 50"
-                    rows="2"
+                    rows="3"
                     placeholder="写点什么吧~"
                     name="review"
                     @input="resize">
@@ -133,14 +104,15 @@
 
 <script setup>
 import { reactive, onMounted, onUnmounted, computed, inject, defineAsyncComponent, ref } from 'vue'
+import Header from '@/indexApp/components/Header.vue'
 import RepostCard from '@/indexApp/components/postDetail/RepostCard.vue'
 import { posting } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import EditorMenu from '@/indexApp/components/index/PostEditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
-import VisibilityAction from '@/indexApp/components/menus/postEditorMenus/VisibilityAction.vue'
 import { VueShowdown } from 'vue-showdown'
 const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 
@@ -158,6 +130,14 @@ const { postingNew } = inject('postingNew')
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
+    headerConfig: {
+        title: '',
+        goBack: false,
+        showMenu: true,
+        menuIcon: 'done',
+        iconTooltip: '提交'
+    },
+    menuSet: new Set(['VisibilityAction', 'EmojiPanel', 'MarkdownPreview']),
     loading: false,
     parentPost: props.post,
     data: {
@@ -173,13 +153,6 @@ const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     showVisibilityPanel: false,
     showMarkdownPanel: false,
-    visibilityActions: [
-        { id: 1, name: '公开', code: 'PUBLIC', icon: 'public', picked: false },
-        { id: 2, name: '探索页内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock', picked: false },
-        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'people_outline', picked: false },
-        { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people', picked: false },
-        { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock', picked: false },
-    ],
     maxContentWordCount: 1000,
     showEmojiPanel: false
 })
@@ -207,54 +180,9 @@ const leftWordCount = computed(() => {
     return state.maxContentWordCount - (state.data.content?.length ?? 0)
 })
 
-const leftWordCountClass = computed(() => ({
-    'text-blue-500': leftWordCount.value >= 0,
-    'text-red-500': leftWordCount.value < 0,
-    'hidden': leftWordCount.value === state.maxContentWordCount
-}))
-
-const previewIconActiveClass = computed(() => ({
-    'text-blue-500': state.showMarkdownPanel,
-    'bg-blue-200': state.showMarkdownPanel,
-    'hover:bg-gray-200': !state.showMarkdownPanel
-}))
-
-const EmojiIconActiveClass = computed(() => ({
-    'text-blue-500': state.showEmojiPanel,
-    'bg-blue-200': state.showEmojiPanel,
-    'hover:bg-gray-200': !state.showEmojiPanel
-}))
-
-const VisibilityIconActiveClass = computed(() => ({
-    'text-blue-500': state.showVisibilityPanel || state.data.status !== 'PUBLIC',
-    'bg-blue-200': state.showVisibilityPanel || state.data.status !== 'PUBLIC',
-    'hover:bg-gray-200': !state.showVisibilityPanel && state.data.status === 'PUBLIC',
-}))
-
-function dismissVisibilityAction() {
-    state.showVisibilityPanel = false
-}
-
-function dismissEmojiPanel() {
-    state.showEmojiPanel = false
-}
-
-function insertEmoji({ unified }) {
-    const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
-    state.data.content = state.data.content.concat(emoji)
-}
-
 const isValidContentLength = computed(() => {
     return leftWordCount.value >= 0 && leftWordCount.value < state.maxContentWordCount
 })
-
-const submitPostBtnClass = computed(() => ({
-    'bg-blue-500': isValidContentLength.value,
-    'cursor-pointer': isValidContentLength.value,
-    'bg-gray-300': !isValidContentLength.value,
-    'cursor-not-allowed': !isValidContentLength.value,
-    'pointer-events-none': !isValidContentLength.value
-}))
 
 function dismiss() {
     emits('dismiss')
@@ -293,20 +221,6 @@ async function reposting() {
     } finally {
         state.loading = false
     }
-}
-
-const curVisibility = computed(() => {
-    const filteredActions = state.visibilityActions.filter(it => it.code == state.data.status)
-    return filteredActions.length > 0 ? filteredActions[0] : state.visibilityActions[0]
-})
-
-function pickVisibility(action) {
-    state.data.status = action.code
-    for (let i = 0; i < state.visibilityActions.length; i++) {
-        const action = state.visibilityActions[i]
-        action.picked = action.code === state.data.status
-    }
-    state.showVisibilityPanel = false
 }
 
 onMounted(() => {

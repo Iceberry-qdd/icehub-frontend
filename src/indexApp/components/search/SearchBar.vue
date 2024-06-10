@@ -124,10 +124,6 @@
     opacity: 0;
 }
 
-.no-hover:hover {
-    background-color: transparent;
-}
-
 .material-icons-round.no-hover {
     font-size: 18pt;
     padding: 0;
