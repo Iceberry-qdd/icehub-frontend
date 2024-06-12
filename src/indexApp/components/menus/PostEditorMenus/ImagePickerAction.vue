@@ -51,6 +51,7 @@
     </div>
 </template>
 
+<!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
 import { reactive } from 'vue'
 import IconAdd from '@/components/icons/IconAdd.vue'
@@ -58,6 +59,11 @@ import IconError from '@/components/icons/IconError.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
 import ImageEditor from '@/indexApp/components/index/ImageEditor.vue'
 const props = defineProps({
+    /** 用于定位菜单使用的imgFile */
+    editorMenuId: {
+        type: String,
+        required: true
+    },
     /** 传入的图片列表 */
     imgList: {
         type: Array,
@@ -70,14 +76,13 @@ const props = defineProps({
     }
 })
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     imgList: props.imgList || [],
     imagesInfo: props.imagesInfo || [],
     showImageEditPanel: false,
     imageEditIndex: 0,
     showAltEditor: [false, false, false, false, false, false, false, false, false],
-    fileSelector: document.querySelector('#postEditorMenu Input[id="imgFile"]')
+    fileSelector: document.querySelector(`#${props.editorMenuId} Input[id="imgFile"]`)
 })
 
 function loadImage(file) {
@@ -98,7 +103,7 @@ function editImage(imageIndex) {
 }
 
 function choosePics() {
-    state.fileSelector.click()
+    state.fileSelector.showPicker()
 }
 
 function closeImageEditor(args) {

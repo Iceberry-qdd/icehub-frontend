@@ -1,17 +1,22 @@
 <template>
     <div
         :id="`rm-${props.review.id}`"
-        class="bg-white cursor-pointer flex flex-col max-w-[18rem] min-w-[10rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg text-[12pt]">
-        <ShareLinkAction
-            v-if="state.actionVisMap.get('ShareLinkAction')"
-            :link="generateLink"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </ShareLinkAction>
-        <DeleteReviewAction
-            v-if="state.actionVisMap.get('DeleteReviewAction')"
-            :review="props.review"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </DeleteReviewAction>
+        class="bg-white flex flex-col ring-1 ring-slate-900/5 shadow-lg">
+        <div class="bg-white flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
+            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+        </div>
+        <div class="flex flex-col max-sm:grid max-sm:grid-cols-4 max-sm:place-items-center">
+            <ShareLinkAction
+                v-if="state.actionVisMap.get('ShareLinkAction')"
+                :link="generateLink"
+                class="action first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px]">
+            </ShareLinkAction>
+            <DeleteReviewAction
+                v-if="state.actionVisMap.get('DeleteReviewAction')"
+                :review="props.review"
+                class="action first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] text-red-500">
+            </DeleteReviewAction>
+        </div>
     </div>
 </template>
 
@@ -20,6 +25,13 @@
     padding: 0.5rem 0.75rem;
     width: 100%;
     text-align: start;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: start;
+    align-items: center;
+    column-gap: 0.75rem;
+    user-select: none;
 }
 
 .action:hover{
@@ -28,6 +40,56 @@
 
 .action:active{
     background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.fade-enter-active {
+    transition: opacity 0.15s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: opacity 0.15s ease-in-out;
+}
+
+.fade-enter-from {
+    opacity: 0;
+}
+
+.fade-leave-to {
+    opacity: 0;
+}
+
+@media not all and (min-width: 640px) {
+    .action{
+        padding: 0.5rem 0;
+        width: auto;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        width: 100%;
+    }
+
+    .action:hover{
+        background-color: transparent;
+    }
+
+    .action:active{
+        background-color: transparent;
+    }
+    .fade-enter-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-leave-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-enter-from {
+        translate: 0 100%;
+    }
+
+    .fade-leave-to {
+        translate: 0 100%;
+        opacity: 1;
+    }
 }
 </style>
 

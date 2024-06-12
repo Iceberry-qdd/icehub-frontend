@@ -116,6 +116,12 @@ img.pic.img-fluid{
    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) 
 }
 
+@supports (field-sizing: content){
+    textarea {
+        field-sizing: content;
+    }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -156,12 +156,14 @@
             <button
                 type="button"
                 :title="`${state.post.reviewCount} 评论`"
+                :class="{'cursor-not-allowed text-[#C1C1C1]': !state.post.allowReview}"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-center py-[0.5rem] rounded-none text-[12pt] z-[97]"
-                @click="routeToPost(state.post.id)">
+                @click="handleClickReviewBtn">
                 <Message
+                    :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}"
                     theme="outline"
                     size="19"
-                    fill="#333"
+                    :fill="state.post.allowReview ? '#333' : '#C1C1C1'"
                     :stroke-width="3">
                 </Message>
                 {{ humanizedNumber(state.post.reviewCount) }}
@@ -249,6 +251,7 @@ const props = defineProps({
     }
 })
 const cardMask = ref()
+const emits = defineEmits(['showReviewPanel'])
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     post: props.post,
@@ -418,6 +421,10 @@ function handleAvatarMouseenter(){
     if(!store.MOBILE_MODE){
         state.showUserInfoPop = true
     }
+}
+
+function handleClickReviewBtn(){
+    emits('showReviewPanel')
 }
 
 provide('dismissPostMenus', { dismissPostMenus })

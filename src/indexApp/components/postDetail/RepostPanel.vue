@@ -27,7 +27,7 @@
                 <div>{{ state.showMarkdownPanel ? '预览' : '转发帖子' }}</div>
             </div>
         </Header>
-        <div class="bg-white flex flex-col flex-nowrap justify-between left-1/2 max-sm:h-[calc(100vh-2.5rem-48px)] max-sm:p-2 max-sm:rounded-none max-sm:w-screen overflow-y-auto p-4 rounded-[8px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:max-h-[80%] sm:min-h-[30%] top-1/2 w-[36rem]">
+        <div class="bg-white flex flex-col flex-nowrap justify-between left-1/2 max-sm:h-[calc(100vh-2.5rem-48px)] max-sm:p-3 max-sm:rounded-none max-sm:w-screen overflow-y-auto p-4 rounded-[8px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:max-h-[80%] sm:min-h-[30%] top-1/2 w-[36rem]">
             <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row gap-x-2 items-center">
                     <Avatar
@@ -42,8 +42,9 @@
                     </div>
                 </div>
                 <EditorMenu
-                    id="postEditorMenu"
-                    class="left-0"
+                    v-if="state.data.content.length > 0"
+                    id="repostEditorMenu"
+                    class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full"
                     switch-from="repost-panel"
                     :menu-set="state.menuSet"
                     :visibility="state.data.status"
@@ -114,6 +115,7 @@ import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import { VueShowdown } from 'vue-showdown'
+import { isSupportCSS } from '@/indexApp/utils/formatUtils.js'
 const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 
 const route = useRoute()
@@ -172,8 +174,10 @@ const doPostingNew = computed(() => {
 })
 
 function resize() {
-    reviewInput.value.style.height = 'auto'
-    reviewInput.value.style.height = `${reviewInput.value.scrollHeight}px`
+    if(!isSupportCSS('field-sizing')){
+        postInput.value.style.height = 'auto'
+        postInput.value.style.height = `${postInput.value.scrollHeight}px`
+    }
 }
 
 const leftWordCount = computed(() => {

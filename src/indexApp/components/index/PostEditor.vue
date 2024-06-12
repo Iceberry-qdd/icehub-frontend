@@ -46,16 +46,17 @@
                 v-else
                 ref="postInput"
                 v-model="state.content"
-                class="break-all focus:outline-none leading-6 overflow-hidden p-2 resize-none rounded text-[1rem] text-justify tracking-wide w-full"
+                class="break-all focus:outline-none leading-6 min-h-[5rem] overflow-hidden p-2 resize-none rounded text-[1rem] text-justify tracking-wide w-full"
                 :maxlength="state.maxContentWordCount + 50"
                 rows="3"
-                placeholder="发布帖子"
+                placeholder="写点什么吧~"
                 name="post"
                 @input="resize">
                 </textarea>
             <Transition name="fade">
                 <ImagePickerAction
                     v-if="hasImage"
+                    editor-menu-id="postEditorMenu"
                     class="mb-2 ml-2"
                     :img-list="state.imgList"
                     :images-info="state.imageListInfo">
@@ -63,6 +64,7 @@
             </Transition>
             <EditorMenu
                 id="postEditorMenu"
+                class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full"
                 :menu-set="state.menuSet"
                 switch-from="post-editor"
                 :visibility="state.data.status"
@@ -129,7 +131,7 @@ import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { VueShowdown } from 'vue-showdown'
 import EditorMenu from '@/indexApp/components/index/PostEditorMenu.vue'
-import { standardDateTime } from '@/indexApp/utils/formatUtils.js'
+import { standardDateTime, isSupportCSS } from '@/indexApp/utils/formatUtils.js'
 import Header from '@/indexApp/components/Header.vue'
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
@@ -175,8 +177,10 @@ const state = reactive({
 })
 
 function resize() {
-    postInput.value.style.height = 'auto'
-    postInput.value.style.height = `${postInput.value.scrollHeight}px`
+    if(!isSupportCSS('field-sizing')){
+        postInput.value.style.height = 'auto'
+        postInput.value.style.height = `${postInput.value.scrollHeight}px`
+    }
 }
 
 async function submitPost() {

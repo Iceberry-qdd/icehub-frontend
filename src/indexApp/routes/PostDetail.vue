@@ -8,10 +8,26 @@
             :menu-icon="state.headerConfig.menuIcon"
             :menu-action="state.headerConfig.menuAction">
         </Header>
-        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <PostCard v-if="state.post" :post="state.post"></PostCard>
-        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <ReviewEditor v-if="allowReview" :post="state.post" :from-review-panel="false"></ReviewEditor>
+        <PostCard
+            v-if="state.post"
+            :post="state.post"
+            @show-review-panel="state.showReviewPanel = true">
+        </PostCard>
+        <ReviewEditor 
+            v-if="allowReview && !store.MOBILE_MODE"
+            :post="state.post"
+            :from-review-panel="false">
+        </ReviewEditor>
+        <Teleport to="#app">
+            <Transition name="fade">
+                <ReviewPanel
+                    v-if="state.post && state.showReviewPanel && store.MOBILE_MODE && allowReview"
+                    class="max-sm:fixed max-sm:top-0"
+                    :post="state.post"
+                    @dismiss="state.showReviewPanel = false">
+                </ReviewPanel>
+            </Transition>
+        </Teleport>
         <div
             v-if="!allowReview && state.post"
             class="bg-[#e8f0ff] cursor-default flex gap-2 h-[3rem] items-center justify-left my-[2%] p-4 rounded-lg translate-x-[2%] w-[96%]">
@@ -71,11 +87,12 @@ import ReviewEditor from '@/indexApp/components/postDetail/ReviewEditor.vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
 import { useRouter, useRoute } from 'vue-router'
 import Footer from '@/indexApp/components/Footer.vue'
+import ReviewPanel from '@/indexApp/components/replyDetail/ReviewPanel.vue'
 
 const router = useRouter()
 const route = useRoute()
 const state = reactive({
-    post: null,
+    post: undefined,
     reviews: [],
     pageIndex: 1,
     pageSize: 10,
@@ -89,7 +106,8 @@ const state = reactive({
         menuAction: { action: 'route', param: '' },
         width: 0
     },
-    isLoading: false
+    isLoading: false,
+    showReviewPanel: false
 })
 
 const hasMore = computed(() => {

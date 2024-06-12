@@ -35,7 +35,7 @@
             <div
                 id="main"
                 class="lg:flex-[1.05] max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] max-w-[64rem] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] sm:z-[1]">
-                <div class="absolute flex items-start justify-center top-2 w-full z-[1001]">
+                <div class="absolute flex items-start justify-center top-2 w-full z-[1999]">
                     <GlobalBanner
                         v-if="store.GLOBAL_MSG.length > 0"
                         class="fixed h-fit w-fit">

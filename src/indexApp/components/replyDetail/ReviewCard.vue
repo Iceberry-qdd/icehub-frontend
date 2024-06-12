@@ -1,6 +1,6 @@
 <template>
-    <div class="border-b-[1px] border-gray-100 flex flex-col px-[1rem] py-[1rem] relative">
-        <div class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+    <div class="border-b-[1px] border-gray-100 flex flex-col max-sm:p-3 p-4 relative">
+        <div class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
         <div class="flex flex-row items-center justify-between">
             <div class="flex flex-row gap-x-4 items-center">
                 <div class="relative z-10">

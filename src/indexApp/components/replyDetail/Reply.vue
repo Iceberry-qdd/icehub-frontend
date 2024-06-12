@@ -1,15 +1,15 @@
 <template>
     <div>
-        <div class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 px-[1rem] py-[1rem] relative">
+        <div class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
             <div
                 v-if="state.tieSub == 'mid'"
-                class="absolute bg-gray-200 h-full left-[2.2rem] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="state.tieSub == 'top'"
-                class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="state.tieSub == 'bottom'"
-                class="absolute bg-gray-200 h-[2.5rem] left-[2.2rem] timeline-bottom top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
                 class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(state.reply.id)" />
@@ -44,7 +44,7 @@
                         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                         <div class="text-[11pt]" @click="routeToUser(replyTo)">
                             回复
-                            <span class="cursor-pointer font-bold hover:underline">@{{ replyTo }}</span>
+                            <span class="cursor-pointer hover:underline">@{{ replyTo }}</span>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row justify-between pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-4 justify-end pl-[3.5rem] z-20">
                 <button
                     :id="`rmb-${state.reply.id}`"
                     type="button"
@@ -78,13 +78,19 @@
                     @click="toggleMenu">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <More theme="outline" size="20" fill="#333" :stroke-width="3"></More>
-                    <Transition name="fade">
-                        <ReviewMenu
-                            v-if="state.showReplyMenu"
-                            class="absolute bottom-[1rem]"
-                            :review="state.reply">
-                        </ReviewMenu>
-                    </Transition>
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                        <div
+                            v-if="state.showReplyMenu && store.MOBILE_MODE"
+                            class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1000]" />
+                        <Transition name="fade">
+                            <ReviewMenu
+                                v-if="state.showReplyMenu"
+                                class="absolute bottom-[1rem] cursor-pointer h-auto max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-2 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1000] rounded-[8px] sm:max-w-[18rem] sm:min-w-[10rem]"
+                                :review="state.reply">
+                            </ReviewMenu>
+                        </Transition>
+                    </Teleport>
                 </button>
                 <button
                     type="button"

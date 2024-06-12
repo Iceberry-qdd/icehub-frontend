@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white bottom-0 flex flex-row justify-between max-sm:fixed max-sm:h-10 max-sm:pr-4 max-sm:z-[1] px-2 w-full">
+    <div class="bg-white flex flex-row justify-between max-sm:z-[1]">
         <div class="content-center flex flex-row gap-x-1 items-center justify-start text-base">
             <input
                 v-show="false"
@@ -9,7 +9,7 @@
                 name="imgFile"
                 multiple="true"
                 accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
-                @change="clickFileSelector" />
+                @change="handleImgFileChange" />
             <div
                 v-if="props.menuSet.has('ImagePicker')"
                 id="image-picker-action"
@@ -272,7 +272,8 @@ const props = defineProps({
      */
     visibility: {
         type: String,
-        required: true
+        required: false,
+        default: 'PUBLIC'
     },
     /** 传入的创建时间 */
     createdTime: {
@@ -329,8 +330,7 @@ const state = reactive({
     ]
 })
 
-function clickFileSelector() {
-    imgFile.value.click()
+function handleImgFileChange() {
     const imgs = Array.of(...imgFile.value.files)
 
     if (imgs.length == 0) return
@@ -347,11 +347,7 @@ function preChoosePics() {
         state.showImagePanel = !lastState
         return
     }
-    choosePics()
-}
-
-function choosePics() {
-    imgFile.value.click()
+    imgFile.value.showPicker()
 }
 
 const hasImage = computed(() => {
