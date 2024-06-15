@@ -2,6 +2,7 @@
     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
     <div id="index">
         <Header
+            class="sticky"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"

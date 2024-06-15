@@ -1,6 +1,5 @@
 <template>
     <div
-        id="VisibilityAction"
         class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] min-h-max min-w-[12rem] ring-1 ring-slate-900/5 rounded-[6px] shadow-lg">
         <div class="bg-white flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
             <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
@@ -55,8 +54,11 @@ function pickedVisibility(action) {
 onMounted(() => {
     if(props.switchId){
         const visibilityAction = document.querySelector(`#${props.switchId}`)
+        const visibilityActionBtn = document.querySelector(`#${props.switchId}-btn`)
         document.querySelector('#app').addEventListener('click', function (event) {
-            if (!visibilityAction.contains(event.target)) {
+            const isClickAction = visibilityAction && visibilityAction.contains(event.target)
+            const isClickActionBtn = visibilityActionBtn && visibilityActionBtn.contains(event.target)
+            if (!isClickAction && !isClickActionBtn) {
                 emits('dismissVisibilityAction')
             }
         })

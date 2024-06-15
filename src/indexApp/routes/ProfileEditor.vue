@@ -1,6 +1,7 @@
 <template>
     <div id="profile-editor">
         <Header
+            class="sticky"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
@@ -14,125 +15,122 @@
             <IconLoading class="-ml-1 h-5 mr-3 text-white w-5"></IconLoading>
             <div>正在提交...</div>
         </div>
-        <div class="h-[20.7rem] relative w-full">
-            <div class="banner-cover">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <span class="material-icons-round" @click="showImageChangeProper('banner')"> edit </span>
-            </div>
-            <div class="avatar-cover">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <span class="material-icons-round" @click="showImageChangeProper('avatar')"> edit </span>
-            </div>
+
+        <div class="banner-cover">
+            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+            <span class="material-icons-round" @click="showImageChangeProper('banner')"> edit </span>
+        </div>
+        
+        <Banner
+            :user="state.newUser"
+            class="-mb-[calc(5rem/2)] aspect-video object-center object-cover w-full z-[1]">
+        </Banner>
+
+        <div class="avatar-cover">
+            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+            <span class="material-icons-round" @click="showImageChangeProper('avatar')"> edit </span>
         </div>
 
-        <div class="absolute top-[56px] w-full">
-            <Banner
-                :user="state.newUser"
-                class="h-[20.7rem] object-center object-cover w-full z-[1]">
-            </Banner>
-        </div>
-        <div class="-translate-y-[2.5rem] relative z-[97]">
-            <Avatar
-                :user="state.newUser"
-                class="h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]">
-            </Avatar>
-            <div class="text-info">
-                <div class="form-floating mb-3">
-                    <input
-                        id="nicknameInput"
-                        v-model.trim="state.newUser.nickname"
-                        type="text"
-                        class="form-control"
-                        :class="isUNameValid.class"
-                        placeholder="用户名"
-                        required
-                        @blur="checkUsernameValid" />
-                    <label for="nicknameInput">用户名</label>
-                    <!-- <div class="valid-feedback">Looks good!</div> -->
-                    <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="invalid-feedback">{{ isUNameValid.msg }}</div>
-                </div>
-                <div class="form-floating mb-3">
-                    <!-- eslint-disable-next-line vue/html-self-closing -->
-                    <textarea
-                        id="floatingTextarea"
-                        v-model.trim="state.newUser.remark"
-                        class="form-control"
-                        placeholder="个人简介">
+        <Avatar
+            :user="state.newUser"
+            class="h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]">
+        </Avatar>
+        <div class="text-info">
+            <div class="form-floating mb-3">
+                <input
+                    id="nicknameInput"
+                    v-model.trim="state.newUser.nickname"
+                    type="text"
+                    class="form-control"
+                    :class="isUNameValid.class"
+                    placeholder="用户名"
+                    required
+                    @blur="checkUsernameValid" />
+                <label for="nicknameInput">用户名</label>
+                <!-- <div class="valid-feedback">Looks good!</div> -->
+                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                <div class="invalid-feedback">{{ isUNameValid.msg }}</div>
+            </div>
+            <div class="form-floating mb-3">
+                <!-- eslint-disable-next-line vue/html-self-closing -->
+                <textarea
+                    id="floatingTextarea"
+                    v-model.trim="state.newUser.remark"
+                    class="form-control"
+                    placeholder="个人简介">
                     </textarea>
-                    <label for="floatingTextarea">个人简介</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input
-                        id="cityInput"
-                        v-model.trim="state.newUser.city"
-                        type="text"
-                        class="form-control"
-                        placeholder="所在城市" />
-                    <label for="cityInput">所在城市</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input
-                        id="ageInput"
-                        v-model.trim="state.newUser.age"
-                        type="number"
-                        :class="isAgeValid.class"
-                        class="form-control"
-                        placeholder="年龄" />
-                    <label for="ageInput">年龄</label>
+                <label for="floatingTextarea">个人简介</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input
+                    id="cityInput"
+                    v-model.trim="state.newUser.city"
+                    type="text"
+                    class="form-control"
+                    placeholder="所在城市" />
+                <label for="cityInput">所在城市</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input
+                    id="ageInput"
+                    v-model.trim="state.newUser.age"
+                    type="number"
+                    :class="isAgeValid.class"
+                    class="form-control"
+                    placeholder="年龄" />
+                <label for="ageInput">年龄</label>
+                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                <div class="invalid-feedback">{{ isAgeValid.msg }}</div>
+            </div>
+            <div class="form-floating mb-3">
+                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                <select id="genderInput" v-model="selected" class="form-select">
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
+                    <option disabled value="">请选择性别</option>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="invalid-feedback">{{ isAgeValid.msg }}</div>
-                </div>
-                <div class="form-floating mb-3">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <select id="genderInput" v-model="selected" class="form-select">
-                        <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                        <option disabled value="">请选择性别</option>
-                        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                        <option value="MALE">男</option>
-                        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                        <option value="FEMALE">女</option>
-                        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                        <option value="UNKNOWN">不设置</option>
-                    </select>
-                    <label for="genderInput">性别</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input
-                        id="emailInput"
-                        v-model.trim="state.newUser.email"
-                        type="email"
-                        :class="isEmailValid.class"
-                        class="form-control"
-                        placeholder="电子邮件" />
-                    <label for="emailInput">电子邮件</label>
+                    <option value="MALE">男</option>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="invalid-feedback">{{ isEmailValid.msg }}</div>
-                </div>
-                <div class="form-floating mb-3">
-                    <input
-                        id="phoneInput"
-                        v-model.trim="state.newUser.phoneNumber"
-                        type="tel"
-                        :class="isPhoneNoValid.class"
-                        class="form-control"
-                        placeholder="手机号码" />
-                    <label for="phoneInput">手机号码</label>
+                    <option value="FEMALE">女</option>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="invalid-feedback">{{ isPhoneNoValid.msg }}</div>
-                </div>
-                <div class="form-floating mb-3">
-                    <input
-                        id="websiteInput"
-                        v-model.trim="state.newUser.website"
-                        type="url"
-                        class="form-control"
-                        :class="isWebsiteValid.class"
-                        placeholder="个人网站" />
-                    <label for="websiteInput">个人网站</label>
-                    <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="invalid-feedback">{{ isWebsiteValid.msg }}</div>
-                </div>
+                    <option value="UNKNOWN">不设置</option>
+                </select>
+                <label for="genderInput">性别</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input
+                    id="emailInput"
+                    v-model.trim="state.newUser.email"
+                    type="email"
+                    :class="isEmailValid.class"
+                    class="form-control"
+                    placeholder="电子邮件" />
+                <label for="emailInput">电子邮件</label>
+                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                <div class="invalid-feedback">{{ isEmailValid.msg }}</div>
+            </div>
+            <div class="form-floating mb-3">
+                <input
+                    id="phoneInput"
+                    v-model.trim="state.newUser.phoneNumber"
+                    type="tel"
+                    :class="isPhoneNoValid.class"
+                    class="form-control"
+                    placeholder="手机号码" />
+                <label for="phoneInput">手机号码</label>
+                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                <div class="invalid-feedback">{{ isPhoneNoValid.msg }}</div>
+            </div>
+            <div class="form-floating mb-3">
+                <input
+                    id="websiteInput"
+                    v-model.trim="state.newUser.website"
+                    type="url"
+                    class="form-control"
+                    :class="isWebsiteValid.class"
+                    placeholder="个人网站" />
+                <label for="websiteInput">个人网站</label>
+                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                <div class="invalid-feedback">{{ isWebsiteValid.msg }}</div>
             </div>
         </div>
         <Teleport to="#app">
@@ -172,7 +170,6 @@
 .avatar-cover {
     background-color: #00000000;
     position: absolute;
-    top: calc(21rem - 2.8rem);
     margin-left: 1rem;
     border-radius: 8px;
     padding: 1rem;
@@ -190,22 +187,26 @@
 
 .avatar-cover>.material-icons-round {
     color: transparent;
-    font-size: 24pt;
+    font-size: 18pt;
 }
 
 .avatar-cover:hover>.material-icons-round {
     color: white;
-    font-size: 18pt;
+    background-color: #000000AA;
+}
+
+.banner-cover:hover {
+    background-color: #00000066;
 }
 
 .banner-cover>.material-icons-round {
     color: transparent;
-    font-size: 18pt;
 }
 
 .banner-cover:hover>.material-icons-round {
     color: white;
     font-size: 24pt;
+    background-color: #000000AA;
 }
 
 .banner-cover {
@@ -215,12 +216,8 @@
     align-items: center;
     position: absolute;
     width: 100%;
-    height: 20.7rem;
-    z-index: 1;
-}
-
-.banner-cover:hover {
-    background-color: #00000066;
+    aspect-ratio: 16 / 9;
+    z-index: 0;
 }
 
 .text-info {

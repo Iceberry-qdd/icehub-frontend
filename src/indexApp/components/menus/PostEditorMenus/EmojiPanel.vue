@@ -95,6 +95,7 @@
 <!-- eslint-disable vue/no-unused-properties -->
 <script setup>
 import { reactive, onMounted, onUnmounted, computed, ref } from 'vue'
+import { store } from '@/indexApp/js/store.js'
 // jsdelivr服务不稳定，选择本地打包进去：https://github.com/jsdelivr/jsdelivr/issues/18565
 import emojiPack from '@/assets/emoji-datasource-apple@15.1.2+esm.js'
 
@@ -103,7 +104,8 @@ const props = defineProps({
     /** 触发该组件的元素id，用于检测点击事件关闭用 */
     switchId: {
         type:String,
-        required:true
+        required:false,
+        default:'emoji-panel'
     },
     /** 是否显示历史记录行 */
     showHistory: {
@@ -150,6 +152,10 @@ const showHistory = computed(() => {
 })
 
 function chooseEmoji(unified) {
+    if(store.MOBILE_MODE && state.showSkinPanel[unified] && !state.showSkinPanel[unified].show){
+        state.showSkinPanel[unified] = true
+        return
+    }
     if(props.showHistory){
         storeEmojiToLocalStorage(unified)
     }
@@ -208,8 +214,11 @@ function toggleSkinPanel(emoji, show){
 onMounted(() => {
     if(!props.switchId) return
     const emojiPanel = document.querySelector(`#${props.switchId}`)
+    const emojiPanelBtn = document.querySelector(`#${props.switchId}-btn`)
     document.querySelector('#app').addEventListener('click', function (event) {
-        if (emojiPanel && !emojiPanel.contains(event.target)) {
+        const isClickPanel = emojiPanel && emojiPanel.contains(event.target)
+        const isClickPanelBtn = emojiPanelBtn && emojiPanelBtn.contains(event.target)
+        if (!isClickPanel && !isClickPanelBtn) {
             emits('dismissEmojiPanel')
         }
     })

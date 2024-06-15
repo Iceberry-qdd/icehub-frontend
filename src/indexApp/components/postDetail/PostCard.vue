@@ -26,7 +26,7 @@
                 theme="outline"
                 size="24"
                 fill="#333"
-                class="z-[96]"
+                class="hover:bg-[#d3d3d5] p-[0.4rem] z-[96]"
                 :stroke-width="2"
                 @click="state.isShowMenu = true">
             </Down>
@@ -44,7 +44,7 @@
                 </PostMenus>
             </Transition>
         </Teleport>
-        <div class="flex gap-x-[1rem]">
+        <div class="flex gap-x-4 max-sm:gap-x-2">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                 <div
@@ -149,7 +149,7 @@
                     size="18"
                     :fill="isReposted ? '#198754' : '#333'"
                     :stroke-width="3"
-                    :class="{ 'bg-[#d1e7dd] hover:bg-[#d1e7dd]': isReposted }">
+                    :class="{ 'bg-[#d1e7dd] hover:bg-[#d1e7dd] p-[0.4rem]': isReposted }">
                 </Share>
                 {{ humanizedNumber(state.post.repostCount) }}
             </button>
@@ -178,50 +178,14 @@
                     size="20"
                     :fill="likedIconColor"
                     :stroke-width="3"
-                    :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
+                    class="p-[0.4rem]"
+                    :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
                 </Like>
                 {{ humanizedNumber(state.post.likeCount) }}
             </button>
         </div>
     </div>
 </template>
-
-<style scoped>
-.fade-enter-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-
-@media not all and (min-width: 640px) {
-    .fade-enter-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-leave-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-enter-from {
-        translate: 0 100%;
-    }
-
-    .fade-leave-to {
-        translate: 0 100%;
-        opacity: 1;
-    }
-}
-</style>
 
 <!-- eslint-disable vue/no-ref-object-reactivity-loss -->
 <script setup>
@@ -269,25 +233,27 @@ const isIndentBody = computed(() => {
     return !isPostDetailRoute && !isMarkdown
 })
 
-const cardContainerClass = reactive({
+const cardContainerClass = computed(() => ({
     'hover:bg-[#F5F5F5]': isIndentBody.value,
     'cursor-default': isIndentBody.value
-})
+}))
 
-const cardBodyClass = reactive({
+const cardBodyClass = computed(() => ({
     'py-[0.5rem]': isIndentBody.value,
     'pr-[0.8rem]': isIndentBody.value,
     'p-0': !isIndentBody.value,
-    'ml-[3.5rem]': isIndentBody.value,
+    'ml-[3.5rem]': isIndentBody.value && !store.MOBILE_MODE,
+    'ml-[3rem]': isIndentBody.value && store.MOBILE_MODE,
     'ml-0': !isIndentBody.value
-})
+}))
 
-const cardButtonClass = reactive({
-    'ml-[3rem]': isIndentBody.value,
+const cardButtonClass = computed(() => ({
+    'ml-[3.5rem]': isIndentBody.value && !store.MOBILE_MODE,
+    'ml-[3rem]': isIndentBody.value && store.MOBILE_MODE,
     'ml-0': !isIndentBody.value,
     'mr-[0.8rem]': isIndentBody.value,
     'mr-0': !isIndentBody.value
-})
+}))
 
 function routeToPost(postId, hash = undefined) {
     store.setSelectPost(state.post)

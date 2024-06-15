@@ -206,6 +206,12 @@ const props = defineProps({
         type: String,
         required: false,
         default: ''
+    },
+    /**触发该组件的元素id，用于检测点击事件关闭用 */
+    switchId: {
+        type: String,
+        require: false,
+        default: 'datetime-picker-action'
     }
 })
 const emits = defineEmits(['closeWithOk', 'closeWithClear'])
@@ -330,9 +336,12 @@ onMounted(() => {
     state.pickedHour = now.getHours()
     state.pickedMinute = now.getMinutes()
 
-    const dateTimePickerAction = document.querySelector('#datetime-picker-action')
+    const dateTimePickerAction = document.querySelector(`#${props.switchId}`)
+    const dateTimePickerActionBtn = document.querySelector(`#${props.switchId}-btn`)
     document.querySelector('#app').addEventListener('click', function (event) {
-        if (!dateTimePickerAction.contains(event.target)) {
+        const isClickAction = dateTimePickerAction && dateTimePickerAction.contains(event.target)
+        const isClickBtn = dateTimePickerActionBtn && dateTimePickerActionBtn.contains(event.target)
+        if (!isClickAction && !isClickBtn) {
             emits('closeWithClear')
         }
     })

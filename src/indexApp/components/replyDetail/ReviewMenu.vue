@@ -28,7 +28,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     column-gap: 0.75rem;
     user-select: none;

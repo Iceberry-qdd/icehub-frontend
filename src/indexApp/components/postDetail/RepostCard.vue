@@ -44,7 +44,7 @@
                         loading="lazy"
                         :style="{ 'background-image': `url(${state.post.images[0].thumb})` }"
                         :src="state.post.images[0].thumb"
-                        class="aspect-video bg-center bg-cover bg-no-repeat h-auto img-fluid object-cover pic rounded-b-[8px] w-full" />
+                        class="aspect-[5/2] bg-center bg-cover bg-no-repeat h-auto img-fluid object-cover pic rounded-b-[8px] w-full" />
                 </picture>
                 <div
                     v-if="isGifCover && !isCoverHidden"

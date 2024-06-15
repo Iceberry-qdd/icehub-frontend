@@ -149,6 +149,7 @@ export function substringBySegmenter(text, maxLen, offset) {
  * 判断一个obj对象的具体类型
  * @param {Object} obj object对象
  * @param {Type} type 预测其类型
+ * @returns {boolean} 判断结果
  */
 export function isType(obj, type) {
     return Object.prototype.toString.call(obj) === `[object ${type.name}]`
@@ -157,6 +158,7 @@ export function isType(obj, type) {
 /**
  * 将时间戳或Date返回为`Input[type=datetime-local]`组件支持的`YYYY-MM-DDThh:mm`格式
  * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ * @returns {string} `YYYY-MM-DDThh:mm`格式的时间字符串
  */
 export function toDtPickerFormat(timestamp) {
     const date = new Date(timestamp)
@@ -166,6 +168,7 @@ export function toDtPickerFormat(timestamp) {
 /**
  * 将时间戳或Date返回为`Input[type=date]`组件支持的`YYYY-MM-DD`格式
  * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ * @returns {string} `YYYY-MM-DD`格式的时间字符串
  */
 export function toDatePickerFormat(timestamp) {
     const date = new Date(timestamp)
@@ -175,6 +178,7 @@ export function toDatePickerFormat(timestamp) {
 /**
  * 将时间戳或Date返回为`Input[type=time]`组件支持的`hh:mm`格式
  * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ * @returns {string} `hh:mm`格式的时间字符串
  */
 export function toTimePickerFormat(timestamp) {
     const date = new Date(timestamp)

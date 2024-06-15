@@ -1,10 +1,8 @@
 <template>
-    <div
-        class="flex flex-rows gap-x-3 items-center justify-start"
-        @click="handleClick">
-        <span class="material-icons-round no-hover p-0 text-[1.2rem]">share</span>
+    <div @click="handleClick">
+        <span class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">share</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">分享该用户</div>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">分享该用户</div>
     </div>
 </template>
 

@@ -3,6 +3,7 @@
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div id="setting" class="basis-[40%] h-screen">
             <Header
+                class="sticky"
                 :width="state.headerConfig.width"
                 :title="state.headerConfig.title"
                 :go-back="state.headerConfig.goBack"

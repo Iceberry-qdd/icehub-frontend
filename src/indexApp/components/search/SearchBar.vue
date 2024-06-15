@@ -6,7 +6,7 @@
         :show-menu="state.headerConfig.showMenu"
         :menu-icon="state.headerConfig.menuIcon"
         :icon-tooltip="state.headerConfig.iconTooltip"
-        class="max-sm:h-[56px] px-2 py-2">
+        class="max-sm:h-[56px] px-2 py-2 sticky">
         <div class="flex flex-1 flex-row h-full text-sm">
             <select
                 id="type-select"

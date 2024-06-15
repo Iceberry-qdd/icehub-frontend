@@ -3,6 +3,7 @@
     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
     <div v-if="state.review != null" id="reply-detail">
         <Header
+            class="sticky"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"

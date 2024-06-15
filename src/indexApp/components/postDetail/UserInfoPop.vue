@@ -31,18 +31,18 @@
             <div class="flex flex-nowrap flex-row items-center">
                 <div
                     :class="{'webkit-box-1': !store.MOBILE_MODE}"
-                    class="max-sm:flex-1 max-sm:max-h-[12rem] max-sm:overflow-y-auto sm:basis-3/4 sm:text-[0.85rem]">
+                    class="flex-1 max-sm:max-h-[12rem] max-sm:overflow-y-auto sm:text-[0.85rem]">
                     {{ brief }}
                 </div>
                 <div
                     v-if="!isCurUser && !store.MOBILE_MODE"
                     :class="followBtnClass"
-                    class="cursor-pointer h-auto py-[0.3rem] rounded-full sm:basis-1/4 text-center"
+                    class="cursor-pointer flex-0 h-auto min-w-[4.5rem] px-2 py-[0.25rem] rounded-full text-[0.9rem] text-center"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="!state.loading"> {{ followButtonText }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
+                    <IconLoading v-else class="h-5 text-white w-5"></IconLoading>
                 </div>
             </div>
             <div class="flex flex-row gap-x-4 items-center justify-center">
@@ -66,6 +66,43 @@
         </div>
     </div>
 </template>
+
+<style scoped>
+.fade-enter-active {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.fade-enter-from {
+    opacity: 0;
+}
+
+.fade-leave-to {
+    opacity: 0;
+}
+
+@media not all and (min-width: 640px) {
+    .fade-enter-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-leave-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-enter-from {
+        translate: 0 100%;
+    }
+
+    .fade-leave-to {
+        translate: 0 100%;
+        opacity: 1;
+    }
+}
+</style>
 
 <script setup>
 import { computed, onMounted, reactive, onUnmounted } from 'vue'

@@ -1,6 +1,6 @@
 <template>
     <div
-        class="backdrop-blur-sm  bg-[#00000066]  h-full  max-sm:bg-white  max-sm:z-[1001]  w-full  z-[111]"
+        class="backdrop-blur-sm bg-[#00000066] h-full max-sm:bg-white max-sm:z-[1001] w-full z-[111]"
         @click.self="dismiss">
         <div
             v-if="state.loading"
@@ -14,7 +14,7 @@
         </div>
         <Header
             v-show="!state.loading"
-            class="sm:hidden"
+            class="sm:hidden sticky"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
@@ -101,10 +101,45 @@
     /* background-color: transparent; */
     font-size: 14pt;
 }
+
+.fade-enter-active {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.fade-enter-from {
+    opacity: 0;
+}
+
+.fade-leave-to {
+    opacity: 0;
+}
+
+@media not all and (min-width: 640px) {
+    .fade-enter-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-leave-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-enter-from {
+        translate: 0 100%;
+    }
+
+    .fade-leave-to {
+        translate: 0 100%;
+        opacity: 1;
+    }
+}
 </style>
 
 <script setup>
-import { reactive, onMounted, onUnmounted, computed, inject, defineAsyncComponent, ref } from 'vue'
+import { reactive, onMounted, onUnmounted, computed, inject, ref } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import RepostCard from '@/indexApp/components/postDetail/RepostCard.vue'
 import { posting } from '@/indexApp/js/api.js'
@@ -115,8 +150,6 @@ import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import { VueShowdown } from 'vue-showdown'
-import { isSupportCSS } from '@/indexApp/utils/formatUtils.js'
-const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 
 const route = useRoute()
 const reviewInput = ref()
@@ -174,7 +207,7 @@ const doPostingNew = computed(() => {
 })
 
 function resize() {
-    if(!isSupportCSS('field-sizing')){
+    if(!CSS.supports('field-sizing: content')){
         postInput.value.style.height = 'auto'
         postInput.value.style.height = `${postInput.value.scrollHeight}px`
     }

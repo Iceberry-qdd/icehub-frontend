@@ -1,11 +1,11 @@
 <template>
     <div
-        class="bg-[#00000066] flex-row h-full items-center justify-center sm:flex w-full z-[111]"
+        class="backdrop-blur-sm bg-[#00000066] flex-row h-full items-center justify-center sm:flex w-full z-[111]"
         @click.self="dismiss">
-        <div class="bg-white max-sm:h-full max-sm:rounded-none max-sm:w-full overflow-y-auto rounded-[8px] sm:max-h-[80%] sm:min-h-[20%] w-[40%]">
+        <div class="bg-white max-sm:h-full max-sm:rounded-none max-sm:w-full overflow-y-auto rounded-[8px] sm:max-h-[80%] sm:min-h-[20%] w-[36rem]">
             <Header
                 v-show="!state.isLoading"
-                class="sm:hidden"
+                class="sm:hidden sticky"
                 :title="state.headerConfig.title"
                 :go-back="state.headerConfig.goBack"
                 :show-menu="state.headerConfig.showMenu"

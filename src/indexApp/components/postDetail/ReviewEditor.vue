@@ -117,7 +117,6 @@ import EditorMenu from '@/indexApp/components/index/PostEditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
-import { isSupportCSS } from '@/indexApp/utils/formatUtils.js'
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
 const panel = ref()
@@ -255,7 +254,7 @@ async function submitReview() {
 }
 
 function resize() {
-    if(!isSupportCSS('field-sizing')){
+    if(!CSS.supports('field-sizing: content')){
         postInput.value.style.height = 'auto'
         postInput.value.style.height = `${postInput.value.scrollHeight}px`
     }

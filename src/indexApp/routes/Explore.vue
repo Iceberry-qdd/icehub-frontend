@@ -2,6 +2,7 @@
     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
     <div id="explore" class="relative">
         <Header
+            class="sticky"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"

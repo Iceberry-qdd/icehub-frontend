@@ -1,35 +1,44 @@
 <template>
     <div>
         <div
-            class="border-b-[1px] border-gray-100 cursor-pointer flex flex-col gap-y-2 hover:bg-[#f5f5f5] max-sm:p-3 p-4 relative">
+            :class="{'hover:bg-[#f5f5f5]': route.name !== 'replyDetail'}"
+            class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
             <div
                 v-if="tieSub == 'mid'"
                 class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="tieSub == 'top'"
-                class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-[calc(100%-2.5rem)] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="tieSub == 'bottom'"
                 class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
-                class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
+                v-if="route.name !== 'replyDetail'"
+                class="absolute bg-transparent cursor-pointer h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(review.id)" />
             <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row gap-x-4 items-center relative">
-                    <Transition name="fade">
-                        <UserInfoPop
-                            v-if="state.showUserInfoPop"
-                            :user="state.review.user"
-                            class="absolute shadow-lg top-0 user-info-pop z-[99]"
-                            @mouseleave="state.showUserInfoPop = false">
-                        </UserInfoPop>
-                    </Transition>
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                        <div
+                            v-if="state.showUserInfoPop && store.MOBILE_MODE"
+                            class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
+                            @click="state.showUserInfoPop = false" />
+                        <Transition name="fade">
+                            <UserInfoPop
+                                v-if="state.showUserInfoPop"
+                                :user="state.review.user"
+                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[103]"
+                                @mouseleave="state.showUserInfoPop = false">
+                            </UserInfoPop>
+                        </Transition>
+                    </Teleport>
                     <div class="relative z-10">
                         <Avatar
                             :user="state.review.user"
                             class="h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]"
-                            @mouseenter="state.showUserInfoPop = true"
-                            @click="routeToUser(state.review.user.nickname)">
+                            @mouseenter="handleAvatarMouseenter()"
+                            @click="handleAvatarClick()">
                         </Avatar>
                     </div>
                     <div class="z-20">
@@ -69,15 +78,20 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row gap-x-4 justify-end pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-8 justify-end pl-[3.5rem] z-20">
                 <button
                     :id="`rmb-${state.review.id}`"
                     type="button"
                     title="更多"
                     class="btn flex flex-row gap-x-2 items-center op relative text-[11pt]"
                     @click="toggleMenu">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <More theme="outline" size="20" fill="#333" :stroke-width="3"></More>
+                    <More
+                        theme="outline"
+                        size="20"
+                        fill="#333"
+                        :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
+                    </More>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                         <div
@@ -97,8 +111,13 @@
                     :title="`${state.totalReplyCount} 评论`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="state.showReplyPanel = true">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <Message theme="outline" size="19" fill="#333" :stroke-width="3"></Message>
+                    <Message
+                        theme="outline"
+                        size="19"
+                        fill="#333"
+                        :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
+                    </Message>
                     {{ humanizedNumber(state.totalReplyCount) }}
                     <Teleport to="#app">
                         <Transition name="fade">
@@ -121,6 +140,7 @@
                         size="20"
                         :fill="likedIconColor"
                         :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]"
                         :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
                     </Like>
                     {{ humanizedNumber(state.review.likeCount) }}
@@ -133,7 +153,7 @@
                     v-for="(reply, index) in state.replies"
                     :key="reply.id"
                     :index="index"
-                    class="cursor-pointer hover:bg-[#f5f5f5] z-10"
+                    class="hover:bg-[#f5f5f5] z-10"
                     :reply="reply"
                     :review="state.review"
                     :tie-sub="index < state.totalReplyCount - 1 ? 'mid' : 'bottom'"
@@ -162,26 +182,6 @@
     position: absolute;
     width: 100%;
     height: fit-content;
-}
-
-.timeline-top {
-    height: calc(100% - 2.5rem);
-}
-
-.fade-enter-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
 }
 </style>
 
@@ -342,6 +342,20 @@ function deleteReplyOnUi(replyId){
     }
     if(route.name === 'replyDetail'){
         router.back()
+    }
+}
+
+function handleAvatarClick(){
+    if(!store.MOBILE_MODE){
+        routeToUser(state.review.user.nickname)
+    } else {
+        state.showUserInfoPop = true
+    }
+}
+
+function handleAvatarMouseenter(){
+    if(!store.MOBILE_MODE){
+        state.showUserInfoPop = true
     }
 }
 

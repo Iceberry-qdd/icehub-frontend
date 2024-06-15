@@ -28,7 +28,7 @@
 
             <div
                 v-if="props.menuSet.has('VisibilityAction')"
-                :id="`${props.switchFrom}-visibility-action`"
+                :id="`${props.switchFrom}-visibility-action-btn`"
                 class="flex-col max-sm:z-[1] relative">
                 <div
                     class="flex"
@@ -49,6 +49,7 @@
                     <Transition name="fade">
                         <VisibilityAction
                             v-if="state.showVisibilityPanel"
+                            :id="`${props.switchFrom}-visibility-action`"
                             :switch-id="`${props.switchFrom}-visibility-action`"
                             class="absolute max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-full sm:top-[2.5rem] z-[1001]"
                             :visibility="props.visibility"
@@ -62,21 +63,11 @@
 
             <div
                 v-if="props.menuSet.has('DatetimePicker')"
-                id="datetime-picker-action"
+                :id="`${props.switchFrom}-datetime-picker-action-btn`"
                 class="flex-col relative">
                 <div
-                    class="flex max-sm:hidden"
+                    class="flex"
                     @click="handleTimeSelect">
-                    <span
-                        title="定时发送"
-                        class="material-icons-round"
-                        :class="[state.showSchedulePanel ? 'bg-blue-100 active' : '', props.createdTime ? 'active' : '']">
-                        schedule
-                    </span>
-                </div>
-                <div
-                    class="flex sm:hidden"
-                    @click="handleTimeSelect('mobile')">
                     <span
                         title="定时发送"
                         class="material-icons-round"
@@ -101,9 +92,11 @@
                 <Transition name="fade">
                     <DateTimePickerAction
                         v-if="state.showSchedulePanel"
+                        :id="`${props.switchFrom}-datetime-picker-action`"
                         class="max-sm:hidden"
                         show-date-picker
                         show-time-picker
+                        :switch-id="`${props.switchFrom}-datetime-picker-action`"
                         :valid-date-time-range="getDateTimeRange(new Date(), 1, 'YEAR')"
                         note-msg="您仅可以安排未来一年内的帖子"
                         :cur-picked-time="props.createdTime ?? 0"
@@ -117,7 +110,7 @@
 
             <div
                 v-if="props.menuSet.has('EmojiPanel')"
-                :id="`${props.switchFrom}-emoji-panel`"
+                :id="`${props.switchFrom}-emoji-panel-btn`"
                 class="flex-col relative">
                 <div
                     class="flex"
@@ -137,6 +130,7 @@
                     <Transition name="fade">
                         <EmojiPanel
                             v-if="state.showEmojiPanel"
+                            :id="`${props.switchFrom}-emoji-panel`"
                             :switch-id="`${props.switchFrom}-emoji-panel`"
                             class="absolute h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max pb-4 ring-1 ring-slate-900/5 shadow-lg sm:top-[2.5rem] z-[99]"
                             @dismiss-emoji-panel="dismissEmojiPanel"
@@ -377,14 +371,11 @@ function pickVisibility(action) {
     state.showVisibilityPanel = false
 }
 
-function handleTimeSelect(mode) {
-    switch (mode) {
-        case 'mobile':
-            dateInput.value.showPicker()
-            break;
-        default:
-            state.showSchedulePanel = !state.showSchedulePanel
-            break;
+function handleTimeSelect() {
+    if(store.MOBILE_MODE){
+        dateInput.value.showPicker()
+    }else {
+        state.showSchedulePanel = !state.showSchedulePanel
     }
 }
 

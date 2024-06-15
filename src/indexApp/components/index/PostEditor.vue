@@ -3,7 +3,7 @@
     <div class="bg-white border-b">
         <Header
             v-show="!state.isLoading"
-            class="sm:hidden"
+            class="sm:hidden sticky"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
@@ -131,7 +131,7 @@ import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { VueShowdown } from 'vue-showdown'
 import EditorMenu from '@/indexApp/components/index/PostEditorMenu.vue'
-import { standardDateTime, isSupportCSS } from '@/indexApp/utils/formatUtils.js'
+import { standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import Header from '@/indexApp/components/Header.vue'
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
@@ -177,7 +177,7 @@ const state = reactive({
 })
 
 function resize() {
-    if(!isSupportCSS('field-sizing')){
+    if(!CSS.supports('field-sizing: content')){
         postInput.value.style.height = 'auto'
         postInput.value.style.height = `${postInput.value.scrollHeight}px`
     }
