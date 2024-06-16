@@ -11,7 +11,7 @@
                     :user="state.user"
                     class="border-[0.2rem] border-white h-[3.5rem] rounded-[8px] text-[3.5rem] w-[3.5rem]">
                 </Avatar>
-                <div class="flex flex-row gap-x-2 sm:text-[0.85rem]">
+                <div class="flex flex-row gap-x-2 sm:text-[0.8rem]">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
                     <div class="cursor-pointer hover:underline" @click="routeToFollowerList">{{ followingCountText }}</div>
                     <span>|</span>

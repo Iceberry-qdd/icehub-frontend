@@ -1,6 +1,6 @@
 <template>
     <div
-        class="backdrop-blur-sm bg-[#00000066] h-full max-sm:bg-white max-sm:z-[1001] w-full z-[111]"
+        class="bg-[#00000066] h-full max-sm:bg-white max-sm:z-[1001] sm:backdrop-blur-sm w-full z-[111]"
         @click.self="dismiss">
         <div
             v-if="state.loading"
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <EditorMenu
-                    v-if="state.data.content.length > 0"
+                    v-if="state.data.content.length > 0 || store.MOBILE_MODE"
                     id="repostEditorMenu"
                     class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full"
                     switch-from="repost-panel"
@@ -145,7 +145,7 @@ import RepostCard from '@/indexApp/components/postDetail/RepostCard.vue'
 import { posting } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import EditorMenu from '@/indexApp/components/index/PostEditorMenu.vue'
+import EditorMenu from '@/indexApp/components/EditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'

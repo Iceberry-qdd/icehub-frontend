@@ -4,10 +4,10 @@
         class="border-b-[1px] flex flex-nowrap flex-row gap-x-3 items-start p-2">
         <Avatar
             :user="props.user"
-            class="flex-initial h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
+            class="flex-0 h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
             @click="routeToUserProfile">
         </Avatar>
-        <div>
+        <div class="flex-1">
             <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
                 <div
                     class="font-bold hover:underline hover:underline-offset-4 text-[14pt]"
@@ -20,12 +20,12 @@
                 </IconVerify>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="brief text-[10pt]">{{ brief(props.user.remark) }}</div>
+            <div class="font-light text-[0.9rem] webkit-box-2">{{ brief(props.user.remark) }}</div>
         </div>
         <div
             v-if="!isSelf"
             :class="buttonClass"
-            class="cursor-pointer flex-initial font-bold place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
+            class="cursor-pointer flex-0 font-bold place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
             @click="toggleFollowState">
             <div
                 v-if="!state.loading"
@@ -37,18 +37,6 @@
         </div>
     </div>
 </template>
-
-<style scoped>
-.brief {
-    width: 24.5rem;
-    font-weight: 400;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-}
-</style>
 
 <script setup>
 import { reactive, computed } from 'vue'

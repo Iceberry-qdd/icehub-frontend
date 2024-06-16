@@ -130,7 +130,7 @@ import { uploadImages, posting, postingPlan } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { VueShowdown } from 'vue-showdown'
-import EditorMenu from '@/indexApp/components/index/PostEditorMenu.vue'
+import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import Header from '@/indexApp/components/Header.vue'
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))

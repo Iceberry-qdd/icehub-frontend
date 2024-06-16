@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <template>
     <div
-        class="border-b-[1px] max-sm:px-3 pb-[0] pt-[1rem] px-[1rem] relative rounded-none"
+        class="border-b-[1px] max-sm:pt-3 max-sm:px-3 pb-0 pt-4 px-4 relative rounded-none"
         :class="cardContainerClass">
         <div
             v-if="showPinTop"
@@ -44,7 +44,7 @@
                 </PostMenus>
             </Transition>
         </Teleport>
-        <div class="flex gap-x-4 max-sm:gap-x-2">
+        <div class="flex gap-x-4 max-sm:gap-x-3">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                 <div
@@ -243,13 +243,13 @@ const cardBodyClass = computed(() => ({
     'pr-[0.8rem]': isIndentBody.value,
     'p-0': !isIndentBody.value,
     'ml-[3.5rem]': isIndentBody.value && !store.MOBILE_MODE,
-    'ml-[3rem]': isIndentBody.value && store.MOBILE_MODE,
+    'ml-[3.25rem]': isIndentBody.value && store.MOBILE_MODE,
     'ml-0': !isIndentBody.value
 }))
 
 const cardButtonClass = computed(() => ({
     'ml-[3.5rem]': isIndentBody.value && !store.MOBILE_MODE,
-    'ml-[3rem]': isIndentBody.value && store.MOBILE_MODE,
+    'ml-[3.25rem]': isIndentBody.value && store.MOBILE_MODE,
     'ml-0': !isIndentBody.value,
     'mr-[0.8rem]': isIndentBody.value,
     'mr-0': !isIndentBody.value

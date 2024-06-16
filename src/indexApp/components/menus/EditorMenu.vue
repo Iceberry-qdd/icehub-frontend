@@ -51,7 +51,7 @@
                             v-if="state.showVisibilityPanel"
                             :id="`${props.switchFrom}-visibility-action`"
                             :switch-id="`${props.switchFrom}-visibility-action`"
-                            class="absolute max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-full sm:top-[2.5rem] z-[1001]"
+                            class="absolute max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-4 max-sm:w-full sm:top-[2.5rem] z-[1001]"
                             :visibility="props.visibility"
                             :ui="state.visibilityOptions"
                             @dismiss-visibility-action="dismissVisibilityAction"
@@ -132,7 +132,7 @@
                             v-if="state.showEmojiPanel"
                             :id="`${props.switchFrom}-emoji-panel`"
                             :switch-id="`${props.switchFrom}-emoji-panel`"
-                            class="absolute h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max pb-4 ring-1 ring-slate-900/5 shadow-lg sm:top-[2.5rem] z-[99]"
+                            class="absolute h-[18rem] max-sm:bottom-0 pr-[1px] px-1 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max pb-4 ring-1 ring-slate-900/5 shadow-lg sm:top-[2.5rem] z-[99]"
                             @dismiss-emoji-panel="dismissEmojiPanel"
                             @insert-emoji-code="insertEmoji">
                         </EmojiPanel>

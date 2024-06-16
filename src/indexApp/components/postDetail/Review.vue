@@ -17,7 +17,7 @@
                 class="absolute bg-transparent cursor-pointer h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(review.id)" />
             <div class="flex flex-row items-center justify-between">
-                <div class="flex flex-row gap-x-4 items-center relative">
+                <div class="flex flex-row gap-x-4 items-center max-sm:gap-x-3 relative">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                         <div
@@ -66,7 +66,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pl-[3.5rem] text-[12pt]">
+            <div class="max-sm:pl-[3.25rem] pl-[3.5rem] text-[12pt]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.review.content"></VueShowdown>
                 <ImageGrid

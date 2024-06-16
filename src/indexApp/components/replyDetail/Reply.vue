@@ -14,7 +14,7 @@
                 class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(state.reply.id)" />
             <div class="flex flex-row items-center justify-between">
-                <div class="flex flex-row gap-x-4 items-center relative">
+                <div class="flex flex-row gap-x-4 items-center max-sm:gap-x-3 relative">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                         <div
@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            <div class="overflow-x-hidden pl-[3.5rem] text-[12pt]">
+            <div class="max-sm:pl-[3.25rem] overflow-x-hidden pl-[3.5rem] text-[12pt]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.reply.content"></VueShowdown>
                 <ImageGrid
@@ -76,7 +76,7 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row gap-x-8 justify-end pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-8 justify-end max-sm:pl-[3rem] pl-[3.5rem] z-20">
                 <button
                     :id="`rmb-${state.reply.id}`"
                     type="button"
@@ -146,7 +146,7 @@
             </div>
             <div
                 v-if="showMoreReplyButton"
-                class="hover:underline ml-[3.5rem] text-[#0d6efd] text-[11pt] z-[19]"
+                class="hover:underline max-sm:ml-[3rem] ml-[3.5rem] text-[#0d6efd] text-[11pt] z-[19]"
                 :class="[state.isLoading ? 'pointer-events-none' : 'cursor-pointer']">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <IconLoading v-if="state.isLoading == true" class="h-5 text-slate-500 w-5"></IconLoading>

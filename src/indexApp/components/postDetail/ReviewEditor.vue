@@ -2,7 +2,7 @@
     <div>
         <div
             v-if="!state.loading"
-            class="flex flex-row gap-x-[1rem] max-sm:p-3 max-sm:pb-0 p-4 relative"
+            class="flex flex-row gap-x-4 max-sm:gap-x-3 max-sm:p-3 max-sm:pb-0 p-4 relative"
             :class="[props.fromReviewPanel ? '' : 'border-gray-100 border-b-[1px]']">
             <div
                 v-if="props.tieLocation == 'mid'"
@@ -25,7 +25,7 @@
                 class="w-full">
                 <div
                     v-if="state.content.length > 0"
-                    class="mb-2 text-[11pt]">
+                    class="text-[11pt]">
                     回复
                     <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
                 </div>
@@ -61,7 +61,7 @@
                 <EditorMenu
                     v-if="state.content.length > 0 || store.MOBILE_MODE"
                     id="reviewEditorMenu"
-                    :class="{'px-2': props.fromReviewPanel}"
+                    :class="{'px-2': props.fromReviewPanel && store.MOBILE_MODE}"
                     class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 w-full"
                     switch-from="review-panel"
                     :menu-set="state.menuSet"
@@ -113,7 +113,7 @@ import { reactive, computed, inject, defineAsyncComponent, ref, watch } from 'vu
 import { reviewing, uploadImages } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import EditorMenu from '@/indexApp/components/index/PostEditorMenu.vue'
+import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'

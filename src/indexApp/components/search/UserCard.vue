@@ -2,9 +2,9 @@
     <div class="bg-white border-[1px] rounded-[8px]">
         <Banner
             :user="props.user"
-            class="h-[6rem] object-cover rounded-t-[8px] w-full">
+            class="-mb-[calc(3.5rem+0.2rem)/2] h-[6rem] object-cover rounded-t-[8px] w-full">
         </Banner>
-        <div class="-translate-y-[1.75rem] flex flex-col gap-y-1 items-start justify-start px-2 w-full">
+        <div class="flex flex-col gap-y-1 items-start justify-start pb-2 px-2 w-full">
             <div class="flex flex-row items-end justify-between w-full">
                 <Avatar
                     :user="props.user"
@@ -13,7 +13,7 @@
                 <div
                     v-if="!isSelf"
                     :class="followBtnClass"
-                    class="btn-no-select flex flex-row h-[1.8rem] items-center justify-center min-w-[4.5rem] px-3 rounded-full text-[11pt]"
+                    class="btn-no-select flex flex-row items-center justify-center min-w-[4.5rem] px-3 py-1 rounded-full text-[0.85rem]"
                     @click.stop="state.isFollowing ? doUnFollowUser() : doFollowUser()">
                     {{ followButtonText }}
                 </div>
@@ -26,7 +26,7 @@
                 <IconVerify v-if="state.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="break-all text-[10pt] webkit-box-1">{{ state.user.remark }}</div>
+            <div class="break-all text-[0.85rem] webkit-box-1">{{ brief }}</div>
         </div>
     </div>
 </template>
@@ -102,4 +102,10 @@ async function doUnFollowUser() {
         state.loading = false
     }
 }
+
+const brief = computed(() => {
+    const remark = state.user.remark
+    const defaultRemark = '该用户很神秘，什么都没写。'
+    return remark || defaultRemark
+})
 </script>

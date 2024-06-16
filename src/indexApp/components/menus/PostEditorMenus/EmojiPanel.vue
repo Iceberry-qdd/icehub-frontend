@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] overflow-x-hidden overflow-y-scroll panel pr-[1px] px-1 rounded-[6px]">
+    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] overflow-x-hidden overflow-y-auto panel rounded-[6px]">
         <div
             v-if="props.showHistory && state.historyEmojis.length > 0"
             class="bg-white border-b-[1px] category gap-1 grid grid-cols-7 px-2 py-2 sticky top-0 z-[99]">
@@ -136,11 +136,12 @@ const categoryZh = {
 }
 const category = Object.keys(categoryZh)
 const emojis = category.reduce((obj, key) => (
-    obj[key] = emojiPack.filter(e => e.category === key && e.has_img_apple === true)
-        .sort((a, b) => a.sort_order - b.sort_order),
-    obj), {})
-const showSkinPanel = emojiPack.filter(emoji => emoji?.skin_variations).map(emoji => {return {unified: emoji.unified, show: false}})
-
+                                obj[key] = emojiPack.filter(e => e.category === key && e.has_img_apple === true)
+                                                    .sort((a, b) => a.sort_order - b.sort_order),
+                                obj), {}
+                              )
+const showSkinPanel = emojiPack.filter(emoji => emoji?.skin_variations) /*.map(emoji => {return {unified: emoji.unified, show: false}})*/
+                               .reduce((obj, { unified }) => (obj[unified] = false, obj), {})
 const state = reactive({
     emojiMap: emojis,
     historyEmojis: JSON.parse(localStorage.getItem('historyEmoji')) || [],
@@ -152,7 +153,7 @@ const showHistory = computed(() => {
 })
 
 function chooseEmoji(unified) {
-    if(store.MOBILE_MODE && state.showSkinPanel[unified] && !state.showSkinPanel[unified].show){
+    if(store.MOBILE_MODE && state.showSkinPanel[unified] === false){
         state.showSkinPanel[unified] = true
         return
     }
@@ -206,6 +207,7 @@ function skinPanelStyle(emojiBtnId){
 }
 
 function toggleSkinPanel(emoji, show){
+    if(show && store.MOBILE_MODE) return
     if(emoji.skin_variations){
         state.showSkinPanel[emoji.unified] = show
     }

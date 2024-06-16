@@ -13,7 +13,7 @@
             v-for="search in props.searches"
             :id="`u-${search.content.id}`"
             :key="search.content.id"
-            class="cursor-pointer delay-100 grow-0 h-[12.5rem] hover:shadow-lg shrink-0 snap-start transition-shadow user-card w-[calc(50%-1rem)]"
+            class="cursor-pointer delay-100 grow-0 h-fit hover:shadow-lg shrink-0 snap-start transition-shadow user-card w-[18rem]"
             :user="search.content"
             @click.stop="routeToProfile(search.content.nickname)">
         </UserCard>

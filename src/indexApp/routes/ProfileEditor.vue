@@ -134,20 +134,28 @@
             </div>
         </div>
         <Teleport to="#app">
-            <ImageChangeProper
-                v-if="state.imageChangeProper.show"
-                class="fixed top-0"
-                :from="state.imageChangeProper.from"
-                @dismiss="state.imageChangeProper.show = false"
-                @select="handleImageChangeProperSelect">
-            </ImageChangeProper>
-            <EmojiAvatarEditor
-                v-if="state.imageChangeProper.select === 'emoji'"
-                class="fixed top-0"
-                :avatar="state.newUser.avatar"
-                @dismiss="state.imageChangeProper.select = undefined"
-                @avatar="setAvatar">
-            </EmojiAvatarEditor>
+            <div
+                v-if="state.imageChangeProper.show && store.MOBILE_MODE"
+                class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1000]"
+                @click="state.imageChangeProper.show = false" />
+            <Transition name="fade">
+                <ImageChangeProper
+                    v-if="state.imageChangeProper.show"
+                    class="fixed h-full max-sm:bottom-0 max-sm:h-fit max-sm:z-[1001] sm:top-0 w-full z-[99]"
+                    :from="state.imageChangeProper.from"
+                    @dismiss="state.imageChangeProper.show = false"
+                    @select="handleImageChangeProperSelect">
+                </ImageChangeProper>
+            </Transition>
+            <Transition name="fade">
+                <EmojiAvatarEditor
+                    v-if="state.imageChangeProper.select === 'emoji'"
+                    class="fixed h-full max-sm:z-[1001] top-0 w-full z-[101]"
+                    :avatar="state.newUser.avatar"
+                    @dismiss="state.imageChangeProper.select = undefined"
+                    @avatar="setAvatar">
+                </EmojiAvatarEditor>
+            </Transition>
             <ImageCropper
                 v-if="state.imageChangeProper.select === 'file'"
                 class="fixed top-0"
