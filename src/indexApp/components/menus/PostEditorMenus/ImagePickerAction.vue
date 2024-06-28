@@ -7,9 +7,9 @@
                 class="fixed top-0"
                 :image="loadImage(state.imgList[state.imageEditIndex])"
                 :image-info="state.imagesInfo[state.imageEditIndex]"
-                :show-alt-editor="state.showAltEditor[state.imageEditIndex]"
+                :show-alt-editor="!!state.imagesInfo[state.imageEditIndex].altText"
                 @close-image-editor="closeImageEditor"
-                @toggle-hidden="toggleHidden">
+                @submit="submit">
             </ImageEditor>
         </Teleport>
         <div id="image-panel">
@@ -23,10 +23,10 @@
                         class="absolute backdrop-blur-xl bg-white/5 h-full rounded-[8px] w-full" />
                     <img
                         class="cursor-default h-[5rem] image-picker object-cover rounded-[8px] w-[5rem]"
-                        :src="loadImage(item)" />
+                        :src="loadImage(item).blob" />
                     <div class="absolute bg-transparent cursor-pointer h-full left-0 rounded-[8px] top-0 w-[5rem]">
                         <div
-                            class="flex h-full hover:bg-[#00000066] hover:text-white items-center justify-center rounded-[8px] text-transparent w-full"
+                            class="flex h-full hover:bg-[#00000055] hover:text-white items-center justify-center rounded-[8px] text-transparent w-full"
                             @click="editImage(key)">
                             <IconMagic class="text-[16pt]"></IconMagic>
                         </div>
@@ -88,7 +88,7 @@ const state = reactive({
 function loadImage(file) {
     let URL = window.URL || window.webkitURL
     let imgUrl = URL.createObjectURL(file)
-    return imgUrl
+    return {blob: imgUrl, file: file}
 }
 
 function deleteImg(item, key) {
@@ -106,11 +106,13 @@ function choosePics() {
     state.fileSelector.showPicker()
 }
 
-function closeImageEditor(args) {
-    state.showImageEditPanel = false
+function submit({ image, imageInfo }) {
+    state.imgList[state.imageEditIndex] = image.file
+    state.imagesInfo[state.imageEditIndex] = imageInfo
+    closeImageEditor()
 }
 
-function toggleHidden({hidden}){
-    state.imagesInfo[state.imageEditIndex].hidden = hidden
+function closeImageEditor(){
+    state.showImageEditPanel = false
 }
 </script>

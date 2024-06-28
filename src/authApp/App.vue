@@ -1,6 +1,11 @@
 <template>
     <div class="container">
-        <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
+        <div class="absolute flex items-start justify-center top-2 w-full z-[1999]">
+            <GlobalBanner
+                v-if="store.GLOBAL_MSG.length > 0"
+                class="fixed h-fit w-fit">
+            </GlobalBanner>
+        </div>
         <Auth @referer="referer"></Auth>
     </div>
 </template>

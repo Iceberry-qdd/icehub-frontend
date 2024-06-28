@@ -244,7 +244,6 @@ async function unFollowAUser(userId) {
 }
 
 function showSlide(images, idx) {
-    document.querySelector("body").setAttribute("style", "overflow:hidden")
     store.showSlide(images, idx)
 }
 
@@ -258,7 +257,6 @@ async function unblockUser() {
         if (result) {
             store.setSuccessMsg('已解除屏蔽此用户')
             refreshProfileOnUi()
-            state.confirmBDialogUi.show = false
         } else {
             throw new Error("解除屏蔽失败！")
         }
@@ -267,6 +265,7 @@ async function unblockUser() {
         console.error(e)
     }finally{
         state.confirmBDialogUi.loading = false
+        state.confirmBDialogUi.show = false
     }
 }
 

@@ -95,12 +95,12 @@ async function toggleCloseReview() {
         if (result == false) throw new Error("操作失败！")
         store.setSuccessMsg("操作成功！")
         state.post.allowReview = !state.post.allowReview
-        dismissConfirmDialogBox()
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
     } finally {
         toggleDialogLoading(false)
+        dismissConfirmDialogBox()
     }
 }
 </script>

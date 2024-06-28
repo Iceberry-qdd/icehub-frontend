@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white flex flex-row gap-x-2 items-center max-w-[36rem] min-w-[8rem] pointer-events-auto px-3 py-[0.6rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-sm">
+    <div class="bg-white flex flex-row gap-x-2 items-center max-w-[min(36rem,96vw)] min-w-[8rem] pointer-events-auto px-3 py-[0.6rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-sm">
         <div>
             <IconDone
                 v-if="props.message.type == 'success'"

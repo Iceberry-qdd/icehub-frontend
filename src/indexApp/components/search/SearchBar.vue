@@ -6,7 +6,7 @@
         :show-menu="state.headerConfig.showMenu"
         :menu-icon="state.headerConfig.menuIcon"
         :icon-tooltip="state.headerConfig.iconTooltip"
-        class="px-2 py-2 sticky">
+        class="header px-2 py-2 sticky">
         <div class="flex flex-1 flex-row h-full text-sm">
             <select
                 id="type-select"
@@ -34,7 +34,7 @@
             <div
                 v-if="state.suggests.show"
                 id="search-suggest"
-                class="bg-white border-[1px] divide-y fixed flex flex-col max-h-[min(24rem,75vh)] overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-1rem)] z-[105]">
+                class="bg-white border-[1px] divide-y fixed flex flex-col max-h-[min(24rem,75vh)] modern-scrollbar-y overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-1rem)] z-[105]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <div v-if="state.suggests.hintSuggests" class="suggests">
                     <div
@@ -131,22 +131,7 @@
 
 .material-icons-round.close {
     font-size: 13pt;
-    padding: calc((3rem - 13pt) / 2);
-}
-
-#search-suggest::-webkit-scrollbar {
-    width: 6px !important;
-    height: 100% !important;
-    -webkit-appearance: none;
-    background: transparent;
-    border-radius: 9999px;
-}
-
-#search-suggest::-webkit-scrollbar-thumb {
-    width: 6px !important;
-    -webkit-appearance: none;
-    background: #E6E8EB;
-    border-radius: 9999px;
+    /* padding: calc((3rem - 13pt) / 2); */
 }
 
 @media not all and (min-width: 640px) {

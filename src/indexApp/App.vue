@@ -15,7 +15,10 @@
             :message="store.GLOBAL_NOTIFY_BANNER_MSG"
             @close-global-notify-banner="closeGlobalNotifyBannerMsg">
         </GlobalNotifyBanner>
-        <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
+        <ImageSlide2
+            v-if="store.SLIDE_DATA.urls.length > 0"
+            class="fixed h-screen w-screen z-[1000]">
+        </ImageSlide2>
         <div
             id="container"
             ref="container"
@@ -27,7 +30,7 @@
             <div
                 id="sidebar-l"
                 :class="{'main-route': isMainRoute}"
-                class="border-[#EEEEEE] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
+                class="border-[#EEEEEE] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
                 <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-20 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <Sidebar id="menu" class="h-fit lg:-translate-x-0 lg:mr-12 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16"></Sidebar>
@@ -67,7 +70,7 @@
             </div>
             <div
                 id="sidebar-r"
-                class="border-[#EEEEEE] border-l-[1px] flex-1 h-screen max-lg:hidden overflow-y-scroll sticky top-0 z-0">
+                class="border-[#EEEEEE] border-l-[1px] flex-1 h-screen max-lg:hidden no-scrollbar overflow-y-scroll sticky top-0 z-0">
                 <Recommend class="max-w-[25rem] p-4"></Recommend>
             </div>
         </div>
@@ -93,17 +96,6 @@
 
 .fade-leave-to {
     bottom: -1rem;
-}
-
-:is(#sidebar-r, #sidebar-l)::-webkit-scrollbar {
-    width: 0 !important;
-    height: 100% !important;
-    -webkit-appearance: none;
-}
-
-:is(#sidebar-r, #sidebar-l)::-webkit-scrollbar-thumb {
-    width: 6px !important;
-    -webkit-appearance: none;
 }
 
 @media not all and (min-width: 640px) {

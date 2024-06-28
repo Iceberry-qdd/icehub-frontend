@@ -52,10 +52,14 @@
             @fetch-more="fetchMoreSameSearch">
         </Footer>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div v-else class="flex flex-nowrap h-[9.5rem] items-center justify-center mt-20 w-full">
+        <div v-else class="flex flex-nowrap h-[9.5rem] items-center justify-center max-lg:hidden mt-20 w-full">
             <!-- eslint-disable-next-line vue/html-self-closing -->
             <div class="bg-[url('/src/assets/search.svg')] bg-center bg-contain bg-no-repeat h-[9.5rem] w-[9.5rem]"></div>
         </div>
+        <Recommend
+            v-if="!state.prompt.key"
+            class="lg:hidden">
+        </Recommend>
     </div>
 </template>
 
@@ -86,6 +90,7 @@ import { reactive, computed, onMounted, provide } from 'vue'
 import { globalSearch } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import Footer from '@/indexApp/components/Footer.vue'
+import Recommend from '@/indexApp/components/Recommend.vue'
 const UserCardSlide = defineAsyncComponent(() => import('@/indexApp/components/search/UserCardSlide.vue'))
 const PostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostCard.vue'))
 const Review = defineAsyncComponent(() => import('@/indexApp/components/postDetail/Review.vue'))

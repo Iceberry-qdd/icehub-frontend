@@ -159,7 +159,6 @@
 
 <script setup>
 import { reactive, computed, onMounted, onUnmounted, inject } from 'vue'
-import { store } from '@/indexApp/js/store.js'
 import BookmarkAction from '@/indexApp/components/menus/postCardMenus/BookmarkAction.vue'
 import FollowingAction from '@/indexApp/components/menus/postCardMenus/FollowingAction.vue'
 import LinkCopyAction from '@/indexApp/components/menus/postCardMenus/LinkCopyAction.vue'
@@ -265,15 +264,9 @@ function handlePostMenusDismiss(event) {
 
 onMounted(() => {
     document.querySelector('#app').addEventListener('click', handlePostMenusDismiss)
-    if(store.MOBILE_MODE){
-        document.querySelector("body").setAttribute("style", "overflow:hidden")
-    }
 })
 
 onUnmounted(() => {
     document.querySelector('#app').removeEventListener('click', handlePostMenusDismiss)
-    if(store.MOBILE_MODE){
-        document.querySelector("body").removeAttribute("style")
-    }
 })
 </script>

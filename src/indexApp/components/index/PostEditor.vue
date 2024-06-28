@@ -220,7 +220,7 @@ async function submitPost() {
 //防止重复提交上一次的内容
 function reset() {
     state.content = ''
-    state.imgList = []
+    state.imgList = new Array()
     state.showImagePanel = false
     state.data.allowReview = true
     state.data.content = ''

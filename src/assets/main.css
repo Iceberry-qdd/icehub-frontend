@@ -3,21 +3,6 @@ html,body {
     font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', system-ui,'Apple Color Emoji','Noto Color Emoji', sans-serif, 'Segoe UI' !important;
 }
 
-html::-webkit-scrollbar {
-    width: 6px !important;
-    height: 100% !important;
-    -webkit-appearance: none;
-    background: transparent;
-    border-radius: 9999px;
-}
-
-html::-webkit-scrollbar-thumb {
-    width: 6px !important;
-    -webkit-appearance: none;
-    background: #00000077;
-    border-radius: 9999px;
-}
-
 #pre-loading{
     width: 100vw;
     height: 100vh;
@@ -108,6 +93,52 @@ img.pic.img-fluid{
 
 * {
    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) 
+}
+
+body:has(div:where(.fixed-page)){
+    overflow: hidden;
+}
+
+.no-scrollbar::-webkit-scrollbar,.no-scrollbar::-webkit-scrollbar-thumb {
+    display: none;
+    /* Chrome Safari */
+}
+
+.no-scrollbar{
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE 10+ */
+}
+
+.modern-scrollbar-y::-webkit-scrollbar{
+    width: 6px !important;
+    height: 100% !important;
+    -webkit-appearance: none;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+.modern-scrollbar-y::-webkit-scrollbar-thumb{
+    width: 6px !important;
+    -webkit-appearance: none;
+    background: #00000077;
+    border-radius: 9999px;
+}
+
+.modern-scrollbar-x::-webkit-scrollbar {
+    width: 100% !important;
+    height: 4px !important;
+    -webkit-appearance: none;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+.modern-scrollbar-x::-webkit-scrollbar-thumb {
+    height: 4px !important;
+    -webkit-appearance: none;
+    background: #E6E8EB;
+    border-radius: 9999px;
 }
 
 @supports (field-sizing: content){

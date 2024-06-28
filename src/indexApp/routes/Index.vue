@@ -24,6 +24,7 @@
             <PostEditor
                 v-show="!store.MOBILE_MODE || (store.MOBILE_MODE && state.isShowPostEditor)"
                 id="post-editor"
+                :class="{'fixed-page': store.MOBILE_MODE && state.isShowPostEditor}"
                 class="max-sm:fixed max-sm:h-[calc(100vh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
                 @close="state.isShowPostEditor = false"
                 @get-data="getData"
@@ -154,14 +155,6 @@ function postingNew(post) {
 
 const isShowGlobalNotifyBannerMsg = computed(() => {
     return store.GLOBAL_NOTIFY_BANNER_MSG.length > 0
-})
-
-watch(() => state.isShowPostEditor, (newVal, oldVal) => {
-    if(newVal === true && oldVal === false){
-        document.querySelector("body").setAttribute("style", "overflow:hidden")
-    }else if(newVal === false && oldVal === true){
-        document.querySelector("body").removeAttribute("style")
-    }
 })
 
 onMounted(() => {

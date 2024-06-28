@@ -1,5 +1,5 @@
 <template>
-    <div class="card-container ring-1 ring-slate-900/5 shadow-lg">
+    <div class="card-container no-scrollbar ring-1 ring-slate-900/5 shadow-lg">
         <div
             v-if="props.noteMsg"
             class="bg-[#f1f3f4] cursor-default flex gap-2 h-[2.5rem] items-center justify-left p-3 rounded-lg w-full">
@@ -150,18 +150,6 @@
     align-items: center;
     font-size: 16pt;
     font-weight: bold;
-}
-
-.scrollbar-hidden {
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* IE 10+ */
-}
-
-::-webkit-scrollbar {
-    display: none;
-    /* Chrome Safari */
 }
 
 .m-disabled {

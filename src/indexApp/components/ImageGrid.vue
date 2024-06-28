@@ -8,16 +8,28 @@
             <IconAltOn
                 v-if="pic.altText && state.showAltText[idx] == false"
                 class="absolute bg-black/75 bottom-[0.3rem] box-content cursor-pointer h-[1.2rem] p-[0.25rem] right-[0.3rem] rounded-full w-[1.2rem] z-[100]"
-                @mouseenter="state.showAltText[idx] = true">
+                @mouseenter="toggleAltTextShow(idx, true, 'mouseenter')"
+                @click="toggleAltTextShow(idx, true)">
             </IconAltOn>
-            <Transition name="alt">
+            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+            <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                 <div
-                    v-if="pic.altText && state.showAltText[idx]"
-                    class="absolute altTextContainer bg-black/75 bottom-0 break-words cursor-text h-fit leading-[1.5rem] max-h-full overflow-scroll p-3 text-[11pt] text-justify text-white w-full z-[100]"
-                    @mouseleave="state.showAltText[idx] = false">
-                    {{ pic.altText }}
-                </div>
-            </Transition>
+                    v-if="pic.altText && state.showAltText[idx] && store.MOBILE_MODE"
+                    ref="altTextBg"
+                    class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
+                    @click.self="toggleAltTextShow(idx, false)" />
+                <Transition name="alt">
+                    <div
+                        v-if="pic.altText && state.showAltText[idx]"
+                        class="absolute bg-black/75 bottom-0 break-words cursor-text h-fit leading-[1.5rem] max-h-full max-sm:bg-white max-sm:fixed max-sm:max-h-[75vh] max-sm:pt-0 max-sm:rounded-t-[0.75rem] max-sm:text-zinc-500 max-sm:z-[1001] no-scrollbar overflow-scroll p-3 text-[11pt] text-justify text-white w-full z-[100]"
+                        @mouseleave="toggleAltTextShow(idx, false, 'mouseleave')">
+                        <div class="bg-white flex h-6 items-center justify-center sm:hidden sticky top-0">
+                            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+                        </div>
+                        {{ pic.altText }}
+                    </div>
+                </Transition>
+            </Teleport>
             <div
                 v-if="pic.hidden && !state.showRealImage[idx]"
                 class="absolute flex flex-row h-full items-center justify-center w-full z-[99]">
@@ -64,25 +76,17 @@
 .alt-leave-to {
     translate: 0 100%;
 }
-
-.altTextContainer::-webkit-scrollbar {
-    display: none;
-    width: 0 !important;
-    height: 0 !important;
-    -webkit-appearance: none;
-    background: transparent;
-}
 </style>
 
-<!-- eslint-disable vue/no-setup-props-reactivity-loss -->
-<!-- eslint-disable vue/no-ref-object-reactivity-loss -->
+<!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-ref-object-reactivity-loss -->
 <script setup>
 import IconGif from '@/components/icons/IconGif.vue'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
-import { reactive, computed } from 'vue'
+import { reactive, computed, ref } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
 
+const altTextBg = ref()
 const props = defineProps({
     /** 要展示的图片列表 */
     images: {
@@ -101,7 +105,6 @@ const props = defineProps({
     }
 })
 const emits = defineEmits(['realImage'])
-
 const state = reactive({
     showAltText: [...props.images.map(() => false)],
     showRealImage: [...props.images.map(() => false)],
@@ -166,6 +169,17 @@ function getImageUrl(image) {
     const { url, hidden } = image
     const size = state.gridImageWidth[gridColCount.value]
     return hidden ? url : `${import.meta.env.VITE_OBJECT_BASE_URL}${url}?width=${size}`
+}
+
+/**
+ * 切换下标为idx的图片的altText显示状态
+ * @param {Number} index 图片下标
+ * @param {Boolean} isShow 是否显示，要切换的新值
+ * @param {String} mode 从那种交互模式触发, 值可选 click | mousemove | mouseleave等，默认值为click
+ */
+function toggleAltTextShow(index, isShow, mode = 'click'){
+    if(mode !== 'click' && store.MOBILE_MODE) return
+    state.showAltText[index] = isShow
 }
 
 function playAnimateImage(idx) {

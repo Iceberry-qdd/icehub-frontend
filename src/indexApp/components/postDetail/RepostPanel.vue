@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-[#00000066] h-full max-sm:bg-white max-sm:z-[1001] sm:backdrop-blur-sm w-full z-[111]"
+        class="bg-[#00000066] fixed-page h-full max-sm:bg-white max-sm:z-[1001] sm:backdrop-blur-sm w-full z-[111]"
         @click.self="dismiss">
         <div
             v-if="state.loading"
@@ -139,13 +139,13 @@
 </style>
 
 <script setup>
-import { reactive, onMounted, onUnmounted, computed, inject, ref } from 'vue'
+import { reactive, computed, inject, ref } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import RepostCard from '@/indexApp/components/postDetail/RepostCard.vue'
 import { posting } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import EditorMenu from '@/indexApp/components/EditorMenu.vue'
+import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
@@ -217,10 +217,6 @@ const leftWordCount = computed(() => {
     return state.maxContentWordCount - (state.data.content?.length ?? 0)
 })
 
-const isValidContentLength = computed(() => {
-    return leftWordCount.value >= 0 && leftWordCount.value < state.maxContentWordCount
-})
-
 function dismiss() {
     emits('dismiss')
 }
@@ -259,12 +255,4 @@ async function reposting() {
         state.loading = false
     }
 }
-
-onMounted(() => {
-    document.querySelector("body").setAttribute("style", "overflow:hidden")
-})
-
-onUnmounted(() => {
-    document.querySelector("body").removeAttribute("style")
-})
 </script>

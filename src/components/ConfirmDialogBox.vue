@@ -1,7 +1,7 @@
 <template>
     <div
         id="confirmDialogBox"
-        class="bg-[#00000066] flex flex-row h-full items-center justify-center max-sm:z-[1001] sm:backdrop-blur-sm w-full z-[111]"
+        class="bg-[#00000066] fixed-page flex flex-row h-full items-center justify-center max-sm:z-[1001] sm:backdrop-blur-sm w-full z-[111]"
         @click.stop="">
         <div
             class="bg-white flex flex-col flex-nowrap gap-y-[1rem] items-center justify-between max-h-[75%] min-h-[8rem] overflow-y-auto p-6 rounded-[8px] w-[18rem]">
@@ -74,12 +74,4 @@ function confirm() {
 function cancel() {
     emits('choice', { choice: 'cancel' })
 }
-
-onMounted(() => {
-    document.querySelector("body").setAttribute("style", "overflow:hidden")
-})
-
-onUnmounted(() => {
-    document.querySelector("body").removeAttribute("style")
-})
 </script>

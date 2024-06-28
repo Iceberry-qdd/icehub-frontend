@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-[#00000066] flex-row h-full items-center justify-center sm:backdrop-blur-sm sm:flex w-full z-[111]"
+        class="bg-[#00000066] fixed-page flex-row h-full items-center justify-center modern-scrollbar-y sm:backdrop-blur-sm sm:flex w-full z-[111]"
         @click.self="dismiss">
         <div class="bg-white max-sm:h-full max-sm:rounded-none max-sm:w-full overflow-y-auto rounded-[8px] sm:max-h-[80%] sm:min-h-[20%] w-[36rem]">
             <Header
@@ -74,7 +74,7 @@
 <!-- eslint-disable vue/no-unused-properties -->
 <script setup>
 import ReviewEditor from '@/indexApp/components/postDetail/ReviewEditor.vue'
-import { reactive, onMounted, onUnmounted, computed } from 'vue'
+import { reactive, computed } from 'vue'
 import ReviewCard from '@/indexApp/components/replyDetail/ReviewCard.vue'
 import Header from '@/indexApp/components/Header.vue'
 
@@ -116,12 +116,4 @@ const title = computed(() => {
 function dismiss() {
     emits('dismiss')
 }
-
-onMounted(() => {
-    document.querySelector("body").setAttribute("style", "overflow:hidden")
-})
-
-onUnmounted(() => {
-    document.querySelector("body").removeAttribute("style")
-})
 </script>

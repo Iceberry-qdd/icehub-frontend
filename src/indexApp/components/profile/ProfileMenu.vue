@@ -90,7 +90,6 @@
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
 import { computed, reactive, onMounted, onUnmounted, inject } from 'vue'
-import { store } from '@/indexApp/js/store.js'
 import ProfileChangeAction from '@/indexApp/components/menus/userProfileMenus/ProfileChangeAction.vue'
 import CalendarSearchAction from '@/indexApp/components/menus/userProfileMenus/CalendarSearchAction.vue'
 import ShareLinkAction from '@/indexApp/components/menus/userProfileMenus/ShareLinkAction.vue'
@@ -117,7 +116,7 @@ const state = reactive({
         [ShareLinkAction.__name, !props.user.blocking && !props.user.blocked],
         [VerifyApplyAction.__name, props.user.id === curUser.id && showUnImpl],
         [ProfileLockAction.__name, props.user.id === curUser.id && showUnImpl],
-        [ProfileBlockAction.__name, props.user.id !== curUser.id && showUnImpl],
+        [ProfileBlockAction.__name, props.user.id !== curUser.id],
         [LogoutAction.__name, props.user.id === curUser.id],
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示
     ])
@@ -138,15 +137,9 @@ function handleProfileMenusDismiss(event) {
 
 onMounted(() => {
     document.querySelector('#app').addEventListener('click', handleProfileMenusDismiss)
-    if(store.MOBILE_MODE){
-        document.querySelector("body").setAttribute("style", "overflow:hidden")
-    }
 })
 
 onUnmounted(() => {
     document.querySelector('#app').removeEventListener('click', handleProfileMenusDismiss)
-    if(store.MOBILE_MODE){
-        document.querySelector("body").removeAttribute("style")
-    }
 })
 </script>

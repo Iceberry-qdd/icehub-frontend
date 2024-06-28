@@ -45,7 +45,7 @@
                 <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                     <div
                         v-if="state.showVisibilityPanel && store.MOBILE_MODE"
-                        class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1001]" />
+                        class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]" />
                     <Transition name="fade">
                         <VisibilityAction
                             v-if="state.showVisibilityPanel"
@@ -126,13 +126,13 @@
                 <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                     <div
                         v-if="state.showEmojiPanel && store.MOBILE_MODE"
-                        class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1001]" />
+                        class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]" />
                     <Transition name="fade">
                         <EmojiPanel
                             v-if="state.showEmojiPanel"
                             :id="`${props.switchFrom}-emoji-panel`"
                             :switch-id="`${props.switchFrom}-emoji-panel`"
-                            class="absolute h-[18rem] max-sm:bottom-0 pr-[1px] px-1 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max pb-4 ring-1 ring-slate-900/5 shadow-lg sm:top-[2.5rem] z-[99]"
+                            class="absolute h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max pb-4 pr-[1px] px-1 ring-1 ring-slate-900/5 shadow-lg sm:top-[2.5rem] z-[99]"
                             @dismiss-emoji-panel="dismissEmojiPanel"
                             @insert-emoji-code="insertEmoji">
                         </EmojiPanel>
@@ -383,6 +383,7 @@ async function handleDateInputChange(e) {
     emits('changeCreatedTime', {createdTime: dateInput.value.value})
     await nextTick()
     if (props.createdTime) {
+        // FIXME 此处timeInput在移动设备上无法触发显示
         timeInput.value.showPicker()
     }
 }

@@ -2,7 +2,7 @@
     <div class="border-b-[1px] border-gray-100 flex flex-col max-sm:p-3 p-4 relative">
         <div class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
         <div class="flex flex-row gap-x-4 justify-between max-sm:gap-x-3">
-            <div class="flex-0 relative z-10">
+            <div class="flex-none relative z-10">
                 <Avatar
                     :user="props.review.user"
                     class="cursor-default h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]">

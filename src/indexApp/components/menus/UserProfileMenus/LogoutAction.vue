@@ -54,7 +54,6 @@ async function doLogout(){
         const result = await response.json()
         if(result){
             clearToken()
-            dismissConfirmDialogBox()
             dismissProfileMenus()
             redirectToAuth()
         }else{
@@ -65,6 +64,7 @@ async function doLogout(){
         console.error(e)
     }finally{
         state.confirmBDialogUi.loading.show = false
+        dismissConfirmDialogBox()
     }
 }
 

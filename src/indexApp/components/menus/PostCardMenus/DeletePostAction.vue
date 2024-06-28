@@ -90,6 +90,7 @@ async function deleteIt() {
         console.error(e)
     } finally {
         toggleDialogLoading(false)
+        dismissConfirmDialogBox()
     }
 }
 </script>

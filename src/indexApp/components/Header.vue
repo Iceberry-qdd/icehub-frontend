@@ -3,9 +3,10 @@
         id="h"
         class="backdrop-blur-xl bg-white/80 flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:px-2 px-[1rem] text-lg top-0 z-[104]"
         :class="[!state.noBorder ? 'border-b-[1px] border-[#EEEEEE]' : '']">
-        <div class="flex flex-0 flex-row h-full items-center">
+        <div class="flex flex-none flex-row h-full items-center">
             <div
                 v-if="props.goBack"
+                :style="{color: props.iconColor}"
                 class="cursor-pointer material-icons-round mr-[0.5rem] text-[1.125rem]"
                 title="返回"
                 @click="routeBackTo">
@@ -14,6 +15,7 @@
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div
                 v-if="props.title"
+                :style="{color: props.textColor}"
                 class="font-bold max-sm:ml-2">
                 {{ props.title }}
             </div>
@@ -24,10 +26,11 @@
             v-if="props.showMenu"
             id="header-opt"
             :title="props.iconTooltip"
-            class="flex-0">
+            class="flex-none">
             <span
                 v-if="props.menuIcon"
                 class="material-icons-round text-[1.125rem]"
+                :style="{color: props.iconColor}"
                 @click="handleAction">
                 {{ props.menuIcon }}
             </span>
@@ -74,6 +77,18 @@ const props = defineProps({
         type: Boolean,
         required: false,
         default: false
+    },
+    /** 图标颜色，可为颜色字面量、十六进制表示、rgba表示 */
+    iconColor: {
+        type: String,
+        required: false,
+        default: ''
+    },
+    /** 文字颜色，可为颜色字面量、十六进制表示、rgba表示 */
+    textColor: {
+        type: String,
+        required: false,
+        default: ''
     }
 })
 const emits = defineEmits(['handleAction'])

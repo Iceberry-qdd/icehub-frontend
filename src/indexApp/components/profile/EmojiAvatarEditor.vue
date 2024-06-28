@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-[#00000066] sm:backdrop-blur-sm">
+    <div class="bg-[#00000066] fixed-page sm:backdrop-blur-sm">
         <div
             class="absolute bg-white divide-y-[1px] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:top-1/2 w-[min(25rem,100vw)]">
             <div
@@ -42,7 +42,7 @@
                     背景颜色
                 </div>
             </div>
-            <div class="h-[min(24rem,calc(100vh-25rem*9/16-2.5rem))] max-sm:h-[calc(100vh-100vw*9/16-3rem)] max-sm:pb-4 overflow-x-hidden overflow-y-auto panel rounded-b-[8px]">
+            <div class="h-[min(24rem,calc(100vh-25rem*9/16-2.5rem))] max-sm:h-[calc(100vh-100vw*9/16-3rem)] max-sm:pb-4 modern-scrollbar-y overflow-x-hidden overflow-y-auto rounded-b-[8px]">
                 <EmojiPanel
                     v-if="state.showEmojiPanel"
                     :show-history="false"
@@ -83,20 +83,6 @@ details>summary>.material-icons-round {
     transition: transform 100ms ease-in-out;
 }
 
-.panel::-webkit-scrollbar {
-    width: 8px !important;
-    -webkit-appearance: none;
-    background: transparent;
-    border-radius: 9999px;
-}
-
-.panel::-webkit-scrollbar-thumb {
-    width: 8px !important;
-    -webkit-appearance: none;
-    background: #00000033;
-    border-radius: 9999px;
-}
-
 .fade-enter-active {
     transition: opacity 0.15s ease-in-out;
 }
@@ -135,7 +121,7 @@ details>summary>.material-icons-round {
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { reactive, onMounted, onUnmounted, computed } from 'vue'
+import { reactive, computed } from 'vue'
 import Avatar from '@/components/Avatar.vue'
 import EmojiPanel from '@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'
 import palette from '@/assets/tailwind-palette.json'
@@ -203,12 +189,4 @@ function selectColor({value, base}){
     state.user.avatar.emoji.bgColor=value
     state.selectColor = base
 }
-
-onMounted(() => {
-    document.querySelector("body").setAttribute("style", "overflow:hidden")
-})
-
-onUnmounted(() => {
-    document.querySelector("body").removeAttribute("style", "overflow:hidden")
-})
 </script>

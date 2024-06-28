@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] overflow-x-hidden overflow-y-auto panel rounded-[6px]">
+    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] modern-scrollbar-y overflow-x-hidden overflow-y-auto rounded-[6px]">
         <div
             v-if="props.showHistory && state.historyEmojis.length > 0"
             class="bg-white border-b-[1px] category gap-1 grid grid-cols-7 px-2 py-2 sticky top-0 z-[99]">
@@ -61,20 +61,6 @@
 </template>
 
 <style scoped>
-.panel::-webkit-scrollbar {
-    width: 8px !important;
-    -webkit-appearance: none;
-    background: transparent;
-    border-radius: 9999px;
-}
-
-.panel::-webkit-scrollbar-thumb {
-    width: 8px !important;
-    -webkit-appearance: none;
-    background: #00000033;
-    border-radius: 9999px;
-}
-
 .skin-fade-enter-active {
     transition: opacity 0.3s ease-in-out;
 }

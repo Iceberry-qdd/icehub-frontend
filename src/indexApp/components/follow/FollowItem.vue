@@ -4,7 +4,7 @@
         class="border-b-[1px] flex flex-nowrap flex-row gap-x-3 items-start p-2">
         <Avatar
             :user="props.user"
-            class="flex-0 h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
+            class="flex-none h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
             @click="routeToUserProfile">
         </Avatar>
         <div class="flex-1">
@@ -25,7 +25,7 @@
         <div
             v-if="!isSelf"
             :class="buttonClass"
-            class="cursor-pointer flex-0 font-bold place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
+            class="cursor-pointer flex-none font-bold place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
             @click="toggleFollowState">
             <div
                 v-if="!state.loading"

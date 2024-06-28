@@ -19,7 +19,7 @@
             <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                 <div
                     v-if="state.showProfileMenus && store.MOBILE_MODE"
-                    class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
+                    class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
                     @click="state.showProfileMenus = false" />
                 <Transition name="fade">
                     <ProfileMenu
@@ -232,7 +232,6 @@ function handleAction() {
 }
 
 function showSlide(images, idx) {
-    document.querySelector("body").setAttribute("style", "overflow:hidden")
     store.showSlide(images, idx)
 }
 

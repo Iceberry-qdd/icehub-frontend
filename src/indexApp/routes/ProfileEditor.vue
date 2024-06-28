@@ -136,7 +136,7 @@
         <Teleport to="#app">
             <div
                 v-if="state.imageChangeProper.show && store.MOBILE_MODE"
-                class="bg-black/50 fixed h-screen left-0 sm:hidden top-0 w-screen z-[1000]"
+                class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1000]"
                 @click="state.imageChangeProper.show = false" />
             <Transition name="fade">
                 <ImageChangeProper
@@ -158,7 +158,7 @@
             </Transition>
             <ImageCropper
                 v-if="state.imageChangeProper.select === 'file'"
-                class="fixed top-0"
+                class="fixed h-full top-0 w-full z-[101]"
                 :mode="state.cropper.mode"
                 :aspect-ratio="state.cropper.aspectRatio"
                 @image-file="handleImageFile"

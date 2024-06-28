@@ -37,7 +37,7 @@
                 <div
                     v-if="!isCurUser && !store.MOBILE_MODE"
                     :class="followBtnClass"
-                    class="cursor-pointer flex-0 h-auto min-w-[4.5rem] px-2 py-[0.25rem] rounded-full text-[0.9rem] text-center"
+                    class="cursor-pointer flex-none h-auto min-w-[4.5rem] px-2 py-[0.25rem] rounded-full text-[0.9rem] text-center"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="!state.loading"> {{ followButtonText }}</div>
@@ -105,7 +105,7 @@
 </style>
 
 <script setup>
-import { computed, onMounted, reactive, onUnmounted } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 import { followUser, unFollowUser } from '@/indexApp/js/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { store } from '@/indexApp/js/store.js'
@@ -231,14 +231,5 @@ onMounted(() => {
             emits('closeUserInfoPop')
         }
     })
-    if(store.MOBILE_MODE){
-        document.querySelector("body").setAttribute("style", "overflow:hidden")
-    }
-})
-
-onUnmounted(() => {
-    if(store.MOBILE_MODE){
-        document.querySelector("body").removeAttribute("style")
-    }
 })
 </script>
