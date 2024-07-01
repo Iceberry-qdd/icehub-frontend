@@ -2,7 +2,7 @@
     <div
         class="bg-[#00000066] fixed-page flex-row h-full items-center justify-center modern-scrollbar-y sm:backdrop-blur-sm sm:flex w-full z-[111]"
         @click.self="dismiss">
-        <div class="bg-white max-sm:h-full max-sm:rounded-none max-sm:w-full overflow-y-auto rounded-[8px] sm:max-h-[80%] sm:min-h-[20%] w-[36rem]">
+        <div class="bg-white max-sm:h-[calc(100vh-2.5rem)] max-sm:rounded-none modern-scrollbar-y overflow-y-auto rounded-[8px] sm:max-h-[80%] sm:min-h-[20%] sm:w-[36rem]">
             <Header
                 v-show="!state.isLoading"
                 class="sm:hidden sticky"

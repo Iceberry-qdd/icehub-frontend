@@ -44,7 +44,7 @@
                 <EditorMenu
                     v-if="state.data.content.length > 0 || store.MOBILE_MODE"
                     id="repostEditorMenu"
-                    class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full"
+                    class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full z-10"
                     switch-from="repost-panel"
                     :menu-set="state.menuSet"
                     :visibility="state.data.status"

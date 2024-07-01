@@ -37,7 +37,7 @@
                 <div
                     v-if="!isCurUser && !store.MOBILE_MODE"
                     :class="followBtnClass"
-                    class="cursor-pointer flex-none h-auto min-w-[4.5rem] px-2 py-[0.25rem] rounded-full text-[0.9rem] text-center"
+                    class="cursor-pointer flex flex-none h-auto items-center justify-center min-w-[4.5rem] px-2 py-[0.25rem] rounded-full text-[0.9rem]"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="!state.loading"> {{ followButtonText }}</div>
@@ -55,7 +55,7 @@
                 <div
                     v-if="!isCurUser && store.MOBILE_MODE"
                     :class="followBtnClass"
-                    class="cursor-pointer flex-1 py-2 rounded-full text-center"
+                    class="cursor-pointer flex flex-1 items-center justify-center py-2 rounded-full"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="!state.loading"> {{ followButtonText }}</div>

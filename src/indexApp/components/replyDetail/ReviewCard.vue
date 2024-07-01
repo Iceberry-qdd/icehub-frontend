@@ -23,8 +23,12 @@
                     </div>
                 </div>
                 <div class="relative text-[12pt]">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.review.content"></VueShowdown>
+                    <VueShowdown
+                        tag="markdown"
+                        :extensions="['exts']"
+                        :markdown="props.review.content"
+                        class="max-sm:w-[calc(100vw-2.5rem-0.75rem*3)] sm:w-[calc(36rem-2.5rem-1rem*3)]">
+                    </VueShowdown>
                     <ImageGrid
                         v-if="props.review.images?.length"
                         :id="`img-${props.review.id}`"

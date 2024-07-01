@@ -64,7 +64,7 @@
             </Transition>
             <EditorMenu
                 id="postEditorMenu"
-                class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full"
+                class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full z-10"
                 :menu-set="state.menuSet"
                 switch-from="post-editor"
                 :visibility="state.data.status"

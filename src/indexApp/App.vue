@@ -29,11 +29,13 @@
             @wheel="handleScroll">
             <div
                 id="sidebar-l"
-                :class="{'main-route': isMainRoute}"
+                :class="{'main-route': isShowSidebarL}"
                 class="border-[#EEEEEE] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
                 <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-20 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <Sidebar id="menu" class="h-fit lg:-translate-x-0 lg:mr-12 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16"></Sidebar>
+                <Sidebar
+                    id="menu"
+                    class="h-fit lg:-translate-x-0 lg:mr-12 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16">
+                </Sidebar>
             </div>
             <div
                 id="main"
@@ -118,7 +120,7 @@
 </style>
 
 <script setup>
-import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick } from 'vue'
 import Sidebar from '@/indexApp/components/Sidebar.vue'
 import Recommend from '@/indexApp/components/Recommend.vue'
 import Brand from '@/indexApp/components/Brand.vue'
@@ -138,7 +140,7 @@ const route = useRoute()
 const router = useRouter()
 const container = ref()
 const state = reactive({
-    user: null,
+    user: undefined,
     globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG,
     startRoute: false,
     showProgressIndicator: false,
@@ -151,22 +153,25 @@ const state = reactive({
 
 async function curUser() {
     try {
-        if (state.token == null || state.token.trim() == "") new Error('Not Login!')
+        if (!state.token || state.token.trim() == "") throw new Error('Not Login!')
 
         const response = await getCurUserInfo()
-        if (!response.ok) throw new Error('Not Login!')
+        if (response.status === 401) throw new Error('Not Login!')
+        if(!response.ok) throw new Error(await response.text())
 
         state.user = await response.json()
-        if (state.user == null) throw new Error('Not Login!')
+        // if (state.user == null) throw new Error('Not Login!')
 
         const user = JSON.stringify(state.user)
         localStorage.setItem('CUR_USER', user)
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
-        localStorage.removeItem('TOKEN')
-        localStorage.removeItem('CUR_USER')
-        location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
+        if(e.message === 'Not Login!'){
+            localStorage.removeItem('TOKEN')
+            localStorage.removeItem('CUR_USER')
+            location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
+        }
     }
 }
 
@@ -220,10 +225,12 @@ watch(() => ws.connectState, function (newVal, oldVal) {
 })
 
 /**
- * 判断当前路由是否为四大主界面
+ * 移动模式下，判断是否显示底部菜单栏
  */
 const mainRouteSet = new Set(['index', 'explore', 'notify', 'profile'])
-const isMainRoute = computed(() => {
+const isShowSidebarL = computed(() => {
+    // XXX 特判，待改进
+    if(route.name === 'profile' && route.params?.nickname !== state.user.nickname) return false
     return mainRouteSet.has(route.name)
 })
 
@@ -258,8 +265,20 @@ function handleMediaChange(mq) {
     store.MOBILE_MODE = mq.matches
 }
 
-curUser()
+watch(() => route.query?.url, (url, oldVal) => {
+    window.location = `${window.location.origin}${decodeURIComponent(atob(url))}`
+}, {once: true})
+
 onMounted(() => {
+    const url = window.document.location.search
+        .substring(1)
+        .split('&')
+        .find(it => it.substring(0, it.indexOf('=')) === 'url')
+    if(!!url){
+        return
+    }
+    
+    nextTick(() => { curUser() })
     document.getElementById('pre-loading').style.display = 'none'
     router.beforeEach((to, from) => {
         state.showProgressIndicator = true

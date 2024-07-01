@@ -185,8 +185,8 @@ const followingCountText = computed(() => {
 const isMyself = computed(() => { return props.user.id == state.curUser.id })
 
 const followButtonText = computed(() => {
-    if(props.user.following && props.user.follower) return '相互订阅'
-    return props.user.following ? '已订阅' : '订阅'
+    if(state.isFollowing && state.isFollower) return '相互订阅'
+    return state.isFollowing ? '已订阅' : '订阅'
 })
 
 const followButtonClass = computed(() => ({

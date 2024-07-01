@@ -54,6 +54,7 @@
             :posts="state.posts">
         </PostsTimeline>
         <Footer
+            v-if="!state.user.blocking && !state.user.blocked"
             :is-loading="state.isPostLoading"
             :has-more="hasMore"
             @fetch-more="fetchNewPost">

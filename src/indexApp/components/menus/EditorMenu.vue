@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white flex flex-row justify-between max-sm:z-[1]">
+    <div class="bg-white flex flex-row justify-between">
         <div class="content-center flex flex-row gap-x-1 items-center justify-start text-base">
             <input
                 v-show="false"

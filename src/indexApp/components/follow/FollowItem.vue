@@ -25,15 +25,15 @@
         <div
             v-if="!isSelf"
             :class="buttonClass"
-            class="cursor-pointer flex-none font-bold place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
+            class="cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
             @click="toggleFollowState">
-            <div
-                v-if="!state.loading"
-                class="text-center">
-                {{ buttonText }}
-            </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
+            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+            <div v-if="!state.loading"> {{ buttonText }} </div>
+            <IconLoading
+                v-else
+                :class="loadingIconClass"
+                class="h-5 w-5">
+            </IconLoading>
         </div>
     </div>
 </template>
@@ -66,14 +66,20 @@ const state = reactive({
 const buttonClass = computed(() => ({
     'bg-blue-500': !state.isFollowing,
     'bg-gray-200': state.isFollowing,
-    'text-black': state.isFollowing,
+    'text-zinc-500': state.isFollowing,
     'text-white': !state.isFollowing
 }))
+
 
 const buttonText = computed(() => {
     if(state.isFollowing && state.isFollower) return '相互订阅'
     return state.isFollowing ? '已订阅' : '订阅'
 })
+
+const loadingIconClass = computed(() => ({
+    'text-zinc-500': state.isFollowing,
+    'text-white': !state.isFollowing
+}))
 
 const itemClass = computed(() => ({
     'justify-between': !isSelf.value,

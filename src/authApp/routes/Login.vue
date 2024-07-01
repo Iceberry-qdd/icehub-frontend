@@ -62,14 +62,13 @@ import { reactive } from 'vue'
 import { getPublicKey, login } from '@/authApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { authStore } from '@/authApp/js/store.js'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { encodePwd } from '@/authApp/util/util.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 
-const route = useRoute()
 const router = useRouter()
-
+const emits = defineEmits(['referer'])
 const state = reactive({
     appName: import.meta.env.VITE_APP_TITLE,
     loading: false,
@@ -98,22 +97,13 @@ async function tryLogin(skipEncodePassword) {
         const token = await response.text()
         localStorage.setItem("TOKEN", token)
         store.setSuccessMsg("登录成功！")
-        referer()
+        emits('referer')
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
     } finally {
         state.loading = false
     }
-}
-
-function referer() {
-    const url = route.query?.url
-    if(!url) {
-        window.location = window.location.origin
-        return
-    }
-    window.location = `${window.location.origin}${decodeURIComponent(atob(route.query.url))}`
 }
 
 async function getPK() {

@@ -56,7 +56,7 @@ const Avatar = defineAsyncComponent(() => import('@/components/Avatar.vue'))
 
 const route = useRoute()
 const router = useRouter()
-
+const emits = defineEmits(['referer'])
 const state = reactive({
     appName: import.meta.env.VITE_APP_TITLE,
     loading: false,
@@ -84,7 +84,7 @@ async function tryLogin(skipEncodePassword) {
         const token = await response.text()
         localStorage.setItem("TOKEN", token)
         store.setSuccessMsg("登录成功！")
-        referer()
+        emits('referer')
     } catch (e) {
         store.setErrorMsg(e.message)
         console.error(e)
@@ -104,15 +104,6 @@ async function getPK() {
         store.setErrorMsg(e.message)
         console.error(e)
     }
-}
-
-function referer() {
-    const url = route.query?.url
-    if(!url) {
-        window.location = window.location.origin
-        return
-    }
-    window.location = `${window.location.origin}${decodeURIComponent(atob(route.query.url))}`
 }
 
 onMounted(() => {

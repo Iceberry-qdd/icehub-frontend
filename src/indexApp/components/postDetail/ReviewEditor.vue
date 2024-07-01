@@ -34,7 +34,7 @@
                     tag="markdown"
                     :extensions="['exts']"
                     :markdown="state.content"
-                    class="min-h-[3rem]">
+                    class="break-all max-sm:w-[calc(100vw-2.5rem-0.75rem*3)] min-h-[3rem]">
                 </VueShowdown>
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <textarea
@@ -62,7 +62,7 @@
                     v-if="state.content.length > 0 || store.MOBILE_MODE"
                     id="reviewEditorMenu"
                     :class="{'px-2': props.fromReviewPanel && store.MOBILE_MODE}"
-                    class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 w-full"
+                    class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 w-full z-10"
                     switch-from="review-panel"
                     :menu-set="state.menuSet"
                     :max-content-word-count="state.maxContentWordCount"

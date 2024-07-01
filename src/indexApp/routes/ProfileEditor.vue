@@ -158,7 +158,7 @@
             </Transition>
             <ImageCropper
                 v-if="state.imageChangeProper.select === 'file'"
-                class="fixed h-full top-0 w-full z-[101]"
+                class="fixed h-full max-sm:z-[999] top-0 w-full z-[101]"
                 :mode="state.cropper.mode"
                 :aspect-ratio="state.cropper.aspectRatio"
                 @image-file="handleImageFile"

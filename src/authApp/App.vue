@@ -16,7 +16,8 @@
                     :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
                     <component
                         :is="Component"
-                        :key="route.fullPath">
+                        :key="route.fullPath"
+                        @referer="referer">
                     </component>
                 </keep-alive>
             </router-view>
@@ -27,7 +28,6 @@
 <script setup>
 import { onMounted, onUnmounted, defineAsyncComponent, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import 'material-icons/iconfont/round.css'
 import { store } from '@/indexApp/js/store.js'
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 
@@ -37,11 +37,10 @@ const router = useRouter()
 function referer() {
     const url = route.query?.url
     if(!url) {
-        window.location = window.location.origin
+        window.location = `${window.location.origin}/index.html`
         return
     }
-
-    window.location = `${window.location.origin}${decodeURIComponent(atob(route.query.url))}`
+    window.location = `${window.location.origin}/index.html?url=${route.query.url}`
 }
 
 watch(() => route.query?.ph, (ph, oldVal) => {

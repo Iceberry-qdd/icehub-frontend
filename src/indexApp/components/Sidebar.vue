@@ -6,7 +6,7 @@
             :title="menu.name"
             :class="{ 'active': menu.active, 'mobile': menu.mobileShow }"
             class="border-0 flex flex-nowrap items-center justify-between m-[0.2rem] max-lg:py-[0.3rem] max-sm:flex-1 max-sm:flex-col max-sm:m-0 max-sm:px-0 max-sm:py-0 px-[1rem] py-3 sm:flex-row sm:hover:bg-[#F5F5F5] sm:rounded-full"
-            @click="routeTo(menu.routeTo, menu.id, menu.routeParams.nickname || null)">
+            @click="routeTo(menu.routeName, menu.routeParams)">
             <div
                 class="content-center flex flex-nowrap gap-x-[1rem] items-center justify-between max-sm:flex-col max-sm:gap-y-[0.1rem] relative sm:flex-row text-[#303133]">
                 <div
@@ -15,7 +15,7 @@
                     {{ menu.badgeCount > 999 ? '999+' : menu.badgeCount }}
                 </div>
                 <div
-                    v-if="menu.routeTo == '/profile'"
+                    v-if="menu.routeName === 'profile'"
                     class="avatar max-sm:px-4 max-sm:py-1 max-sm:rounded-full">
                     <Avatar
                         :user="state.user"
@@ -71,7 +71,7 @@ li.active{
 
 <script setup>
 import { reactive, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
 import { getUserInfoByNickname, queryCurUserUnreadNotifyCount } from '@/indexApp/js/api.js'
 import { ws } from '@/indexApp/js/websocket.js'
@@ -79,36 +79,36 @@ import Avatar from '@/components/Avatar.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
 
 const router = useRouter()
+const route = useRoute()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     menus: [
-        { id: 1, name: '主页', routeTo: '/index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: true, mobileShow: true },
-        { id: 2, name: '探索', routeTo: '/explore', routeParams: {}, icon: 'explore', badgeCount: 0, visible: true, active: false, mobileShow: true },
-        { id: 3, name: '话题', routeTo: '/hashtag', routeParams: {}, icon: 'tag', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
-        { id: 4, name: '消息', routeTo: '/notify', routeParams: {}, icon: 'notifications', badgeCount: 0, visible: true, active: false, mobileShow: true },
-        { id: 5, name: '书签', routeTo: '/bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: true, active: false, mobileShow: false },
-        { id: 6, name: '勋章', routeTo: '/badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
-        { id: 7, name: '活动', routeTo: '/activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
-        { id: 8, name: '管理', routeTo: '/manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: showUnImpl && JSON.parse(localStorage.getItem("CUR_USER")).type === 'ADMIN', active: false, mobileShow: false }, // TODO implement it.
-        { id: 9, name: getCurUserNickname(), routeTo: '/profile', routeParams: { nickname: getCurUserNickname() }, icon: null, badgeCount: 0, visible: true, active: false, mobileShow: true },
-        { id: 10, name: '设置', routeTo: '/setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false } // TODO implement it.
+        { id: 1, name: '主页', routeName: 'index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: true, mobileShow: true },
+        { id: 2, name: '探索', routeName: 'explore', routeParams: {}, icon: 'explore', badgeCount: 0, visible: true, active: false, mobileShow: true },
+        { id: 3, name: '话题', routeName: 'hashtag', routeParams: {}, icon: 'tag', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
+        { id: 4, name: '消息', routeName: 'notify', routeParams: {}, icon: 'notifications', badgeCount: 0, visible: true, active: false, mobileShow: true },
+        { id: 5, name: '书签', routeName: 'bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: true, active: false, mobileShow: false },
+        { id: 6, name: '勋章', routeName: 'badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
+        { id: 7, name: '活动', routeName: 'activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
+        { id: 8, name: '管理', routeName: 'manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: showUnImpl && JSON.parse(localStorage.getItem("CUR_USER")).type === 'ADMIN', active: false, mobileShow: false }, // TODO implement it.
+        { id: 9, name: getCurUserNickname(), routeName: 'profile', routeParams: { nickname: getCurUserNickname() }, icon: null, badgeCount: 0, visible: true, active: false, mobileShow: true },
+        { id: 10, name: '设置', routeName: 'setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false } // TODO implement it.
     ],
     user: JSON.parse(localStorage.getItem("CUR_USER")),
 })
-
-async function routeTo(url, mid, nickname) {
-    activeMenu(mid)
-    if (!nickname) {
-        router.push(url)
-    } else {
-        await getUser(nickname)
-        router.push({ name: 'profile', params: { nickname: nickname } })
-    }
+async function routeTo(routeName, routeParams) {
+    router.push({ name: routeName, params: routeParams })
 }
 
+/**
+ * 切换菜单样式
+ * @param {number} menuId menuId，不能为空值
+ */
 function activeMenu(menuId) {
     state.menus.forEach(menu => { menu.active = false })
-    state.menus[menuId - 1].active = true
+    if(!!menuId) {
+        state.menus.find(it => it.id === menuId).active = true
+    }
 }
 
 async function getUser(nickname) {
@@ -138,18 +138,12 @@ async function getUnreadNotifyCount() {
 }
 
 watch(() => store.UNREAD_MSG_COUNT, (newVal, oldVal) => {
-    state.menus.filter(item => item.name == '消息')[0].badgeCount = newVal
+    state.menus.filter(item => item.routeName === 'notify')[0].badgeCount = newVal
 })
 
 function getCurUserNickname() {
     const { nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
     return nickname || ''
-}
-
-function getUrlPagePath() {
-    const path = window.document.location.pathname
-    const pageName = path.split('/')[1]
-    return pageName || 'index'
 }
 
 watch(() => ws.connectState, function (newVal, oldVal) {
@@ -161,11 +155,12 @@ watch(() => ws.connectState, function (newVal, oldVal) {
     }
 })
 
+watch(() => route.name, (newVal, _) => {
+    const activeMenuId = state.menus.find(it => it.routeName === newVal)?.id
+    activeMenu(activeMenuId)
+})
+
 onMounted(() => {
-    const pageName = getUrlPagePath()
-    const menuItem = state.menus.filter(menu => menu.routeTo == '/' + pageName)
-    const menuId = menuItem.length <= 0 ? 1 : menuItem[0].id
-    activeMenu(menuId)
     getUnreadNotifyCount(state.user.id)
 })
 </script>
