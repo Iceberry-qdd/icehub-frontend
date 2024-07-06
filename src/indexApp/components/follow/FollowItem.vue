@@ -58,8 +58,8 @@ const router = useRouter()
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     loading: false,
-    isFollowing: props.user.following,
-    isFollower: props.user.follower,
+    isFollowing: props.user.yourFollowing,
+    isFan: props.user.yourFan,
     curUser: JSON.parse(localStorage.getItem("CUR_USER"))
 })
 
@@ -72,7 +72,7 @@ const buttonClass = computed(() => ({
 
 
 const buttonText = computed(() => {
-    if(state.isFollowing && state.isFollower) return '相互订阅'
+    if(state.isFollowing && state.isFan) return '相互订阅'
     return state.isFollowing ? '已订阅' : '订阅'
 })
 
@@ -106,14 +106,13 @@ async function followAUser() {
     state.loading = true
     try {
         const response = await followUser(id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) throw new Error('关注失败！')
         state.isFollowing = result
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
     }
@@ -124,14 +123,13 @@ async function unFollowAUser() {
     state.loading = true
     try {
         const response = await unFollowUser(id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) throw new Error('取消关注失败！')
         state.isFollowing = !result
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
     }

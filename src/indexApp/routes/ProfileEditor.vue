@@ -39,7 +39,7 @@
             <div class="form-floating mb-3">
                 <input
                     id="nicknameInput"
-                    v-model.trim="state.newUser.nickname"
+                    v-model="state.newUser.nickname"
                     type="text"
                     class="form-control"
                     :class="isUNameValid.class"
@@ -55,7 +55,7 @@
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <textarea
                     id="floatingTextarea"
-                    v-model.trim="state.newUser.remark"
+                    v-model="state.newUser.remark"
                     class="form-control"
                     placeholder="个人简介">
                     </textarea>
@@ -64,7 +64,7 @@
             <div class="form-floating mb-3">
                 <input
                     id="cityInput"
-                    v-model.trim="state.newUser.city"
+                    v-model="state.newUser.city"
                     type="text"
                     class="form-control"
                     placeholder="所在城市" />
@@ -73,7 +73,7 @@
             <div class="form-floating mb-3">
                 <input
                     id="ageInput"
-                    v-model.trim="state.newUser.age"
+                    v-model="state.newUser.age"
                     type="number"
                     :class="isAgeValid.class"
                     class="form-control"
@@ -99,7 +99,7 @@
             <div class="form-floating mb-3">
                 <input
                     id="emailInput"
-                    v-model.trim="state.newUser.email"
+                    v-model="state.newUser.email"
                     type="email"
                     :class="isEmailValid.class"
                     class="form-control"
@@ -111,7 +111,7 @@
             <div class="form-floating mb-3">
                 <input
                     id="phoneInput"
-                    v-model.trim="state.newUser.phoneNumber"
+                    v-model="state.newUser.phoneNumber"
                     type="tel"
                     :class="isPhoneNoValid.class"
                     class="form-control"
@@ -123,7 +123,7 @@
             <div class="form-floating mb-3">
                 <input
                     id="websiteInput"
-                    v-model.trim="state.newUser.website"
+                    v-model="state.newUser.website"
                     type="url"
                     class="form-control"
                     :class="isWebsiteValid.class"
@@ -301,13 +301,12 @@ async function checkUsernameValid() {
     try {
         const username = state.newUser.nickname
         const response = await isUserExists(username)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.text()
         state.isUsernameExisted = result == 'true' ? true : false
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -328,15 +327,14 @@ async function submitProfile() {
         }
 
         const response = await updateUserProfile(state.newUser)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const data = await response.json()
         localStorage.setItem('CUR_USER', JSON.stringify(data))
-        store.setSuccessMsg('变更成功！')
+        store.setSuccessMsg('资料变更成功！')
         router.push({ name: 'profile', params: { nickname: data.nickname } })
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isLoading = false
     }
@@ -344,14 +342,14 @@ async function submitProfile() {
 
 async function uploadAvatar() {
         const response = await uploadUserAvatar(state.newUser.avatar)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         state.newUser.avatar = (await response.json())[0]
 }
 
 async function uploadBanner() {
         const response = await uploadUserBanner(state.newUser.banner)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         state.newUser.banner = (await response.json())[0]
 }
@@ -447,10 +445,10 @@ watch(() => state.imageChangeProper.select, (newVal, oldVal) => {
     if (newVal === 'restore') {
         switch (state.imageChangeProper.from) {
             case 'avatar':
-                state.newUser.avatar = null
+                state.newUser.avatar = undefined
                 break;
             case 'banner':
-                state.newUser.banner = null
+                state.newUser.banner = undefined
                 break;
             default:
                 break;

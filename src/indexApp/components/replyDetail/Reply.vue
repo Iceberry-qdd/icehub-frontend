@@ -233,7 +233,7 @@ async function toggleLike() {
     try {
         if (state.reply.liked == false) {
             const response = await likeAReview(state.reply.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error('点赞失败！')
@@ -243,7 +243,7 @@ async function toggleLike() {
             state.reply.liked = true
         } else {
             const response = await dislikeAReview(state.reply.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error('取消点赞失败！')
@@ -254,7 +254,6 @@ async function toggleLike() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 

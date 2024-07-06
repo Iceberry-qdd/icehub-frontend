@@ -13,10 +13,10 @@
                 </Avatar>
                 <div class="flex flex-row gap-x-2 sm:text-[0.8rem]">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                    <div class="cursor-pointer hover:underline" @click="routeToFollowerList">{{ followingCountText }}</div>
+                    <div class="cursor-pointer hover:underline" @click="routeToFanList">{{ fanCountText }}</div>
                     <span>|</span>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                    <div class="cursor-pointer hover:underline" @click="routeToFollowingList">{{ followerCountText }}</div>
+                    <div class="cursor-pointer hover:underline" @click="routeToFollowList">{{ followCountText }}</div>
                 </div>
             </div>
             <div class="flex flex-row gap-x-1 items-center">
@@ -134,10 +134,10 @@ const state = reactive({
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500': !state.user.following,
-    'bg-gray-300': state.user.following,
-    'text-white': !state.user.following,
-    'text-zinc-700': state.user.following
+    'bg-blue-500': !state.user.yourFollowing,
+    'bg-gray-300': state.user.yourFollowing,
+    'text-white': !state.user.yourFollowing,
+    'text-zinc-700': state.user.yourFollowing
 }))
 
 const brief = computed(() => {
@@ -148,30 +148,30 @@ const brief = computed(() => {
 
 const isCurUser = computed(() => { return state.curUser.id == state.user.id })
 
-const followingCountText = computed(() => {
+const fanCountText = computed(() => {
     const gender = state.user.gender
-    const followingCount = humanizedNumber(state.user.followingCount)
-    if (isMyself.value == true) return `订阅我的 ${followingCount}`
-    if (gender == 'FEMALE') return `订阅她的 ${followingCount}`
-    return `订阅他的 ${followingCount}`
+    const fanCount = humanizedNumber(state.user.fanCount)
+    if (isMyself.value == true) return `订阅我的 ${fanCount}`
+    if (gender == 'FEMALE') return `订阅她的 ${fanCount}`
+    return `订阅他的 ${fanCount}`
 })
 
-const followerCountText = computed(() => {
+const followCountText = computed(() => {
     const gender = state.user.gender
-    const followerCount = humanizedNumber(state.user.followerCount)
-    if (isMyself.value == true) return `我的订阅 ${followerCount}`
-    if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
-    return `他的订阅 ${followerCount}`
+    const followCount = humanizedNumber(state.user.followCount)
+    if (isMyself.value == true) return `我的订阅 ${followCount}`
+    if (gender == 'FEMALE') return `她的订阅 ${followCount}`
+    return `他的订阅 ${followCount}`
 })
 
 const followButtonText = computed(() => {
-    if(state.user.following && state.user.follower) return '相互订阅'
-    return state.user.following ? '已订阅' : '订阅'
+    if(state.user.yourFollowing && state.user.yourFan) return '相互订阅'
+    return state.user.yourFollowing ? '已订阅' : '订阅'
 })
 
 function toggleFollowState() {
     const userId = state.user.id
-    if (state.user.following) {
+    if (state.user.yourFollowing) {
         unFollowAUser(userId)
     } else {
         followAUser(userId)
@@ -182,26 +182,25 @@ function routeToProfile() {
     router.push({ name: 'profile', params: { nickname: state.user.nickname } })
 }
 
-function routeToFollowingList() {
-    router.push({ name: 'followingList', params: { nickname: state.user.nickname } })
+function routeToFollowList() {
+    router.push({ name: 'followList', params: { nickname: state.user.nickname } })
 }
 
-function routeToFollowerList() {
-    router.push({ name: 'followerList', params: { nickname: state.user.nickname } })
+function routeToFanList() {
+    router.push({ name: 'fanList', params: { nickname: state.user.nickname } })
 }
 
 async function followAUser(userId) {
     state.loading = true
     try {
         const response = await followUser(userId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) throw new Error('关注失败！')
-        state.user.following = result
+        state.user.yourFollowing = result
     } catch (e) {
-        store.setErrorMsg('关注失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.loading = false
     }
@@ -211,14 +210,13 @@ async function unFollowAUser(userId) {
     state.loading = true
     try {
         const response = await unFollowUser(userId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) throw new Error('取消关注失败！')
-        state.user.following = !result
+        state.user.yourFollowing = !result
     } catch (e) {
-        store.setErrorMsg('取消关注失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.loading = false
     }

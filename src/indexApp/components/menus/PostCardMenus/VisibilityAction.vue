@@ -115,8 +115,7 @@ async function updateVisibility({ code }) {
         store.setSuccessMsg('已更改帖子可见范围！')
     } catch (e) {
         state.post.status = originStatus
-        store.setErrorMsg('更改帖子可见范围失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         dismiss()
     }

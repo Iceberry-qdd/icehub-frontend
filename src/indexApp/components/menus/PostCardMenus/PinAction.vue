@@ -33,7 +33,7 @@ const text = computed(() => {
 async function doTogglePin() {
     try {
         const response = await togglePin(state.post.id, state.post.top, !state.post.top)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) throw new Error("置顶失败！")
@@ -42,7 +42,6 @@ async function doTogglePin() {
         store.setSuccessMsg(`该帖子已${!state.post.top ? '取消置顶' : '置顶'}！`)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         dismissPostMenus()
     }

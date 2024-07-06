@@ -14,7 +14,7 @@
                     v-if="!isSelf"
                     :class="followBtnClass"
                     class="btn-no-select flex flex-row items-center justify-center min-w-[4.5rem] px-3 py-1 rounded-full text-[0.85rem]"
-                    @click.stop="state.isFollowing ? doUnFollowUser() : doFollowUser()">
+                    @click.stop="state.yourFollowing ? doUnFollowUser() : doFollowUser()">
                     {{ followButtonText }}
                 </div>
             </div>
@@ -50,37 +50,36 @@ const props = defineProps({
 const state = reactive({
     user: props.user,
     loading: true,
-    isFollowing: props.user.following,
-    isFollower: props.user.follower,
+    yourFollowing: props.user.yourFollowing,
+    yourFan: props.user.yourFan,
     curUser: JSON.parse(localStorage.getItem("CUR_USER"))
 })
 
 const isSelf = computed(() => state.curUser.id === props.user.id)
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500': !state.isFollowing,
-    'bg-gray-300': state.isFollowing,
-    'text-white': !state.isFollowing,
-    'text-zinc-700': state.isFollowing
+    'bg-blue-500': !state.yourFollowing,
+    'bg-gray-300': state.yourFollowing,
+    'text-white': !state.yourFollowing,
+    'text-zinc-700': state.yourFollowing
 }))
 
 const followButtonText = computed(() => {
-    if (state.isFollowing && state.isFollower) return '相互订阅'
-    return state.isFollowing ? '已订阅' : '订阅'
+    if (state.yourFollowing && state.yourFan) return '相互订阅'
+    return state.yourFollowing ? '已订阅' : '订阅'
 })
 
 async function doFollowUser() {
     state.loading = true
     try {
         const response = await followUser(props.user.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = response.json()
-        if (result == false) throw new Error('关注失败！')
-        state.isFollowing = true
+        if (result == false) throw new Error('订阅失败！')
+        state.yourFollowing = true
     } catch (e) {
-        store.setErrorMsg('订阅失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.loading = false
     }
@@ -90,14 +89,13 @@ async function doUnFollowUser() {
     state.loading = true
     try {
         const response = await unFollowUser(props.user.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = response.json()
-        if (result == false) throw new Error('取消关注失败！')
-        state.isFollowing = false
+        if (result == false) throw new Error('取消订阅失败！')
+        state.yourFollowing = false
     } catch (e) {
-        store.setErrorMsg('取消订阅失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.loading = false
     }

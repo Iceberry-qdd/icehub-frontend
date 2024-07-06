@@ -129,7 +129,7 @@
 import Header from '@/indexApp/components/Header.vue'
 import ProfileInfo from '@/indexApp/components/profile/ProfileInfo.vue'
 import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
-import { reactive, onMounted, computed, provide, onUnmounted } from 'vue'
+import { reactive, onMounted, computed, provide, onUnmounted, onActivated, watch } from 'vue'
 import { getUserPosts, getUserInfoByNickname } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRoute } from 'vue-router'
@@ -144,7 +144,7 @@ const isCurUser = computed(() => {
 })
 
 const state = reactive({
-    user: null,
+    user: undefined,
     posts: [],
     pinnedIdTop: new Set(),
     pageIndex: 1,
@@ -172,7 +172,7 @@ async function getPosts() {
     state.isPostLoading = true
     try {
         const response = await getUserPosts(state.user.id, state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { content, totalPages } = await response.json()
 
@@ -191,7 +191,6 @@ async function getPosts() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isPostLoading = false
     }
@@ -200,13 +199,12 @@ async function getPosts() {
 async function getUser(nickname) {
     try {
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const user = await response.json()
         state.user = user
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -221,10 +219,12 @@ function postingNew(post) {
 async function refreshProfileOnUi(){
     try{
         await getUser(state.user.id)
-        await getPosts()
+        state.lastTimestamp = state.user?.lastPostAt || Date.now()
+        if (!state.user.blocked && !state.user.blocking) {
+            await getPosts()
+        }
     }catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -258,6 +258,14 @@ function pinPostOnUi(postId, newTop){
 function handleScroll(){
     document.querySelector('#profile>#h').setAttribute('style', `opacity:${Math.min(100, this.scrollY)}%`)
 }
+
+onActivated(async () => {
+    await getUser(route.params.nickname)
+    state.posts.forEach(post => {
+        post.user.avatar = state.user.avatar
+        post.user.banner = state.user.banner
+    })
+})
 
 onMounted(async () => {
     const nickname = route.params.nickname

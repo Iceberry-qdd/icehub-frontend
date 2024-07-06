@@ -87,7 +87,7 @@ async function blockThisUser() {
     try {
         toggleDialogLoading(true)
         const response = await createOneBlacklist('USER', props.user.id, state.curUser.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { id } = await response.json()
         if (id != props.user.id) throw new Error('操作失败，请稍后重试!')
@@ -98,7 +98,6 @@ async function blockThisUser() {
         deleteAllUsersOfUserOnUi(props.post.user.id) // 供Search组件使用
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         dismissConfirmDialogBox()
     }

@@ -114,26 +114,24 @@ function activeMenu(menuId) {
 async function getUser(nickname) {
     try {
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const user = await response.json()
         store.setSelectUser(user)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
 async function getUnreadNotifyCount() {
     try {
         const response = await queryCurUserUnreadNotifyCount()
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { unreadCount, readCount } = await response.json()
         store.setUnreadMsgCount(unreadCount)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 

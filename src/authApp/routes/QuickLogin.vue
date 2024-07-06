@@ -14,12 +14,19 @@
             </Avatar>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="3xl:text-[3rem] font-bold text-[1.5rem]">{{ state.nickname }}</div>
+            <Turnstile
+                class="w-fit"
+                action="quick-login"
+                :c-data="state.nickname"
+                @token="handleToken"
+                @widget-id="handleWidgetId">
+            </Turnstile>
             <button
                 type="button"
                 name="login"
                 :disabled="state.loading"
-                :class="[state.loading ? 'bg-blue-300' : 'bg-blue-500']"
-                class="3xl:p-4 3xl:text-[2rem] 3xl:w-[32rem] max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-64"
+                :class="[state.loading || !state.turnstile.token ? 'bg-blue-300 cursor-not-allowed pointer-events-none' : 'bg-blue-500']"
+                class="3xl:p-4 3xl:text-[2rem] max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-[300px]"
                 @click="tryLogin(true)">
                 <IconLoading
                     v-if="state.loading"
@@ -30,7 +37,7 @@
             <button
                 type="button"
                 name="login"
-                class="3xl:p-4 3xl:text-[2rem] 3xl:w-[32rem] bg-black max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-64"
+                class="3xl:p-4 3xl:text-[2rem] bg-black max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-[300px]"
                 @click="routeTo('login')">
                 <span>登录其它账号</span>
             </button>
@@ -52,6 +59,7 @@ import { authStore } from '@/authApp/js/store.js'
 import { useRoute, useRouter } from 'vue-router'
 import { encodePwd } from '@/authApp/util/util.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import Turnstile from '@/authApp/components/Turnstile.vue'
 const Avatar = defineAsyncComponent(() => import('@/components/Avatar.vue'))
 
 const route = useRoute()
@@ -61,25 +69,26 @@ const state = reactive({
     appName: import.meta.env.VITE_APP_TITLE,
     loading: false,
     nickname: authStore.NICKNAME,
-    password: ""
+    password: "",
+    turnstile: { token: undefined, widgetId: undefined }
 })
 
-function routeTo(routeName){
-    router.push({name: routeName})
+function routeTo(routeName) {
+    router.push({ name: routeName })
 }
 
 async function tryLogin(skipEncodePassword) {
     state.loading = true
     try {
-        if (state.nickname.length == 0 || state.password.length == 0) {
+        if (!state.nickname.length || !state.password.length) {
             throw new Error("账户名和密码不能为空！")
         }
         if (!state.publicKey) { await getPK() }
 
         const encryptedPK = skipEncodePassword ? state.password : encodePwd(state.publicKey, state.password)
         const authorization = `Basic ${btoa(`${encodeURIComponent(state.nickname)}:${encryptedPK}`)}`
-        const response = await login(authorization)
-        if (!response.ok) throw new Error((await response.json()).error)
+        const response = await login(authorization, state.turnstile.token)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const token = await response.text()
         localStorage.setItem("TOKEN", token)
@@ -87,7 +96,8 @@ async function tryLogin(skipEncodePassword) {
         emits('referer')
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
+        turnstile.reset(state.turnstile.widgetId)
+        state.turnstile.token = undefined
     } finally {
         state.loading = false
     }
@@ -96,25 +106,32 @@ async function tryLogin(skipEncodePassword) {
 async function getPK() {
     try {
         const response = await getPublicKey()
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.text()
         state.publicKey = result
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
+function handleToken({ token }) {
+    state.turnstile.token = token
+}
+
+function handleWidgetId({ widgetId }) {
+    state.turnstile.widgetId = widgetId
+}
+
 onMounted(() => {
-    try{
+    try {
         const queryParam = route.query?.ph
         const quickLoginData = [...Array(queryParam)]
             .map(it => atob(it))
             .map(it => { return { u: decodeURIComponent(it.split(':')[0]), p: it.split(':')[1] } })[0]
         state.nickname = quickLoginData.u
         state.password = quickLoginData.p
-    } catch(e){
+    } catch (e) {
         console.error(e)
         routeTo('login')
     }

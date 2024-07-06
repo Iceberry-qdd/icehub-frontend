@@ -226,13 +226,12 @@ function toggleQuickLogin({ u, p }) {
 async function getPK() {
     try {
         const response = await getPublicKey()
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.text()
         state.publicKey = result
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -247,7 +246,7 @@ async function tryLogin(skipEncodePassword) {
         const encryptedPK = skipEncodePassword ? state.password : encodePwd(state.publicKey, state.password)
         const authorization = `Basic ${btoa(`${encodeURIComponent(state.nickname)}:${encryptedPK}`)}`
         const response = await login(authorization)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const token = await response.text()
         localStorage.setItem("TOKEN", token)
@@ -255,7 +254,6 @@ async function tryLogin(skipEncodePassword) {
         emits('referer')
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
     }
@@ -288,14 +286,13 @@ async function tryRegister() {
         }
         const encryptedPK = encodePwd(state.publicKey, state.password)
         const response = await register(state.nickname, encryptedPK)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
         store.setSuccessMsg("注册成功！");
         state.password = ''
         state.rePassword = ''
         toggleLogin(state.nickname)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
     }

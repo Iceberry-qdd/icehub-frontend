@@ -204,14 +204,13 @@ async function submitPost() {
         }
 
         const response = state.data.createdTime ? await postingPlan(state.data) : await posting(state.data)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
         state.result = await response.json()
         reset()
         postingNew(state.result)
         handleClose()
     } catch (err) {
         store.setErrorMsg(err.message)
-        console.error(err)
     } finally {
         state.isLoading = false
     }

@@ -221,7 +221,7 @@ async function searchSuggest() {
             .map(([k, _]) => k)
         const searchType = state.type === 'ALL' ? validTypeList : [state.type]
         const response = await globalSearchSuggest(state.prompt, searchType)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         state.suggests.hintSuggests = Object.keys(result).length > 0 ? result : null

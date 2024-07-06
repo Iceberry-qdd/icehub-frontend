@@ -242,7 +242,7 @@ const tieSub = computed(() => {
 async function getReply() {
     try {
         const response = await getSubReviewById(state.review.id, state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
         const { content, totalCount } = await response.json()
         state.replies.push(...content)
         state.totalReplyCount = totalCount
@@ -251,7 +251,6 @@ async function getReply() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -268,7 +267,7 @@ async function toggleLike() {
     try {
         if (state.review.liked == false) {
             const response = await likeAReview(state.review.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error('点赞失败！')
@@ -278,7 +277,7 @@ async function toggleLike() {
             state.review.liked = true
         } else {
             const response = await dislikeAReview(state.review.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error('取消点赞失败！')
@@ -289,7 +288,6 @@ async function toggleLike() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 

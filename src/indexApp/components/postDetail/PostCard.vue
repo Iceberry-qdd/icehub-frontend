@@ -268,13 +268,12 @@ async function routeToUser(nickname) {
 async function getUser(nickname) {
     try {
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const user = await response.json()
         store.setSelectUser(user)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -289,20 +288,19 @@ async function toggleLike() {
         if (state.post.plan) throw new Error('该帖子尚未发布，无法进行点赞操作')
         if (lastLikedState == false) {
             const response = await likeAPost(state.post.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error("点赞失败!")
         } else {
             const response = await dislikeAPost(state.post.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error("取消点赞失败!")
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
 
         state.post.liked = lastLikedState
         state.post.likeCount = lastCount

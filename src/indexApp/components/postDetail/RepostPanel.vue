@@ -234,7 +234,7 @@ async function reposting() {
         state.data.rootId = state.parentPost.root?.id ?? state.parentPost.id
         state.data.userId ??= state.curUser.id
         const response = await posting(state.data)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
 
@@ -250,7 +250,6 @@ async function reposting() {
         dismiss()
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
     }

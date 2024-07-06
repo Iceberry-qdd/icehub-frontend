@@ -89,7 +89,7 @@ async function toggleCloseReview() {
     try {
         toggleDialogLoading(true)
         const response = await toggleCloseReviewApi(props.post)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) throw new Error("操作失败！")
@@ -97,7 +97,6 @@ async function toggleCloseReview() {
         state.post.allowReview = !state.post.allowReview
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         toggleDialogLoading(false)
         dismissConfirmDialogBox()

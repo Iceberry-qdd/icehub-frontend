@@ -61,7 +61,7 @@ async function unblockUser() {
     try {
         state.confirmBDialogUi.loading.show = true
         const response = await deleteOneBlacklist('USER', props.user.id, state.curUser.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result) {
@@ -73,7 +73,6 @@ async function unblockUser() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally{
         state.confirmBDialogUi.loading = false
         dismissProfileMenus()
@@ -84,7 +83,7 @@ async function blockUser() {
     try {
         state.confirmBDialogUi.loading.show = true
         const response = await createOneBlacklist('USER', props.user.id, state.curUser.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { id } = await response.json()
         if (id != props.user.id) throw new Error('屏蔽用户失败，请稍后重试!')
@@ -93,7 +92,6 @@ async function blockUser() {
         state.confirmBDialogUi.show = false
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally{
         state.confirmBDialogUi.loading = false
         dismissProfileMenus()

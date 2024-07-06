@@ -146,12 +146,12 @@ function setSuitableHeight() {
 async function fetchPost() {
     try {
         const response = await getPostById(props.postId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         state.post = result
     } catch (e) {
-        state.fetchFailedText = "该帖子目前无法加载"
+        state.fetchFailedText = "该帖子无法加载"
     }
 }
 

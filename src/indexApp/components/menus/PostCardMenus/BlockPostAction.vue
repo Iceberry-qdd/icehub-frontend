@@ -33,7 +33,7 @@ const text = computed(() => {
 async function blockThisPost() {
     try {
         const response = await createOneBlacklist('POST', props.post.id, state.curUser.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { id } = await response.json()
         if (id != props.post.id) throw new Error('操作失败，请稍后重试!')
@@ -41,7 +41,6 @@ async function blockThisPost() {
         deletePostOnUi(props.post.id)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 </script>

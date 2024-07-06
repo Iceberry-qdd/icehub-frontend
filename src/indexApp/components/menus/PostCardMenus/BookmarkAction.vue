@@ -46,7 +46,7 @@ function toggleMark() {
 async function markIt(postId) {
     try {
         const response = await markAPost(postId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.text()
         if (result == false) throw new Error("加入书签失败！")
@@ -54,7 +54,6 @@ async function markIt(postId) {
         store.setSuccessMsg("已加入书签！")
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         dismissPostMenus()
     }
@@ -63,7 +62,7 @@ async function markIt(postId) {
 async function unMarkIt(postId) {
     try {
         const response = await unMarkAPost(postId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.text()
         if (result == false) throw new Error("移除失败！")
@@ -72,7 +71,6 @@ async function unMarkIt(postId) {
         deleteBookmarkOnUi(state.post.id)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         dismissPostMenus()
     }

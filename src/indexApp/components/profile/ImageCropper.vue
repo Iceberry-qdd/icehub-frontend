@@ -413,8 +413,7 @@ function handleZoom(e){
         return
     }
     if(props.mode !== 'rectangle'){
-        store.setErrorMsg('裁剪模式不受支持！')
-        console.error(`裁剪模式不受支持：mode = ${props.mode}`)
+        store.setErrorMsg(`裁剪模式不受支持：mode = ${props.mode}`)
         return
     }
 

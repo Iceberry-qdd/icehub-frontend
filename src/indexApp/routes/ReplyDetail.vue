@@ -58,12 +58,11 @@ const state = reactive({
 async function getReview(id) {
     try {
         const response = await getReviewById(id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         state.review = await response.json()
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 

@@ -49,7 +49,7 @@ async function doLogout(){
     try{
         state.confirmBDialogUi.loading.show = true
         const response = await logout()
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if(result){
@@ -61,7 +61,6 @@ async function doLogout(){
         }
     }catch(e){
         store.setErrorMsg(e.message)
-        console.error(e)
     }finally{
         state.confirmBDialogUi.loading.show = false
         dismissConfirmDialogBox()

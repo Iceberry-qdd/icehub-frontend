@@ -9,14 +9,14 @@ const PostDetail = () => import('@/indexApp/routes/PostDetail.vue')
 const Profile = () => import('@/indexApp/routes/Profile.vue')
 const ProfileEditor = () => import('@/indexApp/routes/ProfileEditor.vue')
 const Follow = () => import('@/indexApp/routes/Follow.vue')
-const FollowerList = () => import('@/indexApp/routes/follow/FollowerList.vue')
-const FollowingList = () => import('@/indexApp/routes/follow/FollowingList.vue')
+const FollowList = () => import('@/indexApp/routes/follow/FollowList.vue')
+const FanList = () => import('@/indexApp/routes/follow/FanList.vue')
 const Notify = () => import('@/indexApp/routes/Notify.vue')
 const ReplyDetail = () => import('@/indexApp/routes/ReplyDetail.vue')
 const GlobalNotFoundPage = () => import('@/components/GlobalNotFoundPage.vue')
 
 const routes = [
-    { name: 'index', path: '/', component: Index, alias: ['/index', '/home'] },
+    { name: 'index', path: '/', component: Index, alias: ['/index', '/home', '/index.html'] },
     { name: 'explore', path: '/explore', component: Explore },
     { name: 'bookmark', path: '/bookmark', component: Bookmark },
     { name: 'search', path: '/search', component: Search },
@@ -29,10 +29,8 @@ const routes = [
         path: '/',
         component: Follow,
         children: [
-            { name: 'followerList', path: '/follower/:nickname', component: FollowerList },
-            { name: 'followingList', path: '/following/:nickname', component: FollowingList },
-        ]
-    },
+            { name: 'followList', path: '/follow/:nickname', component: FollowList },
+            { name: 'fanList', path: '/fan/:nickname', component: FanList },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: GlobalNotFoundPage }
 ]
 

@@ -103,7 +103,7 @@ async function fetchNotify() {
     state.isLoading = true
     try {
         const response = await getUsersNotifyList(state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { content, totalPages } = await response.json()
         state.messages.push(...content)
@@ -113,8 +113,7 @@ async function fetchNotify() {
             state.lastTimestamp = content.slice(-1)[0].timestamps
         }
     } catch (e) {
-        store.setErrorMsg("无法获取消息列表！")
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false
     }
@@ -123,7 +122,7 @@ async function fetchNotify() {
 async function ackMessage(messageId) {
     try {
         const response = await markNotifyRead(messageId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) { throw new Error("无法设置消息状态！") }
@@ -132,8 +131,7 @@ async function ackMessage(messageId) {
         store.setUnreadMsgCount(lastUnreadCount - 1)
         return true
     } catch (e) {
-        store.setErrorMsg("无法设置消息状态！")
-        console.error(e)
+        store.setErrorMsg(e.message)
         return false
     }
 }
@@ -181,15 +179,14 @@ async function markAllNotifyReadOfCurUser({ choice }) {
         }
 
         const response = await markAllNotifyRead()
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         state.messages.forEach(it => it.read = true)
         store.setUnreadMsgCount(0)
         store.setSuccessMsg(`已将${result}条消息设为已读`)
     } catch (e) {
-        store.setErrorMsg("无法设置消息状态！")
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.confirmBDialogUi.loading.show = false
         state.confirmBDialogUi.show = false

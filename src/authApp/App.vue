@@ -10,7 +10,7 @@
             <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
             <router-view
                 v-slot="{ Component }"
-                class="bg-white flex items-center justify-center max-h-[100vh] max-sm:h-[100vh] max-sm:rounded-none max-sm:w-[100vw] max-w-[100vw] relative rounded-xl">
+                class="bg-white flex flex-col items-center justify-center max-h-[100vh] max-sm:h-[100vh] max-sm:rounded-none max-sm:w-[100vw] max-w-[100vw] relative rounded-xl">
                 <keep-alive
                     :max="8"
                     :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">

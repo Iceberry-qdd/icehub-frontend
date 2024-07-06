@@ -166,7 +166,6 @@ async function curUser() {
         localStorage.setItem('CUR_USER', user)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
         if(e.message === 'Not Login!'){
             localStorage.removeItem('TOKEN')
             localStorage.removeItem('CUR_USER')

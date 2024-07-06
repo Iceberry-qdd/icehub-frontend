@@ -73,13 +73,13 @@
             <div class="flex flex-row gap-x-6">
                 <div
                     class="cursor-pointer hover:underline"
-                    @click="routeTo('followerList', props.user.nickname)">
-                    <span>{{ followerCountText }}</span>
+                    @click="routeTo('followList', props.user.nickname)">
+                    <span>{{ followCountText }}</span>
                 </div>
                 <div
                     class="cursor-pointer hover:underline"
-                    @click="routeTo('followingList', props.user.nickname)">
-                    <span>{{ followingCountText }}</span>
+                    @click="routeTo('fanList', props.user.nickname)">
+                    <span>{{ fanCountText }}</span>
                 </div>
             </div>
         </div>
@@ -134,8 +134,8 @@ const props = defineProps({
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
-    isFollowing: props.user.following,
-    isFollower: props.user.follower,
+    yourFollowing: props.user.yourFollowing,
+    yourFan: props.user.yourFan,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     loading: false,
     confirmBDialogUi: {
@@ -166,34 +166,34 @@ const formattedDate = computed(() => {
     return standardDate(timestamps)
 })
 
-const followerCountText = computed(() => {
+const fanCountText = computed(() => {
     const gender = props.user.gender
-    const followingCount = props.user.followingCount
-    if (isMyself.value == true) return `订阅我的 ${followingCount}`
-    if (gender == 'FEMALE') return `订阅她的 ${followingCount}`
-    return `订阅他的 ${followingCount}`
+    const fanCount = props.user.fanCount
+    if (isMyself.value == true) return `订阅我的 ${fanCount}`
+    if (gender == 'FEMALE') return `订阅她的 ${fanCount}`
+    return `订阅他的 ${fanCount}`
 })
 
-const followingCountText = computed(() => {
+const followCountText = computed(() => {
     const gender = props.user.gender
-    const followerCount = props.user.followerCount
-    if (isMyself.value == true) return `我的订阅 ${followerCount}`
-    if (gender == 'FEMALE') return `她的订阅 ${followerCount}`
-    return `他的订阅 ${followerCount}`
+    const followCount = props.user.followCount
+    if (isMyself.value == true) return `我的订阅 ${followCount}`
+    if (gender == 'FEMALE') return `她的订阅 ${followCount}`
+    return `他的订阅 ${followCount}`
 })
 
 const isMyself = computed(() => { return props.user.id == state.curUser.id })
 
 const followButtonText = computed(() => {
-    if(state.isFollowing && state.isFollower) return '相互订阅'
-    return state.isFollowing ? '已订阅' : '订阅'
+    if(state.yourFollowing && state.yourFan) return '相互订阅'
+    return state.yourFollowing ? '已订阅' : '订阅'
 })
 
 const followButtonClass = computed(() => ({
-    'bg-gray-200': state.isFollowing,
-    'bg-blue-500': !state.isFollowing,
-    'text-black': state.isFollowing,
-    'text-white': !state.isFollowing 
+    'bg-gray-200': state.yourFollowing,
+    'bg-blue-500': !state.yourFollowing,
+    'text-black': state.yourFollowing,
+    'text-white': !state.yourFollowing 
 }))
 
 function routeTo(routeName, routeParam) {
@@ -202,7 +202,7 @@ function routeTo(routeName, routeParam) {
 
 function toggleFollowState() {
     const userId = props.user.id
-    if (state.isFollowing) {
+    if (state.yourFollowing) {
         unFollowAUser(userId)
     } else {
         followAUser(userId)
@@ -213,14 +213,13 @@ async function followAUser(userId) {
     state.loading = true
     try {
         const response = await followUser(userId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = response.json()
-        if (result == false) throw new Error('关注失败！')
-        state.isFollowing = result
+        if (result == false) throw new Error('订阅失败！')
+        state.yourFollowing = result
     } catch (e) {
-        store.setErrorMsg('订阅失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.loading = false
     }
@@ -230,14 +229,13 @@ async function unFollowAUser(userId) {
     state.loading = true
     try {
         const response = await unFollowUser(userId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = response.json()
-        if (result == false) throw new Error('取消关注失败！')
-        state.isFollowing = !result
+        if (result == false) throw new Error('取消订阅失败！')
+        state.yourFollowing = !result
     } catch (e) {
-        store.setErrorMsg('取消订阅失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.loading = false
     }
@@ -251,7 +249,7 @@ async function unblockUser() {
     try {
         state.confirmBDialogUi.loading.show = true
         const response = await deleteOneBlacklist('USER', props.user.id, state.curUser.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result) {
@@ -262,7 +260,6 @@ async function unblockUser() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }finally{
         state.confirmBDialogUi.loading = false
         state.confirmBDialogUi.show = false

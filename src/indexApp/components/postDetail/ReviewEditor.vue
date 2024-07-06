@@ -234,7 +234,7 @@ async function submitReview() {
         }
 
         const response = await reviewing(data)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
         const result = await response.json()
         newReview({ review: result })
         state.content = ''
@@ -246,7 +246,6 @@ async function submitReview() {
         // ws.sendToOneQueue(new MsgPack(reviewId, state.curUser.id, 'REVIEW', receiverId), 'interact')
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
         emits('submit', {submitting: false})

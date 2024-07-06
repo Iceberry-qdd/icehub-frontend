@@ -161,7 +161,7 @@ async function doSearch() {
             state.prompt.type = state.prompt.type.filter(it => !invalidTypes.value.includes(it))
         }
         const response = await globalSearch(state.prompt.key, state.prompt.pageSize, state.prompt.pageIndex, state.prompt.type)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         Object.keys(result).forEach(type => {
@@ -182,7 +182,6 @@ async function doSearch() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isLoading = false
     }

@@ -33,7 +33,7 @@
 </style>
 
 <script setup>
-import { reactive, computed, watch, onMounted } from 'vue'
+import { reactive, computed, onMounted } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import { useRoute } from 'vue-router'
 import router from '@/indexApp/js/route.js'
@@ -45,8 +45,8 @@ const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     user: null,
     menus: [
-        { id: 1, name: '我的订阅', isActive: route.name == 'followingList', routeTo: `/following/${route.params.nickname}` },
-        { id: 2, name: '订阅我的', isActive: route.name == 'followerList', routeTo: `/follower/${route.params.nickname}` },
+        { id: 1, name: '我的订阅', isActive: route.name == 'followList', routeTo: `/follow/${route.params.nickname}` },
+        { id: 2, name: '订阅我的', isActive: route.name == 'fanList', routeTo: `/fan/${route.params.nickname}` },
         { id: 3, name: '共同订阅', isActive: route.name == 'coFollowingList', routeTo: `/coFollow/${route.params.nickname}` }
     ],
     headerConfig: {
@@ -60,17 +60,11 @@ const state = reactive({
 })
 
 const menuText = computed(() => {
-    const { gender } = state.user
+    const gender = state.user?.gender
     if (isMyself.value) return '我'
     if (gender == 'FEMALE') return '她'
     return '他'
 })
-
-// watch(() => state.user, (newVal, oldVal) => {
-//     if (oldVal == null || newVal != null) {
-//         state.menus.forEach(menu => { menu.name = menu.name.replace('我', menuText.value) })
-//     }
-// })
 
 const isMyself = computed(() => { return state.curUser.id == state.user.id })
 
@@ -83,13 +77,12 @@ function routeTo(url, id) {
 async function getUserInfo(nickname) {
     try {
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         state.user = result
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 

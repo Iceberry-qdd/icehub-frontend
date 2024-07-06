@@ -55,7 +55,7 @@ async function getData() {
     state.isLoading = true
     try {
         const response = await getTimeline(state.pageIdx, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
@@ -65,7 +65,6 @@ async function getData() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isLoading = false
     }

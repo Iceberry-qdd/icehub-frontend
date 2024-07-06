@@ -122,11 +122,10 @@ const allowReview = computed(() => {
 async function getPost(id) {
     try {
         const response = await getPostById(id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         state.post = await response.json()
     } catch (e) {
-        store.setErrorMsg(e.message)
         console.error(e)
     }
 }
@@ -136,7 +135,7 @@ async function getReviews() {
         state.isLoading = true
         const postId = state.post.id
         const response = await getPostReviews(postId, state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { content, totalPages } = await response.json()
         state.reviews.push(...content)
@@ -146,7 +145,6 @@ async function getReviews() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isLoading = false
     }

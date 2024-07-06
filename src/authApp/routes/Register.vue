@@ -12,31 +12,42 @@
             <a href="/index"><img src="/favicon.ico" class="3xl:h-[96px] 3xl:w-[96px] h-[48px] lg:max-xl:h-[36px] lg:max-xl:w-[36px] w-[48px]" /></a>
             <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
             <div id="brand-name" class="3xl:text-5xl font-bold lg:max-xl:text-xl text-2xl">{{ state.appName }}</div>
-            <input
-                v-model="state.nickname"
-                :disabled="state.loading"
-                class="3xl:px-8 3xl:py-4 3xl:text-[2rem] 3xl:w-[32rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] lg:max-xl:w-52 max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-64"
-                type="text"
-                placeholder="请输入账号名" />
-            <input
-                v-model="state.password"
-                :disabled="state.loading"
-                class="3xl:px-8 3xl:py-4 3xl:text-[2rem] 3xl:w-[32rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] lg:max-xl:w-52 max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-64"
-                type="password"
-                placeholder="请输入密码" />
-            <input
-                v-model="state.rePassword"
-                :disabled="state.loading"
-                class="3xl:px-8 3xl:py-4 3xl:text-[2rem] 3xl:w-[32rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] lg:max-xl:w-52 max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-64"
-                type="password"
-                placeholder="请再次输入密码" />
-            <div class="3xl:gap-x-16 flex flex-row gap-x-8">
+            <form
+                id="register-form"
+                autocomplete="on"
+                class="contents">
+                <input
+                    v-model="state.nickname"
+                    :disabled="state.loading"
+                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    type="text"
+                    placeholder="请输入账号名" />
+                <input
+                    v-model="state.password"
+                    :disabled="state.loading"
+                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    type="password"
+                    placeholder="请输入密码" />
+                <input
+                    v-model="state.rePassword"
+                    :disabled="state.loading"
+                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    type="password"
+                    placeholder="请再次输入密码" />
+                <Turnstile
+                    class="w-fit"
+                    action="register"
+                    :c-data="state.nickname"
+                    @token="handleToken"
+                    @widget-id="handleWidgetId">
+                </Turnstile>
+
                 <button
                     type="button"
                     name="login"
-                    :class="[state.loading ? 'bg-neutral-500' : 'bg-black']"
+                    :class="[state.loading || !state.turnstile.token ? 'bg-neutral-500 cursor-not-allowed pointer-events-none' : 'bg-black']"
                     :disabled="state.loading"
-                    class="3xl:p-4 3xl:text-[2rem] 3xl:w-[32rem] lg:max-xl:text-[0.9rem] lg:max-xl:w-52 max-sm:py-3 p-2 rounded-full shadow-lg shadow-neutral-300 text-[1rem] text-white w-64"
+                    class="3xl:p-4 3xl:text-[2rem] lg:max-xl:text-[0.9rem] max-sm:py-3 p-2 rounded-full shadow-lg shadow-neutral-300 text-[1rem] text-white w-[300px]"
                     @click="tryRegister">
                     <IconLoading
                         v-if="state.loading"
@@ -44,7 +55,7 @@
                     </IconLoading>
                     <span v-else>注册</span>
                 </button>
-            </div>
+            </form>
         </div>
     </div>
 </template>
@@ -57,6 +68,7 @@ import { authStore } from '@/authApp/js/store.js'
 import { getPublicKey, register } from '@/authApp/js/api.js'
 import { encodePwd } from '@/authApp/util/util.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import Turnstile from '@/authApp/components/Turnstile.vue'
 
 const router = useRouter()
 const state = reactive({
@@ -64,19 +76,23 @@ const state = reactive({
     loading: false,
     nickname: authStore.NICKNAME,
     password: "",
-    rePassword: ""
+    rePassword: "",
+    turnstile: { token: undefined, widgetId: undefined }
 })
 
-function routeTo(routeName){
+function routeTo(routeName) {
     authStore.setNickname(state.nickname)
-    router.push({name: routeName})
+    router.push({ name: routeName })
 }
 
 async function tryRegister() {
     state.loading = true
     try {
-        if (state.nickname.length == 0 || state.password.length == 0 || state.rePassword.length == 0) {
+        if (!state.nickname || !state.password || !state.rePassword) {
             throw new Error("账户名和密码不能为空！")
+        }
+        if (!state.turnstile.token) {
+            throw new Error('需要填充验证码！')
         }
 
         if (state.nickname.includes('=') || state.password.includes('=')) {
@@ -91,15 +107,16 @@ async function tryRegister() {
             await getPK()
         }
         const encryptedPK = encodePwd(state.publicKey, state.password)
-        const response = await register(state.nickname, encryptedPK)
-        if (!response.ok) throw new Error((await response.json()).error)
+        const response = await register(state.nickname, encryptedPK, undefined, state.turnstile.token)
+        if (!response.ok) throw new Error((await response.json()).message)
         store.setSuccessMsg("注册成功！");
         state.password = ''
         state.rePassword = ''
         routeTo('login')
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
+        turnstile.reset(state.turnstile.widgetId)
+        state.turnstile.token = undefined
     } finally {
         state.loading = false
     }
@@ -108,13 +125,20 @@ async function tryRegister() {
 async function getPK() {
     try {
         const response = await getPublicKey()
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.text()
         state.publicKey = result
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
+}
+
+function handleToken({ token }) {
+    state.turnstile.token = token
+}
+
+function handleWidgetId({ widgetId }) {
+    state.turnstile.widgetId = widgetId
 }
 </script>

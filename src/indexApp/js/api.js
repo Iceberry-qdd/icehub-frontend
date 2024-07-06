@@ -391,7 +391,7 @@ export function isUserExists(nickname) {
  * @returns 关注结果，成功或失败
  */
 export function followUser(userId) {
-    return fetch(`${BASE_URL}/user/follow/${userId}`, {
+    return fetch(`${BASE_URL}/user/following/${userId}`, {
         method: 'PUT',
         headers: {
             'Authorization': TOKEN
@@ -407,7 +407,7 @@ export function followUser(userId) {
  * @returns 取消关注结果，成功或失败
  */
 export function unFollowUser(userId) {
-    return fetch(`${BASE_URL}/user/follow/${userId}`, {
+    return fetch(`${BASE_URL}/user/following/${userId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': TOKEN
@@ -418,15 +418,15 @@ export function unFollowUser(userId) {
 }
 
 /**
- * 查询用户关注者列表
+ * 查询用户的关注列表
  * @param {string} userId 待查询用户id
  * @param {int} pageIndex 分页页码
  * @param {int} pageSize 分页页大小
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注者列表
  */
-export function getFollowerList(userId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/user/follow/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+export function getFollowList(userId, pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/user/following/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -438,15 +438,15 @@ export function getFollowerList(userId, pageIndex, pageSize, lastTimestamp) {
 }
 
 /**
- * 查询用户关注用户列表
+ * 查询用户的粉丝列表
  * @param {string} userId 待查询用户id
  * @param {int} pageIndex 分页页码
  * @param {int} pageSize 分页页大小
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注用户列表
  */
-export function getFollowingList(userId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/user/follow/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+export function getFanList(userId, pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/user/follower/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,

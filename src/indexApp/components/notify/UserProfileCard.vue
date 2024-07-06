@@ -24,12 +24,12 @@
                     </div>
                     <div class="flex flex-col gap-1 items-center justify-center w-1/3">
                         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                        <div class="font-bold text-[1rem]">{{ humanizedNumber(state.user.followingCount) }}</div>
+                        <div class="font-bold text-[1rem]">{{ humanizedNumber(state.user.followCount) }}</div>
                         <div>订阅他的</div>
                     </div>
                     <div class="flex flex-col gap-1 items-center justify-center w-1/3">
                         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                        <div class="font-bold text-[1rem]">{{ humanizedNumber(state.user.followerCount) }}</div>
+                        <div class="font-bold text-[1rem]">{{ humanizedNumber(state.user.fanCount) }}</div>
                         <div>他的订阅</div>
                     </div>
                 </div>

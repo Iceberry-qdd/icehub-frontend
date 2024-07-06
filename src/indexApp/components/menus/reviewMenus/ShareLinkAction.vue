@@ -33,7 +33,6 @@ function copyLinkV1() {
         store.setSuccessMsg('已复制至剪贴板！')
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.log(e)
     }finally{
         dismissReviewMenus()
     }

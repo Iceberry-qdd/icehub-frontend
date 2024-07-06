@@ -148,7 +148,7 @@ async function getImageUrlIgnoreNSFW(index) {
             throw new Error('The id or type is empty!')
         }
         const response = await getImageUrlIgnoreHidden(typeId.value, index, props.type)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
 
@@ -156,7 +156,6 @@ async function getImageUrlIgnoreNSFW(index) {
         state.showRealImage[index] = true
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
