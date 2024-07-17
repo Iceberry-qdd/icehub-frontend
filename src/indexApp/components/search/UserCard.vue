@@ -14,7 +14,7 @@
                     v-if="!isSelf"
                     :class="followBtnClass"
                     class="btn-no-select flex flex-row items-center justify-center min-w-[4.5rem] px-3 py-1 rounded-full text-[0.85rem]"
-                    @click.stop="state.yourFollowing ? doUnFollowUser() : doFollowUser()">
+                    @click.stop="state.yourFollowStatus !== 'UN_FOLLOW' ? doUnFollowUser() : doFollowUser()">
                     {{ followButtonText }}
                 </div>
             </div>
@@ -22,8 +22,15 @@
                 <div class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
                     {{ state.user.nickname }}
                 </div>
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <IconVerify v-if="state.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                <IconVerify
+                    v-if="state.user.verified"
+                    class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                </IconVerify>
+                <div
+                    v-if="state.user.confirmFollow"
+                    class="material-symbols-rounded no-hover p-0 text-[1.25rem]">
+                    lock
+                </div>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="break-all text-[0.85rem] webkit-box-1">{{ brief }}</div>
@@ -50,23 +57,30 @@ const props = defineProps({
 const state = reactive({
     user: props.user,
     loading: true,
-    yourFollowing: props.user.yourFollowing,
-    yourFan: props.user.yourFan,
-    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
+    yourFollowStatus: props.user.yourFollowStatus,
+    yourFanStatus: props.user.yourFanStatus,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    followTextMap: new Map([
+        ['NOT_FOLLOW', '订阅'],
+        ['WAIT_PASS', '等待批准'],
+        ['FOLLOW', '已订阅'],
+        [undefined, '订阅']
+    ])
 })
 
 const isSelf = computed(() => state.curUser.id === props.user.id)
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500': !state.yourFollowing,
-    'bg-gray-300': state.yourFollowing,
-    'text-white': !state.yourFollowing,
-    'text-zinc-700': state.yourFollowing
+    'bg-blue-500': state.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-gray-200': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-zinc-500': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-white': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 const followButtonText = computed(() => {
-    if (state.yourFollowing && state.yourFan) return '相互订阅'
-    return state.yourFollowing ? '已订阅' : '订阅'
+    if(state.user.yourFollowStatus === 'FOLLOW' && state.yourFanStatus === 'FAN') return '相互订阅'
+    if(state.user.yourFollowStatus === 'NOT_FOLLOW' && props.user.confirmFollow) return '请求订阅'
+    return state.followTextMap.get(state.user.yourFollowStatus)
 })
 
 async function doFollowUser() {
@@ -75,9 +89,13 @@ async function doFollowUser() {
         const response = await followUser(props.user.id)
         if (!response.ok) throw new Error((await response.json()).message)
 
-        const result = response.json()
-        if (result == false) throw new Error('订阅失败！')
-        state.yourFollowing = true
+        const result = await response.json()
+        if (result?.confirmed){
+            store.setSuccessMsg("订阅成功！")
+            state.yourFollowStatus = 'FOLLOW'
+        } else {
+            state.yourFollowStatus = 'WAIT_PASS'
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {
@@ -91,9 +109,9 @@ async function doUnFollowUser() {
         const response = await unFollowUser(props.user.id)
         if (!response.ok) throw new Error((await response.json()).message)
 
-        const result = response.json()
-        if (result == false) throw new Error('取消订阅失败！')
-        state.yourFollowing = false
+        const result = await response.json()
+        state.yourFollowStatus = 'NOT_FOLLOW'
+        store.setSuccessMsg("取消订阅成功！")
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {

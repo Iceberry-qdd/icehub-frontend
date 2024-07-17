@@ -21,12 +21,27 @@
             </div>
             <div class="flex flex-row gap-x-1 items-center">
                 <div
-                    class="cursor-pointer font-bold hover:underline text-[1.1rem]"
+                    class="cursor-pointer font-bold hover:underline text-[1.1rem] webkit-box-1"
                     @click="routeToProfile">
                     {{ state.user.nickname }}
                 </div>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <IconVerify v-if="state.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                <div
+                    v-if="state.user.confirmFollow"
+                    class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                    lock
+                </div>
+                <div
+                    v-if="state.user.yourFanStatus === 'FAN' && state.user.yourFollowStatus !== 'FOLLOW'"
+                    class="bg-blue-100 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    订阅了你
+                </div>
+                <div
+                    v-if="state.user.yourFanStatus === 'WAIT_PASS'"
+                    class="bg-blue-100 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    请求订阅你
+                </div>
             </div>
             <div class="flex flex-nowrap flex-row items-center">
                 <div
@@ -35,7 +50,7 @@
                     {{ brief }}
                 </div>
                 <div
-                    v-if="!isCurUser && !store.MOBILE_MODE"
+                    v-if="!isCurUser && !store.MOBILE_MODE && state.user.yourFollowStatus !== 'FOLLOW'"
                     :class="followBtnClass"
                     class="cursor-pointer flex flex-none h-auto items-center justify-center min-w-[4.5rem] px-2 py-[0.25rem] rounded-full text-[0.9rem]"
                     @click="toggleFollowState">
@@ -47,13 +62,13 @@
             </div>
             <div class="flex flex-row gap-x-4 items-center justify-center">
                 <div
-                    :class="{'bg-blue-500 text-white': isCurUser, 'bg-gray-200 text-black': !isCurUser}"
+                    :class="profileButtonClass"
                     class="flex-1 py-2 rounded-full sm:hidden text-center"
                     @click="routeToProfile(props.user.nickname)">
                     查看个人资料
                 </div>
                 <div
-                    v-if="!isCurUser && store.MOBILE_MODE"
+                    v-if="!isCurUser && store.MOBILE_MODE && state.user.yourFollowStatus !== 'FOLLOW'"
                     :class="followBtnClass"
                     class="cursor-pointer flex flex-1 items-center justify-center py-2 rounded-full"
                     @click="toggleFollowState">
@@ -128,16 +143,22 @@ const router = useRouter()
 const state = reactive({
     user: props.user,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
-    loading: false
+    loading: false,
+    followTextMap: new Map([
+        ['NOT_FOLLOW', '订阅'],
+        ['WAIT_PASS', '等待批准'],
+        ['FOLLOW', '已订阅'],
+        [undefined, '订阅']
+    ])
 })
 
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500': !state.user.yourFollowing,
-    'bg-gray-300': state.user.yourFollowing,
-    'text-white': !state.user.yourFollowing,
-    'text-zinc-700': state.user.yourFollowing
+    'bg-blue-500': state.user.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-gray-200': state.user.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-zinc-500': state.user.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-white': state.user.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 const brief = computed(() => {
@@ -165,13 +186,19 @@ const followCountText = computed(() => {
 })
 
 const followButtonText = computed(() => {
-    if(state.user.yourFollowing && state.user.yourFan) return '相互订阅'
-    return state.user.yourFollowing ? '已订阅' : '订阅'
+    if(state.user.yourFollowStatus === 'FOLLOW' && state.user.isFan) return '相互订阅'
+    if(state.user.yourFollowStatus === 'NOT_FOLLOW' && state.user.confirmFollow) return '请求订阅'
+    return state.followTextMap.get(state.user.yourFollowStatus)
 })
+
+const profileButtonClass = computed(() => ({
+    'bg-blue-500 text-white': isCurUser.value || state.user.yourFollowStatus === 'FOLLOW',
+    'bg-gray-200 text-black': !isCurUser.value && state.user.yourFollowStatus !== 'FOLLOW'
+})) 
 
 function toggleFollowState() {
     const userId = state.user.id
-    if (state.user.yourFollowing) {
+    if (state.user.yourFollowStatus !== 'NOT_FOLLOW') {
         unFollowAUser(userId)
     } else {
         followAUser(userId)
@@ -197,8 +224,12 @@ async function followAUser(userId) {
         if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
-        if (result == false) throw new Error('关注失败！')
-        state.user.yourFollowing = result
+        if (result?.confirmed){
+            store.setSuccessMsg("订阅成功！")
+            state.yourFollowStatus = 'FOLLOW'
+        } else {
+            state.yourFollowStatus = 'WAIT_PASS'
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {
@@ -213,8 +244,8 @@ async function unFollowAUser(userId) {
         if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
-        if (result == false) throw new Error('取消关注失败！')
-        state.user.yourFollowing = !result
+        state.yourFollowStatus = 'NOT_FOLLOW'
+        store.setSuccessMsg("取消订阅成功！")
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {

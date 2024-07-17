@@ -18,7 +18,7 @@
 
         <div class="banner-cover">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <span class="material-icons-round" @click="showImageChangeProper('banner')"> edit </span>
+            <span class="material-symbols-rounded" @click="showImageChangeProper('banner')"> edit </span>
         </div>
         
         <Banner
@@ -28,7 +28,7 @@
 
         <div class="avatar-cover">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <span class="material-icons-round" @click="showImageChangeProper('avatar')"> edit </span>
+            <span class="material-symbols-rounded" @click="showImageChangeProper('avatar')"> edit </span>
         </div>
 
         <Avatar
@@ -171,7 +171,7 @@
 <style scoped>
 @import url("bootstrap/dist/css/bootstrap.css");
 
-.material-icons-round:hover {
+.material-symbols-rounded:hover {
     background-color: #000000aa;
 }
 
@@ -193,12 +193,12 @@
     background-color: #00000066;
 }
 
-.avatar-cover>.material-icons-round {
+.avatar-cover>.material-symbols-rounded {
     color: transparent;
     font-size: 18pt;
 }
 
-.avatar-cover:hover>.material-icons-round {
+.avatar-cover:hover>.material-symbols-rounded {
     color: white;
     background-color: #000000AA;
 }
@@ -207,11 +207,11 @@
     background-color: #00000066;
 }
 
-.banner-cover>.material-icons-round {
+.banner-cover>.material-symbols-rounded {
     color: transparent;
 }
 
-.banner-cover:hover>.material-icons-round {
+.banner-cover:hover>.material-symbols-rounded {
     color: white;
     font-size: 24pt;
     background-color: #000000AA;

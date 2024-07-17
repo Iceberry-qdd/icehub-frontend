@@ -44,7 +44,7 @@
         </Footer>
         <div
             id="create-post-btn"
-            class="bg-blue-500 bottom-20 fixed material-icons-round no-hover p-3 right-4 shadow-blue-500/25 shadow-lg sm:hidden text-white z-[111]"
+            class="bg-blue-500 bottom-20 fixed material-symbols-rounded no-hover p-3 right-4 shadow-blue-500/25 shadow-lg sm:hidden text-white z-[111]"
             @click="state.isShowPostEditor = true">
             create
         </div>

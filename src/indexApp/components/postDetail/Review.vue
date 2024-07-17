@@ -48,11 +48,20 @@
                                 @click="routeToUser(state.review.user.nickname)">
                                 {{ state.review.user.nickname }}
                             </div>
-                            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                            <IconVerify v-if="state.review.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                            <IconVerify
+                                v-if="state.review.user.verified"
+                                class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                            </IconVerify>
+                            <div
+                                v-if="state.review.user.confirmFollow"
+                                class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                                lock
+                            </div>
                         </div>
-                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                        <div v-if="props.post != null" class="text-[11pt]" @click="routeToUser(replyTo)">
+                        <div
+                            v-if="props.post != null"
+                            class="text-[11pt]"
+                            @click="routeToUser(replyTo)">
                             回复
                             <span class="cursor-pointer hover:underline">@{{ replyTo }}</span>
                         </div>

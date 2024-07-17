@@ -6,7 +6,7 @@
         <div
             class="bg-white flex flex-col flex-nowrap gap-y-[1rem] items-center justify-between max-h-[75%] min-h-[8rem] overflow-y-auto p-6 rounded-[8px] w-[18rem]">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="text-[0.95rem]">{{ title }}</div>
+            <div class="text-[0.95rem] text-justify">{{ title }}</div>
             <IconLoading
                 v-if="props.ui.loading.show"
                 class="h-auto w-5"
@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, onMounted, onUnmounted } from 'vue'
+import { computed, reactive, onUnmounted } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 
 const props = defineProps({

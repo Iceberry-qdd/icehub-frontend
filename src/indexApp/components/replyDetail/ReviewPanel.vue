@@ -14,7 +14,7 @@
                 @handle-action="state.submitReview = true">
                 <div class="flex font-bold gap-x-2 items-center justify-start w-full">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                    <div class="close-btn material-icons-round text-[1.125rem]" @click="dismiss">close</div>
+                    <div class="close-btn material-symbols-rounded text-[1.125rem]" @click="dismiss">close</div>
                     <div>{{ title }}</div>
                 </div>
             </Header>

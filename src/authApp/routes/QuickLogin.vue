@@ -7,7 +7,7 @@
             <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
             <div id="brand-name" class="3xl:text-[1.8rem] font-bold text-[0.9rem]">{{ state.appName }}</div>
         </div>
-        <div class="3xl:gap-y-8 flex flex-col gap-y-4 items-center justify-center max-sm:h-screen max-sm:px-0 max-sm:py-0 max-sm:w-screen px-32 py-16">
+        <div class="3xl:gap-y-8 flex flex-col gap-y-4 items-center justify-center max-sm:h-screen max-sm:px-0 max-sm:py-0 max-sm:w-screen px-28 py-16">
             <Avatar
                 class="3xl:h-[10rem] 3xl:rounded-[16px] 3xl:text-[10rem] 3xl:w-[10rem] box-content h-[5rem] object-cover rounded-[8px] text-[5rem] w-[5rem]"
                 :user="{nickname: state.nickname}">

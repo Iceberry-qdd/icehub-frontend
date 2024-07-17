@@ -14,7 +14,7 @@
             @handle-action="applyImg">
             <div class="flex font-bold gap-x-2 items-center justify-start text-white w-full">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                <div class="close-btn material-icons-round text-[1.125rem] text-white" @click="skip">arrow_back_ios</div>
+                <div class="close-btn material-symbols-rounded text-[1.125rem] text-white" @click="skip">arrow_back_ios_new</div>
                 <div>返回</div>
             </div>
         </Header>
@@ -32,7 +32,7 @@
                 class="-translate-x-1/2 -translate-y-1/2 absolute active:bg-gray-100/50 border-[1px] cursor-pointer flex flex-col flex-nowrap gap-2 h-[min(50%,15rem)] hover:bg-gray-100 items-center justify-center left-1/2 rounded-[8px] top-1/2 w-[min(50%,25rem)]"
                 @click="fileInput.click()">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="material-icons-round no-hover p-0">upload</div>
+                <div class="material-symbols-rounded no-hover p-0">upload</div>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="text-[0.9rem] text-zinc-500">点击上传图片</div>
             </div>
@@ -129,30 +129,30 @@
                     v-if="showUnImpl"
                     class="content-start flex-1 gap-x-4 justify-center max-sm:flex max-sm:flex-nowrap max-sm:gap-x-0 max-sm:justify-start max-sm:p-0 max-sm:w-fit pb-3 place-items-center sm:grid sm:grid-cols-[repeat(4,3.5rem)] w-full">
                     <div class="menu">
-                        <div class="icon material-icons-round no-hover">rotate_90_degrees_ccw</div>
+                        <div class="icon material-symbols-rounded no-hover">rotate_90_degrees_ccw</div>
                         <div class="text">左旋90°</div>
                     </div>
                     <div class="menu">
-                        <div class="icon material-icons-round no-hover">rotate_90_degrees_cw</div>
+                        <div class="icon material-symbols-rounded no-hover">rotate_90_degrees_cw</div>
                         <div class="text">右旋90°</div>
                     </div>
                     <div class="menu">
-                        <div class="icon material-icons-round no-hover">flip</div>
+                        <div class="icon material-symbols-rounded no-hover">flip</div>
                         <div class="text">水平翻转</div>
                     </div>
                     <div class="menu">
-                        <div class="icon material-icons-round no-hover">flip</div>
+                        <div class="icon material-symbols-rounded no-hover">flip</div>
                         <div class="text">垂直翻转</div>
                     </div>
                     <div class="menu">
-                        <div class="icon material-icons-round no-hover">transform</div>
+                        <div class="icon material-symbols-rounded no-hover">transform</div>
                         <div class="text">自由裁剪</div>
                     </div>
                     <div class="menu">
-                        <div class="icon material-icons-round no-hover">settings_backup_restore</div>
+                        <div class="icon material-symbols-rounded no-hover">settings_backup_restore</div>
                         <div class="text">复原</div>
                     </div>
-                    <!-- <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-icons-round no-hover p-4 rounded-full">lock</div> -->
+                    <!-- <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-symbols-rounded no-hover p-4 rounded-full">lock</div> -->
                 </div>
                 <div class="backdrop-blur-md border-t-[1px] bottom-0 flex flex-row gap-x-3 h-fit items-center justify-center max-sm:hidden py-2 rounded-br-[8px] sticky w-full">
                     <div

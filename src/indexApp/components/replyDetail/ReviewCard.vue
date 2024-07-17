@@ -14,8 +14,15 @@
                         <div class="font-bold hover:underline text-[12pt]">
                             {{ props.review.user.nickname }}
                         </div>
-                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                        <IconVerify v-if="props.review.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                        <IconVerify
+                            v-if="props.review.user.verified"
+                            class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                        </IconVerify>
+                        <div
+                            v-if="props.review.user.confirmFollow"
+                            class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                            lock
+                        </div>
                     </div>
                     <div>
                         <!-- eslint-disable-next-line vue/html-quotes, vue/singleline-html-element-content-newline -->

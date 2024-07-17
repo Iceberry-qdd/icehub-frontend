@@ -24,7 +24,7 @@
                     </Avatar>
                 </div>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <span v-else class="material-icons-round max-lg:text-[1.5rem] max-sm:px-4 max-sm:py-1 max-sm:rounded-full max-sm:text-[1.25rem] no-hover p-0 rounded-none text-[1.75rem]">{{ menu.icon }}</span>
+                <span v-else class="material-symbols-rounded max-lg:text-[1.5rem] max-sm:px-4 max-sm:py-1 max-sm:rounded-full max-sm:text-[1.25rem] no-hover p-0 rounded-none text-[1.75rem]">{{ menu.icon }}</span>
                 <span class="btn-no-select font-bold max-sm:leading-4 max-sm:text-[0.8rem] sm:max-lg:hidden text-lg webkit-box-1">{{ menu.name }}</span>
             </div>
 
@@ -59,11 +59,11 @@ li.active{
         background-color: transparent;
     }
 
-    li.active :is(.material-icons-round, .avatar){
+    li.active :is(.material-symbols-rounded, .avatar){
         background-color: #cfe2ff;
     }
 
-    li:not(.active) :is(.material-icons-round, .avatar):hover{
+    li:not(.active) :is(.material-symbols-rounded, .avatar):hover{
         background-color: #F5F5F5;
     }
 }
@@ -73,7 +73,7 @@ li.active{
 import { reactive, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
-import { getUserInfoByNickname, queryCurUserUnreadNotifyCount } from '@/indexApp/js/api.js'
+import { queryCurUserUnreadNotifyCount } from '@/indexApp/js/api.js'
 import { ws } from '@/indexApp/js/websocket.js'
 import Avatar from '@/components/Avatar.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
@@ -83,10 +83,10 @@ const route = useRoute()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     menus: [
-        { id: 1, name: '主页', routeName: 'index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: true, mobileShow: true },
+        { id: 1, name: '主页', routeName: 'index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: false, mobileShow: true },
         { id: 2, name: '探索', routeName: 'explore', routeParams: {}, icon: 'explore', badgeCount: 0, visible: true, active: false, mobileShow: true },
         { id: 3, name: '话题', routeName: 'hashtag', routeParams: {}, icon: 'tag', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
-        { id: 4, name: '消息', routeName: 'notify', routeParams: {}, icon: 'notifications', badgeCount: 0, visible: true, active: false, mobileShow: true },
+        { id: 4, name: '消息', routeName: 'notify', routeParams: {}, icon: 'notifications', badgeCount: store.UNREAD_MSG_COUNT, visible: true, active: false, mobileShow: true },
         { id: 5, name: '书签', routeName: 'bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: true, active: false, mobileShow: false },
         { id: 6, name: '勋章', routeName: 'badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
         { id: 7, name: '活动', routeName: 'activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
@@ -106,20 +106,8 @@ async function routeTo(routeName, routeParams) {
  */
 function activeMenu(menuId) {
     state.menus.forEach(menu => { menu.active = false })
-    if(!!menuId) {
+    if (!!menuId) {
         state.menus.find(it => it.id === menuId).active = true
-    }
-}
-
-async function getUser(nickname) {
-    try {
-        const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error((await response.json()).message)
-
-        const user = await response.json()
-        store.setSelectUser(user)
-    } catch (e) {
-        store.setErrorMsg(e.message)
     }
 }
 
@@ -134,10 +122,6 @@ async function getUnreadNotifyCount() {
         store.setErrorMsg(e.message)
     }
 }
-
-watch(() => store.UNREAD_MSG_COUNT, (newVal, oldVal) => {
-    state.menus.filter(item => item.routeName === 'notify')[0].badgeCount = newVal
-})
 
 function getCurUserNickname() {
     const { nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
@@ -156,7 +140,7 @@ watch(() => ws.connectState, function (newVal, oldVal) {
 watch(() => route.name, (newVal, _) => {
     const activeMenuId = state.menus.find(it => it.routeName === newVal)?.id
     activeMenu(activeMenuId)
-})
+}, { immediate: true })
 
 onMounted(() => {
     getUnreadNotifyCount(state.user.id)

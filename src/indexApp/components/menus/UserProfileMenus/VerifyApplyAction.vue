@@ -1,6 +1,6 @@
 <template>
     <div>
-        <span class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">verified</span>
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">verified</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">申请认证</div>
     </div>

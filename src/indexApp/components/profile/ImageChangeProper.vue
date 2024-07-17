@@ -13,7 +13,7 @@
                 :key="item.id"
                 class="flex flex-col gap-y-2 items-center justify-center">
                 <div
-                    class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]"
+                    class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]"
                     @click="handleSelect(item.select)">
                     {{ item.icon }}
                 </div>

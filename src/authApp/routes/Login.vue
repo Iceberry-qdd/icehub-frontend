@@ -2,7 +2,7 @@
     <div
         id="login-panel"
         class="">
-        <div class="3xl:gap-y-8 flex flex-col gap-y-4 items-center justify-center lg:max-xl:gap-y-3 max-sm:px-0 max-sm:py-0 px-32 py-16">
+        <div class="3xl:gap-y-8 flex flex-col gap-y-4 items-center justify-center lg:max-xl:gap-y-3 max-sm:px-0 max-sm:py-0 px-28 py-16">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <a href="/index"><img src="/favicon.ico" class="3xl:h-[96px] 3xl:w-[96px] h-[48px] lg:max-xl:h-[36px] lg:max-xl:w-[36px] w-[48px]" /></a>
             <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->

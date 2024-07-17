@@ -7,7 +7,7 @@
             v-if="showPinTop"
             class="-translate-y-2 flex flex-row gap-x-1 items-center justify-start">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="material-icons-round p-0 text-[1rem]">push_pin</div>
+            <div class="material-symbols-rounded p-0 text-[1rem]">push_pin</div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="text-[0.825rem] text-zinc-500">已置顶</div>
         </div>
@@ -77,6 +77,11 @@
                     <div>{{ state.post.user.nickname }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <IconVerify v-if="state.post.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                    <div
+                        v-if="state.post.user.confirmFollow"
+                        class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                        lock
+                    </div>
                 </div>
                 <div class="flex flex-row gap-x-[0.5rem] text-[9pt] text-gray-400">
                     <div :title="standardDateTime(state.post.createdTime)">

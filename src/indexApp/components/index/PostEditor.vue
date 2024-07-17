@@ -12,7 +12,7 @@
             @handle-action="submitPost">
             <div class="flex font-bold gap-x-2 items-center justify-start w-full">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                <div class="close-btn material-icons-round text-[1.125rem]" @click="handleClose">close</div>
+                <div class="close-btn material-symbols-rounded text-[1.125rem]" @click="handleClose">close</div>
                 <div>{{ state.showMarkdownPanel ? '预览' : '撰写帖子' }}</div>
             </div>
         </Header>

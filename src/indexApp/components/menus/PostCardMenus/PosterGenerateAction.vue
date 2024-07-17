@@ -1,7 +1,7 @@
 <template>
     <div>
         <span
-            class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">
+            class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">
             add_photo_alternate
         </span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->

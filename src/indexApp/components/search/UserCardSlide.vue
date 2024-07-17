@@ -7,7 +7,7 @@
             v-show="!state.limit.left.reach"
             class="flex flex-col flex-nowrap items-center justify-center left-0 max-lg:hidden sticky z-[99]">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <span class="cursor-pointer material-icons-round ml-2 no-hover shadow-md" @click="scrollToPre">arrow_back_ios</span>
+            <span class="cursor-pointer material-symbols-rounded ml-2 no-hover shadow-md" @click="scrollToPre">arrow_back_ios_new</span>
         </div>
         <UserCard
             v-for="search in props.searches"
@@ -21,13 +21,13 @@
             v-show="!state.limit.right.reach"
             class="flex flex-col flex-nowrap items-center justify-center max-lg:hidden right-0 sticky z-[99]">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <span class="cursor-pointer material-icons-round mr-2 no-hover shadow-md" @click="scrollToNext">arrow_forward_ios</span>
+            <span class="cursor-pointer material-symbols-rounded mr-2 no-hover shadow-md" @click="scrollToNext">arrow_forward_ios</span>
         </div>
     </div>
 </template>
 
 <style scoped>
-.material-icons-round{
+.material-symbols-rounded{
     font-size: 14pt;
     background-color: #FFFFFF;
     padding: 0.5rem;
@@ -35,7 +35,7 @@
     transition: padding 100ms ease-in-out 100ms;
 }
 
-.material-icons-round:hover{
+.material-symbols-rounded:hover{
     background-color: #FFFFFF;
     padding: 0.75rem;
 }

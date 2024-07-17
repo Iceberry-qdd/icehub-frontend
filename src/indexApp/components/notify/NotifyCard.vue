@@ -29,7 +29,7 @@
             </Share>
             <span
                 v-else-if="state.type == 'SYS_NOTIFY'"
-                class="bg-[#bfdbfe] icon material-icons-round p-[0.2rem] text-[#3b82f6]">
+                class="bg-[#bfdbfe] icon material-symbols-rounded p-[0.2rem] text-[#3b82f6]">
                 notifications
             </span>
             <PeoplePlusOne
@@ -121,7 +121,7 @@
     border-radius: 99rem;
 }
 
-.material-icons-round.icon:hover {
+.material-symbols-rounded.icon:hover {
     padding: 0.2rem !important;
     background-color: #bfdbfe;
 }
@@ -130,12 +130,12 @@
     background-color: #eff6ff;
 }
 
-.material-icons-round {
+.material-symbols-rounded {
     padding: 0.2rem;
     font-size: 19pt;
 }
 
-.material-icons-round:hover {
+.material-symbols-rounded:hover {
     padding: 0 !important;
     background-color: transparent;
 }

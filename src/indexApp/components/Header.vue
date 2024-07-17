@@ -7,10 +7,10 @@
             <div
                 v-if="props.goBack"
                 :style="{color: props.iconColor}"
-                class="cursor-pointer material-icons-round mr-[0.5rem] text-[1.125rem]"
+                class="cursor-pointer material-symbols-rounded mr-[0.5rem] text-[1.125rem]"
                 title="返回"
                 @click="routeBackTo">
-                arrow_back_ios
+                arrow_back_ios_new
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div
@@ -29,7 +29,7 @@
             class="flex-none">
             <span
                 v-if="props.menuIcon"
-                class="material-icons-round text-[1.125rem]"
+                class="material-symbols-rounded text-[1.125rem]"
                 :style="{color: props.iconColor}"
                 @click="handleAction">
                 {{ props.menuIcon }}

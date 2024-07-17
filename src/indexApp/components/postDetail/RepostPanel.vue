@@ -23,7 +23,7 @@
             @handle-action="reposting">
             <div class="flex font-bold gap-x-2 items-center justify-start w-full">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                <div class="close-btn material-icons-round" @click="dismiss">close</div>
+                <div class="close-btn material-symbols-rounded" @click="dismiss">close</div>
                 <div>{{ state.showMarkdownPanel ? '预览' : '转发帖子' }}</div>
             </div>
         </Header>
@@ -37,8 +37,17 @@
                     </Avatar>
                     <div
                         v-if="!store.MOBILE_MODE"
-                        class="flex flex-row gap-4 h-full items-center justify-center">
+                        class="flex flex-row gap-2 h-full items-center justify-center">
                         <span class="cursor-default font-bold text-[13pt]">{{ state.curUser.nickname }}</span>
+                        <IconVerify
+                            v-if="state.curUser.verified"
+                            class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                        </IconVerify>
+                        <div
+                            v-if="state.curUser.confirmFollow"
+                            class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                            lock
+                        </div>
                     </div>
                 </div>
                 <EditorMenu
@@ -93,11 +102,11 @@
 </template>
 
 <style scoped>
-.material-icons-round {
+.material-symbols-rounded {
     font-size: 14pt;
 }
 
-.material-icons-round:hover {
+.material-symbols-rounded:hover {
     /* background-color: transparent; */
     font-size: 14pt;
 }
@@ -150,6 +159,7 @@ import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import { VueShowdown } from 'vue-showdown'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const route = useRoute()
 const reviewInput = ref()

@@ -1,6 +1,6 @@
 <template>
     <div @click="handleClick">
-        <span class="material-icons-round max-sm:bg-red-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-red-500">logout</span>
+        <span class="material-symbols-rounded max-sm:bg-red-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-red-500">logout</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <div class="max-sm:text-[0.8rem]">退出登录</div>
         <Teleport to="#app">

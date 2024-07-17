@@ -19,7 +19,7 @@
                     @click="preChoosePics">
                     <span
                         title="添加图片"
-                        class="material-icons-round"
+                        class="material-symbols-rounded"
                         :class="[hasImage ? 'active' : '']">
                         add_photo_alternate
                     </span>
@@ -35,7 +35,7 @@
                     @click="state.showVisibilityPanel = !state.showVisibilityPanel">
                     <span
                         title="帖子可见范围"
-                        class="material-icons-round"
+                        class="material-symbols-rounded"
                         :class="[state.showVisibilityPanel ? 'bg-blue-100 active' : '', curVisibility.code != 'PUBLIC' ? 'active' : '']">
                         {{ curVisibility.icon }}
                     </span>
@@ -70,7 +70,7 @@
                     @click="handleTimeSelect">
                     <span
                         title="定时发送"
-                        class="material-icons-round"
+                        class="material-symbols-rounded"
                         :class="[state.showSchedulePanel ? 'bg-blue-100 active' : '', props.createdTime ? 'active' : '']">
                         schedule
                     </span>
@@ -117,7 +117,7 @@
                     @click="state.showEmojiPanel = !state.showEmojiPanel">
                     <span
                         title="表情面板"
-                        class="material-icons-round"
+                        class="material-symbols-rounded"
                         :class="[state.showEmojiPanel ? 'bg-blue-100 active' : '']">
                         mood
                     </span>
@@ -145,7 +145,7 @@
                 id="long-article">
                 <span
                     title="长文章"
-                    class="material-icons-round">
+                    class="material-symbols-rounded">
                     <!-- TODO implement it. -->
                     article
                 </span>
@@ -156,7 +156,7 @@
                 id="poll">
                 <span
                     title="投票"
-                    class="material-icons-round">
+                    class="material-symbols-rounded">
                     <!-- TODO implement it. -->
                     equalizer
                 </span>
@@ -169,7 +169,7 @@
                 <span
                     :class="[props.showMarkdownPanel ? 'active' : '']"
                     title="预览"
-                    class="material-icons-round">
+                    class="material-symbols-rounded">
                     visibility
                 </span>
             </div>
@@ -192,21 +192,21 @@
 </template>
 
 <style scoped>
-.material-icons-round {
+.material-symbols-rounded {
     font-size: 1.3rem;
     cursor: pointer;
     padding: 0.4rem;
 }
 
-.material-icons-round:not(.close-btn).active {
+.material-symbols-rounded:not(.close-btn).active {
     color: rgb(59 130 246);
 }
 
-.material-icons-round:not(.close-btn):not(.active) {
+.material-symbols-rounded:not(.close-btn):not(.active) {
     color: #303133;
 }
 
-.material-icons-round:not(.close-btn):hover {
+.material-symbols-rounded:not(.close-btn):hover {
     background-color: #dbeafe !important;
     color: rgb(59 130 246);
 }
@@ -318,7 +318,7 @@ const state = reactive({
     visibilityOptions: [
         { id: 1, name: '公开', code: 'PUBLIC', icon: 'public' },
         { id: 2, name: '探索页内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock' },
-        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'people_outline' },
+        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'person' },
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people' },
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock' },
     ]

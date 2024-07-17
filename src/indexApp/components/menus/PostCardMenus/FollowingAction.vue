@@ -1,7 +1,7 @@
 <template>
     <div
         @click="toggleFollowStatus()">
-        <span class="material-icons-round max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ followIcon }}</span>
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ followIcon }}</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">{{ followText }}</div>
     </div>
@@ -23,24 +23,32 @@ const props = defineProps({
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
-    user: props.user
+    user: props.user,
+    followTextMap: new Map([
+        ['NOT_FOLLOW', '订阅'],
+        ['WAIT_PASS', '等待批准'],
+        ['FOLLOW', '已订阅'],
+        [undefined, '订阅']
+    ])
 })
 
 const followText = computed(() => {
-    const { yourFollowing, nickname } = state.user
-    return yourFollowing ? `不再订阅此用户` : `订阅此用户`
+    const { yourFollowStatus, isFan, confirmFollow } = state.user
+    if(yourFollowStatus === 'FOLLOW' && isFan) return '相互订阅'
+    if(yourFollowStatus === 'NOT_FOLLOW' && confirmFollow) return '请求订阅'
+    return state.followTextMap.get(state.yourFollowStatus)
 })
 
 const followIcon = computed(() => {
-    const { yourFollowing } = state.user
-    return yourFollowing ? `person_remove` : `person_add_alt`
+    const { yourFollowStatus } = state.user
+    return yourFollowStatus !== 'NOT_FOLLOW' ? `person_remove` : `person_add_alt`
 })
 
 function dismiss() { emits('dismissMenu') }
 
 function toggleFollowStatus() {
-    const { yourFollowing, id } = state.user
-    yourFollowing == true ? unFollowingIt(id) : followingIt(id)
+    const { yourFollowStatus, id } = state.user
+    yourFollowStatus !== 'NOT_FOLLOW' ? unFollowingIt(id) : followingIt(id)
 }
 
 async function followingIt(postId) {
@@ -48,10 +56,13 @@ async function followingIt(postId) {
         const response = await followUser(postId)
         if (!response.ok) throw new Error((await response.json()).message)
 
-        const result = await response.text()
-        if (result == false) throw new Error("订阅失败！")
-        state.user.yourFollowing = true
-        store.setSuccessMsg("已订阅！")
+        const result = await response.json()
+        if (result?.confirmed){
+            store.setSuccessMsg("订阅成功！")
+            state.yourFollowStatus = 'FOLLOW'
+        } else {
+            state.yourFollowStatus = 'WAIT_PASS'
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {
@@ -64,10 +75,9 @@ async function unFollowingIt(postId) {
         const response = await unFollowUser(postId)
         if (!response.ok) throw new Error((await response.json()).message)
 
-        const result = await response.text()
-        if (result == false) throw new Error("取消订阅失败！")
-        state.user.yourFollowing = false
-        store.setSuccessMsg("已取消订阅！")
+        const result = await response.json()
+        state.yourFollowStatus = 'NOT_FOLLOW'
+        store.setSuccessMsg("取消订阅成功！")
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {

@@ -12,8 +12,19 @@
                 </Avatar>
             </div>
             <div class="flex flex-col items-center justify-center w-full">
-                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="font-bold text-[1rem]">{{ state.user.nickname }}</div>
+                <div class="flex flex-row gap-x-1 items-center">
+                    <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                    <div class="font-bold text-[1rem]">{{ state.user.nickname }}</div>
+                    <IconVerify
+                        v-if="props.user.verified"
+                        class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    </IconVerify>
+                    <div
+                        v-if="state.user.confirmFollow"
+                        class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                        lock
+                    </div>
+                </div>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="break-all brief max-w-[85%] text-[0.9rem]">{{ state.user.remark }}</div>
                 <div class="flex flex-row mt-2 text-[0.9rem] w-full">
@@ -53,6 +64,7 @@ import { reactive } from 'vue'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const props = defineProps({
     /** 传入的用户对象 */

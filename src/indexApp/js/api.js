@@ -848,6 +848,13 @@ export function deleteOneReview(id) {
     })
 }
 
+/**
+ * 切换帖子的置顶状态
+ * @param {string} id 帖子id
+ * @param {boolean} oldPin 原来状态
+ * @param {boolean} newPin 新状态
+ * @returns 切换置顶结果
+ */
 export function togglePin(id, oldPin, newPin) {
     const requestBody = {
         id: id,
@@ -861,6 +868,39 @@ export function togglePin(id, oldPin, newPin) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 移除粉丝
+ * @param {String} fanId 粉丝id
+ * @returns 移除结果， true-移除成功
+ */
+export function removeFan(fanId){
+    return fetch(`${BASE_URL}/user/follower/${fanId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 通过粉丝的关注请求
+ * @param {String} fanId 粉丝id
+ */
+export function confirmFanRequest(fanId){
+    return fetch(`${BASE_URL}/user/follower/confirm/${fanId}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
         redirect: 'follow',
         credentials: 'same-origin'
     })

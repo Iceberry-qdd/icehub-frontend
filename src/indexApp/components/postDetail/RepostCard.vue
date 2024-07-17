@@ -5,13 +5,22 @@
         @click="routeToUserProfile">
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div v-if="state.post" class="pt-2">
-            <div class="flex flex-row gap-x-2 items-center px-2 text-[11pt]">
+            <div class="flex flex-row gap-x-1 items-center px-2 text-[11pt]">
                 <Avatar
                     :user="state.post.user"
                     class="cursor-default h-[1.5rem] rounded-[4px] text-[1.5rem] w-[1.5rem]">
                 </Avatar>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="font-bold">{{ state.post.user.nickname }}</div>
+                <IconVerify
+                    v-if="state.post.user.verified"
+                    class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                </IconVerify>
+                <div
+                    v-if="state.post.user.confirmFollow"
+                    class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                    lock
+                </div>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="text-gray-400 top-[1px]">发布于 {{ humanizedTime(state.post.createdTime) }}</div>
             </div>
@@ -91,6 +100,7 @@ import IconGif from '@/components/icons/IconGif.vue'
 import { VueShowdown } from 'vue-showdown'
 import { getPostById } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
+import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
 const props = defineProps({

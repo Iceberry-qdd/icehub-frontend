@@ -7,7 +7,7 @@
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div class="cursor-pointer fixed ml-4 mt-4 p-2 text-white z-[2]" @click="close">
             <span
-                class="bg-[#6b728055] hover:bg-[#6b7280cc] material-icons-round rounded-full">
+                class="bg-[#6b728055] hover:bg-[#6b7280cc] material-symbols-rounded rounded-full">
                 close
             </span>
         </div>
@@ -16,7 +16,7 @@
             class="bg-transparent cursor-pointer fixed h-full hover:bg-gradient-to-r hover:from-black hover:text-white hover:to-transparent left-0 max-lg:hidden text-transparent w-[15%] z-[1]"
             @click="scrollToPre">
             <div class="flex h-full items-center justify-end pl-4">
-                <span class="material-icons-round">arrow_back_ios</span>
+                <span class="material-symbols-rounded">arrow_back_ios_new</span>
             </div>
         </div>
         <div
@@ -53,53 +53,53 @@
             class="bg-transparent cursor_pointer fixed h-full hover:bg-gradient-to-l hover:from-black hover:text-white hover:to-transparent max-lg:hidden right-0 text-transparent w-[15%] z-[105]"
             @click="scrollToNext">
             <div class="flex h-full items-center justify-start pl-4">
-                <span class="material-icons-round">arrow_forward_ios</span>
+                <span class="material-symbols-rounded">arrow_forward_ios</span>
             </div>
         </div>
         <div class="-translate-x-1/2 backdrop-blur-md bg-gray-500/50 bottom-8 fixed flex flex-nowrap flex-row left-1/2 px-2 rounded-full">
             <div
                 title="向左旋转"
-                class="active:text-white material-icons-round max-lg:hidden no-hover text-white/50"
+                class="active:text-white material-symbols-rounded max-lg:hidden no-hover text-white/50"
                 @click="rotate(-90, state.activeImgIndex)">
                 rotate_left
             </div>
             <div
                 title="向右旋转"
-                class="active:text-white material-icons-round max-lg:hidden no-hover text-white/50"
+                class="active:text-white material-symbols-rounded max-lg:hidden no-hover text-white/50"
                 @click="rotate(90, state.activeImgIndex)">
                 rotate_right
             </div>
             <div
                 title="放大"
                 :class="state.editData[state.activeImgIndex].zoomRatio >= 5 ? 'cursor-not-allowed pointer-events-none text-white/25' : 'text-white/50 active:text-white'"
-                class="material-icons-round max-lg:hidden no-hover"
+                class="material-symbols-rounded max-lg:hidden no-hover"
                 @click="zoom(0.25, state.activeImgIndex)">
                 zoom_in
             </div>
             <div
                 title="缩小"
                 :class="state.editData[state.activeImgIndex].zoomRatio <=0.25 ? 'cursor-not-allowed pointer-events-none text-white/25' : 'text-white/50 active:text-white'"
-                class="active:text-white material-icons-round max-lg:hidden no-hover text-white/50"
+                class="active:text-white material-symbols-rounded max-lg:hidden no-hover text-white/50"
                 @click="zoom(-0.25, state.activeImgIndex)">
                 zoom_out
             </div>
             <div
                 v-show="state.editData[state.activeImgIndex].mode === 'fit-screen'"
                 title="1:1"
-                class="active:text-white material-icons-round max-lg:hidden no-hover text-white/50"
+                class="active:text-white material-symbols-rounded max-lg:hidden no-hover text-white/50"
                 @click="toggleZoomMode('fit-content', state.activeImgIndex)">
                 zoom_in_map
             </div>
             <div
                 v-show="state.editData[state.activeImgIndex].mode === 'fit-content'"
                 title="适应屏幕"
-                class="active:text-white material-icons-round max-lg:hidden no-hover text-white/50"
+                class="active:text-white material-symbols-rounded max-lg:hidden no-hover text-white/50"
                 @click="toggleZoomMode('fit-screen', state.activeImgIndex)">
                 zoom_out_map
             </div>
             <div
                 title="翻转"
-                class="active:text-white material-icons-round max-lg:hidden no-hover text-white/50"
+                class="active:text-white material-symbols-rounded max-lg:hidden no-hover text-white/50"
                 @click="flip(state.activeImgIndex)">
                 flip
             </div>

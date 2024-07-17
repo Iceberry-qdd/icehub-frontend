@@ -34,7 +34,8 @@
     
             <ProfileLockAction
                 v-if="state.actionVisMap.get('ProfileLockAction')"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
+                :is-locked="props.user.confirmFollow">
             </ProfileLockAction>
     
             <ProfileBlockAction
@@ -42,6 +43,12 @@
                 :user="props.user"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </ProfileBlockAction>
+
+            <RemoveFanAction
+                v-if="state.actionVisMap.get('RemoveFanAction')"
+                :fan-id="props.user.id"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </RemoveFanAction>
     
             <LogoutAction
                 v-if="state.actionVisMap.get('LogoutAction')"
@@ -103,6 +110,7 @@ import ProfileLockAction from '@/indexApp/components/menus/userProfileMenus/Prof
 import LogoutAction from '@/indexApp/components/menus/userProfileMenus/LogoutAction.vue'
 import ProfileBlockAction from '@/indexApp/components/menus/userProfileMenus/ProfileBlockAction.vue'
 import BookmarkAction from '@/indexApp/components/menus/userProfileMenus/BookmarkAction.vue'
+import RemoveFanAction from '@/indexApp/components/menus/userProfileMenus/RemoveFanAction.vue'
 import { store } from '@/indexApp/js/store'
 
 const { dismissProfileMenus } = inject('dismissProfileMenus')
@@ -122,10 +130,11 @@ const state = reactive({
         [CalendarSearchAction.__name, !props.user.blocking && !props.user.blocked && showUnImpl],
         [ShareLinkAction.__name, !props.user.blocking && !props.user.blocked],
         [VerifyApplyAction.__name, props.user.id === curUser.id && showUnImpl],
-        [ProfileLockAction.__name, props.user.id === curUser.id && showUnImpl],
+        [ProfileLockAction.__name, props.user.id === curUser.id],
         [ProfileBlockAction.__name, props.user.id !== curUser.id],
         [LogoutAction.__name, props.user.id === curUser.id],
         [BookmarkAction.__name, props.user.id === curUser.id && store.MOBILE_MODE],
+        [RemoveFanAction.__name, props.user.id !== curUser.id && props.user.yourFanStatus === 'FAN'],
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示
     ])
 })

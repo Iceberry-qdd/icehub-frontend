@@ -45,8 +45,15 @@
                                 @click="routeToUser(state.reply.user.nickname)">
                                 {{ state.reply.user.nickname }}
                             </div>
-                            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                            <IconVerify v-if="state.reply.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                            <IconVerify
+                                v-if="state.reply.user.verified"
+                                class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                            </IconVerify>
+                            <div
+                                v-if="state.reply.user.confirmFollow"
+                                class="material-symbols-rounded no-hover p-0 text-[1.25rem]">
+                                lock
+                            </div>
                         </div>
                         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                         <div class="text-[11pt]" @click="routeToUser(replyTo)">

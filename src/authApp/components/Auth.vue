@@ -71,9 +71,9 @@
             <button
                 name="返回登录"
                 type="button"
-                class="3xl:left-8 3xl:text-[2.2rem] 3xl:top-[2rem] absolute cursor-pointer left-4 material-icons-round max-sm:text-[1.25rem] text-[1.1rem] top-[2rem]"
+                class="3xl:left-8 3xl:text-[2.2rem] 3xl:top-[2rem] absolute cursor-pointer left-4 material-symbols-rounded max-sm:text-[1.25rem] text-[1.1rem] top-[2rem]"
                 @click="toggleLogin(state.nickname)">
-                arrow_back_ios
+                arrow_back_ios_new
             </button>
             <div class="3xl:gap-y-8 flex flex-col gap-y-4 items-center justify-center lg:max-xl:gap-y-3 max-sm:px-0 max-sm:py-0 px-32 py-16">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->

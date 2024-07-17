@@ -3,12 +3,12 @@
         <div
             class="absolute bg-white divide-y-[1px] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:top-1/2 w-[min(25rem,100vw)]">
             <div
-                class="absolute bg-gray-500/25 cursor-pointer material-icons-round max-sm:hidden max-sm:left-3 p-1 sm:right-3 top-3 z-[100]"
+                class="absolute bg-gray-500/25 cursor-pointer material-symbols-rounded max-sm:hidden max-sm:left-3 p-1 sm:right-3 top-3 z-[100]"
                 @click="dismiss">
                 close
             </div>
             <div
-                class="absolute bg-gray-500/25 cursor-pointer left-3 material-icons-round p-1 sm:hidden top-3 z-[100]"
+                class="absolute bg-gray-500/25 cursor-pointer left-3 material-symbols-rounded p-1 sm:hidden top-3 z-[100]"
                 @click="dismiss">
                 keyboard_arrow_down
             </div>
@@ -70,7 +70,7 @@
 </template>
 
 <style scoped>
-details>summary>.material-icons-round {
+details>summary>.material-symbols-rounded {
     font-size: 1.5rem;
 }
 

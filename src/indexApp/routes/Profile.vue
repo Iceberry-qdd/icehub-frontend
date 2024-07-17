@@ -40,25 +40,31 @@
         <div
             v-if="state.user.blocking"
             class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
-            <span class="material-icons-round">disabled_visible</span>
+            <span class="material-symbols-rounded">disabled_visible</span>
             <div>你已屏蔽对方</div>
         </div>
         <div
             v-else-if="state.user.blocked"
             class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
-            <span class="material-icons-round">disabled_visible</span>
+            <span class="material-symbols-rounded">disabled_visible</span>
             <div>对方屏蔽了你</div>
         </div>
-        <PostsTimeline
-            v-else
-            :posts="state.posts">
-        </PostsTimeline>
-        <Footer
-            v-if="!state.user.blocking && !state.user.blocked"
-            :is-loading="state.isPostLoading"
-            :has-more="hasMore"
-            @fetch-more="fetchNewPost">
-        </Footer>
+        <div
+            v-else-if="isPrivateAccountAndNotFollowed"
+            class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
+            <span class="material-symbols-rounded">lock</span>
+            <div class="text-[0.9rem] text-zinc-500">这是私密账号，请求订阅通过后才可查看</div>
+        </div>
+        <div v-else>
+            <PostsTimeline
+                :posts="state.posts">
+            </PostsTimeline>
+            <Footer
+                :is-loading="state.isPostLoading"
+                :has-more="hasMore"
+                @fetch-more="fetchNewPost">
+            </Footer>
+        </div>
     </div>
 </template>
 
@@ -79,11 +85,11 @@
     opacity: 0;
 }
 
-.material-icons-round:hover {
+.material-symbols-rounded:hover {
     background-color: transparent;
 }
 
-.material-icons-round {
+.material-symbols-rounded {
     font-size: 24pt;
 }
 
@@ -126,10 +132,10 @@
 
 <!-- eslint-disable vue/no-ref-object-reactivity-loss -->
 <script setup>
+import { reactive, onMounted, computed, provide, onUnmounted, onActivated, onDeactivated } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import ProfileInfo from '@/indexApp/components/profile/ProfileInfo.vue'
 import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
-import { reactive, onMounted, computed, provide, onUnmounted, onActivated, watch } from 'vue'
 import { getUserPosts, getUserInfoByNickname } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRoute } from 'vue-router'
@@ -161,11 +167,16 @@ const state = reactive({
     isPostLoading: true,
     lastWheelDirection: 0,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
-    showProfileMenus: false
+    showProfileMenus: false,
+    recoverFromOnDeactivated: false
 })
 
 const hasMore = computed(() => {
     return state.pageIndex < state.totalPages
+})
+
+const isPrivateAccountAndNotFollowed = computed(() => {
+    return state.user.confirmFollow && state.user.yourFollowStatus !== 'FOLLOW' && state.curUser.id !== state.user.id
 })
 
 async function getPosts() {
@@ -259,7 +270,17 @@ function handleScroll(){
     document.querySelector('#profile>#h').setAttribute('style', `opacity:${Math.min(100, this.scrollY)}%`)
 }
 
+function removeFanOnUi(){
+    state.user.yourFanStatus = 'NOT_FAN'
+}
+
+function newCurUser({ user }){
+    state.user = user
+    localStorage.setItem('CUR_USER', JSON.stringify(user))
+}
+
 onActivated(async () => {
+    if(!state.recoverFromOnDeactivated) return
     await getUser(route.params.nickname)
     state.posts.forEach(post => {
         post.user.avatar = state.user.avatar
@@ -267,12 +288,16 @@ onActivated(async () => {
     })
 })
 
+onDeactivated(() => {
+    state.recoverFromOnDeactivated = true
+})
+
 onMounted(async () => {
     const nickname = route.params.nickname
 
     await getUser(nickname)
     state.lastTimestamp = state.user?.lastPostAt || Date.now()
-    if (!state.user.blocked && !state.user.blocking) {
+    if (!state.user.blocked && !state.user.blocking && !isPrivateAccountAndNotFollowed.value) {
         await getPosts()
     }
 
@@ -289,4 +314,6 @@ provide('dismissProfileMenus', { dismissProfileMenus: dismissProfileMenus })
 provide('postingNew', { postingNew })
 provide('refreshProfileOnUi', { refreshProfileOnUi: refreshProfileOnUi })
 provide('pinPostOnUi', { pinPostOnUi: pinPostOnUi })
+provide('removeFanOnUi', { removeFanOnUi: removeFanOnUi })
+provide('newCurUser', { newCurUser })
 </script>

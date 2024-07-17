@@ -45,16 +45,21 @@ img.pic.img-fluid{
     max-width: 100% !important;
 }
 
-.material-icons-round {
+.material-symbols-rounded {
     cursor: pointer;
     background-color: transparent;
     border-radius: 24rem;
     padding: 0.5rem;
     color: #5d6064;
     user-select: none;
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 300,
+    'GRAD' 0,
+    'opsz' 24
 }
 
-.material-icons-round:not(.no-hover,.sm\:no-hover):hover {
+.material-symbols-rounded:not(.no-hover,.sm\:no-hover):hover {
     background-color: #00000022;
 }
 

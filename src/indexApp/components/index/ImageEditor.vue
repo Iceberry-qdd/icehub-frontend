@@ -12,7 +12,7 @@
             @handle-action="submit">
             <div class="flex font-bold gap-x-2 items-center justify-start text-white w-full">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                <div class="close-btn material-icons-round text-[1.125rem] text-white" @click="dismiss">arrow_back_ios</div>
+                <div class="close-btn material-symbols-rounded text-[1.125rem] text-white" @click="dismiss">arrow_back_ios_new</div>
                 <div>返回</div>
             </div>
         </Header>
@@ -32,7 +32,7 @@
                         title="裁剪"
                         @click="state.cropper.show = true">
                         <div
-                            class="bg-[#000000BB] box-content cursor-pointer h-[1.2rem] material-icons-round max-sm:bg-transparent no-hover p-[0.3rem] rounded-full text-[1rem] text-white w-[1.2rem]">
+                            class="bg-[#000000BB] box-content cursor-pointer h-[1.2rem] material-symbols-rounded max-sm:bg-transparent no-hover p-[0.3rem] rounded-full text-[1rem] text-white w-[1.2rem]">
                             crop
                         </div>
                         <Teleport to="#app">

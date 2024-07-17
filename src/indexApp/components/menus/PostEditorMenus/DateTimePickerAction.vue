@@ -25,13 +25,13 @@
             <div class="flex flex-row h-[2rem] items-center justify-between w-full">
                 <div
                     :class="[canPickYearBefore ? '' : 'm-disabled']"
-                    class="last-year material-icons-round"
+                    class="last-year material-symbols-rounded"
                     @click="minusOneYear">
                     keyboard_double_arrow_left
                 </div>
                 <div
                     :class="[canPickMonthBefore ? '' : 'm-disabled']"
-                    class="last-month material-icons-round"
+                    class="last-month material-symbols-rounded"
                     @click="canPickMonthBefore ? minusOneMonth() : ''">
                     keyboard_arrow_left
                 </div>
@@ -40,13 +40,13 @@
                 </div>
                 <div
                     :class="[canPickMonthAfter ? '' : 'm-disabled']"
-                    class="material-icons-round next-month"
+                    class="material-symbols-rounded next-month"
                     @click="canPickMonthAfter ? addOneMonth() : ''">
                     keyboard_arrow_right
                 </div>
                 <div
                     :class="[canPickYearAfter ? '' : 'm-disabled']"
-                    class="material-icons-round next-year"
+                    class="material-symbols-rounded next-year"
                     @click="addOneYear">
                     keyboard_double_arrow_right
                 </div>
@@ -116,7 +116,7 @@
 </template>
 
 <style scoped>
-.material-icons-round {
+.material-symbols-rounded {
     cursor: pointer;
     border-radius: 8px;
     font-size: 15pt;

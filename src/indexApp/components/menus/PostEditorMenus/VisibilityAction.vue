@@ -12,7 +12,7 @@
             :index="action.id"
             @click.stop="pickedVisibility(action)">
             <span
-                class="material-icons-round no-hover p-0 sm:text-[1.25rem] text-[1.5rem]"
+                class="material-symbols-rounded no-hover p-0 sm:text-[1.25rem] text-[1.5rem]"
                 :class="[action.code == props.visibility ? 'text-blue-500' : '']">
                 {{ action.icon }}
             </span>

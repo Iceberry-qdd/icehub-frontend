@@ -1,6 +1,6 @@
 <template>
     <div @click="showConfirmDialogBox">
-        <span class="material-icons-round max-sm:bg-red-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-red-500">delete</span>
+        <span class="material-symbols-rounded max-sm:bg-red-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-red-500">delete</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <div class="max-sm:text-[0.8rem]">删除此内容</div>
         <Teleport to="#app">

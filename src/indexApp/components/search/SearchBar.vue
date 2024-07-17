@@ -45,7 +45,7 @@
                             :class="[index === 'HISTORY' ? 'flex' : 'hidden']"
                             class="backdrop-blur-sm bg-gray-100/75 flex-row font-bold gap-x-2 h-[3rem] items-center justify-start px-4 sticky text-black top-0">
                             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                            <div class="material-icons-round no-hover">{{ state.suggests.typeMap.get(index).icon }}</div>
+                            <div class="material-symbols-rounded no-hover">{{ state.suggests.typeMap.get(index).icon }}</div>
                             <div>{{ state.suggests.typeMap.get(index).zh }}</div>
                         </div>
                         <div
@@ -71,6 +71,11 @@
                                         </div>
                                         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                                         <IconVerify v-if="suggest.content.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                                        <div
+                                            v-if="suggest.content.confirmFollow"
+                                            class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                                            lock
+                                        </div>
                                     </div>
                                     <div class="font-light text-[0.8rem] text-gray-500 webkit-box-1">
                                         {{ suggest.content.verifiedInfo || suggest.content.remark || '这个人什么也没写' }}
@@ -84,7 +89,7 @@
                                 <div v-html="contentText(suggest.content.content, index)"></div>
                                 <div
                                     v-if="suggest.content.type === 'HISTORY'"
-                                    class="close material-icons-round no-hover"
+                                    class="close material-symbols-rounded no-hover"
                                     @click.stop="removeHistory(suggest.content.id)">
                                     close
                                 </div>
@@ -99,7 +104,7 @@
                     <span class="text-base">{{ state.suggests.loadingText }}</span>
                 </div>
                 <div class="flex-col gap-y-1 h-[8rem] hidden items-center justify-center">
-                    <span class="material-icons-round no-hover"> search_off </span>
+                    <span class="material-symbols-rounded no-hover"> search_off </span>
                     <span class="text-base">{{ state.suggests.failText }}</span>
                 </div>
             </div>
@@ -124,12 +129,12 @@
     opacity: 0;
 }
 
-.material-icons-round.no-hover {
+.material-symbols-rounded.no-hover {
     font-size: 18pt;
     padding: 0;
 }
 
-.material-icons-round.close {
+.material-symbols-rounded.close {
     font-size: 13pt;
     /* padding: calc((3rem - 13pt) / 2); */
 }
@@ -227,7 +232,6 @@ async function searchSuggest() {
         state.suggests.hintSuggests = Object.keys(result).length > 0 ? result : null
         state.suggests.show = Object.keys(result).length > 0
     } catch (e) {
-        console.error(e)
         state.suggests.show = false
     } finally {
         state.suggests.showLoading = false
