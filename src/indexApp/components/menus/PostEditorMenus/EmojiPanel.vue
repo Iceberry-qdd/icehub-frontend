@@ -199,20 +199,22 @@ function toggleSkinPanel(emoji, show){
     }
 }
 
-onMounted(() => {
-    if(!props.switchId) return
+function clickListener(event){
     const emojiPanel = document.querySelector(`#${props.switchId}`)
     const emojiPanelBtn = document.querySelector(`#${props.switchId}-btn`)
-    document.querySelector('#app').addEventListener('click', function (event) {
-        const isClickPanel = emojiPanel && emojiPanel.contains(event.target)
-        const isClickPanelBtn = emojiPanelBtn && emojiPanelBtn.contains(event.target)
-        if (!isClickPanel && !isClickPanelBtn) {
-            emits('dismissEmojiPanel')
-        }
-    })
+    const isClickPanel = emojiPanel && emojiPanel.contains(event.target)
+    const isClickPanelBtn = emojiPanelBtn && emojiPanelBtn.contains(event.target)
+    if (!isClickPanel && !isClickPanelBtn) {
+        emits('dismissEmojiPanel')
+    }
+}
+
+onMounted(() => {
+    if(!props.switchId) return
+    document.querySelector('#app').addEventListener('click', clickListener)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', () => { })
+    document.querySelector('#app').removeEventListener('click', clickListener)
 })
 </script>

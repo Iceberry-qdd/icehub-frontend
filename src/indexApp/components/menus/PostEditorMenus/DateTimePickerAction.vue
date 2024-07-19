@@ -316,6 +316,16 @@ function closeAndOk() {
     emits('closeWithOk', { timestamps: pickedTimestamps })
 }
 
+function clickListener(event){
+    const dateTimePickerAction = document.querySelector(`#${props.switchId}`)
+    const dateTimePickerActionBtn = document.querySelector(`#${props.switchId}-btn`)
+    const isClickAction = dateTimePickerAction && dateTimePickerAction.contains(event.target)
+    const isClickBtn = dateTimePickerActionBtn && dateTimePickerActionBtn.contains(event.target)
+    if (!isClickAction && !isClickBtn) {
+        emits('closeWithClear')
+    }
+}
+
 onMounted(() => {
     const now = props.curPickedTime !== 0 ? new Date(props.curPickedTime) : new Date()
     state.pickedYear = now.getFullYear()
@@ -324,18 +334,10 @@ onMounted(() => {
     state.pickedHour = now.getHours()
     state.pickedMinute = now.getMinutes()
 
-    const dateTimePickerAction = document.querySelector(`#${props.switchId}`)
-    const dateTimePickerActionBtn = document.querySelector(`#${props.switchId}-btn`)
-    document.querySelector('#app').addEventListener('click', function (event) {
-        const isClickAction = dateTimePickerAction && dateTimePickerAction.contains(event.target)
-        const isClickBtn = dateTimePickerActionBtn && dateTimePickerActionBtn.contains(event.target)
-        if (!isClickAction && !isClickBtn) {
-            emits('closeWithClear')
-        }
-    })
+    document.querySelector('#app').addEventListener('click', clickListener)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', () => { })
+    document.querySelector('#app').removeEventListener('click', clickListener)
 })
 </script>

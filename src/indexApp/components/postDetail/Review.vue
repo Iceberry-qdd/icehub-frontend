@@ -196,8 +196,8 @@
 
 <script setup>
 // 只包括评论和一层回复
-import { computed, reactive, onMounted, provide, defineAsyncComponent } from 'vue'
-import { dislikeAReview, getSubReviewById, likeAReview } from '@/indexApp/js/api.js'
+import { computed, reactive, onMounted, provide, defineAsyncComponent, readonly, ref } from 'vue'
+import { dislikeAReview, getPostById, getSubReviewById, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { Like, Message, More } from '@icon-park/vue-next'
 import { useRouter, useRoute } from 'vue-router'
@@ -205,11 +205,11 @@ import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
+import IconVerify from '@/components/icons/IconVerify.vue'
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 const Reply = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/Reply.vue'))
 const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewMenu.vue'))
-import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -236,7 +236,8 @@ const state = reactive({
     lastTimestamp: new Date().getTime(),
     showUserInfoPop: false,
     showReplyPanel: false,
-    showReviewMenu: false    
+    showReviewMenu: false,
+    post: props.post
 })
 
 const replyTo = computed(() => {
@@ -337,9 +338,6 @@ function dismissReviewMenus() {
     state.showReviewMenu = false
 }
 
-onMounted(() => {
-    getReply()
-})
 
 function deleteReplyOnUi(replyId){
     if (!replyId) return
@@ -366,7 +364,27 @@ function handleAvatarMouseenter(){
     }
 }
 
+async function getPost(id){
+    try{
+        const response = await getPostById(id)
+        if (!response.ok) throw new Error((await response.json()).message)
+
+        const result = await response.json()
+        state.post = result
+    } catch(e){
+        console.log(e)
+    }
+}
+
+onMounted(() => {
+    getReply()
+    if(!state.post){
+        getPost(props.review.postId)
+    }
+})
+
 provide('dismissReviewMenus', { dismissReviewMenus: dismissReviewMenus })
 provide('newReview', { newReview })
 provide('deleteReplyOnUi', { deleteReplyOnUi: deleteReplyOnUi })
+provide('postCreatorId', {userId: computed(() => state.post?.user?.id)})
 </script>

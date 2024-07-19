@@ -8,7 +8,7 @@
             v-for="action in props.ui"
             :key="action.id"
             :class="[action.code == props.visibility ? 'bg-blue-100 hover:bg-blue-100' : 'hover:bg-gray-100 active:bg-gray-200']"
-            class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-xl px-4 py-[0.6rem] sm:first-of-type:rounded-t-[6px] sm:last-of-type:rounded-b-[6px]"
+            class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-xl px-4 py-[0.6rem] sm:[&:nth-child(2)]:rounded-t-[6px] sm:last:rounded-b-[6px]"
             :index="action.id"
             @click.stop="pickedVisibility(action)">
             <span
@@ -51,23 +51,26 @@ function pickedVisibility(action) {
     emits('pickedVisibility', action)
 }
 
+function clickListener(event){
+    const visibilityAction = document.querySelector(`#${props.switchId}`)
+    const visibilityActionBtn = document.querySelector(`#${props.switchId}-btn`)
+    const isClickAction = visibilityAction && visibilityAction.contains(event.target)
+    const isClickActionBtn = visibilityActionBtn && visibilityActionBtn.contains(event.target)
+    if (!isClickAction && !isClickActionBtn) {
+        emits('dismissVisibilityAction')
+    }
+}
+
 onMounted(() => {
     if(props.switchId){
-        const visibilityAction = document.querySelector(`#${props.switchId}`)
-        const visibilityActionBtn = document.querySelector(`#${props.switchId}-btn`)
-        document.querySelector('#app').addEventListener('click', function (event) {
-            const isClickAction = visibilityAction && visibilityAction.contains(event.target)
-            const isClickActionBtn = visibilityActionBtn && visibilityActionBtn.contains(event.target)
-            if (!isClickAction && !isClickActionBtn) {
-                emits('dismissVisibilityAction')
-            }
-        })
+
+        document.querySelector('#app').addEventListener('click', clickListener)
     }
 })
 
 onUnmounted(() => {
     if(props.switchId){
-        document.querySelector('#app').removeEventListener('click', () => { })
+        document.querySelector('#app').removeEventListener('click', clickListener)
     }
 })
 </script>

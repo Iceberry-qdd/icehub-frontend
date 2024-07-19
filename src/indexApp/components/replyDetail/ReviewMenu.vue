@@ -98,6 +98,7 @@ import { reactive, computed, onMounted, onUnmounted, inject } from 'vue'
 import ShareLinkAction from '@/indexApp/components/menus/reviewMenus/ShareLinkAction.vue'
 import DeleteReviewAction from '@/indexApp/components/menus/reviewMenus/DeleteReviewAction.vue'
 
+const { userId:postCreatorId } = inject('postCreatorId')
 const { dismissReviewMenus } = inject('dismissReviewMenus')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
@@ -108,11 +109,21 @@ const props = defineProps({
         required: true
     }
 })
+
+const selfReview = computed(() => {
+    return curUser.id === props.review.user.id
+})
+
+const selfPost = computed(() => {
+    return curUser.id === postCreatorId.value
+})
+
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     actionVisMap: new Map([
         [ShareLinkAction.__name, true],
-        [DeleteReviewAction.__name, curUser.id === props.review.user.id],
+        // eslint-disable-next-line vue/no-ref-object-reactivity-loss
+        [DeleteReviewAction.__name, selfReview.value || selfPost.value],
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示
     ])
 })
