@@ -80,6 +80,7 @@ async function doToggleLockProfile(){
         if (!response2.ok) throw new Error((await response2.json()).message)
         const newUser = await response2.json()
         newCurUser({user: newUser})
+        store.setSuccessMsg(`已设为${props.isLocked ? '私密' : '公开'}账户`)
         dismissProfileMenus()
     }catch(e){
         store.setErrorMsg(e.message)

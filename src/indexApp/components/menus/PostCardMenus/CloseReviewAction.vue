@@ -17,11 +17,12 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, inject } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 import { toggleCloseReviewApi } from '@/indexApp/js/api.js'
 
+const { dismissPostMenus } = inject('dismissPostMenus')
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -93,13 +94,14 @@ async function toggleCloseReview() {
 
         const result = await response.json()
         if (result == false) throw new Error("操作失败！")
-        store.setSuccessMsg("操作成功！")
+        store.setSuccessMsg(`已${text.value}！`)
         state.post.allowReview = !state.post.allowReview
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {
         toggleDialogLoading(false)
         dismissConfirmDialogBox()
+        dismissPostMenus()
     }
 }
 </script>
