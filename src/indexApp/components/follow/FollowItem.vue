@@ -4,13 +4,13 @@
         class="border-b-[1px] flex flex-nowrap flex-row gap-x-3 items-start p-2">
         <Avatar
             :user="props.user"
-            class="flex-initial h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
+            class="flex-none h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
             @click="routeToUserProfile">
         </Avatar>
-        <div>
+        <div class="flex-1">
             <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
                 <div
-                    class="font-bold hover:underline hover:underline-offset-4 text-[14pt]"
+                    class="font-bold hover:underline hover:underline-offset-4 text-[14pt] webkit-box-1"
                     @click="routeToUserProfile">
                     {{ props.user.nickname }}
                 </div>
@@ -18,37 +18,53 @@
                     v-if="props.user.verified"
                     class="h-[0.9rem] text-blue-500 w-[0.9rem]">
                 </IconVerify>
+                <div
+                    v-if="props.user.confirmFollow"
+                    class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                    lock
+                </div>
+                <div
+                    v-if="state.yourFanStatus === 'FAN' && state.yourFollowStatus !== 'FOLLOW'"
+                    class="bg-blue-100 cursor-default px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    订阅了你
+                </div>
+                <div
+                    v-if="state.yourFanStatus === 'WAIT_PASS'"
+                    class="bg-blue-100 cursor-default px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    请求订阅你
+                </div>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="brief text-[10pt]">{{ brief(props.user.remark) }}</div>
+            <div class="font-light text-[0.9rem] webkit-box-2">{{ brief(props.user.remark) }}</div>
+        </div>
+        <div
+            v-if="!isSelf && state.yourFanStatus === 'WAIT_PASS' && !store.MOBILE_MODE"
+            :class="yourFanButtonClass"
+            class="cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
+            @click="passFanRequest">
+            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+            <div v-if="!state.loading"> {{ yourFanButtonText }} </div>
+            <IconLoading
+                v-else
+                :class="yourFanLoadingIconClass"
+                class="h-5 w-5">
+            </IconLoading>
         </div>
         <div
             v-if="!isSelf"
-            :class="buttonClass"
-            class="cursor-pointer flex-initial font-bold place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
+            :class="yourFollowButtonClass"
+            class="cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
             @click="toggleFollowState">
-            <div
-                v-if="!state.loading"
-                class="text-center">
-                {{ buttonText }}
-            </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
+            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+            <div v-if="!state.loading"> {{ yourFollowButtonText }} </div>
+            <IconLoading
+                v-else
+                :class="yourFollowLoadingIconClass"
+                class="h-5 w-5">
+            </IconLoading>
         </div>
     </div>
 </template>
-
-<style scoped>
-.brief {
-    width: 24.5rem;
-    font-weight: 400;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-}
-</style>
 
 <script setup>
 import { reactive, computed } from 'vue'
@@ -70,25 +86,59 @@ const router = useRouter()
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     loading: false,
-    isFollowing: props.user.following,
-    isFollower: props.user.follower,
-    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
+    yourFollowStatus: props.user.yourFollowStatus,
+    yourFanStatus: props.user.yourFanStatus,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    followTextMap: new Map([
+        ['NOT_FOLLOW', '订阅'],
+        ['WAIT_PASS', '等待批准'],
+        ['FOLLOW', '已订阅'],
+        [undefined, '订阅']
+    ]),
+    fanTextMap: new Map([
+        ['WAIT_PASS', '允许订阅'],
+        [undefined, '']
+    ])
 })
 
-const buttonClass = computed(() => ({
-    'bg-blue-500': !state.isFollowing,
-    'bg-gray-200': state.isFollowing,
-    'text-black': state.isFollowing,
-    'text-white': !state.isFollowing
+const yourFollowButtonClass = computed(() => ({
+    'bg-blue-500': state.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-gray-200': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-zinc-500': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-white': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
-const buttonText = computed(() => {
-    if(state.isFollowing && state.isFollower) return '相互订阅'
-    return state.isFollowing ? '已订阅' : '订阅'
+
+const yourFollowButtonText = computed(() => {
+    if (state.yourFollowStatus === 'FOLLOW' && state.yourFanStatus === 'FAN') return '相互订阅'
+    if(state.yourFollowStatus === 'NOT_FOLLOW' && props.user.confirmFollow) return '请求订阅'
+    return state.followTextMap.get(state.yourFollowStatus)
 })
 
+const yourFollowLoadingIconClass = computed(() => ({
+    'text-zinc-500': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-white': state.yourFollowStatus === 'NOT_FOLLOW'
+}))
+
+const yourFanButtonClass = computed(() => ({
+    'bg-blue-500': state.yourFanStatus === 'WAIT_PASS',
+    'bg-gray-200': state.yourFanStatus !== 'WAIT_PASS',
+    'text-zinc-500': state.yourFanStatus !== 'WAIT_PASS',
+    'text-white': state.yourFanStatus === 'WAIT_PASS'
+}))
+
+
+const yourFanButtonText = computed(() => {
+    return state.fanTextMap.get(state.yourFanStatus)
+})
+
+const yourFanLoadingIconClass = computed(() => ({
+    'text-zinc-500': state.yourFollowStatus === 'WAIT_PASS',
+    'text-white': state.yourFollowStatus !== 'WAIT_PASS'
+}))
+
 const itemClass = computed(() => ({
-    'justify-center': !isSelf.value,
+    'justify-between': !isSelf.value,
     'justify-start': isSelf.value
 }))
 
@@ -104,7 +154,7 @@ function brief(remark) {
 }
 
 function toggleFollowState() {
-    state.isFollowing ? unFollowAUser() : followAUser()
+    state.yourFollowStatus ? unFollowAUser() : followAUser()
 }
 
 async function followAUser() {
@@ -112,14 +162,17 @@ async function followAUser() {
     state.loading = true
     try {
         const response = await followUser(id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
-        if (result == false) throw new Error('关注失败！')
-        state.isFollowing = result
+        if (result?.confirmed){
+            store.setSuccessMsg("订阅成功！")
+            state.yourFollowStatus = 'FOLLOW'
+        } else {
+            state.yourFollowStatus = 'WAIT_PASS'
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
     }
@@ -130,16 +183,19 @@ async function unFollowAUser() {
     state.loading = true
     try {
         const response = await unFollowUser(id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
-        if (result == false) throw new Error('取消关注失败！')
-        state.isFollowing = !result
+        state.yourFollowStatus = 'NOT_FOLLOW'
+        store.setSuccessMsg("取消订阅成功！")
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
     }
+}
+
+function passFanRequest(){
+    state.yourFanStatus = 'FAN'
 }
 </script>

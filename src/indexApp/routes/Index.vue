@@ -1,8 +1,8 @@
 <template>
     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-    <div id="index" class="relative">
+    <div id="index">
         <Header
-            :width="state.headerConfig.width"
+            class="sticky"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
@@ -10,18 +10,27 @@
             :menu-action="state.headerConfig.menuAction"
             :icon-tooltip="state.headerConfig.iconTooltip">
         </Header>
-        <Transition>
-            <GlobalRefresh
-                v-if="state.isShowGlobalRefresh && showUnImpl"
-                class="-translate-x-1/2 fixed left-1/2 z-[99]"
-                :class="[isShowGlobalNotifyBannerMsg ? 'top[6.5rem]' : 'top-[4rem]']"
-                @close-global-refresh="state.isShowGlobalRefresh=false">
-            </GlobalRefresh>
+        <div  
+            class="absolute content-center flex items-center justify-center pointer-events-none w-full z-[99]">
+            <Transition>
+                <GlobalRefresh
+                    v-if="state.isShowGlobalRefresh && showUnImpl"
+                    class="fixed h-auto top-[4rem]"
+                    @close-global-refresh="state.isShowGlobalRefresh=false">
+                </GlobalRefresh>
+            </Transition>
+        </div>
+        <Transition name="fade">
+            <PostEditor
+                v-show="!store.MOBILE_MODE || (store.MOBILE_MODE && state.isShowPostEditor)"
+                id="post-editor"
+                :class="{'fixed-page': store.MOBILE_MODE && state.isShowPostEditor}"
+                class="max-sm:fixed max-sm:h-[calc(100vh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
+                @close="state.isShowPostEditor = false"
+                @get-data="getData"
+                @posting-new="postingNew">
+            </PostEditor>
         </Transition>
-        <PostEditor
-            @get-data="getData"
-            @posting-new="postingNew">
-        </PostEditor>
         <PostsTimeline
             :is-loading="state.isLoading"
             :posts="state.posts"
@@ -33,6 +42,12 @@
             :has-more="hasMore"
             @fetch-more="fetchNewPost">
         </Footer>
+        <div
+            id="create-post-btn"
+            class="bg-blue-500 bottom-20 fixed material-symbols-rounded no-hover p-3 right-4 shadow-blue-500/25 shadow-lg sm:hidden text-white z-[111]"
+            @click="state.isShowPostEditor = true">
+            create
+        </div>
     </div>
 </template>
 
@@ -68,6 +83,12 @@
         opacity: 0;
     }
 }
+
+@media not all and (min-width: 640px) {
+    #main:has(#back-to-top)>#index>#create-post-btn{
+        display: none;
+    }
+}
 </style>
 
 <script setup>
@@ -76,7 +97,7 @@ import Header from '@/indexApp/components/Header.vue'
 import { getUserTimeline } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import PostEditor from '@/indexApp/components/index/PostEditor.vue'
-import { computed, onMounted, reactive, provide } from 'vue'
+import { computed, onMounted, reactive, provide, watch } from 'vue'
 import GlobalRefresh from '@/components/GlobalRefresh.vue'
 import Footer from '@/indexApp/components/Footer.vue'
 
@@ -88,7 +109,7 @@ const state = reactive({
     totalPages: 0,
     lastTimestamp: new Date().getTime(),
     headerConfig: {
-        title: '主页',
+        title: '动态',
         goBack: false,
         showMenu: showUnImpl, // TODO implement it.
         menuIcon: 'campaign',
@@ -96,14 +117,15 @@ const state = reactive({
         iconTooltip: '公告'
     },
     isShowGlobalRefresh: true,
-    isLoading: false
+    isLoading: false,
+    isShowPostEditor: false
 })
 
 async function getData() {
     state.isLoading = true
     try {
         const response = await getUserTimeline(state.pageIdx, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
@@ -113,7 +135,6 @@ async function getData() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isLoading = false
     }

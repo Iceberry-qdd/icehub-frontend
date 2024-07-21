@@ -1,65 +1,67 @@
 <template>
-    <div class="container">
-        <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
-        <Auth @referer="referer"></Auth>
+    <div>
+        <div class="absolute flex items-start justify-center top-2 w-full z-[1999]">
+            <GlobalBanner
+                v-if="store.GLOBAL_MSG.length > 0"
+                class="fixed h-fit w-fit">
+            </GlobalBanner>
+        </div>
+        <div class="absolute bg-gray-100 flex h-full items-center justify-center w-full">
+            <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
+            <router-view
+                v-slot="{ Component }"
+                class="bg-white flex flex-col items-center justify-center max-h-[100vh] max-sm:h-[100vh] max-sm:rounded-none max-sm:w-[100vw] max-w-[100vw] relative rounded-xl">
+                <keep-alive
+                    :max="8"
+                    :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
+                    <component
+                        :is="Component"
+                        :key="route.fullPath"
+                        @referer="referer">
+                    </component>
+                </keep-alive>
+            </router-view>
+        </div>
     </div>
 </template>
 
-<style scoped>
-#header {
-    position: fixed;
-    width: 100%;
-    z-index: 99;
-}
-
-#sidebar {
-    position: fixed;
-    left: 13rem;
-    top: 5rem;
-}
-
-main {
-    width: 40%;
-    padding-top: 5rem;
-    position: absolute;
-    left: 28%;
-    right: 28%;
-}
-</style>
-
 <script setup>
-import { onMounted, onUnmounted, defineAsyncComponent } from 'vue'
-import Auth from '@/authApp/components/Auth.vue'
-import 'material-icons/iconfont/round.css'
+import { onMounted, onUnmounted, defineAsyncComponent, nextTick, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 
+const route = useRoute()
+const router = useRouter()
+
 function referer() {
-    if (window.location.search && window.location.search.includes('url=')) {
-        const referer = window.location.search.substring(1)
-            .split('&')
-            .find(it => it.substring(0, it.indexOf('=')) === 'url')
-            .split('=')
-            .at(1)
-        window.location = `${window.location.origin}${referer}`
+    const url = route.query?.url
+    if(!url) {
+        window.location = `${window.location.origin}/index.html`
         return
     }
-
-    window.location = window.location.origin
-    return
+    window.location = `${window.location.origin}/index.html?url=${route.query.url}`
 }
 
+watch(() => route.query?.ph, (ph, oldVal) => {
+    if (ph){
+        router.push({name: 'quickLogin', query: {ph: ph}})
+    }
+})
+
 onMounted(() => {
-    document.getElementById('pre-loading').style.display = 'none'
     history.pushState(null, null, document.URL)
     window.addEventListener('popstate', function () {
         history.pushState(null, null, document.URL)
     })
-
+    
     const token = localStorage.getItem('TOKEN')
     if (token) {
         referer()
+        return
     }
+    
+    document.getElementById('pre-loading').style.display = 'none'
 })
 
 onUnmounted(() => {

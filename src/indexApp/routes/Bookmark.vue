@@ -1,6 +1,7 @@
 <template>
     <div id="bookmark">
         <Header
+            class="sticky"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
@@ -45,7 +46,7 @@
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { reactive, computed, onMounted, provide} from 'vue'
+import { reactive, computed, onMounted, provide, watch } from 'vue'
 import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
 import { store } from '@/indexApp/js/store.js'
 import { getMarkPostList } from '@/indexApp/js/api.js'
@@ -54,7 +55,7 @@ import Footer from '@/indexApp/components/Footer.vue'
 const state = reactive({
     headerConfig: {
         title: '书签',
-        goBack: false,
+        goBack: store.MOBILE_MODE,
         showMenu: false,
         menuIcon: 'create',
         menuAction: { action: 'route', param: '/profile/edit' }
@@ -75,7 +76,7 @@ async function getPostList() {
     state.isLoading = true
     try {
         const response = await getMarkPostList(state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
@@ -85,7 +86,6 @@ async function getPostList() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isLoading = false
     }
@@ -130,7 +130,9 @@ function postingNew(post) {
     state.posts.unshift(post)
 }
 
-
+watch(() => store.MOBILE_MODE, (newVal, _) => {
+    state.headerConfig.goBack = newVal
+})
 
 onMounted(() => {
     getPostList()

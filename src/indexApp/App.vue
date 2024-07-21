@@ -3,7 +3,7 @@
     <div v-if="state.user">
         <GlobalProgressIndicator
             v-if="state.showProgressIndicator"
-            class="fixed"
+            class="fixed z-[106]"
             :routing="state.startRoute"
             @close="closeProgressIndicator">
         </GlobalProgressIndicator>
@@ -15,24 +15,51 @@
             :message="store.GLOBAL_NOTIFY_BANNER_MSG"
             @close-global-notify-banner="closeGlobalNotifyBannerMsg">
         </GlobalNotifyBanner>
+        <ImageSlide2
+            v-if="store.SLIDE_DATA.urls.length > 0"
+            class="fixed h-screen w-screen z-[1000]">
+        </ImageSlide2>
         <div
             id="container"
-            :class="{ 'margin-top-10': isShowGlobalNotifyBannerMsg }">
-            <GlobalBanner v-if="store.GLOBAL_MSG.length > 0"></GlobalBanner>
-            <ImageSlide2 v-if="store.SLIDE_DATA.urls.length > 0"></ImageSlide2>
+            ref="container"
+            class="flex-nowrap flex-row justify-center min-h-screen sm:flex"
+            :class="{ 'mt-10': isShowGlobalNotifyBannerMsg }"
+            @touchmove="handleScroll"
+            @touchstart="touchStart"
+            @wheel="handleScroll">
             <div
-                v-if="state.basis[0] > 0"
                 id="sidebar-l"
-                :style="{ 'flex-basis': state.basis[0] + '%' }">
-                <Brand></Brand>
-                <Sidebar id="menu"></Sidebar>
+                :class="{'main-route': isShowSidebarL}"
+                class="border-[#EEEEEE] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
+                <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-20 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
+                <Sidebar
+                    id="menu"
+                    class="h-fit lg:-translate-x-0 lg:mr-12 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16">
+                </Sidebar>
             </div>
             <div
-                v-if="state.basis[1] > 0"
                 id="main"
-                :style="{ 'flex-basis': state.basis[1] + '%' }">
+                class="lg:flex-[1.05] max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] max-w-[64rem] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] sm:z-[1]">
+                <div class="absolute flex items-start justify-center top-2 w-full z-[1999]">
+                    <GlobalBanner
+                        v-if="store.GLOBAL_MSG.length > 0"
+                        class="fixed h-fit w-fit">
+                    </GlobalBanner>
+                </div>
+                <div class="absolute flex items-center justify-end px-4 w-full z-[100]">
+                    <Transition name="fade">
+                        <BackToTop
+                            v-if="state.showBackToTop"
+                            id="back-to-top"
+                            class="bottom-4 fixed max-sm:bottom-20 w-fit"
+                            @click="backToTop">
+                        </BackToTop>
+                    </Transition>
+                </div>
                 <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
-                <router-view v-slot="{ Component }">
+                <router-view
+                    v-slot="{ Component }"
+                    class="relative sm-max-lg:border-[#EEEEEE] sm:max-lg:border-[1px] sm:max-lg:max-w-[36rem] w-full">
                     <keep-alive
                         :max="8"
                         :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
@@ -43,71 +70,57 @@
                     </keep-alive>
                 </router-view>
             </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="state.basis[2] > 0" id="sidebar-r" :style="sidebarRStyle">
-                <Recommend class="mr-20 p-4"></Recommend>
+            <div
+                id="sidebar-r"
+                class="border-[#EEEEEE] border-l-[1px] flex-1 h-screen max-lg:hidden no-scrollbar overflow-y-scroll sticky top-0 z-0">
+                <Recommend class="max-w-[25rem] p-4"></Recommend>
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
-#menu {
-    margin: 6rem 0rem 0 0;
+.fade-enter-active {
+    transition: bottom 0.15s ease-in-out;
 }
 
-#container {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    min-height: 100vh;
+.fade-leave-active {
+    transition: bottom 0.15s ease-in-out;
 }
 
-.margin-top-10 {
-    margin-top: 2.5rem;
+.fade-enter-from {
+    bottom: -1rem;
 }
 
-#sidebar-l {
-    border-right: 1px solid #EEEEEE;
-    overflow-x: hidden;
+.fade-enter-to {
+    bottom: 1rem;
 }
 
-#sidebar-r {
-    border-left: 1px solid #EEEEEE;
-    overflow: hidden scroll;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    z-index: 0;
-    overflow-x: hidden;
+.fade-leave-to {
+    bottom: -1rem;
 }
 
-#main {
-    min-width: 0;
-    z-index: 1;
-    overflow-x: hidden;
-}
+@media not all and (min-width: 640px) {
+    #sidebar-l:not(.main-route){
+        display: none;
+    }
+    
+    #sidebar-l:not(.main-route) + #main{
+        padding-bottom: 0;
+    }
 
-.mr-20 {
-    margin-right: 5rem
-        /* 80px */
-    ;
-}
+    #sidebar-l:not(.main-route) + #main #back-to-top{
+        bottom: 1rem;
+    }
 
-#sidebar-r::-webkit-scrollbar {
-    width: 0 !important;
-    height: 100% !important;
-    -webkit-appearance: none;
-}
-
-#sidebar-r::-webkit-scrollbar-thumb {
-    width: 6px !important;
-    -webkit-appearance: none;
+    .fade-enter-to {
+        bottom: 5rem;
+    }
 }
 </style>
 
 <script setup>
-import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick } from 'vue'
 import Sidebar from '@/indexApp/components/Sidebar.vue'
 import Recommend from '@/indexApp/components/Recommend.vue'
 import Brand from '@/indexApp/components/Brand.vue'
@@ -117,45 +130,47 @@ import { ws } from '@/indexApp/js/websocket.js'
 import { useRoute, useRouter } from 'vue-router'
 import { NavigationFailureType, isNavigationFailure } from 'vue-router'
 import GlobalProgressIndicator from '@/components/GlobalProgressIndicator.vue'
+import BackToTop from '@/indexApp/components/BackToTop.vue'
+import { isType } from '@/indexApp/utils/formatUtils.js'
 const GlobalNotifyBanner = defineAsyncComponent(() => import('@/components/GlobalNotifyBanner.vue'))
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 const ImageSlide2 = defineAsyncComponent(() => import('@/indexApp/components/ImageSlide2.vue'))
 
 const route = useRoute()
 const router = useRouter()
+const container = ref()
 const state = reactive({
-    user: null,
+    user: undefined,
     globalNotifyBannerMsg: store.GLOBAL_NOTIFY_BANNER_MSG,
-    basis: [40, 50, 40],
     startRoute: false,
     showProgressIndicator: false,
     timeoutId: 0,
-    token: localStorage.getItem('TOKEN')
-})
-
-const sidebarRStyle = reactive({
-    flexBasis: `${state.basis[2]}%`,
-
+    token: localStorage.getItem('TOKEN'),
+    showBackToTop: false,
+    touchStartClientY: 0,
+    mediaQueryList: undefined
 })
 
 async function curUser() {
     try {
-        if (state.token == null || state.token.trim() == "") new Error('Not Login!')
+        if (!state.token || state.token.trim() == "") throw new Error('Not Login!')
 
         const response = await getCurUserInfo()
-        if (!response.ok) throw new Error('Not Login!')
+        if (response.status === 401) throw new Error('Not Login!')
+        if(!response.ok) throw new Error(await response.text())
 
         state.user = await response.json()
-        if (state.user == null) throw new Error('Not Login!')
+        // if (state.user == null) throw new Error('Not Login!')
 
         const user = JSON.stringify(state.user)
         localStorage.setItem('CUR_USER', user)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
-        localStorage.removeItem('TOKEN')
-        localStorage.removeItem('CUR_USER')
-        location = `${window.origin}/auth.html?url=${window.location.pathname}`
+        if(e.message === 'Not Login!'){
+            localStorage.removeItem('TOKEN')
+            localStorage.removeItem('CUR_USER')
+            location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
+        }
     }
 }
 
@@ -208,12 +223,14 @@ watch(() => ws.connectState, function (newVal, oldVal) {
     }
 })
 
-watch(() => route.path, function (newVal, oldVal) {
-    if (newVal.startsWith('/setting')) {
-        state.basis = [40, 90, 0]
-    } else {
-        state.basis = [40, 50, 40]
-    }
+/**
+ * 移动模式下，判断是否显示底部菜单栏
+ */
+const mainRouteSet = new Set(['index', 'explore', 'notify', 'profile'])
+const isShowSidebarL = computed(() => {
+    // XXX 特判，待改进
+    if(route.name === 'profile' && route.params?.nickname !== state.user.nickname) return false
+    return mainRouteSet.has(route.name)
 })
 
 function closeProgressIndicator() {
@@ -222,8 +239,45 @@ function closeProgressIndicator() {
     }, 1100);
 }
 
-curUser()
+function backToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    state.showBackToTop = false
+}
+
+function handleScroll(e) {
+    let dy = 0
+    if (isType(e, TouchEvent)) {
+        dy = e.changedTouches.item(0).clientY - state.touchStartClientY
+    } else if (isType(e, WheelEvent)) {
+        dy = e.wheelDeltaY
+    }
+
+    if (dy === 0) return
+    state.showBackToTop = dy > 0 && container.value.scrollHeight > window.innerHeight && window.scrollY > 0
+}
+
+function touchStart(e) {
+    state.touchStartClientY = e.touches.item(0).clientY
+}
+
+function handleMediaChange(mq) {
+    store.MOBILE_MODE = mq.matches
+}
+
+watch(() => route.query?.url, (url, oldVal) => {
+    window.location = `${window.location.origin}${decodeURIComponent(atob(url))}`
+}, {once: true})
+
 onMounted(() => {
+    const url = window.document.location.search
+        .substring(1)
+        .split('&')
+        .find(it => it.substring(0, it.indexOf('=')) === 'url')
+    if(!!url){
+        return
+    }
+    
+    nextTick(() => { curUser() })
     document.getElementById('pre-loading').style.display = 'none'
     router.beforeEach((to, from) => {
         state.showProgressIndicator = true
@@ -236,10 +290,14 @@ onMounted(() => {
             store.setErrorMsg('无法加载页面，您可以刷新重试！')
         }
     })
+    state.mediaQueryList = window.matchMedia('not all and (min-width: 640px)')
+    handleMediaChange(state.mediaQueryList)
+    state.mediaQueryList.addEventListener('change', handleMediaChange)
 })
 
 onUnmounted(() => {
     disconnectToWs()
     clearTimeout(state.timeoutId)
+    state.mediaQueryList.removeEventListener('change', handleMediaChange)
 })
 </script>

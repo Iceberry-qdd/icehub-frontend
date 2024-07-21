@@ -1,35 +1,44 @@
 <template>
     <div>
         <div
-            class="border-b-[1px] border-gray-100 cursor-pointer flex flex-col gap-y-2 hover:bg-[#f5f5f5] px-[1rem] py-[1rem] relative">
+            :class="{'hover:bg-[#f5f5f5]': route.name !== 'replyDetail'}"
+            class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
             <div
                 v-if="tieSub == 'mid'"
-                class="absolute bg-gray-200 h-full left-[2.2rem] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="tieSub == 'top'"
-                class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-[calc(100%-2.5rem)] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="tieSub == 'bottom'"
-                class="absolute bg-gray-200 h-[2.5rem] left-[2.2rem] timeline-bottom top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
-                class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
+                v-if="route.name !== 'replyDetail'"
+                class="absolute bg-transparent cursor-pointer h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(review.id)" />
             <div class="flex flex-row items-center justify-between">
-                <div class="flex flex-row gap-x-4 items-center relative">
-                    <Transition name="fade">
-                        <UserInfoPop
-                            v-if="state.showUserInfoPop"
-                            :user="state.review.user"
-                            class="absolute shadow-lg top-0 user-info-pop z-[99]"
-                            @mouseleave="state.showUserInfoPop = false">
-                        </UserInfoPop>
-                    </Transition>
+                <div class="flex flex-row gap-x-4 items-center max-sm:gap-x-3 relative">
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                        <div
+                            v-if="state.showUserInfoPop && store.MOBILE_MODE"
+                            class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
+                            @click="state.showUserInfoPop = false" />
+                        <Transition name="fade">
+                            <UserInfoPop
+                                v-if="state.showUserInfoPop"
+                                :user="state.review.user"
+                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[103]"
+                                @mouseleave="state.showUserInfoPop = false">
+                            </UserInfoPop>
+                        </Transition>
+                    </Teleport>
                     <div class="relative z-10">
                         <Avatar
                             :user="state.review.user"
                             class="h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]"
-                            @mouseenter="state.showUserInfoPop = true"
-                            @click="routeToUser(state.review.user.nickname)">
+                            @mouseenter="handleAvatarMouseenter()"
+                            @click="handleAvatarClick()">
                         </Avatar>
                     </div>
                     <div class="z-20">
@@ -39,11 +48,20 @@
                                 @click="routeToUser(state.review.user.nickname)">
                                 {{ state.review.user.nickname }}
                             </div>
-                            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                            <IconVerify v-if="state.review.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                            <IconVerify
+                                v-if="state.review.user.verified"
+                                class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                            </IconVerify>
+                            <div
+                                v-if="state.review.user.confirmFollow"
+                                class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                                lock
+                            </div>
                         </div>
-                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                        <div v-if="props.post != null" class="text-[11pt]" @click="routeToUser(replyTo)">
+                        <div
+                            v-if="props.post != null"
+                            class="text-[11pt]"
+                            @click="routeToUser(replyTo)">
                             回复
                             <span class="cursor-pointer hover:underline">@{{ replyTo }}</span>
                         </div>
@@ -57,7 +75,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pl-[3.5rem] text-[12pt]">
+            <div class="max-sm:pl-[3.25rem] pl-[3.5rem] text-[12pt]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.review.content"></VueShowdown>
                 <ImageGrid
@@ -69,37 +87,56 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row justify-between pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-8 justify-end pl-[3.5rem] z-20">
                 <button
                     :id="`rmb-${state.review.id}`"
                     type="button"
                     title="更多"
                     class="btn flex flex-row gap-x-2 items-center op relative text-[11pt]"
                     @click="toggleMenu">
+                    <More
+                        theme="outline"
+                        size="20"
+                        fill="#333"
+                        :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
+                    </More>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <More theme="outline" size="20" fill="#333" :stroke-width="3"></More>
-                    <Transition name="fade">
-                        <ReviewMenu
-                            v-if="state.showReviewMenu"
-                            class="absolute bottom-0"
-                            :review="state.review">
-                        </ReviewMenu>
-                    </Transition>
+                    <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                        <div
+                            v-if="state.showReviewMenu && store.MOBILE_MODE"
+                            class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1000]" />
+                        <Transition name="fade">
+                            <ReviewMenu
+                                v-if="state.showReviewMenu"
+                                class="absolute bottom-0 h-auto max-sm:fixed max-sm:left-0 max-sm:pb-2 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1000] rounded-[8px] sm:max-w-[18rem] sm:min-w-[10rem]"
+                                :review="state.review">
+                            </ReviewMenu>
+                        </Transition>
+                    </Teleport>
                 </button>
                 <button
                     type="button"
                     :title="`${state.totalReplyCount} 评论`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="state.showReplyPanel = true">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <Message theme="outline" size="19" fill="#333" :stroke-width="3"></Message>
+                    <Message
+                        theme="outline"
+                        size="19"
+                        fill="#333"
+                        :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
+                    </Message>
                     {{ humanizedNumber(state.totalReplyCount) }}
                     <Teleport to="#app">
-                        <ReviewPanel
-                            v-if="state.showReplyPanel"
-                            :parent-review="state.review"
-                            @dismiss="dismissReplyPanel">
-                        </ReviewPanel>
+                        <Transition name="fade">
+                            <ReviewPanel
+                                v-if="state.showReplyPanel"
+                                class="fixed top-0"
+                                :parent-review="state.review"
+                                @dismiss="dismissReplyPanel">
+                            </ReviewPanel>
+                        </Transition>
                     </Teleport>
                 </button>
                 <button
@@ -112,6 +149,7 @@
                         size="20"
                         :fill="likedIconColor"
                         :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]"
                         :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
                     </Like>
                     {{ humanizedNumber(state.review.likeCount) }}
@@ -124,7 +162,7 @@
                     v-for="(reply, index) in state.replies"
                     :key="reply.id"
                     :index="index"
-                    class="cursor-pointer hover:bg-[#f5f5f5] z-10"
+                    class="hover:bg-[#f5f5f5] z-10"
                     :reply="reply"
                     :review="state.review"
                     :tie-sub="index < state.totalReplyCount - 1 ? 'mid' : 'bottom'"
@@ -154,32 +192,12 @@
     width: 100%;
     height: fit-content;
 }
-
-.timeline-top {
-    height: calc(100% - 2.5rem);
-}
-
-.fade-enter-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
 </style>
 
 <script setup>
 // 只包括评论和一层回复
-import { computed, reactive, onMounted, provide, defineAsyncComponent } from 'vue'
-import { dislikeAReview, getSubReviewById, likeAReview } from '@/indexApp/js/api.js'
+import { computed, reactive, onMounted, provide, defineAsyncComponent, readonly, ref } from 'vue'
+import { dislikeAReview, getPostById, getSubReviewById, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { Like, Message, More } from '@icon-park/vue-next'
 import { useRouter, useRoute } from 'vue-router'
@@ -187,11 +205,11 @@ import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
+import IconVerify from '@/components/icons/IconVerify.vue'
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 const Reply = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/Reply.vue'))
 const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewMenu.vue'))
-import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -218,7 +236,8 @@ const state = reactive({
     lastTimestamp: new Date().getTime(),
     showUserInfoPop: false,
     showReplyPanel: false,
-    showReviewMenu: false    
+    showReviewMenu: false,
+    post: props.post
 })
 
 const replyTo = computed(() => {
@@ -233,7 +252,7 @@ const tieSub = computed(() => {
 async function getReply() {
     try {
         const response = await getSubReviewById(state.review.id, state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
         const { content, totalCount } = await response.json()
         state.replies.push(...content)
         state.totalReplyCount = totalCount
@@ -242,7 +261,6 @@ async function getReply() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -259,7 +277,7 @@ async function toggleLike() {
     try {
         if (state.review.liked == false) {
             const response = await likeAReview(state.review.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error('点赞失败！')
@@ -269,7 +287,7 @@ async function toggleLike() {
             state.review.liked = true
         } else {
             const response = await dislikeAReview(state.review.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error('取消点赞失败！')
@@ -280,7 +298,6 @@ async function toggleLike() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -321,9 +338,6 @@ function dismissReviewMenus() {
     state.showReviewMenu = false
 }
 
-onMounted(() => {
-    getReply()
-})
 
 function deleteReplyOnUi(replyId){
     if (!replyId) return
@@ -336,7 +350,41 @@ function deleteReplyOnUi(replyId){
     }
 }
 
+function handleAvatarClick(){
+    if(!store.MOBILE_MODE){
+        routeToUser(state.review.user.nickname)
+    } else {
+        state.showUserInfoPop = true
+    }
+}
+
+function handleAvatarMouseenter(){
+    if(!store.MOBILE_MODE){
+        state.showUserInfoPop = true
+    }
+}
+
+async function getPost(id){
+    try{
+        const response = await getPostById(id)
+        if (!response.ok) throw new Error((await response.json()).message)
+
+        const result = await response.json()
+        state.post = result
+    } catch(e){
+        console.log(e)
+    }
+}
+
+onMounted(() => {
+    getReply()
+    if(!state.post){
+        getPost(props.review.postId)
+    }
+})
+
 provide('dismissReviewMenus', { dismissReviewMenus: dismissReviewMenus })
 provide('newReview', { newReview })
 provide('deleteReplyOnUi', { deleteReplyOnUi: deleteReplyOnUi })
+provide('postCreatorId', {userId: computed(() => state.post?.user?.id)})
 </script>

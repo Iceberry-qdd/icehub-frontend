@@ -1,13 +1,12 @@
 <template>
-    <div
-        class="flex flex-rows gap-x-3 items-center justify-start"
-        @click="handleClick">
-        <span class="material-icons-round no-hover p-0 text-[1.2rem] text-red-500">logout</span>
+    <div @click="handleClick">
+        <span class="material-symbols-rounded max-sm:bg-red-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-red-500">logout</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select text-red-500">退出登录</div>
+        <div class="max-sm:text-[0.8rem]">退出登录</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmBDialogUi.show"
+                class="fixed top-0"
                 :ui="state.confirmBDialogUi"
                 @choice="choose">
             </ConfirmDialogBox>
@@ -50,12 +49,11 @@ async function doLogout(){
     try{
         state.confirmBDialogUi.loading.show = true
         const response = await logout()
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if(result){
             clearToken()
-            dismissConfirmDialogBox()
             dismissProfileMenus()
             redirectToAuth()
         }else{
@@ -63,9 +61,9 @@ async function doLogout(){
         }
     }catch(e){
         store.setErrorMsg(e.message)
-        console.error(e)
     }finally{
         state.confirmBDialogUi.loading.show = false
+        dismissConfirmDialogBox()
     }
 }
 

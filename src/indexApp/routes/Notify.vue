@@ -1,6 +1,7 @@
 <template>
     <div id="notify">
         <Header
+            class="sticky"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
@@ -13,6 +14,7 @@
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmBDialogUi.show"
+                class="fixed top-0"
                 :ui="state.confirmBDialogUi"
                 @choice="markAllNotifyReadOfCurUser">
             </ConfirmDialogBox>
@@ -39,77 +41,6 @@
         </div>
     </div>
 </template>
-
-<style scoped>
-.icon {
-    display: block;
-    width: 2rem;
-    height: 2rem;
-}
-
-.unread {
-    background-color: #eff6ff;
-}
-
-.icon-post-like {
-    background-color: #fecaca;
-}
-
-.icon-post-review {
-    background-color: #fed7aa;
-}
-
-.icon-post-repost {
-    background-color: #d1e7dd;
-}
-
-.icon-sys-notify {
-    color: #3b82f6;
-    background-color: #bfdbfe;
-}
-
-.icon-user-followed {
-    background-color: #ddd6fe;
-}
-
-.icon-at-sign {
-    background-color: #fecdd3;
-}
-
-.material-icons-round {
-    padding: 0.2rem;
-    font-size: 19pt;
-}
-
-.material-icons-round:hover {
-    padding: 0 !important;
-    background-color: transparent;
-}
-
-.notify-card {
-    padding: 1rem 1.5rem 1rem 1.5rem;
-    border-bottom: 1px solid #EEEEEE;
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    cursor: pointer;
-}
-
-.brief {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 0.5rem;
-}
-
-.time {
-    font-size: 10pt;
-    color: #9ca3af;
-}
-</style>
 
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
@@ -172,7 +103,7 @@ async function fetchNotify() {
     state.isLoading = true
     try {
         const response = await getUsersNotifyList(state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { content, totalPages } = await response.json()
         state.messages.push(...content)
@@ -182,8 +113,7 @@ async function fetchNotify() {
             state.lastTimestamp = content.slice(-1)[0].timestamps
         }
     } catch (e) {
-        store.setErrorMsg("无法获取消息列表！")
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false
     }
@@ -192,7 +122,7 @@ async function fetchNotify() {
 async function ackMessage(messageId) {
     try {
         const response = await markNotifyRead(messageId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) { throw new Error("无法设置消息状态！") }
@@ -201,8 +131,7 @@ async function ackMessage(messageId) {
         store.setUnreadMsgCount(lastUnreadCount - 1)
         return true
     } catch (e) {
-        store.setErrorMsg("无法设置消息状态！")
-        console.error(e)
+        store.setErrorMsg(e.message)
         return false
     }
 }
@@ -250,15 +179,14 @@ async function markAllNotifyReadOfCurUser({ choice }) {
         }
 
         const response = await markAllNotifyRead()
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         state.messages.forEach(it => it.read = true)
         store.setUnreadMsgCount(0)
         store.setSuccessMsg(`已将${result}条消息设为已读`)
     } catch (e) {
-        store.setErrorMsg("无法设置消息状态！")
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.confirmBDialogUi.loading.show = false
         state.confirmBDialogUi.show = false

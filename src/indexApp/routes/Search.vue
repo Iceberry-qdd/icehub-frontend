@@ -1,13 +1,11 @@
 <!-- eslint-disable vue/no-template-shadow -->
 <template>
     <div id="search">
-        <div class="header relative">
-            <SearchBar
-                :prompt="state.prompt"
-                @search="search"
-                @route-to="routeTo">
-            </SearchBar>
-        </div>
+        <SearchBar
+            :prompt="state.prompt"
+            @search="search"
+            @route-to="routeTo">
+        </SearchBar>
         <div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
             <div v-if="showUsers" class="font-bold px-2 py-2 text-[13pt]">用户</div>
@@ -54,10 +52,14 @@
             @fetch-more="fetchMoreSameSearch">
         </Footer>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div v-else class="flex flex-nowrap h-[9.5rem] items-center justify-center mt-20 w-full">
+        <div v-else class="flex flex-nowrap h-[9.5rem] items-center justify-center max-lg:hidden mt-20 w-full">
             <!-- eslint-disable-next-line vue/html-self-closing -->
             <div class="bg-[url('/src/assets/search.svg')] bg-center bg-contain bg-no-repeat h-[9.5rem] w-[9.5rem]"></div>
         </div>
+        <Recommend
+            v-if="!state.prompt.key"
+            class="lg:hidden">
+        </Recommend>
     </div>
 </template>
 
@@ -88,6 +90,7 @@ import { reactive, computed, onMounted, provide } from 'vue'
 import { globalSearch } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import Footer from '@/indexApp/components/Footer.vue'
+import Recommend from '@/indexApp/components/Recommend.vue'
 const UserCardSlide = defineAsyncComponent(() => import('@/indexApp/components/search/UserCardSlide.vue'))
 const PostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostCard.vue'))
 const Review = defineAsyncComponent(() => import('@/indexApp/components/postDetail/Review.vue'))
@@ -158,7 +161,7 @@ async function doSearch() {
             state.prompt.type = state.prompt.type.filter(it => !invalidTypes.value.includes(it))
         }
         const response = await globalSearch(state.prompt.key, state.prompt.pageSize, state.prompt.pageIndex, state.prompt.type)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         Object.keys(result).forEach(type => {
@@ -179,7 +182,6 @@ async function doSearch() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isLoading = false
     }

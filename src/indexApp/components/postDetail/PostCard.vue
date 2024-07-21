@@ -1,13 +1,13 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <template>
     <div
-        class="border-b-[1px] pb-[0] pt-[1rem] px-[1rem] relative rounded-none"
+        class="border-b-[1px] max-sm:pt-3 max-sm:px-3 pb-0 pt-4 px-4 relative rounded-none"
         :class="cardContainerClass">
         <div
             v-if="showPinTop"
             class="-translate-y-2 flex flex-row gap-x-1 items-center justify-start">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="material-icons-round p-0 text-[1rem]">push_pin</div>
+            <div class="material-symbols-rounded p-0 text-[1rem]">push_pin</div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="text-[0.825rem] text-zinc-500">已置顶</div>
         </div>
@@ -26,31 +26,45 @@
                 theme="outline"
                 size="24"
                 fill="#333"
-                class="z-[96]"
+                class="hover:bg-[#d3d3d5] p-[0.4rem] z-[96]"
                 :stroke-width="2"
                 @click="state.isShowMenu = true">
             </Down>
         </button>
-        <Transition name="fade">
-            <PostMenus
-                v-if="state.isShowMenu"
-                class="absolute cursor-pointer h-auto right-[3%] top-[1rem] z-[100]"
-                :post="state.post">
-            </PostMenus>
-        </Transition>
-        <div class="flex gap-[1rem]">
+        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+        <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+            <div
+                v-if="state.isShowMenu && store.MOBILE_MODE"
+                class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1000]" />
             <Transition name="fade">
-                <UserInfoPop
-                    v-if="state.showUserInfoPop"
-                    :user="state.post.user"
-                    class="absolute top-[1rem] z-[103]"
-                    @mouseleave="state.showUserInfoPop = false">
-                </UserInfoPop>
+                <PostMenus
+                    v-if="state.isShowMenu"
+                    class="absolute cursor-pointer h-auto max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-2 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1000] right-[3%] rounded-[8px] sm:max-w-[18rem] sm:min-w-[12rem] sm:top-[1rem] z-[100]"
+                    :post="state.post">
+                </PostMenus>
             </Transition>
+        </Teleport>
+        <div class="flex gap-x-4 max-sm:gap-x-3">
+            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+            <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                <div
+                    v-if="state.showUserInfoPop && store.MOBILE_MODE"
+                    class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
+                    @click="state.showUserInfoPop = false" />
+                <Transition name="fade">
+                    <UserInfoPop
+                        v-if="state.showUserInfoPop"
+                        :user="state.post.user"
+                        class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[103]"
+                        @mouseleave="state.showUserInfoPop = false"
+                        @close-user-info-pop="state.showUserInfoPop = false">
+                    </UserInfoPop>
+                </Transition>
+            </Teleport>
             <a
                 class="no-underline relative z-[97]"
-                @mouseenter="state.showUserInfoPop = true"
-                @click="routeToUser(state.post.user.nickname)">
+                @mouseenter="handleAvatarMouseenter()"
+                @click="handleAvatarClick()">
                 <Avatar
                     :user="state.post.user"
                     class="h-[2.5rem] rounded-[8px] text-[2.5rem] w-[2.5rem]">
@@ -63,6 +77,11 @@
                     <div>{{ state.post.user.nickname }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <IconVerify v-if="state.post.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                    <div
+                        v-if="state.post.user.confirmFollow"
+                        class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                        lock
+                    </div>
                 </div>
                 <div class="flex flex-row gap-x-[0.5rem] text-[9pt] text-gray-400">
                     <div :title="standardDateTime(state.post.createdTime)">
@@ -76,7 +95,9 @@
             </div>
         </div>
 
-        <div :class="cardBodyClass">
+        <div
+            :class="cardBodyClass"
+            class="max-sm:pr-0">
             <div
                 v-if="state.shrinkContent"
                 class="-translate-x-1/2 -translate-y-full absolute bg-[#cfe2ffaa] cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[11pt] top-[calc(100%-50px)] z-[96]"
@@ -110,15 +131,18 @@
 
         <div
             v-if="!state.post.plan"
-            class="flex flex-row items-center justify-center z-[96]"
+            class="flex flex-row items-center justify-center max-sm:mr-0 z-[96]"
             :class="cardButtonClass"
             role="group">
             <Teleport to="#app">
-                <RepostPanel
-                    v-if="state.showRepostPanel"
-                    :post="state.post"
-                    @dismiss="state.showRepostPanel = false">
-                </RepostPanel>
+                <Transition name="fade">
+                    <RepostPanel
+                        v-if="state.showRepostPanel"
+                        class="fixed top-0"
+                        :post="state.post"
+                        @dismiss="state.showRepostPanel = false">
+                    </RepostPanel>
+                </Transition>
             </Teleport>
             <button
                 type="button"
@@ -130,19 +154,21 @@
                     size="18"
                     :fill="isReposted ? '#198754' : '#333'"
                     :stroke-width="3"
-                    :class="{ 'bg-[#d1e7dd] hover:bg-[#d1e7dd]': isReposted }">
+                    :class="{ 'bg-[#d1e7dd] hover:bg-[#d1e7dd] p-[0.4rem]': isReposted }">
                 </Share>
                 {{ humanizedNumber(state.post.repostCount) }}
             </button>
             <button
                 type="button"
                 :title="`${state.post.reviewCount} 评论`"
+                :class="{'cursor-not-allowed text-[#C1C1C1]': !state.post.allowReview}"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-center py-[0.5rem] rounded-none text-[12pt] z-[97]"
-                @click="routeToPost(state.post.id)">
+                @click="handleClickReviewBtn">
                 <Message
+                    :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}"
                     theme="outline"
                     size="19"
-                    fill="#333"
+                    :fill="state.post.allowReview ? '#333' : '#C1C1C1'"
                     :stroke-width="3">
                 </Message>
                 {{ humanizedNumber(state.post.reviewCount) }}
@@ -157,31 +183,14 @@
                     size="20"
                     :fill="likedIconColor"
                     :stroke-width="3"
-                    :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
+                    class="p-[0.4rem]"
+                    :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
                 </Like>
                 {{ humanizedNumber(state.post.likeCount) }}
             </button>
         </div>
     </div>
 </template>
-
-<style scoped>
-.fade-enter-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-</style>
 
 <!-- eslint-disable vue/no-ref-object-reactivity-loss -->
 <script setup>
@@ -211,6 +220,7 @@ const props = defineProps({
     }
 })
 const cardMask = ref()
+const emits = defineEmits(['showReviewPanel'])
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     post: props.post,
@@ -228,25 +238,27 @@ const isIndentBody = computed(() => {
     return !isPostDetailRoute && !isMarkdown
 })
 
-const cardContainerClass = reactive({
+const cardContainerClass = computed(() => ({
     'hover:bg-[#F5F5F5]': isIndentBody.value,
     'cursor-default': isIndentBody.value
-})
+}))
 
-const cardBodyClass = reactive({
+const cardBodyClass = computed(() => ({
     'py-[0.5rem]': isIndentBody.value,
     'pr-[0.8rem]': isIndentBody.value,
     'p-0': !isIndentBody.value,
-    'ml-[3.5rem]': isIndentBody.value,
+    'ml-[3.5rem]': isIndentBody.value && !store.MOBILE_MODE,
+    'ml-[3.25rem]': isIndentBody.value && store.MOBILE_MODE,
     'ml-0': !isIndentBody.value
-})
+}))
 
-const cardButtonClass = reactive({
-    'ml-[3rem]': isIndentBody.value,
+const cardButtonClass = computed(() => ({
+    'ml-[3.5rem]': isIndentBody.value && !store.MOBILE_MODE,
+    'ml-[3.25rem]': isIndentBody.value && store.MOBILE_MODE,
     'ml-0': !isIndentBody.value,
     'mr-[0.8rem]': isIndentBody.value,
     'mr-0': !isIndentBody.value
-})
+}))
 
 function routeToPost(postId, hash = undefined) {
     store.setSelectPost(state.post)
@@ -261,13 +273,12 @@ async function routeToUser(nickname) {
 async function getUser(nickname) {
     try {
         const response = await getUserInfoByNickname(nickname)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const user = await response.json()
         store.setSelectUser(user)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -282,20 +293,19 @@ async function toggleLike() {
         if (state.post.plan) throw new Error('该帖子尚未发布，无法进行点赞操作')
         if (lastLikedState == false) {
             const response = await likeAPost(state.post.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error("点赞失败!")
         } else {
             const response = await dislikeAPost(state.post.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error("取消点赞失败!")
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
 
         state.post.liked = lastLikedState
         state.post.likeCount = lastCount
@@ -366,6 +376,24 @@ function dismissPostMenus() {
 
 function handleRealImage({index, image}){
     state.post.images[index] = image
+}
+
+function handleAvatarClick(){
+    if(!store.MOBILE_MODE){
+        routeToUser(state.post.user.nickname)
+    } else {
+        state.showUserInfoPop = true
+    }
+}
+
+function handleAvatarMouseenter(){
+    if(!store.MOBILE_MODE){
+        state.showUserInfoPop = true
+    }
+}
+
+function handleClickReviewBtn(){
+    emits('showReviewPanel')
 }
 
 provide('dismissPostMenus', { dismissPostMenus })

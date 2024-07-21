@@ -1,5 +1,5 @@
 <template>
-    <div class="card-container ring-1 ring-slate-900/5 shadow-lg">
+    <div class="card-container no-scrollbar ring-1 ring-slate-900/5 shadow-lg">
         <div
             v-if="props.noteMsg"
             class="bg-[#f1f3f4] cursor-default flex gap-2 h-[2.5rem] items-center justify-left p-3 rounded-lg w-full">
@@ -25,13 +25,13 @@
             <div class="flex flex-row h-[2rem] items-center justify-between w-full">
                 <div
                     :class="[canPickYearBefore ? '' : 'm-disabled']"
-                    class="last-year material-icons-round"
+                    class="last-year material-symbols-rounded"
                     @click="minusOneYear">
                     keyboard_double_arrow_left
                 </div>
                 <div
                     :class="[canPickMonthBefore ? '' : 'm-disabled']"
-                    class="last-month material-icons-round"
+                    class="last-month material-symbols-rounded"
                     @click="canPickMonthBefore ? minusOneMonth() : ''">
                     keyboard_arrow_left
                 </div>
@@ -40,13 +40,13 @@
                 </div>
                 <div
                     :class="[canPickMonthAfter ? '' : 'm-disabled']"
-                    class="material-icons-round next-month"
+                    class="material-symbols-rounded next-month"
                     @click="canPickMonthAfter ? addOneMonth() : ''">
                     keyboard_arrow_right
                 </div>
                 <div
                     :class="[canPickYearAfter ? '' : 'm-disabled']"
-                    class="material-icons-round next-year"
+                    class="material-symbols-rounded next-year"
                     @click="addOneYear">
                     keyboard_double_arrow_right
                 </div>
@@ -116,7 +116,7 @@
 </template>
 
 <style scoped>
-.material-icons-round {
+.material-symbols-rounded {
     cursor: pointer;
     border-radius: 8px;
     font-size: 15pt;
@@ -150,18 +150,6 @@
     align-items: center;
     font-size: 16pt;
     font-weight: bold;
-}
-
-.scrollbar-hidden {
-    scrollbar-width: none;
-    /* Firefox */
-    -ms-overflow-style: none;
-    /* IE 10+ */
-}
-
-::-webkit-scrollbar {
-    display: none;
-    /* Chrome Safari */
 }
 
 .m-disabled {
@@ -206,6 +194,12 @@ const props = defineProps({
         type: String,
         required: false,
         default: ''
+    },
+    /**触发该组件的元素id，用于检测点击事件关闭用 */
+    switchId: {
+        type: String,
+        require: false,
+        default: 'datetime-picker-action'
     }
 })
 const emits = defineEmits(['closeWithOk', 'closeWithClear'])
@@ -322,6 +316,16 @@ function closeAndOk() {
     emits('closeWithOk', { timestamps: pickedTimestamps })
 }
 
+function clickListener(event){
+    const dateTimePickerAction = document.querySelector(`#${props.switchId}`)
+    const dateTimePickerActionBtn = document.querySelector(`#${props.switchId}-btn`)
+    const isClickAction = dateTimePickerAction && dateTimePickerAction.contains(event.target)
+    const isClickBtn = dateTimePickerActionBtn && dateTimePickerActionBtn.contains(event.target)
+    if (!isClickAction && !isClickBtn) {
+        emits('closeWithClear')
+    }
+}
+
 onMounted(() => {
     const now = props.curPickedTime !== 0 ? new Date(props.curPickedTime) : new Date()
     state.pickedYear = now.getFullYear()
@@ -330,15 +334,10 @@ onMounted(() => {
     state.pickedHour = now.getHours()
     state.pickedMinute = now.getMinutes()
 
-    const dateTimePickerAction = document.querySelector('#datetime-picker-action')
-    document.querySelector('#app').addEventListener('click', function (event) {
-        if (!dateTimePickerAction.contains(event.target)) {
-            emits('closeWithClear')
-        }
-    })
+    document.querySelector('#app').addEventListener('click', clickListener)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', () => { })
+    document.querySelector('#app').removeEventListener('click', clickListener)
 })
 </script>

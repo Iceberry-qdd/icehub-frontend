@@ -1,6 +1,6 @@
 <template>
     <div
-        class="notify-card"
+        class="border-[#EEEEEE] border-b-[1px] cursor-pointer flex flex-row gap-4 max-sm:gap-3 max-sm:p-3 notify-card p-4"
         :class="postStatus">
         <div>
             <Like
@@ -29,7 +29,7 @@
             </Share>
             <span
                 v-else-if="state.type == 'SYS_NOTIFY'"
-                class="bg-[#bfdbfe] icon material-icons-round p-[0.2rem] text-[#3b82f6]">
+                class="bg-[#bfdbfe] icon material-symbols-rounded p-[0.2rem] text-[#3b82f6]">
                 notifications
             </span>
             <PeoplePlusOne
@@ -51,21 +51,21 @@
         </div>
         <div class="notify-container">
             <Avatar
-                class="h-[2rem] mb-2 relative rounded-full w-[2rem] z-[97]"
+                class="h-[2rem] mb-2 relative rounded-full text-[2rem] w-[2rem] z-[97]"
                 :user="state.from">
             </Avatar>
-            <div class="brief">
+            <div class="brief flex flex-row h-fit items-center justify-between pb-2 w-full">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="event-text">{{ brief }}</div>
                 <div 
-                    class="time"
+                    class="text-[#9ca3af] text-[0.9rem] time z-[97]"
                     :title="standardDateTime(state.timestamps)">
                     {{ humanizedTime(state.timestamps) }}
                 </div>
             </div>
 
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="state.type == 'REVIEW'" class="content">
+            <div v-if="state.type == 'REVIEW'" class="content text-[1rem]">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="py-1">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
@@ -112,8 +112,7 @@
 
 .icon {
     display: block;
-    width: 2rem;
-    height: 2rem;
+    padding: 0.4rem;
 }
 
 .i-icon:hover {
@@ -122,7 +121,7 @@
     border-radius: 99rem;
 }
 
-.material-icons-round.icon:hover {
+.material-symbols-rounded.icon:hover {
     padding: 0.2rem !important;
     background-color: #bfdbfe;
 }
@@ -131,43 +130,14 @@
     background-color: #eff6ff;
 }
 
-.material-icons-round {
+.material-symbols-rounded {
     padding: 0.2rem;
     font-size: 19pt;
 }
 
-.material-icons-round:hover {
+.material-symbols-rounded:hover {
     padding: 0 !important;
     background-color: transparent;
-}
-
-.notify-card {
-    padding: 1rem 1.5rem 1rem 1.5rem;
-    border-bottom: 1px solid #EEEEEE;
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    cursor: pointer;
-}
-
-.brief {
-    width: 100%;
-    height: fit-content;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 0.5rem;
-}
-
-.time {
-    font-size: 10pt;
-    color: #9ca3af;
-    z-index: 97;
-}
-
-.content {
-    font-size: 11pt;
 }
 
 .notify-container:has(markdown){

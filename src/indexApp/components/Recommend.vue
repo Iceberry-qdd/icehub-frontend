@@ -84,13 +84,12 @@ const state = reactive({
 async function doGetHotSearch() {
     try {
         const response = await getHotSearch(state.hotSearchCount)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         state.threading = result
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 

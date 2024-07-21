@@ -1,10 +1,8 @@
 <template>
-    <div
-        class="flex flex-rows gap-x-3 items-center justify-start"
-        @click="copyLink">
-        <span class="material-icons-round no-hover p-0 text-[16pt]">content_copy</span>
+    <div @click="copyLink">
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">content_copy</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">复制链接</div>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">复制链接</div>
     </div>
 </template>
 
@@ -12,7 +10,7 @@
 import { reactive, inject } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 
-const { dismissPostMenus }  = inject('dismissPostMenus')
+const { dismissPostMenus } = inject('dismissPostMenus')
 const props = defineProps({
     /** 传入的链接字符串 */
     link: {
@@ -41,8 +39,7 @@ function copyLinkV1() {
         store.setSuccessMsg('已复制至剪贴板！')
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.log(e)
-    }finally{
+    } finally {
         dismissPostMenus()
     }
 }
@@ -66,7 +63,7 @@ async function copyLinkV2() {
     } catch (e) {
         store.setErrorMsg('链接复制失败！')
         console.log(e)
-    }finally{
+    } finally {
         dismissPostMenus()
     }
 }

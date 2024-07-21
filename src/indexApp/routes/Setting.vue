@@ -3,6 +3,7 @@
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div id="setting" class="basis-[40%] h-screen">
             <Header
+                class="sticky"
                 :width="state.headerConfig.width"
                 :title="state.headerConfig.title"
                 :go-back="state.headerConfig.goBack"
@@ -20,7 +21,7 @@
                     @click="routeTo(menu.routeTo)">
                     <div>{{ menu.name }}</div>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="cursor-pointer material-icons-round mr-[0.5rem] text-[12pt]">arrow_forward_ios</div>
+                    <div class="cursor-pointer material-symbols-rounded mr-[0.5rem] text-[12pt]">arrow_forward_ios</div>
                 </div>
             </div>
         </div>
@@ -34,14 +35,14 @@
 </template>
 
 <style scoped>
-.material-icons-round {
+.material-symbols-rounded {
     font-size: 12pt;
     padding: 0;
     margin: 0;
     color: #303133;
 }
 
-.material-icons-round:hover {
+.material-symbols-rounded:hover {
     background-color: transparent;
     padding: 0;
 }

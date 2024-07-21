@@ -2,6 +2,7 @@
     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
     <div id="explore" class="relative">
         <Header
+            class="sticky"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
@@ -54,7 +55,7 @@ async function getData() {
     state.isLoading = true
     try {
         const response = await getTimeline(state.pageIdx, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { content, totalPages } = await response.json()
         state.posts.push(...content)
@@ -64,7 +65,6 @@ async function getData() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.isLoading = false
     }

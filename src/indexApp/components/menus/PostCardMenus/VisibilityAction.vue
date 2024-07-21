@@ -1,24 +1,28 @@
 <template>
-    <div
-        class="flex flex-row items-center justify-between"
-        @click="showSubAction">
+    <div @click="showSubAction">
+        <span
+            v-show="!state.showSubAction"
+            class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">
+            {{ curActiveAction.icon }}
+        </span>
         <div
             v-show="!state.showSubAction"
-            class="flex flex-rows gap-x-3 items-center justify-start">
-            <span class="material-icons-round no-hover p-0 text-[16pt]">{{ curActiveAction.icon }}</span>
-            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="btn-no-select">更改可见范围</div>
+            class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            更改可见范围
         </div>
 
-        <Transition name="fade">
-            <VisibilityChoiceAction
-                v-if="state.showSubAction"
-                class="absolute left-0 top-0 z-[99]"
-                :visibility="state.post.status"
-                :ui="state.actions"
-                @picked-visibility="updateVisibility">
-            </VisibilityChoiceAction>
-        </Transition>
+        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+        <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+            <Transition name="fade">
+                <VisibilityChoiceAction
+                    v-if="state.showSubAction"
+                    class="absolute left-0 max-sm:bottom-0 max-sm:fixed max-sm:w-full max-sm:z-[1001] sm:top-0 z-[99]"
+                    :visibility="state.post.status"
+                    :ui="state.actions"
+                    @picked-visibility="updateVisibility">
+                </VisibilityChoiceAction>
+            </Transition>
+        </Teleport>
     </div>
 </template>
 
@@ -37,6 +41,25 @@
 
 .fade-leave-to {
     opacity: 0;
+}
+
+@media not all and (min-width: 640px) {
+    .fade-enter-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-leave-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+
+    .fade-enter-from {
+        translate: 0 100%;
+    }
+
+    .fade-leave-to {
+        translate: 0 100%;
+        opacity: 1;
+    }
 }
 </style>
 
@@ -62,7 +85,7 @@ const state = reactive({
     actions: [
         { id: 1, name: '公开', code: 'PUBLIC', icon: 'public' },
         { id: 2, name: '探索页内隐藏', code: 'NOT_TIMELINE', icon: 'vpn_lock' },
-        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'people_outline' },
+        { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'person' },
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people' },
         // { id: 5, name: '指定用户可见', code: 'ONLY_SPECIFIED' },
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock' },
@@ -92,8 +115,7 @@ async function updateVisibility({ code }) {
         store.setSuccessMsg('已更改帖子可见范围！')
     } catch (e) {
         state.post.status = originStatus
-        store.setErrorMsg('更改帖子可见范围失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         dismiss()
     }

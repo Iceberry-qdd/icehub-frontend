@@ -1,9 +1,10 @@
 <template>
     <div
-        class="btn-no-select flex flex-rows gap-x-3 items-center justify-start"
         @click="toggleMark()">
-        <span class="material-icons-round no-hover p-0 text-[16pt]">{{ bookmarkIcon }}</span>
-        <div>{{ bookMarkText }}</div>
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ bookmarkIcon }}</span>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            {{ bookMarkText }}
+        </div>
     </div>
 </template>
 
@@ -45,7 +46,7 @@ function toggleMark() {
 async function markIt(postId) {
     try {
         const response = await markAPost(postId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.text()
         if (result == false) throw new Error("加入书签失败！")
@@ -53,7 +54,6 @@ async function markIt(postId) {
         store.setSuccessMsg("已加入书签！")
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         dismissPostMenus()
     }
@@ -62,7 +62,7 @@ async function markIt(postId) {
 async function unMarkIt(postId) {
     try {
         const response = await unMarkAPost(postId)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.text()
         if (result == false) throw new Error("移除失败！")
@@ -71,7 +71,6 @@ async function unMarkIt(postId) {
         deleteBookmarkOnUi(state.post.id)
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         dismissPostMenus()
     }

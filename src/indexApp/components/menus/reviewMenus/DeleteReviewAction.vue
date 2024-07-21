@@ -1,13 +1,12 @@
 <template>
-    <div
-        class="flex flex-rows gap-x-3 items-center justify-start"
-        @click="showConfirmDialogBox">
-        <span class="material-icons-round no-hover p-0 text-[16pt] text-red-500">delete</span>
+    <div @click="showConfirmDialogBox">
+        <span class="material-symbols-rounded max-sm:bg-red-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-red-500">delete</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select text-red-500">删除此内容</div>
+        <div class="max-sm:text-[0.8rem]">删除此内容</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmDialogBoxUi.show"
+                class="fixed top-0"
                 :ui="state.confirmDialogBoxUi"
                 @choice="choose">
             </ConfirmDialogBox>
@@ -88,7 +87,7 @@ async function deleteIt() {
     try {
         toggleDialogLoading(true)
         const response = await deleteOneReview(props.review.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) throw new Error("删除失败！")
@@ -103,7 +102,6 @@ async function deleteIt() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         toggleDialogLoading(false)
         dismissConfirmDialogBox()

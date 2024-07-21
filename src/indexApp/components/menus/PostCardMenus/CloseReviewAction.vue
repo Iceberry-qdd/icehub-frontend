@@ -1,12 +1,14 @@
 <template>
     <div
-        class="btn-no-select flex flex-rows gap-x-3 items-center justify-start"
         @click="showConfirmDialogBox">
-        <span class="material-icons-round no-hover p-0 text-[16pt]">{{ icon }}</span>
-        <div>{{ text }}</div>
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ icon }}</span>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            {{ text }}
+        </div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmDialogBoxUi.show"
+                class="fixed top-0"
                 :ui="state.confirmDialogBoxUi"
                 @choice="choose">
             </ConfirmDialogBox>
@@ -15,11 +17,12 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, inject } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 import { toggleCloseReviewApi } from '@/indexApp/js/api.js'
 
+const { dismissPostMenus } = inject('dismissPostMenus')
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -87,18 +90,18 @@ async function toggleCloseReview() {
     try {
         toggleDialogLoading(true)
         const response = await toggleCloseReviewApi(props.post)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result == false) throw new Error("操作失败！")
-        store.setSuccessMsg("操作成功！")
+        store.setSuccessMsg(`已${text.value}！`)
         state.post.allowReview = !state.post.allowReview
-        dismissConfirmDialogBox()
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         toggleDialogLoading(false)
+        dismissConfirmDialogBox()
+        dismissPostMenus()
     }
 }
 </script>

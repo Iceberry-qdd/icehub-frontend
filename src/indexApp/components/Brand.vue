@@ -1,29 +1,21 @@
 <template>
     <div
         id="brand"
-        class="fixed flex flex-row gap-x-4 h-16 items-center justify-center left-[11%] mt-6">
+        class="flex flex-row gap-x-4 h-16 items-center justify-center">
         <a>
             <img
-                id="brand-img"
-                src="../../assets/logo.svg"
+                src="../../../public/favicon.ico"
+                class="h-auto lg:max-w-[4rem] lg:w-[2.5rem] sm:max-lg:w-[2rem]"
                 @click="routeTo('index')" />
         </a>
         <div
-            class="cursor-pointer font-bold text-2xl"
+            class="cursor-pointer font-bold sm:max-lg:hidden text-2xl"
             @click="routeTo('index')">
             Icehub
             <span class="align-middle bg-blue-500 font-light px-1 py-[0.1rem] rounded-md text-[0.6rem] text-white">{{ state.version }}</span>
         </div>
     </div>
 </template>
-
-<style scoped>
-#brand-img {
-    width: 2.5rem !important;
-    max-width: 4rem !important;
-    height: auto;
-}
-</style>
 
 <script setup>
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'

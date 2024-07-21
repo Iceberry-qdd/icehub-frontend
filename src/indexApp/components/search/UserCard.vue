@@ -2,9 +2,9 @@
     <div class="bg-white border-[1px] rounded-[8px]">
         <Banner
             :user="props.user"
-            class="h-[6rem] object-cover rounded-t-[8px] w-full">
+            class="-mb-[calc(3.5rem+0.2rem)/2] h-[6rem] object-cover rounded-t-[8px] w-full">
         </Banner>
-        <div class="-translate-y-[1.75rem] flex flex-col gap-y-1 items-start justify-start px-2 w-full">
+        <div class="flex flex-col gap-y-1 items-start justify-start pb-2 px-2 w-full">
             <div class="flex flex-row items-end justify-between w-full">
                 <Avatar
                     :user="props.user"
@@ -13,8 +13,8 @@
                 <div
                     v-if="!isSelf"
                     :class="followBtnClass"
-                    class="btn-no-select flex flex-row h-[1.8rem] items-center justify-center min-w-[4.5rem] px-3 rounded-full text-[11pt]"
-                    @click.stop="state.isFollowing ? doUnFollowUser() : doFollowUser()">
+                    class="btn-no-select flex flex-row items-center justify-center min-w-[4.5rem] px-3 py-1 rounded-full text-[0.85rem]"
+                    @click.stop="state.yourFollowStatus !== 'UN_FOLLOW' ? doUnFollowUser() : doFollowUser()">
                     {{ followButtonText }}
                 </div>
             </div>
@@ -22,11 +22,18 @@
                 <div class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
                     {{ state.user.nickname }}
                 </div>
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <IconVerify v-if="state.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                <IconVerify
+                    v-if="state.user.verified"
+                    class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                </IconVerify>
+                <div
+                    v-if="state.user.confirmFollow"
+                    class="material-symbols-rounded no-hover p-0 text-[1.25rem]">
+                    lock
+                </div>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="break-all text-[10pt] webkit-box-1">{{ state.user.remark }}</div>
+            <div class="break-all text-[0.85rem] webkit-box-1">{{ brief }}</div>
         </div>
     </div>
 </template>
@@ -50,37 +57,47 @@ const props = defineProps({
 const state = reactive({
     user: props.user,
     loading: true,
-    isFollowing: props.user.following,
-    isFollower: props.user.follower,
-    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
+    yourFollowStatus: props.user.yourFollowStatus,
+    yourFanStatus: props.user.yourFanStatus,
+    curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    followTextMap: new Map([
+        ['NOT_FOLLOW', '订阅'],
+        ['WAIT_PASS', '等待批准'],
+        ['FOLLOW', '已订阅'],
+        [undefined, '订阅']
+    ])
 })
 
 const isSelf = computed(() => state.curUser.id === props.user.id)
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500': !state.isFollowing,
-    'bg-gray-300': state.isFollowing,
-    'text-white': !state.isFollowing,
-    'text-zinc-700': state.isFollowing
+    'bg-blue-500': state.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-gray-200': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-zinc-500': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-white': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 const followButtonText = computed(() => {
-    if (state.isFollowing && state.isFollower) return '相互订阅'
-    return state.isFollowing ? '已订阅' : '订阅'
+    if(state.user.yourFollowStatus === 'FOLLOW' && state.yourFanStatus === 'FAN') return '相互订阅'
+    if(state.user.yourFollowStatus === 'NOT_FOLLOW' && props.user.confirmFollow) return '请求订阅'
+    return state.followTextMap.get(state.user.yourFollowStatus)
 })
 
 async function doFollowUser() {
     state.loading = true
     try {
         const response = await followUser(props.user.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
-        const result = response.json()
-        if (result == false) throw new Error('关注失败！')
-        state.isFollowing = true
+        const result = await response.json()
+        if (result?.confirmed){
+            store.setSuccessMsg("订阅成功！")
+            state.yourFollowStatus = 'FOLLOW'
+        } else {
+            state.yourFollowStatus = 'WAIT_PASS'
+        }
     } catch (e) {
-        store.setErrorMsg('订阅失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.loading = false
     }
@@ -90,16 +107,21 @@ async function doUnFollowUser() {
     state.loading = true
     try {
         const response = await unFollowUser(props.user.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
-        const result = response.json()
-        if (result == false) throw new Error('取消关注失败！')
-        state.isFollowing = false
+        const result = await response.json()
+        state.yourFollowStatus = 'NOT_FOLLOW'
+        store.setSuccessMsg("取消订阅成功！")
     } catch (e) {
-        store.setErrorMsg('取消订阅失败！')
-        console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.loading = false
     }
 }
+
+const brief = computed(() => {
+    const remark = state.user.remark
+    const defaultRemark = '该用户很神秘，什么都没写。'
+    return remark || defaultRemark
+})
 </script>

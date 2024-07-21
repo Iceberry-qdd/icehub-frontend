@@ -1,6 +1,7 @@
 <template>
     <div>
         <Header
+            class="sticky"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"

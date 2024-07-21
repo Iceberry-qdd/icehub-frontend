@@ -391,7 +391,7 @@ export function isUserExists(nickname) {
  * @returns 关注结果，成功或失败
  */
 export function followUser(userId) {
-    return fetch(`${BASE_URL}/user/follow/${userId}`, {
+    return fetch(`${BASE_URL}/user/following/${userId}`, {
         method: 'PUT',
         headers: {
             'Authorization': TOKEN
@@ -407,7 +407,7 @@ export function followUser(userId) {
  * @returns 取消关注结果，成功或失败
  */
 export function unFollowUser(userId) {
-    return fetch(`${BASE_URL}/user/follow/${userId}`, {
+    return fetch(`${BASE_URL}/user/following/${userId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': TOKEN
@@ -418,15 +418,15 @@ export function unFollowUser(userId) {
 }
 
 /**
- * 查询用户关注者列表
+ * 查询用户的关注列表
  * @param {string} userId 待查询用户id
  * @param {int} pageIndex 分页页码
  * @param {int} pageSize 分页页大小
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注者列表
  */
-export function getFollowerList(userId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/user/follow/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+export function getFollowList(userId, pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/user/following/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -438,15 +438,15 @@ export function getFollowerList(userId, pageIndex, pageSize, lastTimestamp) {
 }
 
 /**
- * 查询用户关注用户列表
+ * 查询用户的粉丝列表
  * @param {string} userId 待查询用户id
  * @param {int} pageIndex 分页页码
  * @param {int} pageSize 分页页大小
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注用户列表
  */
-export function getFollowingList(userId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/user/follow/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+export function getFanList(userId, pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/user/follower/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN,
@@ -848,6 +848,13 @@ export function deleteOneReview(id) {
     })
 }
 
+/**
+ * 切换帖子的置顶状态
+ * @param {string} id 帖子id
+ * @param {boolean} oldPin 原来状态
+ * @param {boolean} newPin 新状态
+ * @returns 切换置顶结果
+ */
 export function togglePin(id, oldPin, newPin) {
     const requestBody = {
         id: id,
@@ -861,6 +868,39 @@ export function togglePin(id, oldPin, newPin) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestBody),
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 移除粉丝
+ * @param {String} fanId 粉丝id
+ * @returns 移除结果， true-移除成功
+ */
+export function removeFan(fanId){
+    return fetch(`${BASE_URL}/user/follower/${fanId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        credentials: 'same-origin'
+    })
+}
+
+/**
+ * 通过粉丝的关注请求
+ * @param {String} fanId 粉丝id
+ */
+export function confirmFanRequest(fanId){
+    return fetch(`${BASE_URL}/user/follower/confirm/${fanId}`, {
+        method: 'POST',
+        headers: {
+            'Authorization': TOKEN,
+            'Content-Type': 'application/json'
+        },
         redirect: 'follow',
         credentials: 'same-origin'
     })

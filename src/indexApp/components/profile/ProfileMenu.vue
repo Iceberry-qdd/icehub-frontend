@@ -1,48 +1,107 @@
 <template>
     <div
         id="profile-menu"
-        class="bg-white cursor-pointer flex flex-col max-w-[18rem] min-w-[10rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
-        <ProfileChangeAction
-            v-if="state.actionVisMap.get('ProfileChangeAction')"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </ProfileChangeAction>
+        class="bg-white cursor-pointer flex flex-col ring-1 ring-slate-900/5 shadow-lg">
+        <div class="bg-white flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
+            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+        </div>
+        <div class="flex flex-col max-sm:grid max-sm:grid-cols-4 max-sm:place-items-center">
+            <ProfileChangeAction
+                v-if="state.actionVisMap.get('ProfileChangeAction')"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </ProfileChangeAction>
+    
+            <CalendarSearchAction
+                v-if="state.actionVisMap.get('CalendarSearchAction')"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </CalendarSearchAction>
+    
+            <ShareLinkAction
+                v-if="state.actionVisMap.get('ShareLinkAction')"
+                :link="generateLink"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </ShareLinkAction>
+    
+            <VerifyApplyAction
+                v-if="state.actionVisMap.get('VerifyApplyAction')"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </VerifyApplyAction>
 
-        <CalendarSearchAction
-            v-if="state.actionVisMap.get('CalendarSearchAction')"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </CalendarSearchAction>
+            <BookmarkAction
+                v-if="state.actionVisMap.get('BookmarkAction')"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </BookmarkAction>
+    
+            <ProfileLockAction
+                v-if="state.actionVisMap.get('ProfileLockAction')"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
+                :is-locked="props.user.confirmFollow">
+            </ProfileLockAction>
+    
+            <ProfileBlockAction
+                v-if="state.actionVisMap.get('ProfileBlockAction')"
+                :user="props.user"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </ProfileBlockAction>
 
-        <ShareLinkAction
-            v-if="state.actionVisMap.get('ShareLinkAction')"
-            :link="generateLink"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </ShareLinkAction>
-
-        <VerifyApplyAction
-            v-if="state.actionVisMap.get('VerifyApplyAction')"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </VerifyApplyAction>
-
-        <ProfileLockAction
-            v-if="state.actionVisMap.get('ProfileLockAction')"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </ProfileLockAction>
-
-        <ProfileBlockAction
-            v-if="state.actionVisMap.get('ProfileBlockAction')"
-            :user="props.user"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </ProfileBlockAction>
-
-        <LogoutAction
-            v-if="state.actionVisMap.get('LogoutAction')"
-            class="active:bg-gray-200 first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px] px-[0.75rem] py-[0.5rem]">
-        </LogoutAction>
+            <RemoveFanAction
+                v-if="state.actionVisMap.get('RemoveFanAction')"
+                :fan-id="props.user.id"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </RemoveFanAction>
+    
+            <LogoutAction
+                v-if="state.actionVisMap.get('LogoutAction')"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px] text-red-500">
+            </LogoutAction>
+        </div>
     </div>
 </template>
 
+<style scoped>
+.action{
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+    text-align: start;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 0.75rem;
+    user-select: none;
+}
+
+.action:hover{
+    background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.action:active{
+    background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+@media not all and (min-width: 640px) {
+    .action{
+        padding: 0.5rem 0;
+        width: auto;
+        flex-direction: column;
+        row-gap: 0.5rem;
+        width: 100%;
+    }
+
+    .action:hover{
+        background-color: transparent;
+    }
+
+    .action:active{
+        background-color: transparent;
+    }
+}
+</style>
+
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
+import { computed, reactive, onMounted, onUnmounted, inject, watch } from 'vue'
 import ProfileChangeAction from '@/indexApp/components/menus/userProfileMenus/ProfileChangeAction.vue'
 import CalendarSearchAction from '@/indexApp/components/menus/userProfileMenus/CalendarSearchAction.vue'
 import ShareLinkAction from '@/indexApp/components/menus/userProfileMenus/ShareLinkAction.vue'
@@ -50,7 +109,9 @@ import VerifyApplyAction from '@/indexApp/components/menus/userProfileMenus/Veri
 import ProfileLockAction from '@/indexApp/components/menus/userProfileMenus/ProfileLockAction.vue'
 import LogoutAction from '@/indexApp/components/menus/userProfileMenus/LogoutAction.vue'
 import ProfileBlockAction from '@/indexApp/components/menus/userProfileMenus/ProfileBlockAction.vue'
-import { computed, reactive, onMounted, onUnmounted, inject } from 'vue'
+import BookmarkAction from '@/indexApp/components/menus/userProfileMenus/BookmarkAction.vue'
+import RemoveFanAction from '@/indexApp/components/menus/userProfileMenus/RemoveFanAction.vue'
+import { store } from '@/indexApp/js/store'
 
 const { dismissProfileMenus } = inject('dismissProfileMenus')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
@@ -69,9 +130,11 @@ const state = reactive({
         [CalendarSearchAction.__name, !props.user.blocking && !props.user.blocked && showUnImpl],
         [ShareLinkAction.__name, !props.user.blocking && !props.user.blocked],
         [VerifyApplyAction.__name, props.user.id === curUser.id && showUnImpl],
-        [ProfileLockAction.__name, props.user.id === curUser.id && showUnImpl],
-        [ProfileBlockAction.__name, props.user.id !== curUser.id && showUnImpl],
+        [ProfileLockAction.__name, props.user.id === curUser.id],
+        [ProfileBlockAction.__name, props.user.id !== curUser.id],
         [LogoutAction.__name, props.user.id === curUser.id],
+        [BookmarkAction.__name, props.user.id === curUser.id && store.MOBILE_MODE],
+        [RemoveFanAction.__name, props.user.id !== curUser.id && props.user.yourFanStatus === 'FAN'],
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示
     ])
 })
@@ -88,6 +151,10 @@ function handleProfileMenusDismiss(event) {
     }
     event.stopPropagation()
 }
+
+watch(() => store.MOBILE_MODE, (newVal, _) => {
+    state.actionVisMap.set(BookmarkAction.__name, newVal)
+})
 
 onMounted(() => {
     document.querySelector('#app').addEventListener('click', handleProfileMenusDismiss)

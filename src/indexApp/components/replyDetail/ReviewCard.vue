@@ -1,39 +1,52 @@
 <template>
-    <div class="border-b-[1px] border-gray-100 flex flex-col px-[1rem] py-[1rem] relative">
-        <div class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
-        <div class="flex flex-row items-center justify-between">
-            <div class="flex flex-row gap-x-4 items-center">
-                <div class="relative z-10">
-                    <Avatar
-                        :user="props.review.user"
-                        class="cursor-default h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]">
-                    </Avatar>
-                </div>
-                <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
-                    <div class="font-bold hover:underline text-[12pt]">
-                        {{ props.review.user.nickname }}
+    <div class="border-b-[1px] border-gray-100 flex flex-col max-sm:p-3 p-4 relative">
+        <div class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+        <div class="flex flex-row gap-x-4 justify-between max-sm:gap-x-3">
+            <div class="flex-none relative z-10">
+                <Avatar
+                    :user="props.review.user"
+                    class="cursor-default h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]">
+                </Avatar>
+            </div>
+            <div class="flex flex-1 flex-col">
+                <div class="flex flex-row gap-x-4 h-fit items-center justify-between">
+                    <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
+                        <div class="font-bold hover:underline text-[12pt]">
+                            {{ props.review.user.nickname }}
+                        </div>
+                        <IconVerify
+                            v-if="props.review.user.verified"
+                            class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                        </IconVerify>
+                        <div
+                            v-if="props.review.user.confirmFollow"
+                            class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                            lock
+                        </div>
                     </div>
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconVerify v-if="props.review.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                    <div>
+                        <!-- eslint-disable-next-line vue/html-quotes, vue/singleline-html-element-content-newline -->
+                        <div class='text-[10pt] text-gray-400'>{{ humanizedTime(props.review.createdTime) }}</div>
+                    </div>
+                </div>
+                <div class="relative text-[12pt]">
+                    <VueShowdown
+                        tag="markdown"
+                        :extensions="['exts']"
+                        :markdown="props.review.content"
+                        class="max-sm:w-[calc(100vw-2.5rem-0.75rem*3)] sm:w-[calc(36rem-2.5rem-1rem*3)]">
+                    </VueShowdown>
+                    <ImageGrid
+                        v-if="props.review.images?.length"
+                        :id="`img-${props.review.id}`"
+                        :images="props.review.images"
+                        type="review"
+                        class="bottom-[0.5rem] pt-[0.5rem] relative z-[20]"
+                        @real-image="handleRealImage">
+                    </ImageGrid>
+                    <div class="absolute bg-transparent h-full top-0 w-full z-[21]" />
                 </div>
             </div>
-            <div>
-                <!-- eslint-disable-next-line vue/html-quotes, vue/singleline-html-element-content-newline -->
-                <div class='text-[10pt] text-gray-400'>{{ humanizedTime(props.review.createdTime) }}</div>
-            </div>
-        </div>
-        <div class="ml-[3.5rem] relative text-[12pt]">
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.review.content"></VueShowdown>
-            <ImageGrid
-                v-if="props.review.images?.length"
-                :id="`img-${props.review.id}`"
-                :images="props.review.images"
-                type="review"
-                class="bottom-[0.5rem] pt-[0.5rem] relative z-[20]"
-                @real-image="handleRealImage">
-            </ImageGrid>
-            <div class="absolute bg-transparent h-full top-0 w-full z-[21]" />
         </div>
     </div>
 </template>

@@ -1,34 +1,41 @@
 <template>
     <div>
-        <div class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 px-[1rem] py-[1rem] relative">
+        <div class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
             <div
                 v-if="state.tieSub == 'mid'"
-                class="absolute bg-gray-200 h-full left-[2.2rem] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="state.tieSub == 'top'"
-                class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-[calc(100%-2.5rem)] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="state.tieSub == 'bottom'"
-                class="absolute bg-gray-200 h-[2.5rem] left-[2.2rem] timeline-bottom top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
                 class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(state.reply.id)" />
             <div class="flex flex-row items-center justify-between">
-                <div class="flex flex-row gap-x-4 items-center relative">
-                    <Transition name="fade">
-                        <UserInfoPop
-                            v-if="state.showUserInfoPop"
-                            :user="state.reply.user"
-                            class="absolute shadow-lg top-0 user-info-pop z-[99]"
-                            @mouseleave="state.showUserInfoPop = false">
-                        </UserInfoPop>
-                    </Transition>
+                <div class="flex flex-row gap-x-4 items-center max-sm:gap-x-3 relative">
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                        <div
+                            v-if="state.showUserInfoPop && store.MOBILE_MODE"
+                            class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
+                            @click="state.showUserInfoPop = false" />
+                        <Transition name="fade">
+                            <UserInfoPop
+                                v-if="state.showUserInfoPop"
+                                :user="state.reply.user"
+                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[103]"
+                                @mouseleave="state.showUserInfoPop = false">
+                            </UserInfoPop>
+                        </Transition>
+                    </Teleport>
                     <div class="relative z-10">
                         <Avatar
                             :user="state.reply.user"
                             class="h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]"
-                            @mouseenter="state.showUserInfoPop = true"
-                            @click="routeToUser(state.reply.user.nickname)">
+                            @mouseenter="handleAvatarMouseenter()"
+                            @click="handleAvatarClick()">
                         </Avatar>
                     </div>
                     <div class="z-20">
@@ -38,13 +45,20 @@
                                 @click="routeToUser(state.reply.user.nickname)">
                                 {{ state.reply.user.nickname }}
                             </div>
-                            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                            <IconVerify v-if="state.reply.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                            <IconVerify
+                                v-if="state.reply.user.verified"
+                                class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                            </IconVerify>
+                            <div
+                                v-if="state.reply.user.confirmFollow"
+                                class="material-symbols-rounded no-hover p-0 text-[1.25rem]">
+                                lock
+                            </div>
                         </div>
                         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                         <div class="text-[11pt]" @click="routeToUser(replyTo)">
                             回复
-                            <span class="cursor-pointer font-bold hover:underline">@{{ replyTo }}</span>
+                            <span class="cursor-pointer hover:underline">@{{ replyTo }}</span>
                         </div>
                     </div>
                 </div>
@@ -57,7 +71,7 @@
                 </div>
             </div>
 
-            <div class="overflow-x-hidden pl-[3.5rem] text-[12pt]">
+            <div class="max-sm:pl-[3.25rem] overflow-x-hidden pl-[3.5rem] text-[12pt]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.reply.content"></VueShowdown>
                 <ImageGrid
@@ -69,37 +83,56 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row justify-between pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-8 justify-end max-sm:pl-[3rem] pl-[3.5rem] z-20">
                 <button
                     :id="`rmb-${state.reply.id}`"
                     type="button"
                     title="更多"
                     class="btn flex flex-row gap-x-2 items-center op text-[11pt]"
                     @click="toggleMenu">
+                    <More
+                        theme="outline"
+                        size="20"
+                        fill="#333"
+                        :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
+                    </More>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <More theme="outline" size="20" fill="#333" :stroke-width="3"></More>
-                    <Transition name="fade">
-                        <ReviewMenu
-                            v-if="state.showReplyMenu"
-                            class="absolute bottom-[1rem]"
-                            :review="state.reply">
-                        </ReviewMenu>
-                    </Transition>
+                    <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                        <div
+                            v-if="state.showReplyMenu && store.MOBILE_MODE"
+                            class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1000]" />
+                        <Transition name="fade">
+                            <ReviewMenu
+                                v-if="state.showReplyMenu"
+                                class="absolute bottom-[1rem] cursor-pointer h-auto max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-2 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1000] rounded-[8px] sm:max-w-[18rem] sm:min-w-[10rem]"
+                                :review="state.reply">
+                            </ReviewMenu>
+                        </Transition>
+                    </Teleport>
                 </button>
                 <button
                     type="button"
                     :title="`${state.reply.replyCount} 评论`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="state.showReplyPanel = true">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <Message theme="outline" size="19" fill="#333" :stroke-width="3"></Message>
+                    <Message
+                        theme="outline"
+                        size="19"
+                        fill="#333"
+                        :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
+                    </Message>
                     {{ humanizedNumber(state.reply.replyCount) }}
                     <Teleport to="#app">
-                        <ReviewPanel
-                            v-if="state.showReplyPanel"
-                            :parent-review="state.reply"
-                            @dismiss="dismissReplyPanel">
-                        </ReviewPanel>
+                        <Transition name="fade">
+                            <ReviewPanel
+                                v-if="state.showReplyPanel"
+                                class="fixed top-0"
+                                :parent-review="state.reply"
+                                @dismiss="dismissReplyPanel">
+                            </ReviewPanel>
+                        </Transition>
                     </Teleport>
                 </button>
                 <button
@@ -112,6 +145,7 @@
                         size="20"
                         :fill="likedIconColor"
                         :stroke-width="3"
+                        class="hover:bg-[#d3d3d5] p-[0.4rem]"
                         :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
                     </Like>
                     {{ humanizedNumber(state.reply.likeCount) }}
@@ -119,7 +153,7 @@
             </div>
             <div
                 v-if="showMoreReplyButton"
-                class="hover:underline ml-[3.5rem] text-[#0d6efd] text-[11pt] z-[19]"
+                class="hover:underline max-sm:ml-[3rem] ml-[3.5rem] text-[#0d6efd] text-[11pt] z-[19]"
                 :class="[state.isLoading ? 'pointer-events-none' : 'cursor-pointer']">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <IconLoading v-if="state.isLoading == true" class="h-5 text-slate-500 w-5"></IconLoading>
@@ -129,28 +163,6 @@
         </div>
     </div>
 </template>
-
-<style scoped>
-.timeline-top {
-    height: calc(100% - 2.5rem);
-}
-
-.fade-enter-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-</style>
 
 <script setup>
 // 只包括回复，单独从Review复制出来
@@ -228,7 +240,7 @@ async function toggleLike() {
     try {
         if (state.reply.liked == false) {
             const response = await likeAReview(state.reply.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error('点赞失败！')
@@ -238,7 +250,7 @@ async function toggleLike() {
             state.reply.liked = true
         } else {
             const response = await dislikeAReview(state.reply.id)
-            if (!response.ok) throw new Error((await response.json()).error)
+            if (!response.ok) throw new Error((await response.json()).message)
 
             const result = await response.text()
             if (result == false) throw new Error('取消点赞失败！')
@@ -249,7 +261,6 @@ async function toggleLike() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 
@@ -295,6 +306,20 @@ function handleRealImage({index, image}){
 
 function dismissReplyMenus() {
     state.showReplyMenu = false
+}
+
+function handleAvatarClick(){
+    if(!store.MOBILE_MODE){
+        routeToUser(state.review.user.nickname)
+    } else {
+        state.showUserInfoPop = true
+    }
+}
+
+function handleAvatarMouseenter(){
+    if(!store.MOBILE_MODE){
+        state.showUserInfoPop = true
+    }
 }
 
 provide('dismissReviewMenus', { dismissReviewMenus: dismissReplyMenus })

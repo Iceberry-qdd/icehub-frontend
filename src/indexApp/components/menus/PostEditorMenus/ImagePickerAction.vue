@@ -4,11 +4,12 @@
             <ImageEditor
                 v-if="state.showImageEditPanel == true"
                 id="imageEditPanel"
+                class="fixed top-0"
                 :image="loadImage(state.imgList[state.imageEditIndex])"
                 :image-info="state.imagesInfo[state.imageEditIndex]"
-                :show-alt-editor="state.showAltEditor[state.imageEditIndex]"
+                :show-alt-editor="!!state.imagesInfo[state.imageEditIndex].altText"
                 @close-image-editor="closeImageEditor"
-                @toggle-hidden="toggleHidden">
+                @submit="submit">
             </ImageEditor>
         </Teleport>
         <div id="image-panel">
@@ -22,10 +23,10 @@
                         class="absolute backdrop-blur-xl bg-white/5 h-full rounded-[8px] w-full" />
                     <img
                         class="cursor-default h-[5rem] image-picker object-cover rounded-[8px] w-[5rem]"
-                        :src="loadImage(item)" />
+                        :src="loadImage(item).blob" />
                     <div class="absolute bg-transparent cursor-pointer h-full left-0 rounded-[8px] top-0 w-[5rem]">
                         <div
-                            class="flex h-full hover:bg-[#00000066] hover:text-white items-center justify-center rounded-[8px] text-transparent w-full"
+                            class="flex h-full hover:bg-[#00000055] hover:text-white items-center justify-center rounded-[8px] text-transparent w-full"
                             @click="editImage(key)">
                             <IconMagic class="text-[16pt]"></IconMagic>
                         </div>
@@ -50,14 +51,19 @@
     </div>
 </template>
 
+<!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
 import { reactive } from 'vue'
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconError from '@/components/icons/IconError.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
 import ImageEditor from '@/indexApp/components/index/ImageEditor.vue'
-
 const props = defineProps({
+    /** 用于定位菜单使用的imgFile */
+    editorMenuId: {
+        type: String,
+        required: true
+    },
     /** 传入的图片列表 */
     imgList: {
         type: Array,
@@ -67,27 +73,22 @@ const props = defineProps({
     imagesInfo: {
         type: Array,
         required: true
-    },
-    /** 传入的文件选择器 */
-    selector: {
-        type:Object,
-        required: true
     }
 })
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     imgList: props.imgList || [],
     imagesInfo: props.imagesInfo || [],
     showImageEditPanel: false,
     imageEditIndex: 0,
-    showAltEditor: [false, false, false, false, false, false, false, false, false]
+    showAltEditor: [false, false, false, false, false, false, false, false, false],
+    fileSelector: document.querySelector(`#${props.editorMenuId} Input[id="imgFile"]`)
 })
 
 function loadImage(file) {
     let URL = window.URL || window.webkitURL
     let imgUrl = URL.createObjectURL(file)
-    return imgUrl
+    return {blob: imgUrl, file: file}
 }
 
 function deleteImg(item, key) {
@@ -102,14 +103,16 @@ function editImage(imageIndex) {
 }
 
 function choosePics() {
-    props.selector.click()
+    state.fileSelector.showPicker()
 }
 
-function closeImageEditor(args) {
+function submit({ image, imageInfo }) {
+    state.imgList[state.imageEditIndex] = image.file
+    state.imagesInfo[state.imageEditIndex] = imageInfo
+    closeImageEditor()
+}
+
+function closeImageEditor(){
     state.showImageEditPanel = false
-}
-
-function toggleHidden({hidden}){
-    state.imagesInfo[state.imageEditIndex].hidden = hidden
 }
 </script>

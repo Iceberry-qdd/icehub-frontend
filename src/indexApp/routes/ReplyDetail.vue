@@ -3,6 +3,7 @@
     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
     <div v-if="state.review != null" id="reply-detail">
         <Header
+            class="sticky"
             :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
@@ -57,12 +58,11 @@ const state = reactive({
 async function getReview(id) {
     try {
         const response = await getReviewById(id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         state.review = await response.json()
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     }
 }
 

@@ -111,3 +111,76 @@ const intlNumberFormat = new Intl.NumberFormat(undefined, numberFormatOptions)
 export function humanizedNumber(number) {
     return intlNumberFormat.format(number)
 }
+
+const intlTextSegmenter = new Intl.Segmenter(undefined, { granularity: 'word', localeMatcher: 'best fit' })
+/**
+ * 使用segmenter取子字符串，结果包含preTag、postTag，长度计数时，不包含preTag、postTag
+ * @param {number} maxLen 最大字符串长度，必须为非负整数
+ * @param {number} offset 从第几个字符开始取，必须为非负整数
+ * @returns {string} 子字符串
+ */
+export function substringBySegmenter(text, maxLen, offset) {
+    maxLen = Math.min(text.length, Math.max(maxLen ?? text.length, 0))
+    offset = Math.min(Math.max(offset ?? 0, 0), maxLen)
+    const segArr = [...intlTextSegmenter.segment(text.substring(offset))]
+    let [result, index, lastResultLen] = ['', 0, 0]
+    const [preTag, postTag] = ['<em>', '</em>']
+
+    while (maxLen > 0 && index < segArr.length) {
+        const seg = segArr.at(index).segment
+        result += seg
+        maxLen -= seg.length
+        index++
+
+        if (result.includes(preTag, lastResultLen)) {
+            maxLen += preTag.length
+            lastResultLen = result.length
+        }
+        if (result.includes(postTag, lastResultLen)) {
+            maxLen += postTag.length
+            lastResultLen = result.length
+        }
+    }
+
+    return result
+}
+
+/**
+ * 判断一个obj对象的具体类型
+ * @param {Object} obj object对象
+ * @param {Type} type 预测其类型
+ * @returns {boolean} 判断结果
+ */
+export function isType(obj, type) {
+    return Object.prototype.toString.call(obj) === `[object ${type.name}]`
+}
+
+/**
+ * 将时间戳或Date返回为`Input[type=datetime-local]`组件支持的`YYYY-MM-DDThh:mm`格式
+ * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ * @returns {string} `YYYY-MM-DDThh:mm`格式的时间字符串
+ */
+export function toDtPickerFormat(timestamp) {
+    const date = new Date(timestamp)
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getDate()).padStart(2, '0')}`
+}
+
+/**
+ * 将时间戳或Date返回为`Input[type=date]`组件支持的`YYYY-MM-DD`格式
+ * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ * @returns {string} `YYYY-MM-DD`格式的时间字符串
+ */
+export function toDatePickerFormat(timestamp) {
+    const date = new Date(timestamp)
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+}
+
+/**
+ * 将时间戳或Date返回为`Input[type=time]`组件支持的`hh:mm`格式
+ * @param {number} timestamp 13位毫秒级时间戳 | 10位秒级时间戳数字 | Date
+ * @returns {string} `hh:mm`格式的时间字符串
+ */
+export function toTimePickerFormat(timestamp) {
+    const date = new Date(timestamp)
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getDate()).padStart(2, '0')}`
+}

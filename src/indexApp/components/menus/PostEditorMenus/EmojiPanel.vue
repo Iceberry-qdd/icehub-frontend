@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white overflow-x-hidden overflow-y-scroll panel pr-[1px] px-1 rounded-[6px]">
+    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] modern-scrollbar-y overflow-x-hidden overflow-y-auto rounded-[6px]">
         <div
             v-if="props.showHistory && state.historyEmojis.length > 0"
             class="bg-white border-b-[1px] category gap-1 grid grid-cols-7 px-2 py-2 sticky top-0 z-[99]">
@@ -38,7 +38,7 @@
                         @mouseenter.self="toggleSkinPanel(emoji, true)"
                         @mouseleave.self="toggleSkinPanel(emoji, false)">
                         <span @click="chooseEmoji(emoji.unified)">{{ emojiCode(emoji) }}</span>
-                        <Transition name="fade">
+                        <Transition name="skin-fade">
                             <div
                                 v-if="emoji.skin_variations && state.showSkinPanel[emoji.unified]"
                                 id="skinPanel"
@@ -61,33 +61,19 @@
 </template>
 
 <style scoped>
-.panel::-webkit-scrollbar {
-    width: 8px !important;
-    -webkit-appearance: none;
-    background: transparent;
-    border-radius: 9999px;
-}
-
-.panel::-webkit-scrollbar-thumb {
-    width: 8px !important;
-    -webkit-appearance: none;
-    background: #00000033;
-    border-radius: 9999px;
-}
-
-.fade-enter-active {
+.skin-fade-enter-active {
     transition: opacity 0.3s ease-in-out;
 }
 
-.fade-leave-active {
+.skin-fade-leave-active {
     transition: opacity 0.3s ease-in-out;
 }
 
-.fade-enter-from {
+.skin-fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to {
+.skin-fade-leave-to {
     opacity: 0;
 }
 </style>
@@ -95,6 +81,7 @@
 <!-- eslint-disable vue/no-unused-properties -->
 <script setup>
 import { reactive, onMounted, onUnmounted, computed, ref } from 'vue'
+import { store } from '@/indexApp/js/store.js'
 // jsdelivr服务不稳定，选择本地打包进去：https://github.com/jsdelivr/jsdelivr/issues/18565
 import emojiPack from '@/assets/emoji-datasource-apple@15.1.2+esm.js'
 
@@ -103,7 +90,8 @@ const props = defineProps({
     /** 触发该组件的元素id，用于检测点击事件关闭用 */
     switchId: {
         type:String,
-        required:true
+        required:false,
+        default:'emoji-panel'
     },
     /** 是否显示历史记录行 */
     showHistory: {
@@ -134,11 +122,12 @@ const categoryZh = {
 }
 const category = Object.keys(categoryZh)
 const emojis = category.reduce((obj, key) => (
-    obj[key] = emojiPack.filter(e => e.category === key && e.has_img_apple === true)
-        .sort((a, b) => a.sort_order - b.sort_order),
-    obj), {})
-const showSkinPanel = emojiPack.filter(emoji => emoji?.skin_variations).map(emoji => {return {unified: emoji.unified, show: false}})
-
+                                obj[key] = emojiPack.filter(e => e.category === key && e.has_img_apple === true)
+                                                    .sort((a, b) => a.sort_order - b.sort_order),
+                                obj), {}
+                              )
+const showSkinPanel = emojiPack.filter(emoji => emoji?.skin_variations) /*.map(emoji => {return {unified: emoji.unified, show: false}})*/
+                               .reduce((obj, { unified }) => (obj[unified] = false, obj), {})
 const state = reactive({
     emojiMap: emojis,
     historyEmojis: JSON.parse(localStorage.getItem('historyEmoji')) || [],
@@ -150,6 +139,10 @@ const showHistory = computed(() => {
 })
 
 function chooseEmoji(unified) {
+    if(store.MOBILE_MODE && state.showSkinPanel[unified] === false){
+        state.showSkinPanel[unified] = true
+        return
+    }
     if(props.showHistory){
         storeEmojiToLocalStorage(unified)
     }
@@ -200,22 +193,28 @@ function skinPanelStyle(emojiBtnId){
 }
 
 function toggleSkinPanel(emoji, show){
+    if(show && store.MOBILE_MODE) return
     if(emoji.skin_variations){
         state.showSkinPanel[emoji.unified] = show
     }
 }
 
+function clickListener(event){
+    const emojiPanel = document.querySelector(`#${props.switchId}`)
+    const emojiPanelBtn = document.querySelector(`#${props.switchId}-btn`)
+    const isClickPanel = emojiPanel && emojiPanel.contains(event.target)
+    const isClickPanelBtn = emojiPanelBtn && emojiPanelBtn.contains(event.target)
+    if (!isClickPanel && !isClickPanelBtn) {
+        emits('dismissEmojiPanel')
+    }
+}
+
 onMounted(() => {
     if(!props.switchId) return
-    const emojiPanel = document.querySelector(`#${props.switchId}`)
-    document.querySelector('#app').addEventListener('click', function (event) {
-        if (emojiPanel && !emojiPanel.contains(event.target)) {
-            emits('dismissEmojiPanel')
-        }
-    })
+    document.querySelector('#app').addEventListener('click', clickListener)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', () => { })
+    document.querySelector('#app').removeEventListener('click', clickListener)
 })
 </script>

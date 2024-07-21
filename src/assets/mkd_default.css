@@ -117,3 +117,7 @@ markdown atsign{
 markdown .emoji span{
     display: inline-block;
 }
+
+markdown * {
+    overflow-wrap: break-word;
+}

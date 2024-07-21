@@ -1,7 +1,8 @@
 <template>
-    <div class="flex flex-rows gap-x-3 items-center justify-start">
-        <span class="material-icons-round no-hover p-0 text-[16pt]">report_problem</span>
+    <div>
+        <span
+            class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">report_problem</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">举报此内容</div>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">举报此内容</div>
     </div>
 </template>

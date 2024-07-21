@@ -1,12 +1,12 @@
 <template>
     <div class="cursor-pointer">
-        <picture v-if="state.banner">
+        <picture v-if="banner">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <source :srcset="srcset" type="image/webp" />
+            <source :srcset="banner.url" type="image/webp" />
             <img
-                :style="{'background-image': `url(${state.banner.thumb})`}"
+                :style="{'background-image': `url(${banner.thumb})`}"
                 class="bg-center bg-cover bg-no-repeat img-fluid pic"
-                :src="state.banner.thumb"
+                :src="banner.thumb"
                 loading="lazy"
                 v-bind="$attrs" />
         </picture>
@@ -17,11 +17,11 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { reactive, watch, computed } from 'vue'
+import { computed } from 'vue'
 
 // eslint-disable-next-line vue/no-unsupported-features
 defineOptions({
-  inheritAttrs: false
+    inheritAttrs: false
 })
 
 const props = defineProps({
@@ -33,23 +33,15 @@ const props = defineProps({
     }
 })
 
-const state = reactive({
-    banner: props.user.banner
-})
-
-const srcset = computed(() => {
-    if(props.user.banner instanceof File){
-        return state.banner.url
-    }else{
-        return `${import.meta.env.VITE_OBJECT_BASE_URL}${state.banner.url}?width=600`
-    }
-})
-
-watch(() => props.user.banner, (newVal, oldVal) => {
-    if(props.user.banner instanceof File){
+const banner = computed(() => {
+    if (props.user.banner instanceof File) {
         let URL = window.URL || window.webkitURL
         let imgUrl = URL.createObjectURL(props.user.banner)
-        state.banner = {thumb: imgUrl, url: imgUrl}
+        return { thumb: imgUrl, url: imgUrl }
+    } else if (!props.user.banner) {
+        return undefined
+    } else {
+        return { thumb: props.user.banner.thumb, url: `${import.meta.env.VITE_OBJECT_BASE_URL}${props.user.banner.url}?width=600` }
     }
 })
 </script>

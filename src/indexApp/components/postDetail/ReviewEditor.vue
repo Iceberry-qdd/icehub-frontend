@@ -2,17 +2,17 @@
     <div>
         <div
             v-if="!state.loading"
-            class="flex flex-row gap-x-[1rem] px-[1rem] py-[1rem] relative"
+            class="flex flex-row gap-x-4 max-sm:gap-x-3 max-sm:p-3 max-sm:pb-0 p-4 relative"
             :class="[props.fromReviewPanel ? '' : 'border-gray-100 border-b-[1px]']">
             <div
                 v-if="props.tieLocation == 'mid'"
-                class="absolute bg-gray-200 h-full left-[2.2rem] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="props.tieLocation == 'top'"
-                class="absolute bg-gray-200 left-[2.2rem] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="props.tieLocation == 'bottom'"
-                class="-z-0 absolute bg-gray-200 h-[2.5rem] left-[2.2rem] timeline-bottom top-0 w-[0.15rem]" />
+                class="-z-0 absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem]" />
 
             <div class="h-fit z-10">
                 <Avatar
@@ -25,7 +25,7 @@
                 class="w-full">
                 <div
                     v-if="state.content.length > 0"
-                    class="mb-2 text-[11pt]">
+                    class="text-[11pt]">
                     回复
                     <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
                 </div>
@@ -34,7 +34,7 @@
                     tag="markdown"
                     :extensions="['exts']"
                     :markdown="state.content"
-                    class="min-h-[3rem]">
+                    class="break-all max-sm:w-[calc(100vw-2.5rem-0.75rem*3)] min-h-[3rem]">
                 </VueShowdown>
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <textarea
@@ -45,92 +45,42 @@
                     :class="{ 'text-gray-400': state.loading }"
                     class="bg-transparent break-all focus:outline-none leading-6 max-w-full min-h-fit min-w-full overflow-y-hidden resize-none text-[1rem] text-justify tracking-wide"
                     :maxlength="state.maxContentWordCount + 50"
-                    rows="2"
-                    placeholder="发布评论"
+                    rows="3"
+                    placeholder="写点什么吧~"
                     @input="resize">
                 </textarea>
                 <Transition name="fade">
                     <ImagePickerAction
                         v-if="state.imgList.length > 0"
+                        editor-menu-id="reviewEditorMenu"
                         :img-list="state.imgList"
                         :selector="imgFile"
                         :images-info="state.imageListInfo">
                     </ImagePickerAction>
                 </Transition>
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <div v-if="state.content.length > 0" class="flex flex-row items-center justify-between mt-2">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <div v-if="!state.loading" class="flex flex-row gap-x-1 items-center">
-                        <!-- TODO implement it. -->
-                        <input
-                            v-show="false"
-                            ref="imgFile"
-                            type="file"
-                            name="imgFile"
-                            multiple="true"
-                            accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
-                            @change="clickFileSelector" />
-                        <div
-                            @click="preChoosePics">
-                            <span
-                                title="添加图片"
-                                class="material-icons-round text-[1.25rem]"
-                                :class="[hasImage ? 'active' : '']">
-                                add_photo_alternate
-                            </span>
-                        </div>
-                        <div
-                            :id="emojiSwitchId"
-                            class="flex-col relative">
-                            <div
-                                title="表情面板"
-                                class="material-icons-round no-hover text-[1.25rem]"
-                                :class="EmojiIconActiveClass"
-                                @click="state.showEmojiPanel = !state.showEmojiPanel">
-                                mood
-                            </div>
-                            <Transition name="fade">
-                                <EmojiPanel
-                                    v-if="state.showEmojiPanel"
-                                    id="emojiPanel"
-                                    :switch-id="emojiSwitchId"
-                                    class="absolute max-h-[18rem] min-h-[8rem] min-w-max ring-1 ring-slate-900/5 shadow-lg top-[2.5rem] z-[99]"
-                                    @dismiss-emoji-panel="dismissEmojiPanel"
-                                    @insert-emoji-code="insertEmoji">
-                                </EmojiPanel>
-                            </Transition>
-                        </div>
-                        <div
-                            :class="previewIconActiveClass"
-                            title="预览"
-                            class="material-icons-round no-hover text-[1.25rem]"
-                            @click="state.showMarkdownPanel = !state.showMarkdownPanel">
-                            visibility
-                        </div>
-                    </div>
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <div v-else class="flex flex-row gap-x-2 items-center" />
-                    <div class="flex flex-row gap-x-4 items-center">
-                        <div
-                            class="select-none text-[10pt]"
-                            :class="leftWordCountClass"
-                            :title="leftWordCount < 0 ? `超出${-leftWordCount}字` : ''">
-                            {{ leftWordCount }}
-                        </div>
-                        <div
-
-                            :class="submitPostBtnClass"
-                            class="px-6 py-[0.4rem] rounded-full text-sm text-white"
-                            @click="submitReview">
-                            <span>发布</span>
-                        </div>
-                    </div>
-                </div>
+                <EditorMenu
+                    v-if="state.content.length > 0 || store.MOBILE_MODE"
+                    id="reviewEditorMenu"
+                    :class="{'px-2': props.fromReviewPanel && store.MOBILE_MODE}"
+                    class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 w-full z-10"
+                    switch-from="review-panel"
+                    :menu-set="state.menuSet"
+                    :max-content-word-count="state.maxContentWordCount"
+                    :content-length="state.content.length"
+                    :img-list="state.imgList"
+                    :show-markdown-panel="state.showMarkdownPanel"
+                    @insert-emoji="({emoji}) => {state.content = state.content.concat(emoji)}"
+                    @submit="submitReview"
+                    @push-image="({images}) => {state.imgList.push(...images)}"
+                    @pop-image="() => {state.imgList.pop()}"
+                    @resize="resize"
+                    @preview="({isShow}) => {state.showMarkdownPanel = isShow}">
+                </EditorMenu>
             </div>
         </div>
         <div
             v-else
-            class="bg-white flex flex-col gap-y-2 h-[8rem] items-center justify-center"
+            class="bg-white flex flex-col gap-y-2 h-[8rem] items-center justify-center max-sm:fixed max-sm:h-screen max-sm:w-screen top-0 z-10"
             :class="[props.fromReviewPanel ? '' : 'border-gray-100 border-b-[1px]']">
             <IconLoading class="'h-5 text-white' w-5"></IconLoading>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
@@ -157,21 +107,21 @@
 }
 </style>
 
-<!-- eslint-disable vue/no-setup-props-reactivity-loss -->
+<!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-unused-properties -->
 <script setup>
-import { reactive, computed, inject, defineAsyncComponent, ref } from 'vue'
+import { reactive, computed, inject, defineAsyncComponent, ref, watch } from 'vue'
 import { reviewing, uploadImages } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
+import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
-import EmojiPanel from '@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
 const panel = ref()
 const imgFile = ref()
-const emits = defineEmits(['dismiss'])
+const emits = defineEmits(['dismiss', 'isLoading', 'showMarkdownPanel', 'submit'])
 const props = defineProps({
     /** 传入的帖子对象，与parent二选一传递 */
     post: {
@@ -186,17 +136,21 @@ const props = defineProps({
         default: undefined
     },
     /** 时间线条位置 */
-    // eslint-disable-next-line vue/no-unused-properties
     tieLocation: {
         type: String,
         required: false,
         default: ''
     },
     /** 是否从ReviewPanel触发 */
-    // eslint-disable-next-line vue/no-unused-properties
     fromReviewPanel: {
         type: Boolean,
         required: true
+    },
+    /** 当fromReviewPanel为true且store.MOBILE_MODE为true时，标识submit操作从父组件主动触发 */
+    submit: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 const { newReview } = inject('newReview')
@@ -222,41 +176,41 @@ const state = reactive({
     textAreaId: props.fromReviewPanel ? 'reply-input' : 'review-input',
     imgList: [],
     imageListInfo: imageListInfo,
-    images: null
+    images: null,
+    menuSet: new Set(['ImagePicker','EmojiPanel', 'MarkdownPreview'])
 })
-
-const emojiSwitchId = computed(() => {
-    return props.fromReviewPanel ? 'reply-editor-emoji-panel' : 'review-editor-emoji-panel'
-})
-const previewIconActiveClass = computed(() => ({
-    'text-blue-500': state.showMarkdownPanel,
-    'bg-blue-200': state.showMarkdownPanel,
-    'hover:bg-gray-200': !state.showMarkdownPanel
-}))
-
-const EmojiIconActiveClass = computed(() => ({
-    'text-blue-500': state.showEmojiPanel,
-    'bg-blue-200': state.showEmojiPanel,
-    'hover:bg-gray-200': !state.showEmojiPanel
-}))
 
 const replyTo = computed(() => {
     return props.parent?.user?.nickname || props.post?.user?.nickname || '神秘用户'
 })
 
-function dismissEmojiPanel() {
-    state.showEmojiPanel = false
+if(props.fromReviewPanel){
+    watch(() => state.loading, (newVal, oldVal) => {
+        emits('isLoading', {isLoading: newVal})
+    })
+    watch(() => state.showMarkdownPanel, (newVal, oldVal) => {
+        emits('showMarkdownPanel', {isShow: newVal})
+    })
+}
+
+if(props.fromReviewPanel && store.MOBILE_MODE){
+    watch(() => props.submit, (newVal, oldVal) => {
+        if(newVal === true){
+            submitReview()
+        }
+    })
 }
 
 async function submitReview() {
     if (state.loading == true) {
         store.setWarningMsg('正在提交中，请勿重复提交！')
+        emits('submit', {submitting: false})
         return
     }
 
     state.loading = true
     try {
-        if (state.post?.plan) throw new Error('该帖子尚未发布，无法进行评论操作')
+        if (props.post?.plan) throw new Error('该帖子尚未发布，无法进行评论操作')
         if (state.content.trim() == '') throw new Error('评论内容不能为空！')
         if (!props.post && !props.parent) throw new Error('该评论没有依赖的父级内容，非法评论！')
 
@@ -280,7 +234,7 @@ async function submitReview() {
         }
 
         const response = await reviewing(data)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
         const result = await response.json()
         newReview({ review: result })
         state.content = ''
@@ -292,75 +246,18 @@ async function submitReview() {
         // ws.sendToOneQueue(new MsgPack(reviewId, state.curUser.id, 'REVIEW', receiverId), 'interact')
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally {
         state.loading = false
+        emits('submit', {submitting: false})
     }
 }
 
-const avatar = computed(() => {
-    const { previewUrl, originUrl, contentType } = state.curUser.avatarUrl || [null, null, null]
-    if (contentType && contentType.toLowerCase() == 'image/gif') return originUrl || defaultUrl
-    return previewUrl || originUrl
-})
-
 function resize() {
-    const textarea = panel.value.querySelector(`#${state.textAreaId}`)
-    textarea.style.height = 'auto'
-    textarea.style.height = `${textarea.scrollHeight}px`
-    //FIXME 当删除内容时无法自动调整大小
+    if(!CSS.supports('field-sizing: content')){
+        postInput.value.style.height = 'auto'
+        postInput.value.style.height = `${postInput.value.scrollHeight}px`
+    }
 }
-
-const leftWordCount = computed(() => {
-    return state.maxContentWordCount - state.content.length
-})
-
-const leftWordCountClass = computed(() => ({
-    'text-blue-500': leftWordCount.value >= 0,
-    'text-red-500': leftWordCount.value < 0,
-    'hidden': leftWordCount.value === state.maxContentWordCount
-}))
-
-const isValidContentLength = computed(() => {
-    return leftWordCount.value >= 0 && leftWordCount.value < state.maxContentWordCount
-})
-
-const submitPostBtnClass = computed(() => ({
-    'bg-blue-500': isValidContentLength.value,
-    'cursor-pointer': isValidContentLength.value,
-    'bg-gray-300': !isValidContentLength.value,
-    'cursor-not-allowed': !isValidContentLength.value,
-    'pointer-events-none': !isValidContentLength.value
-}))
-
-function insertEmoji({ unified }) {
-    const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
-    state.content = state.content.concat(emoji)
-}
-
-function clickFileSelector() {
-    imgFile.value.click()
-    const imgs = Array.of(...imgFile.value.files)
-
-    if (imgs.length == 0) return
-    state.imgList.push(...imgs)
-
-    if (state.imgList.length > 9) { store.setWarningMsg('最多仅支持上传9张图片！') }
-
-    while (state.imgList.length > 9) { state.imgList.pop() }
-}
-
-function preChoosePics() {
-    choosePics()
-}
-
-function choosePics() {
-    imgFile.value.click()
-}
-
-const hasImage = computed(() => {
-    return state.imgList.length > 0
-})
 
 //防止重复提交上一次的内容
 function reset(){

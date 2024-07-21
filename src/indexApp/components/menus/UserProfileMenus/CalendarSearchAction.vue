@@ -1,9 +1,8 @@
 <template>
-    <div
-        class="flex flex-rows gap-x-3 items-center justify-start">
-        <span class="material-icons-round no-hover p-0 text-[1.2rem]">search</span>
+    <div>
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">search</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">高级搜索</div>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">高级搜索</div>
     </div>
 </template>
 

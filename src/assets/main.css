@@ -1,21 +1,6 @@
 html,body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, system-ui,'Apple Color Emoji','Noto Color Emoji', sans-serif, 'Segoe UI' !important;
-}
-
-html::-webkit-scrollbar {
-    width: 6px !important;
-    height: 100% !important;
-    -webkit-appearance: none;
-    background: transparent;
-    border-radius: 9999px;
-}
-
-html::-webkit-scrollbar-thumb {
-    width: 6px !important;
-    -webkit-appearance: none;
-    background: #00000077;
-    border-radius: 9999px;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', system-ui,'Apple Color Emoji','Noto Color Emoji', sans-serif, 'Segoe UI' !important;
 }
 
 #pre-loading{
@@ -31,7 +16,7 @@ html::-webkit-scrollbar-thumb {
     translate: -50% -50%;
     width: 3rem;
     height: 3rem;
-    background-image: url('../assets/logo.svg');
+    background-image: url('/favicon.ico');
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
@@ -60,30 +45,29 @@ img.pic.img-fluid{
     max-width: 100% !important;
 }
 
-.material-icons-round {
+.material-symbols-rounded {
     cursor: pointer;
     background-color: transparent;
     border-radius: 24rem;
     padding: 0.5rem;
     color: #5d6064;
     user-select: none;
+    font-variation-settings:
+    'FILL' 0,
+    'wght' 300,
+    'GRAD' 0,
+    'opsz' 24
 }
 
-.material-icons-round:hover:not(.no-hover) {
+.material-symbols-rounded:not(.no-hover,.sm\:no-hover):hover {
     background-color: #00000022;
 }
 
 .i-icon {
-    padding: 0.4rem;
+    padding: 0;
     background-color: transparent;
     border-radius: 99rem;
-}
-
-.i-icon:hover {
     cursor: pointer;
-    padding: 0.4rem;
-    background-color: #d3d3d5;
-    border-radius: 99rem;
 }
 
 .btn-no-select{
@@ -104,6 +88,68 @@ img.pic.img-fluid{
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-box-orient: vertical;
+}
+
+.suggests em {
+    font-style: normal;
+    font-weight:normal;
+    color: #3b82f6;
+}
+
+* {
+   -webkit-tap-highlight-color: rgba(0, 0, 0, 0) 
+}
+
+body:has(div:where(.fixed-page)){
+    overflow: hidden;
+}
+
+.no-scrollbar::-webkit-scrollbar,.no-scrollbar::-webkit-scrollbar-thumb {
+    display: none;
+    /* Chrome Safari */
+}
+
+.no-scrollbar{
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE 10+ */
+}
+
+.modern-scrollbar-y::-webkit-scrollbar{
+    width: 6px !important;
+    height: 100% !important;
+    -webkit-appearance: none;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+.modern-scrollbar-y::-webkit-scrollbar-thumb{
+    width: 6px !important;
+    -webkit-appearance: none;
+    background: #00000077;
+    border-radius: 9999px;
+}
+
+.modern-scrollbar-x::-webkit-scrollbar {
+    width: 100% !important;
+    height: 4px !important;
+    -webkit-appearance: none;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+.modern-scrollbar-x::-webkit-scrollbar-thumb {
+    height: 4px !important;
+    -webkit-appearance: none;
+    background: #E6E8EB;
+    border-radius: 9999px;
+}
+
+@supports (field-sizing: content){
+    textarea {
+        field-sizing: content;
+    }
 }
 
 @tailwind base;

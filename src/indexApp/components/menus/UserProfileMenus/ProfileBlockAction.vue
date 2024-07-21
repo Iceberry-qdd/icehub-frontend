@@ -1,13 +1,12 @@
 <template>
-    <div
-        class="flex flex-rows gap-x-3 items-center justify-start"
-        @click="handleClick">
-        <span class="material-icons-round no-hover p-0 text-[1.2rem]">person_off</span>
+    <div @click="handleClick">
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="btn-no-select">{{ `${props.user.blocking ? '解除屏蔽' : '屏蔽该用户'}` }}</div>
+        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">{{ `${props.user.blocking ? '解除屏蔽' : '屏蔽该用户'}` }}</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmBDialogUi.show"
+                class="fixed top-0"
                 :ui="state.confirmBDialogUi"
                 @choice="choose">
             </ConfirmDialogBox>
@@ -62,7 +61,7 @@ async function unblockUser() {
     try {
         state.confirmBDialogUi.loading.show = true
         const response = await deleteOneBlacklist('USER', props.user.id, state.curUser.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         if (result) {
@@ -74,7 +73,6 @@ async function unblockUser() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally{
         state.confirmBDialogUi.loading = false
         dismissProfileMenus()
@@ -85,7 +83,7 @@ async function blockUser() {
     try {
         state.confirmBDialogUi.loading.show = true
         const response = await createOneBlacklist('USER', props.user.id, state.curUser.id)
-        if (!response.ok) throw new Error((await response.json()).error)
+        if (!response.ok) throw new Error((await response.json()).message)
 
         const { id } = await response.json()
         if (id != props.user.id) throw new Error('屏蔽用户失败，请稍后重试!')
@@ -94,7 +92,6 @@ async function blockUser() {
         state.confirmBDialogUi.show = false
     } catch (e) {
         store.setErrorMsg(e.message)
-        console.error(e)
     } finally{
         state.confirmBDialogUi.loading = false
         dismissProfileMenus()
