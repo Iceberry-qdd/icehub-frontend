@@ -70,7 +70,7 @@ li.active{
 </style>
 
 <script setup>
-import { reactive, onMounted, watch } from 'vue'
+import { reactive, onMounted, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
 import { queryCurUserUnreadNotifyCount } from '@/indexApp/js/api.js'
@@ -86,7 +86,7 @@ const state = reactive({
         { id: 1, name: '主页', routeName: 'index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: false, mobileShow: true },
         { id: 2, name: '探索', routeName: 'explore', routeParams: {}, icon: 'explore', badgeCount: 0, visible: true, active: false, mobileShow: true },
         { id: 3, name: '话题', routeName: 'hashtag', routeParams: {}, icon: 'tag', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
-        { id: 4, name: '消息', routeName: 'notify', routeParams: {}, icon: 'notifications', badgeCount: store.UNREAD_MSG_COUNT, visible: true, active: false, mobileShow: true },
+        { id: 4, name: '消息', routeName: 'notify', routeParams: {}, icon: 'notifications', badgeCount: computed(() => store.UNREAD_MSG_COUNT), visible: true, active: false, mobileShow: true },
         { id: 5, name: '书签', routeName: 'bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: true, active: false, mobileShow: false },
         { id: 6, name: '勋章', routeName: 'badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
         { id: 7, name: '活动', routeName: 'activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
@@ -116,7 +116,7 @@ async function getUnreadNotifyCount() {
         const response = await queryCurUserUnreadNotifyCount()
         if (!response.ok) throw new Error((await response.json()).message)
 
-        const { unreadCount, readCount } = await response.json()
+        const { unreadCount } = await response.json()
         store.setUnreadMsgCount(unreadCount)
     } catch (e) {
         store.setErrorMsg(e.message)
