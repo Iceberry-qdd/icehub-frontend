@@ -1,6 +1,6 @@
 {
   "name": "icehub",
-  "version": "1.0.8.1",
+  "version": "1.0.8.2",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
