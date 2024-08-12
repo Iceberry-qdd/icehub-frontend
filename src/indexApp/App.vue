@@ -1,6 +1,12 @@
 <!-- eslint-disable-next-line vue/no-root-v-if -->
 <template>
     <div v-if="state.user">
+        <Teleport to="body">
+            <CustomAppTitleBar
+                v-if="store.PWA_MODE"
+                class="fixed top-0 z-[1000]">
+            </CustomAppTitleBar>
+        </Teleport>
         <GlobalProgressIndicator
             v-if="state.showProgressIndicator"
             class="fixed z-[106]"
@@ -8,13 +14,19 @@
             @close="closeProgressIndicator">
         </GlobalProgressIndicator>
         <GlobalNotifyBanner
-            v-if="isShowGlobalNotifyBannerMsg"
+            v-if="showGlobalNotifyBannerMsg"
             id="global-notify-banner"
             class="fixed"
-            :class="{ 'top-0': isShowGlobalNotifyBannerMsg }"
+            :class="{ 'top-0': showGlobalNotifyBannerMsg }"
             :message="store.GLOBAL_NOTIFY_BANNER_MSG"
             @close-global-notify-banner="closeGlobalNotifyBannerMsg">
         </GlobalNotifyBanner>
+        <GlobalContextMenu
+            v-if="state.showContextMenu"
+            class="fixed z-[1000]"
+            :click-x="state.click.x"
+            :click-y="state.click.y">
+        </GlobalContextMenu>
         <ImageSlide2
             v-if="store.SLIDE_DATA.urls.length > 0"
             class="fixed h-screen w-screen z-[1000]">
@@ -23,7 +35,7 @@
             id="container"
             ref="container"
             class="flex-nowrap flex-row justify-center min-h-screen sm:flex"
-            :class="{ 'mt-10': isShowGlobalNotifyBannerMsg }"
+            :class="{ 'mt-10': showGlobalNotifyBannerMsg }"
             @touchmove="handleScroll"
             @touchstart="touchStart"
             @wheel="handleScroll">
@@ -31,7 +43,7 @@
                 id="sidebar-l"
                 :class="{'main-route': isShowSidebarL}"
                 class="border-[#EEEEEE] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
-                <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-20 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
+                <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-16 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
                 <Sidebar
                     id="menu"
                     class="h-fit lg:-translate-x-0 lg:mr-12 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16">
@@ -59,7 +71,7 @@
                 <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
                 <router-view
                     v-slot="{ Component }"
-                    class="relative sm-max-lg:border-[#EEEEEE] sm:max-lg:border-[1px] sm:max-lg:max-w-[36rem] w-full">
+                    class="relative sm:max-lg:border-[#EEEEEE] sm:max-lg:border-x-[1px] sm:max-lg:max-w-[36rem] w-full">
                     <keep-alive
                         :max="8"
                         :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
@@ -120,7 +132,7 @@
 </style>
 
 <script setup>
-import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick, provide } from 'vue'
 import Sidebar from '@/indexApp/components/Sidebar.vue'
 import Recommend from '@/indexApp/components/Recommend.vue'
 import Brand from '@/indexApp/components/Brand.vue'
@@ -134,7 +146,10 @@ import BackToTop from '@/indexApp/components/BackToTop.vue'
 import { isType } from '@/indexApp/utils/formatUtils.js'
 const GlobalNotifyBanner = defineAsyncComponent(() => import('@/components/GlobalNotifyBanner.vue'))
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
+const GlobalNetworkOffPage = defineAsyncComponent(() => import('@/components//GlobalNetworkOffPage.vue')) /*Don't delete this due to package included*/
 const ImageSlide2 = defineAsyncComponent(() => import('@/indexApp/components/ImageSlide2.vue'))
+const GlobalContextMenu = defineAsyncComponent(() => import('@/components/GlobalContextMenu.vue'))
+const CustomAppTitleBar = defineAsyncComponent(() => import('@/components/CustomAppTitleBar.vue'))
 
 const route = useRoute()
 const router = useRouter()
@@ -148,7 +163,9 @@ const state = reactive({
     token: localStorage.getItem('TOKEN'),
     showBackToTop: false,
     touchStartClientY: 0,
-    mediaQueryList: undefined
+    mediaQueryList: undefined,
+    showContextMenu: false,
+    click: {x: 20, y: 20}
 })
 
 async function curUser() {
@@ -174,7 +191,7 @@ async function curUser() {
     }
 }
 
-const isShowGlobalNotifyBannerMsg = computed(() => {
+const showGlobalNotifyBannerMsg = computed(() => {
     return store.GLOBAL_NOTIFY_BANNER_MSG
 })
 
@@ -264,6 +281,17 @@ function handleMediaChange(mq) {
     store.MOBILE_MODE = mq.matches
 }
 
+function handleContextMenu(e){
+    e.preventDefault()
+    state.showContextMenu = true
+    state.click.x = e.clientX
+    state.click.y = e.clientY
+}
+
+function dismissContextMenu(){
+    state.showContextMenu = false
+}
+
 watch(() => route.query?.url, (url, oldVal) => {
     window.location = `${window.location.origin}${decodeURIComponent(atob(url))}`
 }, {once: true})
@@ -273,31 +301,43 @@ onMounted(() => {
         .substring(1)
         .split('&')
         .find(it => it.substring(0, it.indexOf('=')) === 'url')
-    if(!!url){
-        return
-    }
+    if(!!url) return
     
     nextTick(() => { curUser() })
+
+    // splash page settings
     document.getElementById('pre-loading').style.display = 'none'
+
+    // router guard settings
     router.beforeEach((to, from) => {
         state.showProgressIndicator = true
         state.startRoute = true
     })
-
     router.afterEach((to, from, failure) => {
         state.startRoute = false
         if (failure && !isNavigationFailure(failure, NavigationFailureType.duplicated)) {
             store.setErrorMsg('无法加载页面，您可以刷新重试！')
         }
     })
+
+    // Media query mobile mode settings
     state.mediaQueryList = window.matchMedia('not all and (min-width: 640px)')
     handleMediaChange(state.mediaQueryList)
     state.mediaQueryList.addEventListener('change', handleMediaChange)
+
+    // PWA standalone mode settings
+    store.setPwaMode(!window.matchMedia('(display-mode: browser)').matches)
+    if (store.PWA_MODE) {
+        document.body.addEventListener('contextmenu', handleContextMenu)
+    }
 })
 
 onUnmounted(() => {
     disconnectToWs()
     clearTimeout(state.timeoutId)
     state.mediaQueryList.removeEventListener('change', handleMediaChange)
+    document.body.removeEventListener('contextmenu', handleContextMenu)
 })
+
+provide('dismissContextMenu', {dismissContextMenu})
 </script>

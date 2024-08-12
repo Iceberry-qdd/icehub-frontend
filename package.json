@@ -2,8 +2,9 @@
   "name": "icehub",
   "version": "1.0.8.2",
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
+    "build:sw:inject": "workbox injectManifest workbox.config.build.js",
+    "dev": " vite --host",
+    "build": "vite build && npm run build:sw:inject",
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
@@ -16,7 +17,9 @@
     "stompjs": "^2.3.3",
     "vue": "^3.2.38",
     "vue-router": "^4.1.5",
-    "vue-showdown": "^4.1.0"
+    "vue-showdown": "^4.1.0",
+    "workbox-sw": "^7.1.0",
+    "workbox-window": "^7.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.0.3",

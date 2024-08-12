@@ -35,7 +35,7 @@
         <Teleport to="#app" :disabled="!store.MOBILE_MODE">
             <div
                 v-if="state.isShowMenu && store.MOBILE_MODE"
-                class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1000]" />
+                class="bg-black/50 bottom-0 fixed fixed-page h-screen left-0 sm:hidden w-screen z-[1000]" />
             <Transition name="fade">
                 <PostMenus
                     v-if="state.isShowMenu"

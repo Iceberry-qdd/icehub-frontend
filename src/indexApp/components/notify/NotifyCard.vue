@@ -52,11 +52,20 @@
         <div class="notify-container">
             <Avatar
                 class="h-[2rem] mb-2 relative rounded-full text-[2rem] w-[2rem] z-[97]"
-                :user="state.from">
+                :user="state.from"
+                @click="routeToUserProfile">
             </Avatar>
             <div class="brief flex flex-row h-fit items-center justify-between pb-2 w-full">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="event-text">{{ brief }}</div>
+                <div class="event-text z-[100]">
+                    <span
+                        class="hover:underline"
+                        @click="routeToUserProfile">
+                        {{ state.from.nickname }}
+                    </span>
+                    &nbsp;
+                    {{ brief }}
+                </div>
                 <div 
                     class="text-[#9ca3af] text-[0.9rem] time z-[97]"
                     :title="standardDateTime(state.timestamps)">
@@ -155,9 +164,9 @@ import { Like, Message, Share, PeoplePlusOne, AtSign } from '@icon-park/vue-next
 import { humanizedTime, standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import { useRouter } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
+import { VueShowdown } from 'vue-showdown'
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const UserProfileCard = defineAsyncComponent(() => import('@/indexApp/components/notify/UserProfileCard.vue'))
-import { VueShowdown } from 'vue-showdown'
 
 const router = useRouter()
 const props = defineProps({
@@ -178,24 +187,23 @@ const state = reactive({
 })
 
 const brief = computed(() => {
-    const fromName = state.from.nickname || null
     switch (state.type) {
         case 'POST_LIKE':
-            return `${fromName} 赞了您的帖子`
+            return `赞了您的帖子`
         case 'REVIEW':
-            return `${fromName} 评论了您的帖子`
+            return `评论了您的帖子`
         case 'REVIEW_LIKE':
-            return `${fromName} 赞了您的评论`
+            return `赞了您的评论`
         case 'REVIEW_REPLY':
-            return `${fromName} 回复了您的评论`
+            return `回复了您的评论`
         case 'REPOST':
-            return `${fromName} 转发了您的帖子`
+            return `转发了您的帖子`
         case 'SYS_NOTIFY':
             return `系统消息`
         case 'USER_FOLLOW':
-            return `${fromName} 订阅了您`
+            return `订阅了您`
         case 'AT_SIGN':
-            return `${fromName} 提到了您`
+            return `提到了您`
         default:
             return ''
     }
@@ -205,8 +213,8 @@ const postStatus = computed(() => {
     return state.read ? 'READ' : 'UNREAD'
 })
 
-function routeToUserProfile(user) {
-    router.push({ name: 'profile', params: { nickname: user.nickname } })
+function routeToUserProfile() {
+    router.push({ name: 'profile', params: { nickname: state.from.nickname } })
 }
 
 watch(() => props.message.read, function (newVal, oldVal) {

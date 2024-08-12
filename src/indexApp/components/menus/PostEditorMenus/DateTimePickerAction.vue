@@ -334,10 +334,10 @@ onMounted(() => {
     state.pickedHour = now.getHours()
     state.pickedMinute = now.getMinutes()
 
-    document.querySelector('#app').addEventListener('click', clickListener)
+    document.addEventListener('click', clickListener)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', clickListener)
+    document.removeEventListener('click', clickListener)
 })
 </script>

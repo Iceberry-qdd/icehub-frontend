@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-[#00000066] fixed-page h-full max-sm:bg-white max-sm:z-[1001] sm:backdrop-blur-sm w-full z-[111]"
+        class="bg-[#00000066] fixed-page h-screen max-sm:bg-white max-sm:z-[1001] sm:backdrop-blur-sm w-screen z-[111]"
         @click.self="dismiss">
         <div
             v-if="state.loading"

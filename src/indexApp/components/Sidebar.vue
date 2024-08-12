@@ -123,6 +123,14 @@ async function getUnreadNotifyCount() {
     }
 }
 
+watch(() => store.UNREAD_MSG_COUNT, (newVal, oldVal) => {
+    if(newVal <= 0){
+        navigator.clearAppBadge()
+    }else{
+        navigator.setAppBadge(newVal)
+    }
+})
+
 function getCurUserNickname() {
     const { nickname } = JSON.parse(localStorage.getItem("CUR_USER"))
     return nickname || ''

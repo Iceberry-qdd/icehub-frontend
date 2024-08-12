@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, defineAsyncComponent, nextTick, watch } from 'vue'
+import { onMounted, onUnmounted, defineAsyncComponent, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))

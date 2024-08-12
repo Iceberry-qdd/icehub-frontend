@@ -186,15 +186,16 @@ const followCountText = computed(() => {
 })
 
 const followButtonText = computed(() => {
-    if(state.user.yourFollowStatus === 'FOLLOW' && state.user.isFan) return '相互订阅'
-    if(state.user.yourFollowStatus === 'NOT_FOLLOW' && state.user.confirmFollow) return '请求订阅'
-    return state.followTextMap.get(state.user.yourFollowStatus)
+    const { yourFollowStatus, yourFanStatus, confirmFollow } = state.user
+    if (yourFollowStatus === 'FOLLOW' && yourFanStatus === 'FAN') return '相互订阅'
+    if (yourFollowStatus === 'NOT_FOLLOW' && confirmFollow) return '请求订阅'
+    return state.followTextMap.get(yourFollowStatus)
 })
 
 const profileButtonClass = computed(() => ({
     'bg-blue-500 text-white': isCurUser.value || state.user.yourFollowStatus === 'FOLLOW',
     'bg-gray-200 text-black': !isCurUser.value && state.user.yourFollowStatus !== 'FOLLOW'
-})) 
+}))
 
 function toggleFollowState() {
     const userId = state.user.id
@@ -224,7 +225,7 @@ async function followAUser(userId) {
         if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
-        if (result?.confirmed){
+        if (result?.confirmed) {
             store.setSuccessMsg("订阅成功！")
             state.yourFollowStatus = 'FOLLOW'
         } else {
@@ -256,7 +257,7 @@ async function unFollowAUser(userId) {
 onMounted(() => {
     const dismissRouteToSet = new Set(['profile', 'followingList', 'followerList'])
     router.afterEach((to, from) => {
-        if(dismissRouteToSet.has(to.name)){
+        if (dismissRouteToSet.has(to.name)) {
             emits('closeUserInfoPop')
         }
     })

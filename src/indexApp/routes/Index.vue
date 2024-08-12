@@ -97,10 +97,12 @@ import Header from '@/indexApp/components/Header.vue'
 import { getUserTimeline } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import PostEditor from '@/indexApp/components/index/PostEditor.vue'
-import { computed, onMounted, reactive, provide, watch } from 'vue'
+import { computed, onMounted, reactive, provide } from 'vue'
 import GlobalRefresh from '@/components/GlobalRefresh.vue'
 import Footer from '@/indexApp/components/Footer.vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     posts: [],
@@ -157,6 +159,9 @@ const isShowGlobalNotifyBannerMsg = computed(() => {
 })
 
 onMounted(() => {
+    if(route.query?.postEditor && store.MOBILE_MODE){
+        state.isShowPostEditor = true
+    }
     getData()
 })
 

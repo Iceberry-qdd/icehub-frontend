@@ -27,16 +27,16 @@ const state = reactive({
     followTextMap: new Map([
         ['NOT_FOLLOW', '订阅'],
         ['WAIT_PASS', '等待批准'],
-        ['FOLLOW', '已订阅'],
+        ['FOLLOW', '取消订阅'],
         [undefined, '订阅']
     ])
 })
 
 const followText = computed(() => {
-    const { yourFollowStatus, isFan, confirmFollow } = state.user
-    if(yourFollowStatus === 'FOLLOW' && isFan) return '相互订阅'
+    const { yourFollowStatus, yourFanStatus, confirmFollow } = state.user
+    if(yourFollowStatus === 'FOLLOW' && yourFanStatus === 'FAN') return '相互订阅'
     if(yourFollowStatus === 'NOT_FOLLOW' && confirmFollow) return '请求订阅'
-    return state.followTextMap.get(state.yourFollowStatus)
+    return state.followTextMap.get(yourFollowStatus)
 })
 
 const followIcon = computed(() => {

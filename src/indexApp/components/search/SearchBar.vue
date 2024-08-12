@@ -287,7 +287,7 @@ function search(word = state.prompt) {
 }
 
 function handleDismissSuggestPanel(event) {
-    const searchPanel = document.querySelector(`#search>.header`)
+    const searchPanel = document.querySelector(`#search-suggest`)
     if (searchPanel && !searchPanel.contains(event.target)) {
         state.suggests.show = false
     }
@@ -321,12 +321,12 @@ function contentText(content, type){
 }
 
 onMounted(() => {
-    document.querySelector('#app').addEventListener('click', handleDismissSuggestPanel)
+    document.addEventListener('click', handleDismissSuggestPanel)
     state.prompt = props.prompt.key || ''
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', handleDismissSuggestPanel)
+    document.removeEventListener('click', handleDismissSuggestPanel)
     state.timeoutIds.forEach(id => clearTimeout(id))
 })
 </script>

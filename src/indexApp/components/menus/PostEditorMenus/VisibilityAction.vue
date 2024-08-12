@@ -64,13 +64,13 @@ function clickListener(event){
 onMounted(() => {
     if(props.switchId){
 
-        document.querySelector('#app').addEventListener('click', clickListener)
+        document.addEventListener('click', clickListener)
     }
 })
 
 onUnmounted(() => {
     if(props.switchId){
-        document.querySelector('#app').removeEventListener('click', clickListener)
+        document.removeEventListener('click', clickListener)
     }
 })
 </script>

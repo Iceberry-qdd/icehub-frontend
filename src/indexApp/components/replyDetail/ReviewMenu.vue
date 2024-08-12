@@ -6,11 +6,12 @@
             <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
         </div>
         <div class="flex flex-col max-sm:grid max-sm:grid-cols-4 max-sm:place-items-center">
-            <ShareLinkAction
-                v-if="state.actionVisMap.get('ShareLinkAction')"
+            <ShareAction
+                v-if="state.actionVisMap.get('ShareAction')"
                 :link="generateLink"
+                type="REVIEW"
                 class="action first:rounded-t-[8px] hover:bg-gray-100 last:rounded-b-[8px]">
-            </ShareLinkAction>
+            </ShareAction>
             <DeleteReviewAction
                 v-if="state.actionVisMap.get('DeleteReviewAction')"
                 :review="props.review"
@@ -95,7 +96,7 @@
 
 <script setup>
 import { reactive, computed, onMounted, onUnmounted, inject } from 'vue'
-import ShareLinkAction from '@/indexApp/components/menus/reviewMenus/ShareLinkAction.vue'
+import ShareAction from '@/indexApp/components/menus/common/ShareAction.vue'
 import DeleteReviewAction from '@/indexApp/components/menus/reviewMenus/DeleteReviewAction.vue'
 
 const { userId:postCreatorId } = inject('postCreatorId')
@@ -121,7 +122,7 @@ const selfPost = computed(() => {
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     actionVisMap: new Map([
-        [ShareLinkAction.__name, true],
+        [ShareAction.__name, true],
         // eslint-disable-next-line vue/no-ref-object-reactivity-loss
         [DeleteReviewAction.__name, selfReview.value || selfPost.value],
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示
@@ -142,10 +143,10 @@ function handleReviewMenusDismiss(event) {
 }
 
 onMounted(() => {
-    document.querySelector('#app').addEventListener('click', handleReviewMenusDismiss)
+    document.addEventListener('click', handleReviewMenusDismiss)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', handleReviewMenusDismiss)
+    document.removeEventListener('click', handleReviewMenusDismiss)
 })
 </script>
