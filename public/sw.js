@@ -13,7 +13,7 @@ clientsClaim()
 
 setCacheNameDetails({
     prefix: 'icehub',
-    suffix: 'v1',
+    suffix: 'v2',
     precache: 'precache',
     runtime: 'runtime',
     googleAnalytics: 'ga'
@@ -23,11 +23,10 @@ const DAY = 24 * 60 * 60
 const SW_VERSION = cacheNames.suffix
 const FIRST_CACHE_TYPE = ['audio', 'audioworklet', 'document', 'embed', 'font', /*'frame', 'fencedframe', 'iframe',*/ 'image', 'json', 'manifest', 'object', 'paintworklet', 'report', 'script', 'sharedworker', 'style', 'track', 'video', 'worker', 'xslt']
 const FIRST_NETWORK_PATTERN = [/\/api\/curUser/, /\/api\/search\/hot.*/]
-const precaches = self.__WB_MANIFEST
-const vueFallbackPage = precaches
-    .find(it => it.url.match(/assets\/GlobalNetworkOffPage\.[0-9a-f]{8}\.js/)).url
+const PRE_CACHES = /self.__WB_MANIFEST/
+const VUE_FALLBACK_PAGE = PRE_CACHES.find(it => it.url.match(/assets\/GlobalNetworkOffPage\.[0-9a-f]{8}\.js/)).url
 
-precacheAndRoute(precaches)
+precacheAndRoute(PRE_CACHES)
 
 FIRST_CACHE_TYPE.forEach(type => {
     registerRoute(
@@ -73,9 +72,28 @@ setCatchHandler(({ url, event, params }) => {
         case 'document': return caches.match('/offline.html')
         case 'script': {
             const canOffline = OFFLINE_SCRIPT_PATTERNS.some(it => url.pathname.match(it))
-            return canOffline ? caches.match(vueFallbackPage) : Response.error()
+            return canOffline ? caches.match(VUE_FALLBACK_PAGE) : new Response({})
         }
-        default: return Response.error()
+        default: {
+            if(url.pathname.startsWith('/api/')){
+                return new Response(
+                    JSON.stringify({
+                        status: 408,
+                        error: 'Request Timeout',
+                        message: '网络连接错误，请检查网络设置！',
+                        timestamp: Date.now(),
+                        path: url.pathname + url.search
+                    }),
+                    {
+                        status: 408,
+                        statusText: 'Request Timeout',
+                        headers: { 'Content-Type': 'application/json' }
+                    }
+                )
+            }
+            return new Response()
+
+        }
     }
 })
 

@@ -94,13 +94,10 @@
                     title="更多"
                     class="btn flex flex-row gap-x-2 items-center op relative text-[11pt]"
                     @click="toggleMenu">
-                    <More
-                        theme="outline"
-                        size="20"
-                        fill="#333"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
-                    </More>
+                    <span
+                        class="hover:bg-[#d3d3d5] material-symbols-rounded p-[0.4rem] text-[#333] text-[20px]">
+                        more_horiz
+                    </span>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                         <div
@@ -120,13 +117,15 @@
                     :title="`${state.totalReplyCount} 评论`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="state.showReplyPanel = true">
-                    <Message
-                        theme="outline"
-                        size="19"
-                        fill="#333"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
-                    </Message>
+                    <span
+                        class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
+                        :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}">
+                        <IconMessage
+                            :size="19"
+                            :stroke-color="state.post.allowReview ? '#333' : '#C1C1C1'"
+                            :stroke-width="3">
+                        </IconMessage>
+                    </span>
                     {{ humanizedNumber(state.totalReplyCount) }}
                     <Teleport to="#app">
                         <Transition name="fade">
@@ -144,14 +143,16 @@
                     :title="`${state.review.likeCount} 点赞`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="toggleLike">
-                    <Like
-                        :theme="likedIconTheme"
-                        size="20"
-                        :fill="likedIconColor"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]"
-                        :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
-                    </Like>
+                    <span
+                        class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
+                        :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
+                        <IconLike
+                            :fill="likedIconFillColor"
+                            :size="20"
+                            :stroke-color="likedIconStrokeColor"
+                            :stroke-width="3">>
+                        </IconLike>
+                    </span>
                     {{ humanizedNumber(state.review.likeCount) }}
                 </button>
             </div>
@@ -196,16 +197,17 @@
 
 <script setup>
 // 只包括评论和一层回复
-import { computed, reactive, onMounted, provide, defineAsyncComponent, readonly, ref } from 'vue'
+import { computed, reactive, onMounted, provide, defineAsyncComponent } from 'vue'
 import { dislikeAReview, getPostById, getSubReviewById, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { Like, Message, More } from '@icon-park/vue-next'
 import { useRouter, useRoute } from 'vue-router'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import IconVerify from '@/components/icons/IconVerify.vue'
+import IconLike from '@/components/icons/IconLike.vue'
+import IconMessage from '@/components/icons/IconMessage.vue'
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 const Reply = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/Reply.vue'))
@@ -305,12 +307,12 @@ const isLiked = computed(() => {
     return state.review.liked
 })
 
-const likedIconTheme = computed(() => {
-    return state.review.liked ? 'filled' : 'outline'
+const likedIconStrokeColor = computed(() => {
+    return isLiked.value ? '#FF0000' : '#333'
 })
 
-const likedIconColor = computed(() => {
-    return isLiked.value ? '#FF0000' : '#333'
+const likedIconFillColor = computed(() => {
+    return isLiked.value ? '#FF0000' : 'none'
 })
 
 function routeToReplyDetail(reviewId) {
@@ -326,11 +328,11 @@ function newReview({ review }) {
     state.replies.unshift(review)
 }
 
-function toggleMenu(){
+function toggleMenu() {
     state.showReviewMenu = true
 }
 
-function handleRealImage({index, image}){
+function handleRealImage({ index, image }) {
     state.review.images[index] = image
 }
 
@@ -339,46 +341,46 @@ function dismissReviewMenus() {
 }
 
 
-function deleteReplyOnUi(replyId){
+function deleteReplyOnUi(replyId) {
     if (!replyId) return
     const preDeleteReplyIndex = state.replies.findIndex(it => it.id == replyId)
     if (preDeleteReplyIndex != -1) {
         state.replies.splice(preDeleteReplyIndex, 1)
     }
-    if(route.name === 'replyDetail'){
+    if (route.name === 'replyDetail') {
         router.back()
     }
 }
 
-function handleAvatarClick(){
-    if(!store.MOBILE_MODE){
+function handleAvatarClick() {
+    if (!store.MOBILE_MODE) {
         routeToUser(state.review.user.nickname)
     } else {
         state.showUserInfoPop = true
     }
 }
 
-function handleAvatarMouseenter(){
-    if(!store.MOBILE_MODE){
+function handleAvatarMouseenter() {
+    if (!store.MOBILE_MODE) {
         state.showUserInfoPop = true
     }
 }
 
-async function getPost(id){
-    try{
+async function getPost(id) {
+    try {
         const response = await getPostById(id)
         if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         state.post = result
-    } catch(e){
-        console.log(e)
+    } catch (e) {
+        console.error(e)
     }
 }
 
 onMounted(() => {
     getReply()
-    if(!state.post){
+    if (!state.post) {
         getPost(props.review.postId)
     }
 })
@@ -386,5 +388,5 @@ onMounted(() => {
 provide('dismissReviewMenus', { dismissReviewMenus: dismissReviewMenus })
 provide('newReview', { newReview })
 provide('deleteReplyOnUi', { deleteReplyOnUi: deleteReplyOnUi })
-provide('postCreatorId', {userId: computed(() => state.post?.user?.id)})
+provide('postCreatorId', { userId: computed(() => state.post?.user?.id) })
 </script>

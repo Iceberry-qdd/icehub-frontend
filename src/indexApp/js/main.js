@@ -27,9 +27,6 @@ async function initApp() {
 const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     const { Workbox } = await import('workbox-window')
-
-    await import('workbox-sw')
-
     const wb = new Workbox('/sw.js')
     wb.register()
   }
@@ -37,6 +34,6 @@ const registerServiceWorker = async () => {
 
 initApp()
 
-if (import.meta.env.VITE_APP_VERSION !== 'dev') {
+if (!import.meta.env.DEV) {
   registerServiceWorker()
 }

@@ -2,13 +2,11 @@
   "name": "icehub",
   "version": "1.0.8.2",
   "scripts": {
-    "build:sw:inject": "workbox injectManifest workbox.config.build.js",
     "dev": " vite --host",
-    "build": "vite build && npm run build:sw:inject",
+    "build": "vite build",
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
-    "@icon-park/vue-next": "^1.4.2",
     "bootstrap": "^5.2.2",
     "bootstrap-icons": "^1.9.1",
     "jsencrypt": "^3.3.1",
@@ -27,8 +25,10 @@
     "eslint": "^8.56.0",
     "eslint-plugin-vue": "^9.21.1",
     "postcss": "^8.4.18",
+    "rollup-obfuscator": "^4.1.1",
     "tailwindcss": "^3.2.1",
     "vite": "^3.2.10",
-    "vue-eslint-parser": "^9.4.2"
+    "vue-eslint-parser": "^9.4.2",
+    "workbox-build": "^7.1.1"
   }
 }

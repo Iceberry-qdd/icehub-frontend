@@ -90,13 +90,10 @@
                     title="更多"
                     class="btn flex flex-row gap-x-2 items-center op text-[11pt]"
                     @click="toggleMenu">
-                    <More
-                        theme="outline"
-                        size="20"
-                        fill="#333"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
-                    </More>
+                    <span
+                        class="hover:bg-[#d3d3d5] material-symbols-rounded p-[0.4rem] text-[#333] text-[20px]">
+                        more_horiz
+                    </span>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                         <div
@@ -116,13 +113,13 @@
                     :title="`${state.reply.replyCount} 评论`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="state.showReplyPanel = true">
-                    <Message
-                        theme="outline"
-                        size="19"
-                        fill="#333"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
-                    </Message>
+                    <span class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full">
+                        <IconMessage
+                            :size="19"
+                            stroke-color="#333"
+                            :stroke-width="3">
+                        </IconMessage>
+                    </span>
                     {{ humanizedNumber(state.reply.replyCount) }}
                     <Teleport to="#app">
                         <Transition name="fade">
@@ -140,14 +137,16 @@
                     :title="`${state.reply.likeCount} 点赞`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="toggleLike">
-                    <Like
-                        :theme="likedIconTheme"
-                        size="20"
-                        :fill="likedIconColor"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]"
-                        :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
-                    </Like>
+                    <span
+                        class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
+                        :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
+                        <IconLike
+                            :fill="likedIconFillColor"
+                            :size="20"
+                            :stroke-color="likedIconStrokeColor"
+                            :stroke-width="3">>
+                        </IconLike>
+                    </span>
                     {{ humanizedNumber(state.reply.likeCount) }}
                 </button>
             </div>
@@ -170,13 +169,14 @@ import { computed, reactive, defineAsyncComponent, provide } from 'vue'
 import { humanizedTime, humanizedNumber, standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import { dislikeAReview, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { Like, Message, More } from '@icon-park/vue-next'
 import { useRouter } from 'vue-router'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
+import IconLike from '@/components/icons/IconLike.vue'
+import IconMessage from '@/components/icons/IconMessage.vue'
 const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewMenu.vue'))
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
@@ -272,12 +272,12 @@ const isLiked = computed(() => {
     return state.reply.liked
 })
 
-const likedIconTheme = computed(() => {
-    return state.reply.liked ? 'filled' : 'outline'
+const likedIconStrokeColor = computed(() => {
+    return isLiked.value ? '#FF0000' : '#333'
 })
 
-const likedIconColor = computed(() => {
-    return isLiked.value ? '#FF0000' : '#333'
+const likedIconFillColor = computed(() => {
+    return isLiked.value ? '#FF0000' : 'none'
 })
 
 const hasMore = computed(() => {

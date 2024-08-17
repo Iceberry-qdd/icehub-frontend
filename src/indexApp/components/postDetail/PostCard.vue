@@ -22,14 +22,15 @@
             :id="`pmb-${state.post.id}`"
             type="button"
             class="absolute border-0 btn-no-select content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center outline-none py-[0.5rem] right-[3%] top-[0.5rem] z-[97]">
-            <Down
-                theme="outline"
-                size="24"
-                fill="#333"
-                class="hover:bg-[#d3d3d5] p-[0.4rem] z-[96]"
-                :stroke-width="2"
+            <span
+                class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full z-[96]"
                 @click="state.isShowMenu = true">
-            </Down>
+                <IconDown
+                    :size="24"
+                    :stroke-width="2"
+                    stroke-color="#333">
+                </IconDown>
+            </span>
         </button>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <Teleport to="#app" :disabled="!store.MOBILE_MODE">
@@ -149,13 +150,14 @@
                 :title="`${state.post.repostCount} 转发`"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-start py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="repostIt">
-                <Share
-                    theme="filled"
-                    size="18"
-                    :fill="isReposted ? '#198754' : '#333'"
-                    :stroke-width="3"
+                <span
+                    class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
                     :class="{ 'bg-[#d1e7dd] hover:bg-[#d1e7dd] p-[0.4rem]': isReposted }">
-                </Share>
+                    <IconShare
+                        :stroke-color="isReposted ? '#198754' : '#333'"
+                        :stroke-width="3">
+                    </IconShare>
+                </span>
                 {{ humanizedNumber(state.post.repostCount) }}
             </button>
             <button
@@ -164,13 +166,14 @@
                 :class="{'cursor-not-allowed text-[#C1C1C1]': !state.post.allowReview}"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-center py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="handleClickReviewBtn">
-                <Message
-                    :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}"
-                    theme="outline"
-                    size="19"
-                    :fill="state.post.allowReview ? '#333' : '#C1C1C1'"
-                    :stroke-width="3">
-                </Message>
+                <span
+                    :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}">
+                    <IconMessage
+                        :size="19"
+                        :stroke-color="state.post.allowReview ? '#333' : '#C1C1C1'"
+                        :stroke-width="3">
+                    </IconMessage>
+                </span>
                 {{ humanizedNumber(state.post.reviewCount) }}
             </button>
             <button
@@ -178,14 +181,16 @@
                 :title="`${state.post.likeCount} 点赞`"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-end py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="toggleLike">
-                <Like
-                    :theme="likedIconTheme"
-                    size="20"
-                    :fill="likedIconColor"
-                    :stroke-width="3"
-                    class="p-[0.4rem]"
+                <span
+                    class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
                     :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
-                </Like>
+                    <IconLike
+                        :fill="likedIconFillColor"
+                        :size="20"
+                        :stroke-color="likedIconStrokeColor"
+                        :stroke-width="3">>
+                    </IconLike>
+                </span>
                 {{ humanizedNumber(state.post.likeCount) }}
             </button>
         </div>
@@ -199,16 +204,19 @@ import { computed, onMounted, reactive, ref, provide, defineAsyncComponent } fro
 import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/indexApp/js/api.js'
 import { useRouter, useRoute } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
-import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
+import IconVerify from '@/components/icons/IconVerify.vue'
+import IconLike from '@/components/icons/IconLike.vue'
+import IconMessage from '@/components/icons/IconMessage.vue'
+import IconShare from '@/components/icons/IconShare.vue'
+import IconDown from '@/components/icons/IconDown.vue'
 const PostMenus = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostMenus.vue')) //NOTE 组件字母小写会导致hmr失效
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const RepostPanel = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostPanel.vue'))
-import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -329,12 +337,12 @@ const isLiked = computed(() => { return state.post.liked })
 
 const isReposted = computed(() => { return state.post.reposted })
 
-const likedIconTheme = computed(() => {
-    return state.post.liked ? 'filled' : 'outline'
+const likedIconStrokeColor = computed(() => {
+    return isLiked.value ? '#FF0000' : '#333'
 })
 
-const likedIconColor = computed(() => {
-    return isLiked.value ? '#FF0000' : '#333'
+const likedIconFillColor = computed(() => {
+    return isLiked.value ? '#FF0000' : 'none'
 })
 
 const formattedTime = computed(() => {
@@ -374,25 +382,25 @@ function dismissPostMenus() {
     state.isShowMenu = false
 }
 
-function handleRealImage({index, image}){
+function handleRealImage({ index, image }) {
     state.post.images[index] = image
 }
 
-function handleAvatarClick(){
-    if(!store.MOBILE_MODE){
+function handleAvatarClick() {
+    if (!store.MOBILE_MODE) {
         routeToUser(state.post.user.nickname)
     } else {
         state.showUserInfoPop = true
     }
 }
 
-function handleAvatarMouseenter(){
-    if(!store.MOBILE_MODE){
+function handleAvatarMouseenter() {
+    if (!store.MOBILE_MODE) {
         state.showUserInfoPop = true
     }
 }
 
-function handleClickReviewBtn(){
+function handleClickReviewBtn() {
     emits('showReviewPanel')
 }
 
