@@ -1,7 +1,9 @@
 import { obfuscator } from 'rollup-obfuscator'
 
-export function codeObfuscatorPlugin() {
-    console.log('[rollup-obfuscatorPlugin] Using obfuscatorPlugin.')
+export function codeObfuscatorPlugin(isBuild) {
+    if(!isBuild) return undefined
+
+    console.log('[rollup-obfuscatorPlugin] Using obfuscatorPlugin')
     const options = {
         compact: true, 
         controlFlowFlattening: true, 

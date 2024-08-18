@@ -14,7 +14,9 @@ const workboxOptions = {
     swSrc: 'public/sw.js',
 }
 
-function workboxPlugin() {
+function workboxPlugin(isBuild) {
+    if(!isBuild) return undefined
+
     return {
         name: "workbox",
         apply: "build",
