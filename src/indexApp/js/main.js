@@ -1,5 +1,4 @@
 import { createApp, defineAsyncComponent } from 'vue'
-import 'bootstrap'
 import router from '@/indexApp/js/route.js'
 const App = defineAsyncComponent(() => import('@/indexApp/App.vue'))
 

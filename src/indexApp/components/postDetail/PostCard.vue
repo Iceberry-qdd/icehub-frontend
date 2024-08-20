@@ -213,6 +213,7 @@ import IconLike from '@/components/icons/IconLike.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
 import IconShare from '@/components/icons/IconShare.vue'
 import IconDown from '@/components/icons/IconDown.vue'
+import { debounce } from '@/indexApp/utils/jsHelper'
 const PostMenus = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostMenus.vue')) //NOTE 组件字母小写会导致hmr失效
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
@@ -290,7 +291,7 @@ async function getUser(nickname) {
     }
 }
 
-async function toggleLike() {
+const toggleLike = debounce(async function () {
     const lastLikedState = state.post.liked
     const lastCount = state.post.likeCount
 
@@ -318,7 +319,7 @@ async function toggleLike() {
         state.post.liked = lastLikedState
         state.post.likeCount = lastCount
     }
-}
+}, 300)
 
 function repostIt() { state.showRepostPanel = true }
 

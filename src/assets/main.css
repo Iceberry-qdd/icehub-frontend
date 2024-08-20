@@ -10,14 +10,17 @@ body {
 #pre-loading {
     width: 100vw;
     height: 100vh;
-    background-color: transparent;
+    position: fixed;
+    z-index: 10000;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 1rem;
 }
 
 #pre-loading>#icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
     width: 3rem;
     height: 3rem;
     background-image: url('/favicon.ico');
@@ -25,6 +28,19 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     animation: loading 4s ease-in-out 0s infinite normal both;
+}
+
+#pre-loading>#text{
+    font-size: 0.9rem;
+    animation: show-lazy 1s ease-in-out 15s 1 normal forwards;
+}
+
+body:has(#app:not(:empty)) > #pre-loading{
+    display: none;
+}
+
+body:has(#app:empty) > #pre-loading{
+    overflow: none;
 }
 
 @keyframes loading {
@@ -38,6 +54,18 @@ body {
 
     100% {
         opacity: 25%;
+    }
+}
+
+@keyframes show-lazy {
+    0% {
+        opacity: 25%;
+        color: rgb(55 65 81);
+    }
+
+    100% {
+        opacity: 100%;
+        color: rgb(55 65 81);
     }
 }
 
@@ -57,10 +85,10 @@ img.pic.img-fluid {
     color: #5d6064;
     user-select: none;
     font-variation-settings:
-    'FILL' 0,
-    'wght' 300,
-    'GRAD' 0,
-    'opsz' 24
+        'FILL' 0,
+        'wght' 300,
+        'GRAD' 0,
+        'opsz' 24
 }
 
 .material-symbols-rounded:not(.no-hover, .sm\:no-hover):hover {
@@ -101,7 +129,7 @@ img.pic.img-fluid {
 }
 
 * {
-   -webkit-tap-highlight-color: rgba(0, 0, 0, 0) 
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0)
 }
 
 body:has(div:where(.fixed-page)) {

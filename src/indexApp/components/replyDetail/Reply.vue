@@ -177,6 +177,7 @@ import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
 import IconLike from '@/components/icons/IconLike.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
+import { debounce } from '@/indexApp/utils/jsHelper'
 const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewMenu.vue'))
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
@@ -236,7 +237,7 @@ function fetchMoreReply() {
     emits('fetchMoreReply')
 }
 
-async function toggleLike() {
+const toggleLike = debounce(async function() {
     try {
         if (state.reply.liked == false) {
             const response = await likeAReview(state.reply.id)
@@ -262,7 +263,7 @@ async function toggleLike() {
     } catch (e) {
         store.setErrorMsg(e.message)
     }
-}
+}, 300)
 
 function dismissReplyPanel() {
     state.showReplyPanel = false

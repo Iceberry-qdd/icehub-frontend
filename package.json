@@ -1,13 +1,13 @@
 {
   "name": "icehub",
-  "version": "1.0.8.2",
+  "version": "1.0.8.4",
   "scripts": {
     "dev": " vite --host",
     "build": "vite build",
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
-    "bootstrap": "^5.2.2",
+    "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.9.1",
     "jsencrypt": "^3.3.1",
     "katex": "^0.16.10",

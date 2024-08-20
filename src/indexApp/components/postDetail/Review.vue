@@ -208,6 +208,7 @@ import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/uti
 import IconVerify from '@/components/icons/IconVerify.vue'
 import IconLike from '@/components/icons/IconLike.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
+import { debounce } from '@/indexApp/utils/jsHelper'
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 const Reply = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/Reply.vue'))
@@ -275,7 +276,7 @@ function dismissReplyPanel() {
     state.showReplyPanel = false
 }
 
-async function toggleLike() {
+const toggleLike = debounce(async function() {
     try {
         if (state.review.liked == false) {
             const response = await likeAReview(state.review.id)
@@ -301,7 +302,7 @@ async function toggleLike() {
     } catch (e) {
         store.setErrorMsg(e.message)
     }
-}
+}, 300)
 
 const isLiked = computed(() => {
     return state.review.liked

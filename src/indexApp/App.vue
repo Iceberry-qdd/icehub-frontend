@@ -305,9 +305,6 @@ onMounted(() => {
     
     nextTick(() => { curUser() })
 
-    // splash page settings
-    document.getElementById('pre-loading').style.display = 'none'
-
     // router guard settings
     router.beforeEach((to, from) => {
         state.showProgressIndicator = true
