@@ -60,7 +60,7 @@
                     :max-content-word-count="state.maxContentWordCount"
                     :content-length="state.data.content.length"
                     :show-markdown-panel="state.showMarkdownPanel"
-                    @insert-emoji="({emoji}) => {state.data.content = state.data.content.concat(emoji)}"
+                    @insert-emoji="insertEmoji"
                     @change-visibility="({visibility}) => {state.data.status = visibility}"
                     @submit="reposting"
                     @resize="resize"
@@ -263,5 +263,10 @@ async function reposting() {
     } finally {
         state.loading = false
     }
+}
+
+function insertEmoji({emoji}){
+    const start = reviewInput.value.selectionStart
+    state.data.content = state.data.content.slice(0, start).concat(emoji).concat(state.data.content.slice(start))
 }
 </script>
