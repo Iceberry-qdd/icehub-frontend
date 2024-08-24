@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="replyBody">
         <div class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
             <div
                 v-if="state.tieSub == 'mid'"
@@ -11,7 +11,7 @@
                 v-if="state.tieSub == 'bottom'"
                 class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
-                class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
+                class="absolute bg-transparent cursor-pointer h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(state.reply.id)" />
             <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row gap-x-4 items-center max-sm:gap-x-3 relative">
@@ -71,9 +71,20 @@
                 </div>
             </div>
 
-            <div class="max-sm:pl-[3.25rem] overflow-x-hidden pl-[3.5rem] text-[12pt]">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.reply.content"></VueShowdown>
+            <div class="max-sm:pl-[3.25rem] overflow-x-hidden pl-[3.5rem] relative text-[12pt]">
+                <div
+                    v-if="state.shrinkContent"
+                    class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                    @click="state.shrinkContent = false">
+                    展开
+                </div>
+                <VueShowdown
+                    tag="markdown"
+                    :extensions="['exts']"
+                    class="break-all overflow-y-hidden"
+                    :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}"
+                    :markdown="state.reply.content">
+                </VueShowdown>
                 <ImageGrid
                     v-if="state.reply.images?.length"
                     :id="`img-${state.reply.id}`"
@@ -83,7 +94,7 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row gap-x-8 justify-end max-sm:pl-[3rem] pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-8 justify-end max-sm:pl-[3rem] pl-[3.5rem] z-[97]">
                 <button
                     :id="`rmb-${state.reply.id}`"
                     type="button"
@@ -165,7 +176,7 @@
 
 <script setup>
 // 只包括回复，单独从Review复制出来
-import { computed, reactive, defineAsyncComponent, provide } from 'vue'
+import { computed, reactive, defineAsyncComponent, provide, onMounted, ref } from 'vue'
 import { humanizedTime, humanizedNumber, standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import { dislikeAReview, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
@@ -182,6 +193,7 @@ const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/repl
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 
+const replyBody = ref()
 const router = useRouter()
 const props = defineProps({
     /** 传入的评论对象 */
@@ -225,7 +237,8 @@ const state = reactive({
     showUserInfoPop: false,
     isLoading: false,
     showReplyPanel: false,
-    showReplyMenu: false
+    showReplyMenu: false,
+    shrinkContent: true
 })
 
 const replyTo = computed(() => {
@@ -322,6 +335,15 @@ function handleAvatarMouseenter(){
         state.showUserInfoPop = true
     }
 }
+
+function setSuitableHeight() {
+    const markdown = replyBody.value.querySelector('markdown')
+    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
+}
+
+onMounted(() => {
+    setSuitableHeight()
+})
 
 provide('dismissReviewMenus', { dismissReviewMenus: dismissReplyMenus })
 </script>

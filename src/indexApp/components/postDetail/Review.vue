@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="reviewBody">
         <div
             :class="{'hover:bg-[#f5f5f5]': route.name !== 'replyDetail'}"
             class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
@@ -59,7 +59,7 @@
                             </div>
                         </div>
                         <div
-                            v-if="props.post != null"
+                            v-if="!props.post"
                             class="text-[11pt]"
                             @click="routeToUser(replyTo)">
                             回复
@@ -76,8 +76,21 @@
                 </div>
             </div>
             <div class="max-sm:pl-[3.25rem] pl-[3.5rem] text-[12pt]">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.review.content"></VueShowdown>
+                <div class="relative">
+                    <div
+                        v-if="state.shrinkContent"
+                        class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                        @click="state.shrinkContent = false">
+                        展开
+                    </div>
+                    <VueShowdown
+                        tag="markdown"
+                        :extensions="['exts']"
+                        class="break-all overflow-y-hidden"
+                        :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}"
+                        :markdown="state.review.content">
+                    </VueShowdown>
+                </div>
                 <ImageGrid
                     v-if="state.review.images?.length"
                     :id="`img-${state.review.id}`"
@@ -87,7 +100,7 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row gap-x-8 justify-end pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-8 justify-end pl-[3.5rem] z-[97]">
                 <button
                     :id="`rmb-${state.review.id}`"
                     type="button"
@@ -119,10 +132,10 @@
                     @click="state.showReplyPanel = true">
                     <span
                         class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
-                        :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}">
+                        :class="{'hover:bg-transparent cursor-not-allowed': !state.post?.allowReview}">
                         <IconMessage
                             :size="19"
-                            :stroke-color="state.post.allowReview ? '#333' : '#C1C1C1'"
+                            :stroke-color="state.post?.allowReview ? '#333' : '#C1C1C1'"
                             :stroke-width="3">
                         </IconMessage>
                     </span>
@@ -197,7 +210,7 @@
 
 <script setup>
 // 只包括评论和一层回复
-import { computed, reactive, onMounted, provide, defineAsyncComponent } from 'vue'
+import { computed, reactive, onMounted, provide, defineAsyncComponent, ref } from 'vue'
 import { dislikeAReview, getPostById, getSubReviewById, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRouter, useRoute } from 'vue-router'
@@ -216,6 +229,7 @@ const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/repl
 
 const router = useRouter()
 const route = useRoute()
+const reviewBody = ref()
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -240,11 +254,12 @@ const state = reactive({
     showUserInfoPop: false,
     showReplyPanel: false,
     showReviewMenu: false,
-    post: props.post
+    post: props.post,
+    shrinkContent: true
 })
 
 const replyTo = computed(() => {
-    return props.post.user.nickname || '神秘用户'
+    return state.post?.user?.nickname || '神秘用户'
 })
 
 // eslint-disable-next-line vue/no-dupe-keys
@@ -375,14 +390,25 @@ async function getPost(id) {
         const result = await response.json()
         state.post = result
     } catch (e) {
-        console.error(e)
+        store.setErrorMsg(e.message)
     }
 }
 
-onMounted(() => {
-    getReply()
+function setSuitableHeight() {
+    const markdown = reviewBody.value.querySelector('markdown')
+    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
+}
+
+onMounted(async () => {
+    await getReply()
     if (!state.post) {
-        getPost(props.review.postId)
+        await getPost(props.review.postId)
+    }
+
+    if(route.name !== 'replyDetail'){
+        setSuitableHeight()
+    } else {
+        state.shrinkContent = false
     }
 })
 

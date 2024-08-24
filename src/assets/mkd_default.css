@@ -121,3 +121,13 @@ markdown .emoji span{
 markdown * {
     overflow-wrap: break-word;
 }
+
+markdown.shrink-content::before {
+    content: '';
+    background-image: linear-gradient(180deg, transparent 60%, white);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}

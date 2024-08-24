@@ -73,11 +73,16 @@
             </a>
             <div class="z-[97]">
                 <div
-                    class="cursor-pointer flex flex-row font-bold gap-x-1 hover:underline hover:underline-offset-4 items-center"
+                    class="cursor-pointer flex flex-row font-bold gap-x-1 items-center"
                     @click="routeToUser(state.post.user.nickname)">
-                    <div>{{ state.post.user.nickname }}</div>
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconVerify v-if="state.post.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                    <div
+                        class="hover:underline hover:underline-offset-4">
+                        {{ state.post.user.nickname }}
+                    </div>
+                    <IconVerify
+                        v-if="state.post.user.verified"
+                        class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    </IconVerify>
                     <div
                         v-if="state.post.user.confirmFollow"
                         class="material-symbols-rounded no-hover p-0 text-[1rem]">
@@ -97,24 +102,25 @@
         </div>
 
         <div
+            ref="cardBody"
             :class="cardBodyClass"
             class="max-sm:pr-0">
-            <div
-                v-if="state.shrinkContent"
-                class="-translate-x-1/2 -translate-y-full absolute bg-[#cfe2ffaa] cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[11pt] top-[calc(100%-50px)] z-[96]"
-                @click="state.shrinkContent = false">
-                展开
-            </div>
-            <p
-                id="content"
-                class="break-all overflow-y-hidden text-[11pt] text-justify"
-                :class="[state.shrinkContent ? 'max-h-[50vh]' : '']">
+            <div class="relative">
+                <div
+                    v-if="state.shrinkContent"
+                    class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                    @click="state.shrinkContent = false">
+                    展开
+                </div>
+
                 <VueShowdown
                     tag="markdown"
                     :extensions="['exts']"
-                    :markdown="state.post.content">
+                    :markdown="state.post.content"
+                    class="break-all overflow-y-hidden relative text-[11pt] text-justify"
+                    :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}">
                 </VueShowdown>
-            </p>
+            </div>
             <RepostCard
                 v-if="state.post.rootId && !state.post.plan"
                 :post-id="state.post.rootId"
@@ -229,6 +235,7 @@ const props = defineProps({
     }
 })
 const cardMask = ref()
+const cardBody = ref()
 const emits = defineEmits(['showReviewPanel'])
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
@@ -237,7 +244,7 @@ const state = reactive({
     showUserInfoPop: false,
     isShowMenu: false,
     user: JSON.parse(localStorage.getItem("CUR_USER")),
-    shrinkContent: false,
+    shrinkContent: true,
     showRepostPanel: false
 })
 
@@ -324,7 +331,7 @@ const toggleLike = debounce(async function () {
 function repostIt() { state.showRepostPanel = true }
 
 const hasPics = computed(() => {
-    return state.post.images?.length !== undefined
+    return !!state.post.images?.length
 })
 
 const hasTags = computed(() => {
@@ -353,11 +360,7 @@ const formattedTime = computed(() => {
 const cardMaskClass = computed(() => ({
     'z-[98]': state.post.plan,
     'bg-[#e5e7eb88]': state.post.plan,
-    'pointer-events-none': state.post.plan,
-    'bg-gradient-to-t': state.shrinkContent,
-    'from-white': state.shrinkContent,
-    'to-transparent': state.shrinkContent,
-    'bg-transparent': !state.shrinkContent
+    'pointer-events-none': state.post.plan
 }))
 
 const postStatus = computed(() => {
@@ -374,9 +377,8 @@ const postStatus = computed(() => {
 })
 
 function setSuitableHeight() {
-    if (state.post.type == 'MARKDOWN' && cardMask.value.clientHeight > window.innerHeight / 2) {
-        state.shrinkContent = true
-    }
+    const markdown = cardBody.value.querySelector('markdown')
+    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
 }
 
 function dismissPostMenus() {
@@ -410,6 +412,8 @@ provide('dismissPostMenus', { dismissPostMenus })
 onMounted(() => {
     if (route.name !== 'postDetail') {
         setSuitableHeight()
+    } else {
+        state.shrinkContent = false
     }
 })
 </script>

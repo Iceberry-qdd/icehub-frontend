@@ -46,14 +46,15 @@
                 alternate_email
             </span>
         </div>
-        <div class="notify-container">
+        <div
+            ref="notifyContainer"
+            class="notify-container">
             <Avatar
                 class="h-[2rem] mb-2 relative rounded-full text-[2rem] w-[2rem] z-[97]"
                 :user="props.message.from"
                 @click="routeToUserProfile">
             </Avatar>
             <div class="brief flex flex-row h-fit items-center justify-between pb-2 w-full">
-                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="event-text z-[100]">
                     <span
                         class="hover:underline"
@@ -64,49 +65,63 @@
                     {{ brief }}
                 </div>
                 <div 
-                    class="text-[#9ca3af] text-[0.9rem] time z-[97]"
+                    class="text-[#9ca3af] text-[0.8rem] time z-[97]"
                     :title="standardDateTime(props.message.timestamps)">
                     {{ humanizedTime(props.message.timestamps) }}
                 </div>
             </div>
 
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.message.type == 'REVIEW'" class="content text-[1rem]">
-                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="py-1">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.message.content.content"></VueShowdown>
-                </div>
+            <div
+                v-if="props.message.type === 'REVIEW'"
+                class="bg-white border-[1px] border-gray-200 content overflow-hidden relative rounded-[8px]">
+                <ReviewCard
+                    class="clientHeight review-card"
+                    :class="{'shrink-content': state.shrinkContent.review}"
+                    tire-direction="bottom"
+                    :review="props.message.content">
+                </ReviewCard>
             </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.message.type == 'REPOST'" class="content">
-                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="py-2">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.message.content.content"></VueShowdown>
+            
+            <div
+                v-if="props.message.type === 'REPOST'"
+                ref="repost"
+                class="bg-white border-[1px] border-gray-300 mb-2 p-2 rounded-[8px]">
+                <div class="mb-2 relative">
+                    <VueShowdown
+                        repost
+                        tag="markdown"
+                        :extensions="['exts']"
+                        :markdown="props.message.content.content"
+                        :class="{'shrink-content': state.shrinkContent.repost, 'max-h-[45vh]': state.shrinkContent.repost}">
+                    </VueShowdown>
                 </div>
                 <RepostCard :post-id="props.message.content.parentId"></RepostCard>
             </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.message.type == 'POST_LIKE'" class="content">
+
+            <div
+                v-if="props.message.type === 'POST_LIKE'"
+                class="content">
                 <RepostCard :post="props.message.content"></RepostCard>
             </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.message.type == 'REVIEW_LIKE'" class="content">
-                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="py-1">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <VueShowdown tag="markdown" :extensions="['exts']" :markdown="props.message.content.content"></VueShowdown>
-                </div>
+
+            <div
+                v-if="props.message.type === 'REVIEW_LIKE'"
+                class="border-[1px] border-gray-300 content overflow-hidden relative rounded-[8px]">
+                <ReviewCard
+                    :review="props.message.content"
+                    tire-direction="bottom"
+                    :class="{'shrink-content': state.shrinkContent.reviewLike}"
+                    class="max-sm:pb-0 pb-0 review-card">
+                </ReviewCard>
             </div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.message.type == 'USER_FOLLOW'" class="content">
+            <div v-if="props.message.type === 'USER_FOLLOW'" class="content">
                 <UserProfileCard :user="props.message.content"></UserProfileCard>
             </div>
             <!-- eslint-disable-next-line vue/html-self-closing vue/max-attributes-per-line -->
-            <div v-if="props.message.type == 'AT_SIGN'" class="content"></div>
+            <div v-if="props.message.type === 'AT_SIGN'" class="content"></div>
             <!-- eslint-disable-next-line vue/html-self-closing vue/max-attributes-per-line -->
-            <div v-if="props.message.type == 'SYS_NOTIFY'" class="content"></div>
+            <div v-if="props.message.type === 'SYS_NOTIFY'" class="content"></div>
         </div>
     </div>
 </template>
@@ -139,10 +154,18 @@
 .notify-container:not(:has(markdown)){
     width: 100%;
 }
+
+markdown {
+    overflow-y: hidden;
+}
+
+markdown.shrink-content::before {
+    border-radius: 8px;
+}
 </style>
 
 <script setup>
-import { computed, reactive, watch, defineAsyncComponent } from 'vue'
+import { computed, reactive, watch, defineAsyncComponent, onMounted, ref } from 'vue'
 import { humanizedTime, standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import { useRouter } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
@@ -150,9 +173,12 @@ import { VueShowdown } from 'vue-showdown'
 import IconLike from '@/components/icons/IconLike.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
 import IconShare from '@/components/icons/IconShare.vue'
+import ReviewCard from '@/indexApp/components/replyDetail/ReviewCard.vue'
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const UserProfileCard = defineAsyncComponent(() => import('@/indexApp/components/notify/UserProfileCard.vue'))
 
+const notifyContainer = ref()
+const repost = ref()
 const router = useRouter()
 const props = defineProps({
     /** 传入的通知消息对象 */
@@ -163,7 +189,12 @@ const props = defineProps({
 })
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
-    read: props.message.read
+    read: props.message.read,
+    shrinkContent: {
+        review: true,
+        repost: true,
+        reviewLike: true
+    }
 })
 
 const brief = computed(() => {
@@ -199,5 +230,29 @@ function routeToUserProfile() {
 
 watch(() => props.message.read, function (newVal, oldVal) {
     state.read = newVal
+})
+
+function setSuitableHeight() {
+    let markdown = undefined
+
+    switch (props.message.type) {
+        case 'REPOST':
+            markdown = repost.value.querySelector('markdown[repost]')
+            state.shrinkContent.repost = markdown.clientHeight < markdown.scrollHeight
+            return
+        case 'REVIEW':
+            markdown = notifyContainer.value.querySelector('.review-card')
+            state.shrinkContent.review = markdown.clientHeight < markdown.scrollHeight
+            return
+        case 'REVIEW_LIKE':
+            markdown = notifyContainer.value.querySelector('.review-card')
+            state.shrinkContent.reviewLike = markdown.clientHeight < markdown.scrollHeight
+            return
+        default:;
+    }
+}
+
+onMounted(() => {
+    setSuitableHeight()
 })
 </script>

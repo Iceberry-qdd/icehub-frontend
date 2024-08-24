@@ -1,6 +1,14 @@
 <template>
     <div class="border-b-[1px] border-gray-100 flex flex-col max-sm:p-3 p-4 relative">
-        <div class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+        <div
+            v-if="props.tireDirection === 'top'"    
+            class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+        <div
+            v-if="props.tireDirection === 'mid'"  
+            class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
+        <div
+            v-if="props.tireDirection === 'bottom'"  
+            class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
         <div class="flex flex-row gap-x-4 justify-between max-sm:gap-x-3">
             <div class="flex-none relative z-10">
                 <Avatar
@@ -29,12 +37,15 @@
                         <div class='text-[10pt] text-gray-400'>{{ humanizedTime(props.review.createdTime) }}</div>
                     </div>
                 </div>
-                <div class="relative text-[12pt]">
+                <div
+                    ref="reviewBody"
+                    class="relative text-[12pt]">
                     <VueShowdown
                         tag="markdown"
                         :extensions="['exts']"
                         :markdown="props.review.content"
-                        class="max-sm:w-[calc(100vw-2.5rem-0.75rem*3)] sm:w-[calc(36rem-2.5rem-1rem*3)]">
+                        class="max-sm:w-[calc(100vw-2.5rem-0.75rem*3)] overflow-hidden sm:w-[calc(36rem-2.5rem-1rem*3)]"
+                        :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}">
                     </VueShowdown>
                     <ImageGrid
                         v-if="props.review.images?.length"
@@ -69,17 +80,37 @@ import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
+import { onMounted, reactive, ref } from 'vue'
 
+const reviewBody = ref()
 const props = defineProps({
     /** 传入的评论对象 */
     // eslint-disable-next-line vue/no-unused-properties
     review: {
         type: Object,
         required: true
+    },
+    /** 悬线的方向，top | mid | bottom */
+    tireDirection:{
+        type: String,
+        required: true
     }
+})
+
+const state = reactive({
+    shrinkContent: true
 })
 
 function handleRealImage({index, image}){
     // Do nothing
 }
+
+function setSuitableHeight() {
+    const markdown = reviewBody.value.querySelector('markdown')
+    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
+}
+
+onMounted(() => {
+    setSuitableHeight()
+})
 </script>

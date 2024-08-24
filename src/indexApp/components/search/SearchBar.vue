@@ -64,13 +64,13 @@
                                 </Avatar>
                                 <div class="flex flex-col flex-nowrap h-max items-start justify-start">
                                     <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
-                                        <!-- eslint-disable-next-line vue/html-self-closing -->
                                         <div
                                             class="font-bold hover:underline text-base"
-                                            v-html="suggest.content.nickname">
-                                        </div>
-                                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                                        <IconVerify v-if="suggest.content.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                                            v-html="suggest.content.nickname" />
+                                        <IconVerify
+                                            v-if="suggest.content.verified"
+                                            class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                                        </IconVerify>
                                         <div
                                             v-if="suggest.content.confirmFollow"
                                             class="material-symbols-rounded no-hover p-0 text-[1rem]">
