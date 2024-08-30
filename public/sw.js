@@ -13,7 +13,7 @@ clientsClaim()
 
 setCacheNameDetails({
     prefix: 'icehub',
-    suffix: 'v4',
+    suffix: 'v5',
     precache: 'precache',
     runtime: 'runtime',
     googleAnalytics: 'ga'
