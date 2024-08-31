@@ -32,6 +32,8 @@ const routes = [
         children: [
             { name: 'followList', path: '/follow/:nickname', component: FollowList },
             { name: 'fanList', path: '/fan/:nickname', component: FanList },
+        ]
+    },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: GlobalNotFoundPage }
 ]
 
