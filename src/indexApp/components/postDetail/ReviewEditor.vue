@@ -118,7 +118,7 @@ import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
-const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/PostEditorMenus/ImagePickerAction.vue'))
+const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
 const panel = ref()
 const imgFile = ref()

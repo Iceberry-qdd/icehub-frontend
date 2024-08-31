@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { store } from '@/indexApp/js/store'
+import { store } from '@/indexApp/js/store.js'
 import { onMounted, reactive, watch } from 'vue'
 
 const emits = defineEmits(['token', 'widgetId'])

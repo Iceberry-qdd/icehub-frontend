@@ -133,7 +133,7 @@ import { VueShowdown } from 'vue-showdown'
 import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import Header from '@/indexApp/components/Header.vue'
-const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/PostEditorMenus/ImagePickerAction.vue'))
+const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
 const { postingNew } = inject('postingNew')
 const postInput = ref()
