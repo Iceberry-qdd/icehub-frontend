@@ -40,15 +40,18 @@ jobs:
       run: npm run build
 
     - name: Zip artifact for deployment
+      if: github.event_name == 'push'
       run: zip dist.zip ./dist/* -r
 
     - name: Archive production artifacts
+      if: github.event_name == 'push'
       uses: actions/upload-artifact@v4
       with:
         name: 'dist-${{ runner.os }}-${{ runner.arch }}-${{ matrix.node-version }}'
         path: dist.zip
 
     - name: Generate artifact attestation
+      if: github.event_name == 'push'
       uses: actions/attest-build-provenance@v1
       with:
         subject-path: 'dist.zip'
