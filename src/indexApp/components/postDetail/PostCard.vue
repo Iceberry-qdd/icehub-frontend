@@ -22,20 +22,21 @@
             :id="`pmb-${state.post.id}`"
             type="button"
             class="absolute border-0 btn-no-select content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center outline-none py-[0.5rem] right-[3%] top-[0.5rem] z-[97]">
-            <Down
-                theme="outline"
-                size="24"
-                fill="#333"
-                class="hover:bg-[#d3d3d5] p-[0.4rem] z-[96]"
-                :stroke-width="2"
+            <span
+                class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full z-[96]"
                 @click="state.isShowMenu = true">
-            </Down>
+                <IconDown
+                    :size="24"
+                    :stroke-width="2"
+                    stroke-color="#333">
+                </IconDown>
+            </span>
         </button>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <Teleport to="#app" :disabled="!store.MOBILE_MODE">
             <div
                 v-if="state.isShowMenu && store.MOBILE_MODE"
-                class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1000]" />
+                class="bg-black/50 bottom-0 fixed fixed-page h-screen left-0 sm:hidden w-screen z-[1000]" />
             <Transition name="fade">
                 <PostMenus
                     v-if="state.isShowMenu"
@@ -72,11 +73,16 @@
             </a>
             <div class="z-[97]">
                 <div
-                    class="cursor-pointer flex flex-row font-bold gap-x-1 hover:underline hover:underline-offset-4 items-center"
+                    class="cursor-pointer flex flex-row font-bold gap-x-1 items-center"
                     @click="routeToUser(state.post.user.nickname)">
-                    <div>{{ state.post.user.nickname }}</div>
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconVerify v-if="state.post.user.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                    <div
+                        class="hover:underline hover:underline-offset-4">
+                        {{ state.post.user.nickname }}
+                    </div>
+                    <IconVerify
+                        v-if="state.post.user.verified"
+                        class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    </IconVerify>
                     <div
                         v-if="state.post.user.confirmFollow"
                         class="material-symbols-rounded no-hover p-0 text-[1rem]">
@@ -96,24 +102,25 @@
         </div>
 
         <div
+            ref="cardBody"
             :class="cardBodyClass"
             class="max-sm:pr-0">
-            <div
-                v-if="state.shrinkContent"
-                class="-translate-x-1/2 -translate-y-full absolute bg-[#cfe2ffaa] cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[11pt] top-[calc(100%-50px)] z-[96]"
-                @click="state.shrinkContent = false">
-                展开
-            </div>
-            <p
-                id="content"
-                class="break-all overflow-y-hidden text-[11pt] text-justify"
-                :class="[state.shrinkContent ? 'max-h-[50vh]' : '']">
+            <div class="relative">
+                <div
+                    v-if="state.shrinkContent"
+                    class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                    @click="state.shrinkContent = false">
+                    展开
+                </div>
+
                 <VueShowdown
                     tag="markdown"
                     :extensions="['exts']"
-                    :markdown="state.post.content">
+                    :markdown="state.post.content"
+                    class="break-all overflow-y-hidden relative text-[11pt] text-justify"
+                    :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}">
                 </VueShowdown>
-            </p>
+            </div>
             <RepostCard
                 v-if="state.post.rootId && !state.post.plan"
                 :post-id="state.post.rootId"
@@ -149,13 +156,14 @@
                 :title="`${state.post.repostCount} 转发`"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-start py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="repostIt">
-                <Share
-                    theme="filled"
-                    size="18"
-                    :fill="isReposted ? '#198754' : '#333'"
-                    :stroke-width="3"
+                <span
+                    class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
                     :class="{ 'bg-[#d1e7dd] hover:bg-[#d1e7dd] p-[0.4rem]': isReposted }">
-                </Share>
+                    <IconShare
+                        :stroke-color="isReposted ? '#198754' : '#333'"
+                        :stroke-width="3">
+                    </IconShare>
+                </span>
                 {{ humanizedNumber(state.post.repostCount) }}
             </button>
             <button
@@ -164,13 +172,14 @@
                 :class="{'cursor-not-allowed text-[#C1C1C1]': !state.post.allowReview}"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-center py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="handleClickReviewBtn">
-                <Message
-                    :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}"
-                    theme="outline"
-                    size="19"
-                    :fill="state.post.allowReview ? '#333' : '#C1C1C1'"
-                    :stroke-width="3">
-                </Message>
+                <span
+                    :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}">
+                    <IconMessage
+                        :size="19"
+                        :stroke-color="state.post.allowReview ? '#333' : '#C1C1C1'"
+                        :stroke-width="3">
+                    </IconMessage>
+                </span>
                 {{ humanizedNumber(state.post.reviewCount) }}
             </button>
             <button
@@ -178,14 +187,16 @@
                 :title="`${state.post.likeCount} 点赞`"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-end py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="toggleLike">
-                <Like
-                    :theme="likedIconTheme"
-                    size="20"
-                    :fill="likedIconColor"
-                    :stroke-width="3"
-                    class="p-[0.4rem]"
+                <span
+                    class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
                     :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
-                </Like>
+                    <IconLike
+                        :fill="likedIconFillColor"
+                        :size="20"
+                        :stroke-color="likedIconStrokeColor"
+                        :stroke-width="3">>
+                    </IconLike>
+                </span>
                 {{ humanizedNumber(state.post.likeCount) }}
             </button>
         </div>
@@ -199,16 +210,20 @@ import { computed, onMounted, reactive, ref, provide, defineAsyncComponent } fro
 import { likeAPost, dislikeAPost, getUserInfoByNickname } from '@/indexApp/js/api.js'
 import { useRouter, useRoute } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
-import { Down, Like, Message, Share } from '@icon-park/vue-next'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
+import IconVerify from '@/components/icons/IconVerify.vue'
+import IconLike from '@/components/icons/IconLike.vue'
+import IconMessage from '@/components/icons/IconMessage.vue'
+import IconShare from '@/components/icons/IconShare.vue'
+import IconDown from '@/components/icons/IconDown.vue'
+import { debounce } from '@/indexApp/utils/jsHelper'
 const PostMenus = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostMenus.vue')) //NOTE 组件字母小写会导致hmr失效
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const RepostPanel = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostPanel.vue'))
-import IconVerify from '@/components/icons/IconVerify.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -220,6 +235,7 @@ const props = defineProps({
     }
 })
 const cardMask = ref()
+const cardBody = ref()
 const emits = defineEmits(['showReviewPanel'])
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
@@ -228,7 +244,7 @@ const state = reactive({
     showUserInfoPop: false,
     isShowMenu: false,
     user: JSON.parse(localStorage.getItem("CUR_USER")),
-    shrinkContent: false,
+    shrinkContent: true,
     showRepostPanel: false
 })
 
@@ -282,7 +298,7 @@ async function getUser(nickname) {
     }
 }
 
-async function toggleLike() {
+const toggleLike = debounce(async function () {
     const lastLikedState = state.post.liked
     const lastCount = state.post.likeCount
 
@@ -310,12 +326,12 @@ async function toggleLike() {
         state.post.liked = lastLikedState
         state.post.likeCount = lastCount
     }
-}
+}, 300)
 
 function repostIt() { state.showRepostPanel = true }
 
 const hasPics = computed(() => {
-    return state.post.images?.length !== undefined
+    return !!state.post.images?.length
 })
 
 const hasTags = computed(() => {
@@ -329,12 +345,12 @@ const isLiked = computed(() => { return state.post.liked })
 
 const isReposted = computed(() => { return state.post.reposted })
 
-const likedIconTheme = computed(() => {
-    return state.post.liked ? 'filled' : 'outline'
+const likedIconStrokeColor = computed(() => {
+    return isLiked.value ? '#FF0000' : '#333'
 })
 
-const likedIconColor = computed(() => {
-    return isLiked.value ? '#FF0000' : '#333'
+const likedIconFillColor = computed(() => {
+    return isLiked.value ? '#FF0000' : 'none'
 })
 
 const formattedTime = computed(() => {
@@ -344,11 +360,7 @@ const formattedTime = computed(() => {
 const cardMaskClass = computed(() => ({
     'z-[98]': state.post.plan,
     'bg-[#e5e7eb88]': state.post.plan,
-    'pointer-events-none': state.post.plan,
-    'bg-gradient-to-t': state.shrinkContent,
-    'from-white': state.shrinkContent,
-    'to-transparent': state.shrinkContent,
-    'bg-transparent': !state.shrinkContent
+    'pointer-events-none': state.post.plan
 }))
 
 const postStatus = computed(() => {
@@ -365,34 +377,33 @@ const postStatus = computed(() => {
 })
 
 function setSuitableHeight() {
-    if (state.post.type == 'MARKDOWN' && cardMask.value.clientHeight > window.innerHeight / 2) {
-        state.shrinkContent = true
-    }
+    const markdown = cardBody.value.querySelector('markdown')
+    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
 }
 
 function dismissPostMenus() {
     state.isShowMenu = false
 }
 
-function handleRealImage({index, image}){
+function handleRealImage({ index, image }) {
     state.post.images[index] = image
 }
 
-function handleAvatarClick(){
-    if(!store.MOBILE_MODE){
+function handleAvatarClick() {
+    if (!store.MOBILE_MODE) {
         routeToUser(state.post.user.nickname)
     } else {
         state.showUserInfoPop = true
     }
 }
 
-function handleAvatarMouseenter(){
-    if(!store.MOBILE_MODE){
+function handleAvatarMouseenter() {
+    if (!store.MOBILE_MODE) {
         state.showUserInfoPop = true
     }
 }
 
-function handleClickReviewBtn(){
+function handleClickReviewBtn() {
     emits('showReviewPanel')
 }
 
@@ -401,6 +412,8 @@ provide('dismissPostMenus', { dismissPostMenus })
 onMounted(() => {
     if (route.name !== 'postDetail') {
         setSuitableHeight()
+    } else {
+        state.shrinkContent = false
     }
 })
 </script>

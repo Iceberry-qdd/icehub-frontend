@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { store } from '@/indexApp/js/store'
+import { store } from '@/indexApp/js/store.js'
 import { onMounted, reactive, watch } from 'vue'
 
 const emits = defineEmits(['token', 'widgetId'])
@@ -64,6 +64,7 @@ watch(() => state.widgetId, (newVal, _) => {
 
 onMounted(() => {
     turnstile.ready(function () {
+        if(!!state.widgetId) return
         state.widgetId = turnstile.render('#cf-turnstile', {
             sitekey: state.sitekey,
             size: state.size,

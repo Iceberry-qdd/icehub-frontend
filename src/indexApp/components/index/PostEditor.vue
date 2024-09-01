@@ -73,7 +73,7 @@
                 :content-length="state.content.length"
                 :img-list="state.imgList"
                 :show-markdown-panel="state.showMarkdownPanel"
-                @insert-emoji="({emoji}) => {state.content = state.content.concat(emoji)}"
+                @insert-emoji="insertEmoji"
                 @change-visibility="({visibility}) => {state.data.status = visibility}"
                 @change-created-time="({createdTime}) => {state.data.createdTime = createdTime}"
                 @submit="submitPost"
@@ -237,8 +237,12 @@ const leftWordCount = computed(() => {
     return state.maxContentWordCount - state.content.length
 })
 
-
 function handleClose() {
     emits('close')
+}
+
+function insertEmoji({emoji}){
+    const start = postInput.value.selectionStart
+    state.content = state.content.slice(0, start).concat(emoji).concat(state.content.slice(start))
 }
 </script>

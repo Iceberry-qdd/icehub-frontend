@@ -17,8 +17,10 @@
                     <div class="flex flex-row gap-x-1 items-center">
                         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                         <div class="font-bold text-[12pt] webkit-box-1">{{ user.nickname }}</div>
-                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                        <IconVerify v-if="user.verified" class="h-[0.9rem] shrink-0 text-blue-500 w-[0.9rem]"></IconVerify>
+                        <IconVerify
+                            v-if="user.verified"
+                            class="h-[0.9rem] shrink-0 text-blue-500 w-[0.9rem]">
+                        </IconVerify>
                     </div>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="brief text-[10pt] webkit-box-2">{{ user.brief }}</div>

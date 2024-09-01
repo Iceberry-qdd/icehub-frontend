@@ -11,22 +11,33 @@
         <div
             class="cursor-pointer font-bold sm:max-lg:hidden text-2xl"
             @click="routeTo('index')">
-            Icehub
-            <span class="align-middle bg-blue-500 font-light px-1 py-[0.1rem] rounded-md text-[0.6rem] text-white">{{ state.version }}</span>
+            <span class="mr-1">Icehub</span>
+            <span class="align-middle bg-blue-500 font-light mr-1 px-1 py-[0.1rem] rounded-md text-[0.6rem] text-white">{{ mode }}</span>
+            <span class="align-middle bg-green-500 font-light pwa-badge px-1 py-[0.1rem] rounded-md text-[0.6rem] text-white">pwa</span>
         </div>
     </div>
 </template>
 
+<style scoped>
+@media (display-mode: browser) {
+    .pwa-badge {
+        display: none;
+    }
+}
+</style>
+
 <script setup>
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { store } from '@/indexApp/js/store.js'
-import { reactive } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
-const state = reactive({
-    version: import.meta.env.VITE_APP_VERSION
+
+const mode = computed(() => {
+    const {DEV, PROD, SSR} = import.meta.env
+    return DEV ? 'DEV' : PROD ? 'PROD' : SSR ? 'SSR' : 'UKN'
 })
 
 function testSendPublicNotify() {

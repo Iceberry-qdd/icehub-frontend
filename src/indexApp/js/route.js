@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { store } from '@/indexApp/js/store.js'
 
 const Index = () => import('@/indexApp/routes/Index.vue')
 const Explore = () => import('@/indexApp/routes/Explore.vue')
@@ -31,12 +32,18 @@ const routes = [
         children: [
             { name: 'followList', path: '/follow/:nickname', component: FollowList },
             { name: 'fanList', path: '/fan/:nickname', component: FanList },
+        ]
+    },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: GlobalNotFoundPage }
 ]
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
+})
+
+router.onError((e) => {
+    store.setErrorMsg('无法加载页面，您可以刷新重试！')
 })
 
 export default router

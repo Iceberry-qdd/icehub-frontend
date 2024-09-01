@@ -11,11 +11,12 @@
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]"
                 :post="state.post">
             </PinAction>
-            <LinkCopyAction
-                v-if="showLinkCopyAction"
+            <ShareAction
+                v-if="showShareAction"
                 :link="generateLink"
+                type="POST"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-            </LinkCopyAction>
+            </ShareAction>
     
             <PosterGenerateAction
                 v-if="showUnImpl && showGeneratePoster"
@@ -161,7 +162,7 @@
 import { reactive, computed, onMounted, onUnmounted, inject } from 'vue'
 import BookmarkAction from '@/indexApp/components/menus/postCardMenus/BookmarkAction.vue'
 import FollowingAction from '@/indexApp/components/menus/postCardMenus/FollowingAction.vue'
-import LinkCopyAction from '@/indexApp/components/menus/postCardMenus/LinkCopyAction.vue'
+import ShareAction from '@/indexApp/components/menus/common/ShareAction.vue'
 import VisibilityAction from '@/indexApp/components/menus/postCardMenus/VisibilityAction.vue'
 import DeletePostAction from '@/indexApp/components/menus/postCardMenus/DeletePostAction.vue'
 import BlockPostAction from '@/indexApp/components/menus/postCardMenus/BlockPostAction.vue'
@@ -190,7 +191,7 @@ const state = reactive({
 })
 
 const generateLink = computed(() => {
-    return window.location.href.replace(/index|profile.*/, `post/${state.post.id}`)
+    return `${window.location.origin}/post/${state.post.id}`
 })
 
 const isMySelf = computed(() => {
@@ -205,7 +206,7 @@ const isPlannedPost = computed(() => {
     return state.post.plan == true
 })
 
-const showLinkCopyAction = computed(() => {
+const showShareAction = computed(() => {
     return isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
@@ -263,10 +264,10 @@ function handlePostMenusDismiss(event) {
 }
 
 onMounted(() => {
-    document.querySelector('#app').addEventListener('click', handlePostMenusDismiss)
+    document.addEventListener('click', handlePostMenusDismiss)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', handlePostMenusDismiss)
+    document.removeEventListener('click', handlePostMenusDismiss)
 })
 </script>

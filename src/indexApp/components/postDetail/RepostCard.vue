@@ -1,7 +1,7 @@
 <template>
     <div
         ref="repostCard"
-        class="border-[1px] border-gray-300 cursor-pointer flex flex-col gap-y-1 m-bg-white rounded-[8px]"
+        class="bg-white border-[1px] border-gray-300 cursor-pointer flex flex-col gap-y-1 rounded-[8px]"
         @click="routeToUserProfile">
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div v-if="state.post" class="pt-2">
@@ -25,42 +25,24 @@
                 <div class="text-gray-400 top-[1px]">发布于 {{ humanizedTime(state.post.createdTime) }}</div>
             </div>
 
-            <div
-                class="break-all px-2 relative text-[11pt]"
-                :class="[state.shrinkContent ? 'max-h-[50vh] overflow-hidden rounded-b-[8px]' : '']">
-                <div
-                    v-if="state.shrinkContent"
-                    class="bg-slate-400 bottom-0 left-0 relative right-0 shrink-mask top-0" />
+            <div class="break-all px-2 relative text-[11pt]">
                 <VueShowdown
                     tag="markdown"
                     :extensions="['exts']"
-                    :markdown="state.post.content">
+                    :markdown="state.post.content"
+                    class="break-all overflow-y-hidden text-[11pt] text-justify"
+                    :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}">
                 </VueShowdown>
             </div>
-            <div class="flex flex-col gap-y-1 relative">
-                <div
-                    v-if="isCoverHidden"
-                    class="absolute flex flex-row h-full items-center justify-center w-full z-[99]">
-                    <div
-                        class="black-80-bg cursor-pointer h-fit px-3 py-2 rounded-[8px] text-[11pt] w-fit white-text">
-                        已隐藏
-                    </div>
-                </div>
-                <picture v-if="state.post.images?.length">
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <source :srcset="getImageUrl(state.post.images[0])" type="image/webp" />
-                    <img
-                        loading="lazy"
-                        :style="{ 'background-image': `url(${state.post.images[0].thumb})` }"
-                        :src="state.post.images[0].thumb"
-                        class="aspect-[5/2] bg-center bg-cover bg-no-repeat h-auto img-fluid object-cover pic rounded-b-[8px] w-full" />
-                </picture>
-                <div
-                    v-if="isGifCover && !isCoverHidden"
-                    class="absolute cursor-pointer flex h-full items-center justify-center right-0 text-white top-0 w-full">
-                    <IconGif class="bg-[#000000BB] gif h-[2.5rem] rounded-full w-[2.5rem]"></IconGif>
-                </div>
-            </div>
+            <ImageGrid
+                v-if="hasPics"
+                :id="`img-${state.post.id}`"
+                :images="[state.post.images ? state.post.images[0] : undefined]"
+                :aspect-ratio="16/9"
+                type="post"
+                class="bottom-[0.5rem] mt-[0.5rem]"
+                @real-image="undefined">
+            </ImageGrid>
         </div>
         <div v-else>
             <div
@@ -72,23 +54,8 @@
 </template>
 
 <style scoped>
-.black-80-bg {
-    background-color: #000000AA !important;
-}
-
-.white-text {
-    color: white !important;
-}
-
-.m-bg-white {
-    background-color: white !important;
-}
-
-.shrink-mask {
-    width: 100%;
-    height: 50vh;
-    background: linear-gradient(0deg, white 6%, transparent 50%);
-    position: absolute;
+markdown.shrink-content::before {
+    border-radius: 8px;
 }
 </style>
 
@@ -96,12 +63,13 @@
 import { computed, reactive, onMounted, ref } from 'vue'
 import { humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import { useRouter } from 'vue-router'
-import IconGif from '@/components/icons/IconGif.vue'
 import { VueShowdown } from 'vue-showdown'
 import { getPostById } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
+import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 
+const repostCard = ref()
 const router = useRouter()
 const props = defineProps({
     /** 传入的帖子对象, 与postId二选一传递*/
@@ -117,12 +85,11 @@ const props = defineProps({
         default: undefined
     }
 })
-const repostCard = ref()
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
-    post: props.post ? props.post : null,
-    shrinkContent: false,
+    post: props.post,
+    shrinkContent: true,
     fetchFailedText: null
 })
 
@@ -132,25 +99,13 @@ function routeToUserProfile() {
     router.push({ name: 'postDetail', params: { id: state.post.id } })
 }
 
-function getImageUrl(image) {
-    const { url, hidden } = image
-    return hidden ? url : `${import.meta.env.VITE_OBJECT_BASE_URL}${image.url}?width=600`
-}
-
-const isCoverHidden = computed(() => {
-    if (!state.post.images) return false
-    else return state.post.images[0].hidden
-})
-
-const isGifCover = computed(() => {
-    if (!state.post.images) return false
-    else return state.post.images[0].contentType == 'image/gif'
+const hasPics = computed(() => {
+    return !!state.post.images?.length
 })
 
 function setSuitableHeight() {
-    if (state.post && state.post.type == 'MARKDOWN' && repostCard.value.clientHeight > window.innerHeight / 2) {
-        state.shrinkContent = true
-    }
+    const markdown = repostCard.value.querySelector('markdown')
+    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
 }
 
 async function fetchPost() {
@@ -161,13 +116,13 @@ async function fetchPost() {
         const result = await response.json()
         state.post = result
     } catch (e) {
-        state.fetchFailedText = "该帖子无法加载"
+        state.fetchFailedText = "该帖子不可用"
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
     if (!props.post) {
-        fetchPost()
+        await fetchPost()
     }
 
     setSuitableHeight()

@@ -64,13 +64,13 @@
                                 </Avatar>
                                 <div class="flex flex-col flex-nowrap h-max items-start justify-start">
                                     <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
-                                        <!-- eslint-disable-next-line vue/html-self-closing -->
                                         <div
                                             class="font-bold hover:underline text-base"
-                                            v-html="suggest.content.nickname">
-                                        </div>
-                                        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                                        <IconVerify v-if="suggest.content.verified" class="h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                                            v-html="suggest.content.nickname" />
+                                        <IconVerify
+                                            v-if="suggest.content.verified"
+                                            class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                                        </IconVerify>
                                         <div
                                             v-if="suggest.content.confirmFollow"
                                             class="material-symbols-rounded no-hover p-0 text-[1rem]">
@@ -153,6 +153,7 @@ import { globalSearchSuggest } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { substringBySegmenter } from '@/indexApp/utils/formatUtils.js'
+import { debounce } from '@/indexApp/utils/jsHelper.js'
 import Header from '@/indexApp/components/Header.vue'
 
 const emits = defineEmits(['routeTo', 'search'])
@@ -181,34 +182,27 @@ const state = reactive({
         showLoading: false,
         loadingText: '正在搜索中......',
         failText: '无结果',
-        typeMap: props.prompt.typeMap,
-        lock: false
+        typeMap: props.prompt.typeMap
     },
     apiSuggests: null,
-    toSearch: false,
-    timeoutIds: []
+    toSearch: false
 })
 
 watch(() => state.prompt, (newVal, oldVal) => {
     if (!newVal) {
-        showSearchHistory()
-        return
-    }
-
-    // 请求服务器和快速回退输入时不触发联想功能
-    if (state.suggests.showLoading || oldVal.substring(0, oldVal.length - 1) === newVal) return
-    // 若lock未true,则不触发，冷待冷却时间
-    if (state.suggests.lock) return
-    // 输入的prompt为空，则不触发联想功能
-    if (!state.prompt) return
-    // 按下enter键时，也不触发
-    if (state.toSearch) return
-
-    state.suggests.show = true
-    state.suggests.lock = true
-    const timeoutId = setTimeout(() => { state.suggests.lock = false }, 500)
-    state.timeoutIds.push(timeoutId)
-    searchSuggest()
+            showSearchHistory()
+            return
+        }
+        
+        // 请求服务器和快速回退输入时不触发联想功能
+        if (state.suggests.showLoading) return
+        // 输入的prompt为空，则不触发联想功能
+        if (!state.prompt) return
+        // 按下enter键时，也不触发
+        if (state.toSearch) return
+        
+        // state.suggests.show = true
+        searchSuggest()
 })
 
 function showSearchHistory() {
@@ -217,7 +211,7 @@ function showSearchHistory() {
     state.suggests.show = true
 }
 
-async function searchSuggest() {
+const searchSuggest = debounce(async function () {
     state.suggests.show = true
     state.suggests.showLoading = true
     try {
@@ -236,7 +230,7 @@ async function searchSuggest() {
     } finally {
         state.suggests.showLoading = false
     }
-}
+}, 500)
 
 function storeSearchHistory(word) {
     if (!word) return
@@ -287,7 +281,7 @@ function search(word = state.prompt) {
 }
 
 function handleDismissSuggestPanel(event) {
-    const searchPanel = document.querySelector(`#search>.header`)
+    const searchPanel = document.querySelector(`#search-suggest`)
     if (searchPanel && !searchPanel.contains(event.target)) {
         state.suggests.show = false
     }
@@ -321,12 +315,11 @@ function contentText(content, type){
 }
 
 onMounted(() => {
-    document.querySelector('#app').addEventListener('click', handleDismissSuggestPanel)
+    document.addEventListener('click', handleDismissSuggestPanel)
     state.prompt = props.prompt.key || ''
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', handleDismissSuggestPanel)
-    state.timeoutIds.forEach(id => clearTimeout(id))
+    document.removeEventListener('click', handleDismissSuggestPanel)
 })
 </script>

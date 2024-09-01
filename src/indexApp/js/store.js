@@ -124,5 +124,9 @@ export const store = reactive({
     MOBILE_MODE: false,
     setMobileMode(isMobile) {
         this.MOBILE_MODE = isMobile
+    },
+    PWA_MODE: false,
+    setPwaMode(isPwa){
+        this.PWA_MODE = isPwa
     }
 })

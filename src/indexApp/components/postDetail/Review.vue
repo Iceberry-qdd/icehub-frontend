@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="reviewBody">
         <div
             :class="{'hover:bg-[#f5f5f5]': route.name !== 'replyDetail'}"
             class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
@@ -59,7 +59,7 @@
                             </div>
                         </div>
                         <div
-                            v-if="props.post != null"
+                            v-if="!props.post"
                             class="text-[11pt]"
                             @click="routeToUser(replyTo)">
                             回复
@@ -76,8 +76,21 @@
                 </div>
             </div>
             <div class="max-sm:pl-[3.25rem] pl-[3.5rem] text-[12pt]">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.review.content"></VueShowdown>
+                <div class="relative">
+                    <div
+                        v-if="state.shrinkContent"
+                        class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                        @click="state.shrinkContent = false">
+                        展开
+                    </div>
+                    <VueShowdown
+                        tag="markdown"
+                        :extensions="['exts']"
+                        class="break-all overflow-y-hidden"
+                        :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}"
+                        :markdown="state.review.content">
+                    </VueShowdown>
+                </div>
                 <ImageGrid
                     v-if="state.review.images?.length"
                     :id="`img-${state.review.id}`"
@@ -87,20 +100,17 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row gap-x-8 justify-end pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-8 justify-end pl-[3.5rem] z-[97]">
                 <button
                     :id="`rmb-${state.review.id}`"
                     type="button"
                     title="更多"
                     class="btn flex flex-row gap-x-2 items-center op relative text-[11pt]"
                     @click="toggleMenu">
-                    <More
-                        theme="outline"
-                        size="20"
-                        fill="#333"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
-                    </More>
+                    <span
+                        class="hover:bg-[#d3d3d5] material-symbols-rounded p-[0.4rem] text-[#333] text-[20px]">
+                        more_horiz
+                    </span>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                         <div
@@ -120,13 +130,15 @@
                     :title="`${state.totalReplyCount} 评论`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="state.showReplyPanel = true">
-                    <Message
-                        theme="outline"
-                        size="19"
-                        fill="#333"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
-                    </Message>
+                    <span
+                        class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
+                        :class="{'hover:bg-transparent cursor-not-allowed': !state.post?.allowReview}">
+                        <IconMessage
+                            :size="19"
+                            :stroke-color="state.post?.allowReview ? '#333' : '#C1C1C1'"
+                            :stroke-width="3">
+                        </IconMessage>
+                    </span>
                     {{ humanizedNumber(state.totalReplyCount) }}
                     <Teleport to="#app">
                         <Transition name="fade">
@@ -144,14 +156,16 @@
                     :title="`${state.review.likeCount} 点赞`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="toggleLike">
-                    <Like
-                        :theme="likedIconTheme"
-                        size="20"
-                        :fill="likedIconColor"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]"
-                        :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
-                    </Like>
+                    <span
+                        class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
+                        :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
+                        <IconLike
+                            :fill="likedIconFillColor"
+                            :size="20"
+                            :stroke-color="likedIconStrokeColor"
+                            :stroke-width="3">>
+                        </IconLike>
+                    </span>
                     {{ humanizedNumber(state.review.likeCount) }}
                 </button>
             </div>
@@ -196,16 +210,18 @@
 
 <script setup>
 // 只包括评论和一层回复
-import { computed, reactive, onMounted, provide, defineAsyncComponent, readonly, ref } from 'vue'
+import { computed, reactive, onMounted, provide, defineAsyncComponent, ref } from 'vue'
 import { dislikeAReview, getPostById, getSubReviewById, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { Like, Message, More } from '@icon-park/vue-next'
 import { useRouter, useRoute } from 'vue-router'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import IconVerify from '@/components/icons/IconVerify.vue'
+import IconLike from '@/components/icons/IconLike.vue'
+import IconMessage from '@/components/icons/IconMessage.vue'
+import { debounce } from '@/indexApp/utils/jsHelper'
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 const Reply = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/Reply.vue'))
@@ -213,6 +229,7 @@ const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/repl
 
 const router = useRouter()
 const route = useRoute()
+const reviewBody = ref()
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -237,11 +254,12 @@ const state = reactive({
     showUserInfoPop: false,
     showReplyPanel: false,
     showReviewMenu: false,
-    post: props.post
+    post: props.post,
+    shrinkContent: true
 })
 
 const replyTo = computed(() => {
-    return props.post.user.nickname || '神秘用户'
+    return state.post?.user?.nickname || '神秘用户'
 })
 
 // eslint-disable-next-line vue/no-dupe-keys
@@ -273,7 +291,7 @@ function dismissReplyPanel() {
     state.showReplyPanel = false
 }
 
-async function toggleLike() {
+const toggleLike = debounce(async function() {
     try {
         if (state.review.liked == false) {
             const response = await likeAReview(state.review.id)
@@ -299,18 +317,18 @@ async function toggleLike() {
     } catch (e) {
         store.setErrorMsg(e.message)
     }
-}
+}, 300)
 
 const isLiked = computed(() => {
     return state.review.liked
 })
 
-const likedIconTheme = computed(() => {
-    return state.review.liked ? 'filled' : 'outline'
+const likedIconStrokeColor = computed(() => {
+    return isLiked.value ? '#FF0000' : '#333'
 })
 
-const likedIconColor = computed(() => {
-    return isLiked.value ? '#FF0000' : '#333'
+const likedIconFillColor = computed(() => {
+    return isLiked.value ? '#FF0000' : 'none'
 })
 
 function routeToReplyDetail(reviewId) {
@@ -326,11 +344,11 @@ function newReview({ review }) {
     state.replies.unshift(review)
 }
 
-function toggleMenu(){
+function toggleMenu() {
     state.showReviewMenu = true
 }
 
-function handleRealImage({index, image}){
+function handleRealImage({ index, image }) {
     state.review.images[index] = image
 }
 
@@ -339,52 +357,63 @@ function dismissReviewMenus() {
 }
 
 
-function deleteReplyOnUi(replyId){
+function deleteReplyOnUi(replyId) {
     if (!replyId) return
     const preDeleteReplyIndex = state.replies.findIndex(it => it.id == replyId)
     if (preDeleteReplyIndex != -1) {
         state.replies.splice(preDeleteReplyIndex, 1)
     }
-    if(route.name === 'replyDetail'){
+    if (route.name === 'replyDetail') {
         router.back()
     }
 }
 
-function handleAvatarClick(){
-    if(!store.MOBILE_MODE){
+function handleAvatarClick() {
+    if (!store.MOBILE_MODE) {
         routeToUser(state.review.user.nickname)
     } else {
         state.showUserInfoPop = true
     }
 }
 
-function handleAvatarMouseenter(){
-    if(!store.MOBILE_MODE){
+function handleAvatarMouseenter() {
+    if (!store.MOBILE_MODE) {
         state.showUserInfoPop = true
     }
 }
 
-async function getPost(id){
-    try{
+async function getPost(id) {
+    try {
         const response = await getPostById(id)
         if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
         state.post = result
-    } catch(e){
-        console.log(e)
+    } catch (e) {
+        store.setErrorMsg(e.message)
     }
 }
 
-onMounted(() => {
-    getReply()
-    if(!state.post){
-        getPost(props.review.postId)
+function setSuitableHeight() {
+    const markdown = reviewBody.value.querySelector('markdown')
+    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
+}
+
+onMounted(async () => {
+    await getReply()
+    if (!state.post) {
+        await getPost(props.review.postId)
+    }
+
+    if(route.name !== 'replyDetail'){
+        setSuitableHeight()
+    } else {
+        state.shrinkContent = false
     }
 })
 
 provide('dismissReviewMenus', { dismissReviewMenus: dismissReviewMenus })
 provide('newReview', { newReview })
 provide('deleteReplyOnUi', { deleteReplyOnUi: deleteReplyOnUi })
-provide('postCreatorId', {userId: computed(() => state.post?.user?.id)})
+provide('postCreatorId', { userId: computed(() => state.post?.user?.id) })
 </script>

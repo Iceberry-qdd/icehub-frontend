@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-[#00000066] fixed-page fixed-page flex flex-row h-full items-center justify-center max-sm:bg-black max-sm:flex-col max-sm:z-[1001] w-full z-[111]">
+    <div class="bg-[#00000066] fixed-page flex flex-row h-screen items-center justify-center max-sm:bg-black max-sm:flex-col max-sm:z-[1001] w-screen z-[111]">
         <Header
             class="backdrop-blur-none bg-black/75 fixed sm:hidden w-full"
             :title="state.headerConfig.title"

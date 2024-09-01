@@ -17,8 +17,11 @@
         </div>
 
         <div class="banner-cover">
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <span class="material-symbols-rounded" @click="showImageChangeProper('banner')"> edit </span>
+            <span
+                class="material-symbols-rounded"
+                @click="showImageChangeProper('banner')">
+                edit
+            </span>
         </div>
         
         <Banner
@@ -27,8 +30,11 @@
         </Banner>
 
         <div class="avatar-cover">
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <span class="material-symbols-rounded" @click="showImageChangeProper('avatar')"> edit </span>
+            <span
+                class="material-symbols-rounded"
+                @click="showImageChangeProper('avatar')">
+                edit
+            </span>
         </div>
 
         <Avatar
@@ -259,6 +265,7 @@ import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
+import 'bootstrap'
 const ImageChangeProper = defineAsyncComponent(() => import('@/indexApp/components/profile/ImageChangeProper.vue'))
 const EmojiAvatarEditor = defineAsyncComponent(() => import('@/indexApp/components/profile/EmojiAvatarEditor.vue'))
 const ImageCropper = defineAsyncComponent(() => import('@/indexApp/components/profile/ImageCropper.vue'))

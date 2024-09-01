@@ -283,7 +283,7 @@ const props = defineProps({
     },
     /** 当前已输入内容的字符长度 */
     contentLength: {
-        type:Number,
+        type: Number,
         required: true
     },
     /** 传入的图片文件列表 */
@@ -305,7 +305,7 @@ const props = defineProps({
     },
     /** 声明是从哪里打开的菜单 */
     switchFrom: {
-        type:String,
+        type: String,
         required: true
     }
 })
@@ -328,7 +328,7 @@ function handleImgFileChange() {
     const imgs = Array.of(...imgFile.value.files)
 
     if (imgs.length == 0) return
-    emits('pushImage', {images: imgs})
+    emits('pushImage', { images: imgs })
 
     if (props.imgList.length > 9) { store.setWarningMsg('最多仅支持上传9张图片！') }
 
@@ -363,33 +363,42 @@ function dismissEmojiPanel() {
 
 function insertEmoji(unified) {
     const emoji = String.fromCodePoint(...unified.split('-').map(it => `0x${it}`))
-    emits('insertEmoji', {emoji: emoji})
+    emits('insertEmoji', { emoji: emoji })
 }
 
 function pickVisibility(action) {
-    emits('changeVisibility', {visibility: action.code})
+    emits('changeVisibility', { visibility: action.code })
     state.showVisibilityPanel = false
 }
 
+
+// XXX 分两步分别选择日期和时间，容易引起歧义
 function handleTimeSelect() {
-    if(store.MOBILE_MODE){
+    const onlyDate = typeof props.createdTime === 'string'
+    const dateAndTime = typeof props.createdTime === 'number'
+    const emptyDate = typeof props.createdTime === 'undefined'
+
+    if (store.MOBILE_MODE && (dateAndTime || emptyDate)) {
         dateInput.value.showPicker()
-    }else {
+        return
+    }
+
+    if (store.MOBILE_MODE && onlyDate) {
+        timeInput.value.showPicker()
+        return
+    }
+
+    if (!store.MOBILE_MODE) {
         state.showSchedulePanel = !state.showSchedulePanel
     }
 }
 
-async function handleDateInputChange(e) {
-    emits('changeCreatedTime', {createdTime: dateInput.value.value})
-    await nextTick()
-    if (props.createdTime) {
-        // FIXME 此处timeInput在移动设备上无法触发显示
-        timeInput.value.showPicker()
-    }
+function handleDateInputChange() {
+    emits('changeCreatedTime', { createdTime: dateInput.value.value })
 }
 
-async function handleTimeInputChange(e) {
-    emits('changeCreatedTime', {createdTime: new Date(`${props.createdTime}T${timeInput.value.value}`).getTime()})
+async function handleTimeInputChange() {
+    emits('changeCreatedTime', { createdTime: new Date(`${props.createdTime}T${timeInput.value.value}`).getTime() })
     await nextTick()
     pickedTimeAndClose({ timestamps: props.createdTime })
 }
@@ -398,20 +407,20 @@ function pickedTimeAndClose(args) {
     if (args && args.timestamps) {
         if (Date.now() >= args.timestamps) {
             store.setWarningMsg('您安排的预发布时间不能早于现在！')
-            emits('changeCreatedTime', {createdTime: undefined})
+            emits('changeCreatedTime', { createdTime: undefined })
             return
         }
 
-        emits('changeCreatedTime', {createdTime: args.timestamps})
+        emits('changeCreatedTime', { createdTime: args.timestamps })
     } else {
-        emits('changeCreatedTime', {createdTime: undefined})
+        emits('changeCreatedTime', { createdTime: undefined })
 
     }
     state.showSchedulePanel = false
 }
 
 async function toggleMarkdown() {
-    emits('preview', {isShow: !props.showMarkdownPanel})
+    emits('preview', { isShow: !props.showMarkdownPanel })
     await nextTick()
     if (!props.showMarkdownPanel) {
         emits('resize')

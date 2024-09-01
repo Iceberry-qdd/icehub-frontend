@@ -8,6 +8,12 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
 
 jobs:
   build:
@@ -20,12 +26,33 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
     - name: Setup Node ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+
     - name: Install dependencies
       run: npm ci
+
     - name: Build
       run: npm run build
+
+    - name: Zip artifact for deployment
+      if: github.event_name == 'push'
+      run: zip dist.zip ./dist/* -r
+
+    - name: Archive production artifacts
+      if: github.event_name == 'push'
+      uses: actions/upload-artifact@v4
+      with:
+        name: 'dist-${{ runner.os }}-${{ runner.arch }}-${{ matrix.node-version }}'
+        path: dist.zip
+
+    - name: Generate artifact attestation
+      if: github.event_name == 'push'
+      uses: actions/attest-build-provenance@v1
+      with:
+        subject-path: 'dist.zip'
+

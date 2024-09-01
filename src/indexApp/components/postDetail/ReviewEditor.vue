@@ -40,6 +40,7 @@
                 <textarea
                     v-else
                     :id="state.textAreaId"
+                    ref="reviewInput"
                     v-model="state.content"
                     :disabled="state.loading"
                     :class="{ 'text-gray-400': state.loading }"
@@ -69,7 +70,7 @@
                     :content-length="state.content.length"
                     :img-list="state.imgList"
                     :show-markdown-panel="state.showMarkdownPanel"
-                    @insert-emoji="({emoji}) => {state.content = state.content.concat(emoji)}"
+                    @insert-emoji="insertEmoji"
                     @submit="submitReview"
                     @push-image="({images}) => {state.imgList.push(...images)}"
                     @pop-image="() => {state.imgList.pop()}"
@@ -121,6 +122,7 @@ const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/componen
 
 const panel = ref()
 const imgFile = ref()
+const reviewInput = ref()
 const emits = defineEmits(['dismiss', 'isLoading', 'showMarkdownPanel', 'submit'])
 const props = defineProps({
     /** 传入的帖子对象，与parent二选一传递 */
@@ -250,6 +252,11 @@ async function submitReview() {
         state.loading = false
         emits('submit', {submitting: false})
     }
+}
+
+function insertEmoji({emoji}){
+    const start = reviewInput.value.selectionStart
+    state.content = state.content.slice(0, start).concat(emoji).concat(state.content.slice(start))
 }
 
 function resize() {

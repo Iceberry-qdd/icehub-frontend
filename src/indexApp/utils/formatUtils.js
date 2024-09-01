@@ -1,42 +1,37 @@
+const relativeTimeOptions = {
+    localeMatcher: "best fit",
+    numeric: "auto",
+    style: "long",
+}
+const intlRelativeTimeFormat = new Intl.RelativeTimeFormat(undefined, relativeTimeOptions)
+const oneSecond = 1000
+const oneMinute = oneSecond * 60
+const oneHour = oneMinute * 60
+const oneDay = oneHour * 24
+const oneWeek = oneDay * 7
+const oneMonth = oneDay * 30
+const oneYear = oneMonth * 24
+const conditions = [
+    // [上限, 小于上限时显示单位]
+    [oneMinute, 'second'],
+    [oneHour, 'minute'],
+    [oneDay, 'hour'],
+    [oneWeek, 'day'],
+    [oneMonth, 'week'],
+    [oneYear, 'month']
+]
 export function humanizedTime(timestamps) {
     const now = new Date()
     const postTime = new Date(Number.parseInt(timestamps))
-    const [timeDiff, suffix] = now < postTime ? [postTime - now, '后'] : [now - postTime, '前']
+    const timeDiff = now - postTime
 
-    const oneSecond = 1000
-    const oneMinute = oneSecond * 60
-    const oneHour = oneMinute * 60
-    const oneDay = oneHour * 24
-    const oneWeek = oneDay * 7
-    const oneMonth = oneDay * 30
-    const oneYear = oneMonth * 24
-
-    if (timeDiff < oneMinute) {
-        return `${Number.parseInt(timeDiff / oneSecond)}秒${suffix}`
-    }
-
-    if (timeDiff < oneHour) {
-        return `${Number.parseInt(timeDiff / oneMinute)}分钟${suffix}`
-    }
-
-    if (timeDiff < oneDay) {
-        return `${Number.parseInt(timeDiff / oneHour)}小时${suffix}`
-    }
-
-    if (timeDiff < oneWeek) {
-        return `${Number.parseInt(timeDiff / oneDay)}天${suffix}`
-    }
-
-    if (timeDiff < oneMonth) {
-        return `${Number.parseInt(timeDiff / oneWeek)}周${suffix}`
-    }
-
-    if (timeDiff < oneYear) {
-        return `${Number.parseInt(timeDiff / oneMonth)}月${suffix}`
-    }
-
-    if (timeDiff > oneYear) {
-        return `${Number.parseInt(timeDiff - oneYear)}年${suffix}`
+    let lastLimit = oneSecond
+    for (const condition of conditions) {
+        const limit = condition[0], unit = condition[1]
+        if (Math.abs(timeDiff) < limit) {
+            return intlRelativeTimeFormat.format(-Math.floor(timeDiff / lastLimit), unit)
+        }
+        lastLimit = limit
     }
     return postTime
 }

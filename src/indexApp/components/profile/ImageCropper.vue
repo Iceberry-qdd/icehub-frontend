@@ -384,7 +384,7 @@ function handleMove(e){
         state.nw.top = Math.max(0, Math.min(state.nw.top + dy, state.mask.height - vLineLength))
         state.se.top = Math.max(vLineLength, Math.min(state.se.top + dy, state.mask.height))
         if(!store.MOBILE_MODE){
-            updateCanvas()
+            updateCanvas(canvas.value.width, canvas.value.height)
         }
     }
 }

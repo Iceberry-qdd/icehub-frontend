@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="replyBody">
         <div class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
             <div
                 v-if="state.tieSub == 'mid'"
@@ -11,7 +11,7 @@
                 v-if="state.tieSub == 'bottom'"
                 class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
-                class="absolute bg-transparent h-full left-0 top-0 w-full z-10"
+                class="absolute bg-transparent cursor-pointer h-full left-0 top-0 w-full z-10"
                 @click.self="routeToReplyDetail(state.reply.id)" />
             <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row gap-x-4 items-center max-sm:gap-x-3 relative">
@@ -71,9 +71,20 @@
                 </div>
             </div>
 
-            <div class="max-sm:pl-[3.25rem] overflow-x-hidden pl-[3.5rem] text-[12pt]">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <VueShowdown tag="markdown" :extensions="['exts']" :markdown="state.reply.content"></VueShowdown>
+            <div class="max-sm:pl-[3.25rem] overflow-x-hidden pl-[3.5rem] relative text-[12pt]">
+                <div
+                    v-if="state.shrinkContent"
+                    class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                    @click="state.shrinkContent = false">
+                    展开
+                </div>
+                <VueShowdown
+                    tag="markdown"
+                    :extensions="['exts']"
+                    class="break-all overflow-y-hidden"
+                    :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}"
+                    :markdown="state.reply.content">
+                </VueShowdown>
                 <ImageGrid
                     v-if="state.reply.images?.length"
                     :id="`img-${state.reply.id}`"
@@ -83,20 +94,17 @@
                     @real-image="handleRealImage">
                 </ImageGrid>
             </div>
-            <div class="flex flex-row gap-x-8 justify-end max-sm:pl-[3rem] pl-[3.5rem] z-20">
+            <div class="flex flex-row gap-x-8 justify-end max-sm:pl-[3rem] pl-[3.5rem] z-[97]">
                 <button
                     :id="`rmb-${state.reply.id}`"
                     type="button"
                     title="更多"
                     class="btn flex flex-row gap-x-2 items-center op text-[11pt]"
                     @click="toggleMenu">
-                    <More
-                        theme="outline"
-                        size="20"
-                        fill="#333"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
-                    </More>
+                    <span
+                        class="hover:bg-[#d3d3d5] material-symbols-rounded p-[0.4rem] text-[#333] text-[20px]">
+                        more_horiz
+                    </span>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                         <div
@@ -116,13 +124,13 @@
                     :title="`${state.reply.replyCount} 评论`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="state.showReplyPanel = true">
-                    <Message
-                        theme="outline"
-                        size="19"
-                        fill="#333"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]">
-                    </Message>
+                    <span class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full">
+                        <IconMessage
+                            :size="19"
+                            stroke-color="#333"
+                            :stroke-width="3">
+                        </IconMessage>
+                    </span>
                     {{ humanizedNumber(state.reply.replyCount) }}
                     <Teleport to="#app">
                         <Transition name="fade">
@@ -140,14 +148,16 @@
                     :title="`${state.reply.likeCount} 点赞`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="toggleLike">
-                    <Like
-                        :theme="likedIconTheme"
-                        size="20"
-                        :fill="likedIconColor"
-                        :stroke-width="3"
-                        class="hover:bg-[#d3d3d5] p-[0.4rem]"
-                        :class="isLiked ? 'text-red-500 bg-red-200 hover:bg-red-200' : ''">
-                    </Like>
+                    <span
+                        class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
+                        :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
+                        <IconLike
+                            :fill="likedIconFillColor"
+                            :size="20"
+                            :stroke-color="likedIconStrokeColor"
+                            :stroke-width="3">>
+                        </IconLike>
+                    </span>
                     {{ humanizedNumber(state.reply.likeCount) }}
                 </button>
             </div>
@@ -166,21 +176,24 @@
 
 <script setup>
 // 只包括回复，单独从Review复制出来
-import { computed, reactive, defineAsyncComponent, provide } from 'vue'
+import { computed, reactive, defineAsyncComponent, provide, onMounted, ref } from 'vue'
 import { humanizedTime, humanizedNumber, standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import { dislikeAReview, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { Like, Message, More } from '@icon-park/vue-next'
 import { useRouter } from 'vue-router'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
+import IconLike from '@/components/icons/IconLike.vue'
+import IconMessage from '@/components/icons/IconMessage.vue'
+import { debounce } from '@/indexApp/utils/jsHelper'
 const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewMenu.vue'))
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 
+const replyBody = ref()
 const router = useRouter()
 const props = defineProps({
     /** 传入的评论对象 */
@@ -224,7 +237,8 @@ const state = reactive({
     showUserInfoPop: false,
     isLoading: false,
     showReplyPanel: false,
-    showReplyMenu: false
+    showReplyMenu: false,
+    shrinkContent: true
 })
 
 const replyTo = computed(() => {
@@ -236,7 +250,7 @@ function fetchMoreReply() {
     emits('fetchMoreReply')
 }
 
-async function toggleLike() {
+const toggleLike = debounce(async function() {
     try {
         if (state.reply.liked == false) {
             const response = await likeAReview(state.reply.id)
@@ -262,7 +276,7 @@ async function toggleLike() {
     } catch (e) {
         store.setErrorMsg(e.message)
     }
-}
+}, 300)
 
 function dismissReplyPanel() {
     state.showReplyPanel = false
@@ -272,12 +286,12 @@ const isLiked = computed(() => {
     return state.reply.liked
 })
 
-const likedIconTheme = computed(() => {
-    return state.reply.liked ? 'filled' : 'outline'
+const likedIconStrokeColor = computed(() => {
+    return isLiked.value ? '#FF0000' : '#333'
 })
 
-const likedIconColor = computed(() => {
-    return isLiked.value ? '#FF0000' : '#333'
+const likedIconFillColor = computed(() => {
+    return isLiked.value ? '#FF0000' : 'none'
 })
 
 const hasMore = computed(() => {
@@ -321,6 +335,15 @@ function handleAvatarMouseenter(){
         state.showUserInfoPop = true
     }
 }
+
+function setSuitableHeight() {
+    const markdown = replyBody.value.querySelector('markdown')
+    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
+}
+
+onMounted(() => {
+    setSuitableHeight()
+})
 
 provide('dismissReviewMenus', { dismissReviewMenus: dismissReplyMenus })
 </script>

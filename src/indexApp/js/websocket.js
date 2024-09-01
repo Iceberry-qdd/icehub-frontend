@@ -21,7 +21,7 @@ export class MsgPack {
 }
 
 export const ws = reactive({
-    url: `${import.meta.env.VITE_BASE_URL}/ws`,
+    url: `${import.meta.env.VITE_API_BASE_URL}/ws`,
     globalStompClient: null,
     reconnectCount: 0,
     connectState: 'DISCONNECT', // CONNECTED,MAX_TRY_RECONNECT,DISCONNECTED,CONNECTED_FAILED

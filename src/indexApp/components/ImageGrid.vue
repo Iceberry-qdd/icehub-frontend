@@ -43,7 +43,7 @@
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <source :srcset="getImageUrl(pic)" type="image/webp" />
                 <img
-                    :style="{'background-image': `url(${pic.thumb})`}"
+                    :style="{'background-image': `url(${pic.thumb})`, 'aspect-ratio': `${props.aspectRatio}`}"
                     :class="mPicClass"
                     loading="lazy"
                     class="duration-[400ms] hover:scale-[1.2] object-cover pic rounded-[4px] transition-transform w-full"
@@ -102,6 +102,12 @@ const props = defineProps({
     type: {
         type: String,
         required: true
+    },
+    /** 每张图片的宽高比，默认不设置 */
+    aspectRatio: {
+        type: Number,
+        required: false,
+        default: undefined
     }
 })
 const emits = defineEmits(['realImage'])

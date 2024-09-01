@@ -1,0 +1,148 @@
+{
+    "short_name": "Icehub",
+    "name": "Icehub",
+    "icons": [
+        {
+            "src": "/icon_x192.png",
+            "type": "image/png",
+            "purpose": "any",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/icon_x512.png",
+            "type": "image/png",
+            "purpose": "any",
+            "sizes": "512x512"
+        },
+        {
+            "src": "/maskable_icon_x192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/maskable_icon_x512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "maskable"
+        }
+    ],
+    "id": "/?source=pwa",
+    "start_url": "/?source=pwa",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "scope": "/",
+    "orientation": "portrait-primary",
+    "lang": "zh",
+    "dir": "ltr",
+    "theme_color": "#ffffff",
+    "shortcuts": [
+        {
+            "name": "创建新帖子",
+            "short_name": "新建帖子",
+            "description": "创建一条新的帖子，然后发布它！",
+            "url": "/?postEditor=true",
+            "icons": [
+                {
+                    "src": "/shortCut_create_x192.png",
+                    "sizes": "192x192"
+                },
+                {
+                    "src": "/shortCut_create_x512.png",
+                    "sizes": "512x512"
+                }
+            ]
+        },
+        {
+            "name": "探索",
+            "short_name": "探索",
+            "description": "探索最新内容。",
+            "url": "/explore",
+            "icons": [
+                {
+                    "src": "/shortCut_explore_x192.png",
+                    "sizes": "192x192"
+                },
+                {
+                    "src": "/shortCut_explore_x512.png",
+                    "sizes": "512x512"
+                }
+            ]
+        }
+    ],
+    "description": "Icehub, 一个文字图片分享互动社区。",
+    "screenshots": [
+        {
+            "src": "/screenshot_mobile_1.png",
+            "type": "image/png",
+            "sizes": "540x960",
+            "label": "探索页，可以查看最新帖子，支持全局搜索。",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "/screenshot_mobile_2.png",
+            "type": "image/png",
+            "sizes": "540x960",
+            "label":"个人资料页，可以查看用户横幅、帖子及简介。",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "/screenshot_mobile_3.png",
+            "type": "image/png",
+            "sizes": "540x960",
+            "label":"表情选择弹窗，支持最新Emoji标准。",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "/screenshot_mobile_4.png",
+            "type": "image/png",
+            "sizes": "540x960",
+            "label": "发布帖子时，支持多种可见范围。",
+            "form_factor": "narrow"
+        },
+        {
+            "src": "/screenshot_desktop_1.png",
+            "type": "image/jpg",
+            "sizes": "1024x652",
+            "form_factor": "wide",
+            "label": "主页，可以发布、浏览帖子。"
+        },
+        {
+            "src": "/screenshot_desktop_2.png",
+            "type": "image/jpg",
+            "sizes": "1024x652",
+            "form_factor": "wide",
+            "label": "图片预览界面，支持图片旋转、缩放、查看原图等。"
+        },
+        {
+            "src": "/screenshot_desktop_3.png",
+            "type": "image/jpg",
+            "sizes": "1024x652",
+            "form_factor": "wide",
+            "label": "表情选择弹窗，支持最新Emoji标准。"
+        },
+        {
+            "src": "/screenshot_desktop_4.png",
+            "type": "image/jpg",
+            "sizes": "1024x652",
+            "form_factor": "wide",
+            "label": "图片裁剪窗口，支持对图片进行裁剪、缩放。"
+        }
+    ],
+    "display_override": ["window-controls-overlay"],
+    "protocol_handlers": [
+        {
+            "protocol": "web+icehubPost",
+            "url": "/post/%s"
+        },
+        {
+            "protocol": "web+icehubUser",
+            "url": "/user/%s"
+        },
+        {
+            "protocol": "web+icehubSearch",
+            "url": "/search?key=%s"
+        }
+    ],
+    "categories": ["entertainment","social","social networking"]
+}

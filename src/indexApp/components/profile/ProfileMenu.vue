@@ -16,11 +16,12 @@
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </CalendarSearchAction>
     
-            <ShareLinkAction
-                v-if="state.actionVisMap.get('ShareLinkAction')"
+            <ShareAction
+                v-if="state.actionVisMap.get('ShareAction')"
                 :link="generateLink"
+                type="USER"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-            </ShareLinkAction>
+            </ShareAction>
     
             <VerifyApplyAction
                 v-if="state.actionVisMap.get('VerifyApplyAction')"
@@ -104,7 +105,7 @@
 import { computed, reactive, onMounted, onUnmounted, inject, watch } from 'vue'
 import ProfileChangeAction from '@/indexApp/components/menus/userProfileMenus/ProfileChangeAction.vue'
 import CalendarSearchAction from '@/indexApp/components/menus/userProfileMenus/CalendarSearchAction.vue'
-import ShareLinkAction from '@/indexApp/components/menus/userProfileMenus/ShareLinkAction.vue'
+import ShareAction from '@/indexApp/components/menus/common/ShareAction.vue'
 import VerifyApplyAction from '@/indexApp/components/menus/userProfileMenus/VerifyApplyAction.vue'
 import ProfileLockAction from '@/indexApp/components/menus/userProfileMenus/ProfileLockAction.vue'
 import LogoutAction from '@/indexApp/components/menus/userProfileMenus/LogoutAction.vue'
@@ -128,7 +129,7 @@ const state = reactive({
     actionVisMap: new Map([
         [ProfileChangeAction.__name, props.user.id === curUser.id],
         [CalendarSearchAction.__name, !props.user.blocking && !props.user.blocked && showUnImpl],
-        [ShareLinkAction.__name, !props.user.blocking && !props.user.blocked],
+        [ShareAction.__name, !props.user.blocking && !props.user.blocked],
         [VerifyApplyAction.__name, props.user.id === curUser.id && showUnImpl],
         [ProfileLockAction.__name, props.user.id === curUser.id],
         [ProfileBlockAction.__name, props.user.id !== curUser.id],
@@ -157,10 +158,10 @@ watch(() => store.MOBILE_MODE, (newVal, _) => {
 })
 
 onMounted(() => {
-    document.querySelector('#app').addEventListener('click', handleProfileMenusDismiss)
+    document.addEventListener('click', handleProfileMenusDismiss)
 })
 
 onUnmounted(() => {
-    document.querySelector('#app').removeEventListener('click', handleProfileMenusDismiss)
+    document.removeEventListener('click', handleProfileMenusDismiss)
 })
 </script>

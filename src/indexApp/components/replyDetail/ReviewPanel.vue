@@ -18,7 +18,10 @@
                     <div>{{ title }}</div>
                 </div>
             </Header>
-            <ReviewCard :review="props.parentReview ?? props.post"></ReviewCard>
+            <ReviewCard
+                tire-direction="top"
+                :review="props.parentReview ?? props.post">
+            </ReviewCard>
             <ReviewEditor
                 :post="props.post"
                 :parent="props.parentReview"
