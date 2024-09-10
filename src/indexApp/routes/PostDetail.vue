@@ -31,9 +31,9 @@
         </Teleport>
         <div
             v-if="!allowReview && state.post"
-            class="bg-[#e8f0ff] cursor-default flex gap-2 h-[3rem] items-center justify-left my-[2%] p-4 rounded-lg translate-x-[2%] w-[96%]">
-            <IconInfo class="bg-[#3b82f6] box-content p-[0.1rem] rounded-full text-white"></IconInfo>
-            <span class="text-[#303133] text-[11pt]">该帖子的评论功能已关闭</span>
+            class="bg-[#e8f0ff] cursor-default dark:bg-neutral-800 flex gap-2 h-[3rem] items-center justify-left my-[2%] p-4 rounded-lg translate-x-[2%] w-[96%]">
+            <IconInfo class="bg-[#3b82f6] box-content dark:bg-blue-300 dark:text-neutral-800 p-[0.1rem] rounded-full text-white"></IconInfo>
+            <span class="dark:text-white/50 text-[#303133] text-[11pt]">该帖子的评论功能已关闭</span>
         </div>
         <div v-if="state.reviews.length > 0">
             <TransitionGroup name="reviews">

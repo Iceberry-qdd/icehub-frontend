@@ -1,17 +1,17 @@
 <template>
-    <ul class="bg-white flex flex-col flex-nowrap justify-start max-lg:gap-y-2 max-sm:border-t-[1px] max-sm:bottom-0 max-sm:flex-row max-sm:py-2">
+    <ul class="flex flex-col flex-nowrap justify-start max-lg:gap-y-2 max-sm:bg-white max-sm:border-neutral-700 max-sm:border-t-[1px] max-sm:bottom-0 max-sm:dark:bg-[#121212] max-sm:flex-row max-sm:py-2">
         <li
             v-for="menu in state.menus.filter(menu => menu.visible == true)"
             :key="menu.id"
             :title="menu.name"
             :class="{ 'active': menu.active, 'mobile': menu.mobileShow }"
-            class="border-0 flex flex-nowrap items-center justify-between m-[0.2rem] max-lg:py-[0.3rem] max-sm:flex-1 max-sm:flex-col max-sm:m-0 max-sm:px-0 max-sm:py-0 px-[1rem] py-3 sm:flex-row sm:hover:bg-[#F5F5F5] sm:rounded-full"
+            class="border-0 flex flex-nowrap items-center justify-between m-[0.2rem] max-lg:py-[0.3rem] max-sm:flex-1 max-sm:flex-col max-sm:m-0 max-sm:px-0 max-sm:py-0 px-[1rem] py-3 sm:flex-row sm:rounded-full"
             @click="routeTo(menu.routeName, menu.routeParams)">
             <div
-                class="content-center flex flex-nowrap gap-x-[1rem] items-center justify-between max-sm:flex-col max-sm:gap-y-[0.1rem] relative sm:flex-row text-[#303133]">
+                class="content-center flex flex-nowrap gap-x-[1rem] items-center justify-between max-sm:flex-col max-sm:gap-y-[0.1rem] relative sm:flex-row">
                 <div
                     v-if="menu.badgeCount"
-                    class="absolute bg-red-500 leading-3 left-1/2 lg:hidden min-w-[1.05rem] px-[0.3rem] py-[0.15rem] rounded-full select-none text-[0.7rem] text-center text-white top-0 z-[1]">
+                    class="absolute bg-red-500 dark:text-[#121212] leading-3 left-1/2 lg:hidden min-w-[1.05rem] px-[0.3rem] py-[0.15rem] rounded-full select-none text-[0.7rem] text-center text-white top-0 z-[1]">
                     {{ menu.badgeCount > 999 ? '999+' : menu.badgeCount }}
                 </div>
                 <div
@@ -24,13 +24,13 @@
                     </Avatar>
                 </div>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <span v-else class="material-symbols-rounded max-lg:text-[1.5rem] max-sm:px-4 max-sm:py-1 max-sm:rounded-full max-sm:text-[1.25rem] no-hover p-0 rounded-none text-[1.75rem]">{{ menu.icon }}</span>
+                <span v-else class="dark:text-inherit material-symbols-rounded max-lg:text-[1.5rem] max-sm:px-4 max-sm:py-1 max-sm:rounded-full max-sm:text-[1.25rem] no-hover p-0 rounded-none text-[1.75rem]">{{ menu.icon }}</span>
                 <span class="btn-no-select font-bold max-sm:leading-4 max-sm:text-[0.8rem] sm:max-lg:hidden text-lg webkit-box-1">{{ menu.name }}</span>
             </div>
 
             <span
                 v-if="menu.badgeCount > 0"
-                class="bg-transparent h-[1.4rem] max-lg:hidden rounded-[4rem] text-[12pt] text-black text-center w-[2rem]">
+                class="bg-transparent h-[1.4rem] max-lg:hidden rounded-[4rem] text-[12pt] text-center w-[2rem]">
                 {{ humanizedNumber(menu.badgeCount) }}
             </span>
         </li>
@@ -46,17 +46,25 @@ li.active{
     background-color: #cfe2ff;
 }
 
+li:not(.active):hover:where([theme="dark"], [theme="dark"] *) {
+    background-color: #1e1e1e;
+}
+
+li.active:where([theme="dark"], [theme="dark"] *){
+    background-color: #1e1e1e;
+}
+
 @media not all and (min-width: 640px) {
     li:not(.mobile) {
         display: none;
     }
 
     li:not(.active):hover {
-        background-color: transparent;
+        background-color: inherit;
     }
 
     li.active{
-        background-color: transparent;
+        background-color: inherit;
     }
 
     li.active :is(.material-symbols-rounded, .avatar){
@@ -65,6 +73,14 @@ li.active{
 
     li:not(.active) :is(.material-symbols-rounded, .avatar):hover{
         background-color: #F5F5F5;
+    }
+
+    li.active :is(.material-symbols-rounded, .avatar):where([theme="dark"], [theme="dark"] *){
+        background-color: #1e1e1e;
+    }
+
+    li:not(.active) :is(.material-symbols-rounded, .avatar):hover:where([theme="dark"], [theme="dark"] *){
+        background-color: #1e1e1e;
     }
 }
 </style>

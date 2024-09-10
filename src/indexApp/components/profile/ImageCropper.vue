@@ -26,19 +26,19 @@
             name="imgFile"
             accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
             @change="choosePics" />
-        <div class="bg-white divide-x-[1px] flex flex-nowrap flex-row h-[30rem] max-sm:bg-zinc-900 max-sm:divide-x-0 max-sm:flex-col max-sm:h-[calc(100vh-4rem-48px)] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none w-[min(50rem,100vw)]">
+        <div class="bg-white dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-x-[1px] flex flex-nowrap flex-row h-[30rem] max-sm:bg-zinc-900 max-sm:divide-x-0 max-sm:flex-col max-sm:h-[calc(100vh-4rem-48px)] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none w-[min(50rem,100vw)]">
             <div
                 v-if="!state.originImgFile"
-                class="-translate-x-1/2 -translate-y-1/2 absolute active:bg-gray-100/50 border-[1px] cursor-pointer flex flex-col flex-nowrap gap-2 h-[min(50%,15rem)] hover:bg-gray-100 items-center justify-center left-1/2 rounded-[8px] top-1/2 w-[min(50%,25rem)]"
+                class="-translate-x-1/2 -translate-y-1/2 absolute active:bg-gray-100/50 border-[1px] cursor-pointer dark:active:bg-neutral-700 dark:border-neutral-700 dark:hover:bg-[#1e1e1e] flex flex-col flex-nowrap gap-2 h-[min(50%,15rem)] hover:bg-gray-100 items-center justify-center left-1/2 rounded-[8px] top-1/2 w-[min(50%,25rem)]"
                 @click="fileInput.click()">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="material-symbols-rounded no-hover p-0">upload</div>
+                <div class="dark:text-white/25 material-symbols-rounded no-hover p-0">upload</div>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="text-[0.9rem] text-zinc-500">点击上传图片</div>
+                <div class="dark:text-white/25 text-[0.9rem] text-zinc-500">点击上传图片</div>
             </div>
             <div
                 v-if="state.originImgFile"
-                class="bg-black flex flex-row h-full items-center justify-center sm:basis-3/5">
+                class="bg-black dark:bg-[#1e1e1e] flex flex-row h-full items-center justify-center sm:basis-3/5">
                 <div class="h-fit relative w-fit">
                     <div
                         ref="cropperMask"
@@ -154,14 +154,14 @@
                     </div>
                     <!-- <div class="active:bg-gray-200/75 bg-gray-200 hover:bg-gray-300 material-symbols-rounded no-hover p-4 rounded-full">lock</div> -->
                 </div>
-                <div class="backdrop-blur-md border-t-[1px] bottom-0 flex flex-row gap-x-3 h-fit items-center justify-center max-sm:hidden py-2 rounded-br-[8px] sticky w-full">
+                <div class="backdrop-blur-md border-t-[1px] bottom-0 dark:border-t-neutral-700 flex flex-row gap-x-3 h-fit items-center justify-center max-sm:hidden py-2 rounded-br-[8px] sticky w-full">
                     <div
                         class="active:bg-blue-500/75 bg-blue-500 cursor-pointer h-[2.25rem] hover:bg-blue-600 px-3 py-2 rounded-full text-[0.9rem] text-center text-white w-[40%]"
                         @click="applyImg">
                         应用
                     </div>
                     <div
-                        class="active:bg-gray-200/75 active:text-zinc-500 bg-gray-200 cursor-pointer h-[2.25rem] hover:bg-gray-300 px-3 py-2 rounded-full text-[0.9rem] text-black text-center w-[40%]"
+                        class="active:bg-gray-200/75 active:text-zinc-500 bg-gray-200 cursor-pointer h-[2.25rem] hover:bg-gray-300 px-3 py-2 rounded-full text-[0.9rem] text-black/75 text-center w-[40%]"
                         @click="skip">
                         跳过裁剪
                     </div>
@@ -189,14 +189,31 @@
     padding: 1rem;
 }
 
+.menu > .icon:where([theme="dark"], [theme="dark"] *){
+    background-color: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.5);
+}
+
 .menu > .icon:active {
     background-color: rgb(229 231 235 / 0.75);
+}
+
+.menu > .icon:active:where([theme="dark"], [theme="dark"] *) {
+    background-color: rgba(255, 255, 255, 0.25);
 }
 
 .menu > .text {
     --tw-text-opacity: 1;
     color: rgb(113 113 122 / var(--tw-text-opacity));
     font-size: 0.8rem;
+}
+
+.menu > .text:where([theme="dark"], [theme="dark"] *){
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#h{
+    background-color: #000000dd;
 }
 
 @media not all and (min-width: 640px) {

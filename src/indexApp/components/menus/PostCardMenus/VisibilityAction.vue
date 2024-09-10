@@ -2,12 +2,12 @@
     <div @click="showSubAction">
         <span
             v-show="!state.showSubAction"
-            class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">
+            class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">
             {{ curActiveAction.icon }}
         </span>
         <div
             v-show="!state.showSubAction"
-            class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">
             更改可见范围
         </div>
 
@@ -16,8 +16,8 @@
             <Transition name="fade">
                 <VisibilityChoiceAction
                     v-if="state.showSubAction"
-                    class="absolute left-0 max-sm:bottom-0 max-sm:fixed max-sm:w-full max-sm:z-[1001] sm:top-0 z-[99]"
-                    :visibility="state.post.status"
+                    class="absolute left-0 max-sm:bottom-0 max-sm:fixed max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-full max-sm:z-[1001] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-0 z-[99]"
+                    :visibility="props.post.status"
                     :ui="state.actions"
                     @picked-visibility="updateVisibility">
                 </VisibilityChoiceAction>
@@ -103,18 +103,22 @@ const curActiveAction = computed(() => {
 
 async function updateVisibility({ code }) {
     try {
-        if (state.post.status == code) return
-        const originStatus = state.post.status
+        if (props.post.status == code) return
+        const originStatus = props.post.status
 
-        state.post.status = code
-        const response = await modifyPostVisibility(state.post, originStatus)
+        // XXX 此处为方便，直接修改props对象的属性值
+        // eslint-disable-next-line vue/no-mutating-props
+        props.post.status = code
+        const response = await modifyPostVisibility(props.post, originStatus)
         if (!response.ok) throw new Error(await response.json().error)
 
         const result = await response.json()
         if (!result) throw new Error(`更改帖子内容失败：${result}`)
         store.setSuccessMsg('已更改帖子可见范围！')
     } catch (e) {
-        state.post.status = originStatus
+        // XXX 此处为方便，直接修改props对象的属性值
+        // eslint-disable-next-line vue/no-mutating-props
+        props.post.status = originStatus
         store.setErrorMsg(e.message)
     } finally {
         dismiss()

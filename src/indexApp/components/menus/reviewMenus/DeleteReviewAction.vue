@@ -1,6 +1,8 @@
 <template>
-    <div @click="showConfirmDialogBox">
-        <span class="material-symbols-rounded max-sm:bg-red-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-red-500">delete</span>
+    <div
+        class="dark:text-red-300 text-red-500"
+        @click="showConfirmDialogBox">
+        <span class="material-symbols-rounded max-sm:bg-red-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-inherit">delete</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <div class="max-sm:text-[0.8rem]">删除此内容</div>
         <Teleport to="#app">

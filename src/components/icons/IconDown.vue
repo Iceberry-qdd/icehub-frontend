@@ -3,8 +3,9 @@
         :width="props.size"
         :height="props.size"
         viewBox="0 0 48 48"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg">
+        :fill="props.fill"
+        xmlns="http://www.w3.org/2000/svg"
+        class="btn-no-select m-icon">
         <path
             d="M36 18L24 30L12 18"
             :stroke="props.strokeColor"
@@ -26,7 +27,7 @@ const props = defineProps({
     strokeColor: {
         type: String,
         required: false,
-        default: '#000000'
+        default: 'currentColor'
     },
     /** 大小 */
     size: {

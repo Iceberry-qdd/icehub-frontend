@@ -11,11 +11,10 @@
                 v-bind="$attrs" />
         </picture>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div v-else v-bind="$attrs" class="bg-gradient-to-r from-sky-500 to-indigo-500" />
+        <div v-else v-bind="$attrs" class="bg-gradient-to-r dark:bg-neutral-800 dark:bg-none from-sky-500 to-indigo-500" />
     </div>
 </template>
 
-<!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
 import { computed } from 'vue'
 
@@ -26,7 +25,6 @@ defineOptions({
 
 const props = defineProps({
     /** 传入的用户对象 */
-    // eslint-disable-next-line vue/no-unused-properties
     user: {
         type: Object,
         required: true

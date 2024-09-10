@@ -1,9 +1,9 @@
 <template>
     <div
         id="profile-menu"
-        class="bg-white cursor-pointer flex flex-col ring-1 ring-slate-900/5 shadow-lg">
-        <div class="bg-white flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
-            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+        class="bg-white cursor-pointer dark:bg-[#1e1e1e] flex flex-col">
+        <div class="flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
+            <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
         </div>
         <div class="flex flex-col max-sm:grid max-sm:grid-cols-4 max-sm:place-items-center">
             <ProfileChangeAction
@@ -53,7 +53,7 @@
     
             <LogoutAction
                 v-if="state.actionVisMap.get('LogoutAction')"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px] text-red-500">
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </LogoutAction>
         </div>
     </div>
@@ -74,11 +74,19 @@
 }
 
 .action:hover{
-    background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+    background-color: #f3f4f6;
+}
+
+.action:hover:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
 }
 
 .action:active{
     background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.action:active:where([theme="dark"], [theme="dark"] *){
+    background-color: #404040;
 }
 
 @media not all and (min-width: 640px) {

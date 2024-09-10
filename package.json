@@ -1,6 +1,6 @@
 {
   "name": "icehub",
-  "version": "1.0.9",
+  "version": "1.0.9.1",
   "scripts": {
     "dev": " vite --host",
     "build": "vite build",
@@ -9,6 +9,7 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.9.1",
+    "dompurify": "^3.1.6",
     "jsencrypt": "^3.3.1",
     "katex": "^0.16.10",
     "sockjs-client": "^1.6.1",

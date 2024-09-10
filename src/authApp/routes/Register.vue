@@ -19,19 +19,19 @@
                 <input
                     v-model="state.nickname"
                     :disabled="state.loading"
-                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
                     type="text"
                     placeholder="请输入账号名" />
                 <input
                     v-model="state.password"
                     :disabled="state.loading"
-                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
                     type="password"
                     placeholder="请输入密码" />
                 <input
                     v-model="state.rePassword"
                     :disabled="state.loading"
-                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
                     type="password"
                     placeholder="请再次输入密码" />
                 <Turnstile
@@ -45,13 +45,13 @@
                 <button
                     type="button"
                     name="login"
-                    :class="[state.loading || !state.turnstile.token ? 'bg-neutral-500 cursor-not-allowed pointer-events-none' : 'bg-black']"
+                    :class="[state.loading || !state.turnstile.token ? 'dark:shadow-neutral-800/50 bg-neutral-500 dark:bg-neutral-800 dark:text-blue-300/25 cursor-not-allowed pointer-events-none' : 'dark:text-blue-300 dark:shadow-neutral-700/50 bg-black dark:bg-neutral-700']"
                     :disabled="state.loading"
-                    class="3xl:p-4 3xl:text-[2rem] lg:max-xl:text-[0.9rem] max-sm:py-3 p-2 rounded-full shadow-lg shadow-neutral-300 text-[1rem] text-white w-[300px]"
+                    class="3xl:p-4 3xl:text-[2rem] font-bold lg:max-xl:text-[0.9rem] max-sm:py-3 p-2 rounded-full shadow-lg shadow-neutral-300 text-[1rem] text-white w-[300px]"
                     @click="tryRegister">
                     <IconLoading
                         v-if="state.loading"
-                        class="3xl:h-10 3xl:left-[calc(50%-1.25rem)] 3xl:w-10 animate-spin h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
+                        class="3xl:h-10 3xl:left-[calc(50%-1.25rem)] 3xl:w-10 animate-spin dark:text-white/25 h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
                     </IconLoading>
                     <span v-else>注册</span>
                 </button>

@@ -1,7 +1,7 @@
 <template>
     <div @click="showConfirmDialogBox">
-        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
-        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
+        <div class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">
             不喜欢此用户
         </div>
         <Teleport to="#app">

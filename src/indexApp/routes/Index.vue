@@ -6,10 +6,29 @@
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
-            :menu-icon="state.headerConfig.menuIcon"
-            :menu-action="state.headerConfig.menuAction"
-            :icon-tooltip="state.headerConfig.iconTooltip">
+            :menu-icon="state.theme.iconMap.get(state.theme.mode)"
+            :icon-tooltip="state.headerConfig.iconTooltip"
+            @handle-action="state.theme.showMenu = true">
         </Header>
+        <div class="max-sm:hidden sm:absolute sm:left-full">
+            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+            <Teleport to="#app" :disabled="!store.MOBILE_MODE">
+                <div
+                    v-if="state.theme.showMenu && store.MOBILE_MODE"
+                    class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]"
+                    @click="state.theme.showMenu = false" />
+                <Transition name="fade">
+                    <ThemeMenu
+                        v-if="state.theme.showMenu"
+                        :icon-map="state.theme.iconMap"
+                        :active-mode="state.theme.mode"
+                        class="fixed h-fit max-sm:bottom-0 max-sm:left-0 max-sm:pb-4 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] z-[1002]"
+                        @active-mode="toggleTheme"
+                        @dismiss="state.theme.showMenu = false">
+                    </ThemeMenu>
+                </Transition>
+            </Teleport>
+        </div>
         <div  
             class="absolute content-center flex items-center justify-center pointer-events-none w-full z-[99]">
             <Transition>
@@ -25,7 +44,7 @@
                 v-show="!store.MOBILE_MODE || (store.MOBILE_MODE && state.isShowPostEditor)"
                 id="post-editor"
                 :class="{'fixed-page': store.MOBILE_MODE && state.isShowPostEditor}"
-                class="max-sm:fixed max-sm:h-[calc(100vh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
+                class="border-b-[1px] dark:border-[#1e1e1e] max-sm:fixed max-sm:h-[calc(100vh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
                 @close="state.isShowPostEditor = false"
                 @get-data="getData"
                 @posting-new="postingNew">
@@ -44,7 +63,7 @@
         </Footer>
         <div
             id="create-post-btn"
-            class="bg-blue-500 bottom-20 fixed material-symbols-rounded no-hover p-3 right-4 shadow-blue-500/25 shadow-lg sm:hidden text-white z-[111]"
+            class="bg-blue-500 bottom-20 dark:bg-neutral-800 dark:shadow-neutral-800/25 fixed material-symbols-rounded no-hover p-3 right-4 shadow-blue-500/25 shadow-lg sm:hidden text-white z-[111]"
             @click="state.isShowPostEditor = true">
             create
         </div>
@@ -58,6 +77,22 @@
 
 .v-leave-active {
     animation: slide-out-top 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
+}
+
+.fade-enter-active {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.fade-leave-active {
+    transition: opacity 0.1s ease-in-out;
+}
+
+.fade-enter-from {
+    opacity: 0;
+}
+
+.fade-leave-to {
+    opacity: 0;
 }
 
 @keyframes slide-in-top {
@@ -88,19 +123,37 @@
     #main:has(#back-to-top)>#index>#create-post-btn{
         display: none;
     }
+    
+    .fade-enter-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+    
+    .fade-leave-active {
+        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+    }
+    
+    .fade-enter-from {
+        translate: 0 100%;
+    }
+    
+    .fade-leave-to {
+        translate: 0 100%;
+        opacity: 1;
+    }
 }
 </style>
 
 <script setup>
+import { computed, onMounted, reactive, provide, defineAsyncComponent } from 'vue'
 import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
 import Header from '@/indexApp/components/Header.vue'
 import { getUserTimeline } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import PostEditor from '@/indexApp/components/index/PostEditor.vue'
-import { computed, onMounted, reactive, provide } from 'vue'
 import GlobalRefresh from '@/components/GlobalRefresh.vue'
 import Footer from '@/indexApp/components/Footer.vue'
 import { useRoute } from 'vue-router'
+const ThemeMenu = defineAsyncComponent(() => import('@/indexApp/components/index/ThemeMenu.vue'))
 
 const route = useRoute()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
@@ -115,12 +168,20 @@ const state = reactive({
         goBack: false,
         showMenu: showUnImpl, // TODO implement it.
         menuIcon: 'campaign',
-        menuAction: { action: 'route', param: '' },
-        iconTooltip: '公告'
+        iconTooltip: '深色模式'
     },
     isShowGlobalRefresh: true,
     isLoading: false,
-    isShowPostEditor: false
+    isShowPostEditor: false,
+    theme: {
+        showMenu: false,
+        mode: 'followSystem',
+        iconMap: new Map([
+            ['dark', 'dark_mode'],
+            ['light', 'light_mode'],
+            ['followSystem', 'contrast']
+        ])
+    }
 })
 
 async function getData() {
@@ -158,10 +219,31 @@ const isShowGlobalNotifyBannerMsg = computed(() => {
     return store.GLOBAL_NOTIFY_BANNER_MSG.length > 0
 })
 
+function toggleTheme(mode){
+    state.theme.mode = mode
+    if(mode !== 'followSystem'){
+        localStorage.setItem('theme', mode)
+        document.body.setAttribute('theme', mode)
+    } else {
+        localStorage.removeItem('theme')
+        document.body.setAttribute('theme', store.SYS_THEME_MODE)
+    }
+    state.theme.showMenu = false
+}
+
 onMounted(() => {
+    // PostEditor display settings
     if(route.query?.postEditor && store.MOBILE_MODE){
         state.isShowPostEditor = true
     }
+
+    // Theme settings
+    if(!('theme' in localStorage)){
+        state.theme.mode = 'followSystem'
+    } else{
+        state.theme.mode = localStorage.theme
+    }
+
     getData()
 })
 

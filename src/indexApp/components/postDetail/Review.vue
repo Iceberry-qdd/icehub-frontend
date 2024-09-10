@@ -1,17 +1,17 @@
 <template>
     <div ref="reviewBody">
         <div
-            :class="{'hover:bg-[#f5f5f5]': route.name !== 'replyDetail'}"
-            class="border-b-[1px] border-gray-100 flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
+            :class="{'hover:bg-gray-50 dark:hover:bg-neutral-900': route.name !== 'replyDetail'}"
+            class="border-b-[1px] border-gray-100 dark:border-b-[#1e1e1e] flex flex-col gap-y-2 max-sm:p-3 p-4 relative">
             <div
                 v-if="tieSub == 'mid'"
-                class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 dark:bg-neutral-800 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="tieSub == 'top'"
-                class="absolute bg-gray-200 h-[calc(100%-2.5rem)] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 dark:bg-neutral-800 h-[calc(100%-2.5rem)] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="tieSub == 'bottom'"
-                class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 dark:bg-neutral-800 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
             <div
                 v-if="route.name !== 'replyDetail'"
                 class="absolute bg-transparent cursor-pointer h-full left-0 top-0 w-full z-10"
@@ -50,27 +50,27 @@
                             </div>
                             <IconVerify
                                 v-if="state.review.user.verified"
-                                class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                                class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
                             </IconVerify>
                             <div
                                 v-if="state.review.user.confirmFollow"
-                                class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                                class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
                                 lock
                             </div>
                         </div>
                         <div
                             v-if="!props.post"
-                            class="text-[11pt]"
+                            class="dark:text-white/50 text-[0.85rem] text-gray-400"
                             @click="routeToUser(replyTo)">
                             回复
-                            <span class="cursor-pointer hover:underline">@{{ replyTo }}</span>
+                            <span class="cursor-pointer hover:dark:text-white hover:underline">@{{ replyTo }}</span>
                         </div>
                     </div>
                 </div>
                 <div class="z-[20]">
                     <div
                         :title="standardDateTime(state.review.createdTime)"
-                        class="text-[10pt] text-gray-400">
+                        class="dark:text-white/50 text-[10pt] text-gray-400">
                         {{ humanizedTime(state.review.createdTime) }}
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                 <div class="relative">
                     <div
                         v-if="state.shrinkContent"
-                        class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                        class="-translate-x-1/2 absolute bg-blue-100 bottom-2 cursor-pointer dark:bg-neutral-800 dark:text-blue-200 left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
                         @click="state.shrinkContent = false">
                         展开
                     </div>
@@ -108,7 +108,7 @@
                     class="btn flex flex-row gap-x-2 items-center op relative text-[11pt]"
                     @click="toggleMenu">
                     <span
-                        class="hover:bg-[#d3d3d5] material-symbols-rounded p-[0.4rem] text-[#333] text-[20px]">
+                        class="hover:bg-[#d3d3d5] material-symbols-rounded p-[0.4rem] text-[20px]">
                         more_horiz
                     </span>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
@@ -129,13 +129,13 @@
                     type="button"
                     :title="`${state.totalReplyCount} 评论`"
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
-                    @click="state.showReplyPanel = true">
+                    :class="{'cursor-not-allowed text-[#C1C1C1] dark:text-white/25': !state.post?.allowReview}"
+                    @click="state.post?.allowReview ? state.showReplyPanel = true : undefined">
                     <span
-                        class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
-                        :class="{'hover:bg-transparent cursor-not-allowed': !state.post?.allowReview}">
+                        class="icon-message p-[0.4rem] rounded-full"
+                        :class="{'not-allowed': !state.post?.allowReview}">
                         <IconMessage
                             :size="19"
-                            :stroke-color="state.post?.allowReview ? '#333' : '#C1C1C1'"
                             :stroke-width="3">
                         </IconMessage>
                     </span>
@@ -157,12 +157,11 @@
                     class="btn flex flex-row gap-x-1 items-center op text-[11pt]"
                     @click="toggleLike">
                     <span
-                        class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
-                        :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
+                        class="icon-like p-[0.4rem] rounded-full"
+                        :class="{'liked' : isLiked}">
                         <IconLike
                             :fill="likedIconFillColor"
                             :size="20"
-                            :stroke-color="likedIconStrokeColor"
                             :stroke-width="3">>
                         </IconLike>
                     </span>
@@ -170,18 +169,19 @@
                 </button>
             </div>
         </div>
-        <div v-if="state.replies.length > 0">
+        <div v-if="state.replies.length > 0 && !!state.post">
             <TransitionGroup name="reviews">
                 <Reply
                     v-for="(reply, index) in state.replies"
                     :key="reply.id"
                     :index="index"
-                    class="hover:bg-[#f5f5f5] z-10"
+                    class="z-10"
                     :reply="reply"
                     :review="state.review"
                     :tie-sub="index < state.totalReplyCount - 1 ? 'mid' : 'bottom'"
                     :total-reply-count="state.totalReplyCount"
                     :fetched-reply-count="state.replies.length"
+                    :allow-reply="state.post?.allowReview"
                     @fetch-more-reply="fetchMoreReply">
                 </Reply>
             </TransitionGroup>
@@ -205,6 +205,28 @@
     position: absolute;
     width: 100%;
     height: fit-content;
+}
+
+.icon-like.liked{
+    background-color: #fecaca;
+    color: #ef4444;
+}
+
+.icon-like.liked>.m-icon{
+    color: #ef4444;
+}
+
+.icon-like.liked:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
+}
+
+.icon-message.not-allowed{
+    background-color: transparent;
+    cursor: not-allowed;
+}
+
+.icon-message.not-allowed>.m-icon:where([theme="dark"], [theme="dark"] *){
+    color: rgb(255 255 255 / 0.25);
 }
 </style>
 

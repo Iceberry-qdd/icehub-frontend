@@ -5,7 +5,7 @@
         :class="{'scroll-smooth': state.scrollSmooth}"
         class="bg-black/75 fixed-page flex flex-row justify-between no-scrollbar overflow-x-auto overflow-y-hidden snap-mandatory snap-normal snap-x">
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div class="cursor-pointer fixed ml-4 mt-4 p-2 text-white z-[2]" @click="close">
+        <div class="cursor-pointer fixed ml-4 mt-4 p-2 z-[2]" @click="close">
             <span
                 class="bg-[#6b728055] hover:bg-[#6b7280cc] material-symbols-rounded rounded-full">
                 close
@@ -39,9 +39,9 @@
                 <div
                     v-if="img.altText && state.editData[index].showAlt"
                     class="absolute bottom-20 flex items-center justify-center max-sm:bottom-0 w-full z-[1]">
-                    <div class="bg-[#000000AA] break-all break-words h-fit leading-[1.5rem] max-h-[calc(100vh-6rem)] max-sm:bg-white max-sm:pt-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:text-zinc-500 max-sm:w-screen no-scrollbar overflow-y-auto px-4 py-3 rounded-[8px] sm:max-w-[75vw] text-[0.9rem] text-justify text-white w-fit">
-                        <div class="bg-white flex h-6 items-center justify-center sm:hidden sticky top-0">
-                            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+                    <div class="bg-[#000000AA] break-all break-words h-fit leading-[1.5rem] max-h-[calc(100vh-6rem)] max-sm:bg-white max-sm:dark:bg-[#1e1e1e] max-sm:pt-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen no-scrollbar overflow-y-auto px-4 py-3 rounded-[8px] sm:max-w-[75vw] text-[0.9rem] text-inherit text-justify w-fit">
+                        <div class="bg-white dark:bg-[#1e1e1e] flex h-6 items-center justify-center sm:hidden sticky top-0">
+                            <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
                         </div>
                         {{ img.altText }}
                     </div>

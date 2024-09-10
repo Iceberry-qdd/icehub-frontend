@@ -1,13 +1,13 @@
 <template>
     <div
         id="h"
-        class="backdrop-blur-xl bg-white/80 flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:px-2 px-[1rem] text-lg top-0 z-[104]"
-        :class="[!state.noBorder ? 'border-b-[1px] border-[#EEEEEE]' : '']">
+        class="backdrop-blur-xl bg-white/80 dark:bg-[#121212dd] flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:px-2 max-sm:z-[104] px-[1rem] text-lg top-0 z-[1002]"
+        :class="[!state.noBorder ? 'border-b-[1px] border-[#EEEEEE] dark:border-[#1e1e1e]' : '']">
         <div class="flex flex-none flex-row h-full items-center">
             <div
                 v-if="props.goBack"
                 :style="{color: props.iconColor}"
-                class="cursor-pointer material-symbols-rounded mr-[0.5rem] text-[1.125rem]"
+                class="cursor-pointer dark:text-inherit material-symbols-rounded mr-[0.5rem] text-[1.125rem]"
                 title="返回"
                 @click="routeBackTo">
                 arrow_back_ios_new
@@ -29,7 +29,7 @@
             class="flex-none">
             <span
                 v-if="props.menuIcon"
-                class="material-symbols-rounded text-[1.125rem]"
+                class="dark:text-inherit material-symbols-rounded text-[1.125rem]"
                 :style="{color: props.iconColor}"
                 @click="handleAction">
                 {{ props.menuIcon }}

@@ -1,19 +1,18 @@
 <template>
     <div
-        class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] min-h-max min-w-[12rem] ring-1 ring-slate-900/5 rounded-[6px] shadow-lg">
-        <div class="bg-white flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
-            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+        class="bg-white dark:bg-[#1e1e1e] min-h-max min-w-[12rem]">
+        <div class="flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
+            <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
         </div>
         <div
             v-for="action in props.ui"
             :key="action.id"
-            :class="[action.code == props.visibility ? 'bg-blue-100 hover:bg-blue-100' : 'hover:bg-gray-100 active:bg-gray-200']"
-            class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-xl px-4 py-[0.6rem] sm:[&:nth-child(2)]:rounded-t-[6px] sm:last:rounded-b-[6px]"
+            :class="[action.code == props.visibility ? 'bg-blue-100 text-blue-500 dark:text-inherit dark:bg-neutral-700 hover:bg-blue-100 hover:dark:bg-neutral-700' : 'hover:bg-gray-100 hover:dark:bg-neutral-800 active:bg-gray-200 active:dark:bg-neutral-700']"
+            class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-[8px] px-4 py-[0.6rem] sm:[&:nth-child(2)]:rounded-t-[inherit] sm:last:rounded-b-[inherit]"
             :index="action.id"
             @click.stop="pickedVisibility(action)">
             <span
-                class="material-symbols-rounded no-hover p-0 sm:text-[1.25rem] text-[1.5rem]"
-                :class="[action.code == props.visibility ? 'text-blue-500' : '']">
+                class="material-symbols-rounded no-hover p-0 sm:text-[1.25rem] text-[1.5rem] text-inherit">
                 {{ action.icon }}
             </span>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->

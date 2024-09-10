@@ -3,7 +3,7 @@
         class="h-10 w-full z-[110]"
         :class="msgTypeColor">
         <div
-            class="flex flex-row h-full items-center justify-center relative text-[10pt] text-white w-full">
+            class="flex flex-row h-full items-center justify-center relative w-full">
             {{ props.message.msg }}
             <IconError
                 class="absolute cursor-pointer right-3 text-[10pt]"
@@ -36,6 +36,10 @@
 
 .bg-activity {
     background-color: #9333ea;
+}
+
+:is(.bg-plain,.bg-info,.bg-success,.bg-warning,.bg-error,.bg-activity):where([theme="dark"], [theme="dark"] *){
+    background-color: #1e1e1e;
 }
 </style>
 

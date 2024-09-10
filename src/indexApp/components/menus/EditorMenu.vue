@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white flex flex-row justify-between">
+    <div class="bg-inherit flex flex-row justify-between">
         <div class="content-center flex flex-row gap-x-1 items-center justify-start text-base">
             <input
                 v-show="false"
@@ -36,7 +36,7 @@
                     <span
                         title="帖子可见范围"
                         class="material-symbols-rounded"
-                        :class="[state.showVisibilityPanel ? 'bg-blue-100 active' : '', curVisibility.code != 'PUBLIC' ? 'active' : '']">
+                        :class="[state.showVisibilityPanel ? 'bg-blue-100 dark:bg-neutral-700 active' : '', curVisibility.code != 'PUBLIC' ? 'active' : '']">
                         {{ curVisibility.icon }}
                     </span>
                 </div>
@@ -51,7 +51,7 @@
                             v-if="state.showVisibilityPanel"
                             :id="`${props.switchFrom}-visibility-action`"
                             :switch-id="`${props.switchFrom}-visibility-action`"
-                            class="absolute max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-4 max-sm:w-full sm:top-[2.5rem] z-[1001]"
+                            class="absolute max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-4 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-full ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] z-[1001]"
                             :visibility="props.visibility"
                             :ui="state.visibilityOptions"
                             @dismiss-visibility-action="dismissVisibilityAction"
@@ -71,7 +71,7 @@
                     <span
                         title="定时发送"
                         class="material-symbols-rounded"
-                        :class="[state.showSchedulePanel ? 'bg-blue-100 active' : '', props.createdTime ? 'active' : '']">
+                        :class="[state.showSchedulePanel ? 'bg-blue-100 dark:bg-neutral-700 active' : '', props.createdTime ? 'active' : '']">
                         schedule
                     </span>
                 </div>
@@ -93,7 +93,7 @@
                     <DateTimePickerAction
                         v-if="state.showSchedulePanel"
                         :id="`${props.switchFrom}-datetime-picker-action`"
-                        class="max-sm:hidden"
+                        class="absolute border-[1px] dark:border-neutral-700 max-sm:hidden min-h-max min-w-max ring-1 ring-slate-900/5 rounded-[8px] shadow-lg top-10 z-[99]"
                         show-date-picker
                         show-time-picker
                         :switch-id="`${props.switchFrom}-datetime-picker-action`"
@@ -118,7 +118,7 @@
                     <span
                         title="表情面板"
                         class="material-symbols-rounded"
-                        :class="[state.showEmojiPanel ? 'bg-blue-100 active' : '']">
+                        :class="[state.showEmojiPanel ? 'bg-blue-100 dark:bg-neutral-700 active' : '']">
                         mood
                     </span>
                 </div>
@@ -132,7 +132,7 @@
                             v-if="state.showEmojiPanel"
                             :id="`${props.switchFrom}-emoji-panel`"
                             :switch-id="`${props.switchFrom}-emoji-panel`"
-                            class="absolute h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max pb-4 pr-[1px] px-1 ring-1 ring-slate-900/5 shadow-lg sm:top-[2.5rem] z-[99]"
+                            class="absolute dark:border-neutral-700 h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max pb-4 pr-[1px] px-1 ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] z-[99]"
                             @dismiss-emoji-panel="dismissEmojiPanel"
                             @insert-emoji-code="insertEmoji">
                         </EmojiPanel>
@@ -198,17 +198,23 @@
     padding: 0.4rem;
 }
 
-.material-symbols-rounded:not(.close-btn).active {
+.material-symbols-rounded.active {
     color: rgb(59 130 246);
 }
 
-.material-symbols-rounded:not(.close-btn):not(.active) {
-    color: #303133;
+.material-symbols-rounded.active:where([theme="dark"], [theme="dark"] *){
+    color: inherit;
+    background-color: #404040;
 }
 
-.material-symbols-rounded:not(.close-btn):hover {
+.material-symbols-rounded:hover {
     background-color: #dbeafe !important;
     color: rgb(59 130 246);
+}
+
+.material-symbols-rounded:where([theme="dark"], [theme="dark"] *):hover{
+    background-color: #262626 !important;
+    color: inherit;
 }
 
 .fade-enter-active {
@@ -432,9 +438,9 @@ const isValidContentLength = computed(() => {
 })
 
 const submitBtnClass = computed(() => ({
-    'bg-blue-500': isValidContentLength.value,
+    'bg-blue-500 dark:bg-neutral-700': isValidContentLength.value,
     'cursor-pointer': isValidContentLength.value,
-    'bg-gray-300': !isValidContentLength.value,
+    'bg-gray-300 dark:bg-neutral-800 dark:text-white/25': !isValidContentLength.value,
     'cursor-not-allowed': !isValidContentLength.value,
     'pointer-events-none': !isValidContentLength.value
 }))
@@ -444,7 +450,7 @@ const leftWordCount = computed(() => {
 })
 
 const leftWordCountClass = computed(() => ({
-    'text-blue-500': leftWordCount.value >= 0,
+    'text-blue-500 dark:text-blue-300': leftWordCount.value >= 0,
     'text-red-500': leftWordCount.value < 0,
     'hidden': leftWordCount.value === props.maxContentWordCount
 }))

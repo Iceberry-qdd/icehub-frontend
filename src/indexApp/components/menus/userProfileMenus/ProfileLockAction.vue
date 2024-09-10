@@ -1,9 +1,9 @@
 <template>
     <div @click="handleClick">
-        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">
             lock_person
         </span>
-        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+        <div class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">
             {{ props.isLocked ? '设为公开账户' : '设为私密账户' }}
         </div>
         <Teleport to="#app">

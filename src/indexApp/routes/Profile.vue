@@ -25,7 +25,7 @@
                     <ProfileMenu
                         v-if="state.showProfileMenus"
                         :user="state.user"
-                        class="fixed h-fit max-sm:bottom-0 max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] rounded-[8px] sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] z-[104]">
+                        class="fixed h-fit max-sm:bottom-0 max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] z-[1002]">
                     </ProfileMenu>
                 </Transition>
             </Teleport>
@@ -39,21 +39,21 @@
         <ProfileInfo :user="state.user"></ProfileInfo>
         <div
             v-if="state.user.blocking"
-            class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
-            <span class="material-symbols-rounded">disabled_visible</span>
+            class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+            <span class="cursor-default material-symbols-rounded no-hover text-inherit">disabled_visible</span>
             <div>你已屏蔽对方</div>
         </div>
         <div
             v-else-if="state.user.blocked"
-            class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
-            <span class="material-symbols-rounded">disabled_visible</span>
+            class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+            <span class="cursor-default material-symbols-rounded no-hover text-inherit">disabled_visible</span>
             <div>对方屏蔽了你</div>
         </div>
         <div
             v-else-if="isPrivateAccountAndNotFollowed"
-            class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
-            <span class="material-symbols-rounded">lock</span>
-            <div class="text-[0.9rem] text-zinc-500">这是私密账号，请求订阅通过后才可查看</div>
+            class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+            <span class="cursor-default material-symbols-rounded no-hover text-inherit">lock</span>
+            <div class="text-[0.9rem]">这是私密账号，请求订阅通过后才可查看</div>
         </div>
         <div v-else>
             <PostsTimeline

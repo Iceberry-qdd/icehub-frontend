@@ -1,14 +1,14 @@
 <template>
-    <div class="border-b-[1px] border-gray-100 flex flex-col max-sm:p-3 p-4 relative">
+    <div class="flex flex-col max-sm:p-3 p-4 relative">
         <div
             v-if="props.tireDirection === 'top'"    
-            class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+            class="absolute bg-gray-200 dark:bg-neutral-800 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
         <div
             v-if="props.tireDirection === 'mid'"  
-            class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
+            class="absolute bg-gray-200 dark:bg-neutral-800 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
         <div
             v-if="props.tireDirection === 'bottom'"  
-            class="absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
+            class="absolute bg-gray-200 dark:bg-neutral-800 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem] z-0" />
         <div class="flex flex-row gap-x-4 justify-between max-sm:gap-x-3">
             <div class="flex-none relative z-10">
                 <Avatar
@@ -24,17 +24,17 @@
                         </div>
                         <IconVerify
                             v-if="props.review.user.verified"
-                            class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                            class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
                         </IconVerify>
                         <div
                             v-if="props.review.user.confirmFollow"
-                            class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                            class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
                             lock
                         </div>
                     </div>
                     <div>
                         <!-- eslint-disable-next-line vue/html-quotes, vue/singleline-html-element-content-newline -->
-                        <div class='text-[10pt] text-gray-400'>{{ humanizedTime(props.review.createdTime) }}</div>
+                        <div class='dark:text-white/50 text-[10pt] text-gray-400'>{{ humanizedTime(props.review.createdTime) }}</div>
                     </div>
                 </div>
                 <div

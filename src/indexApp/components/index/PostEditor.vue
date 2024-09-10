@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <template>
-    <div class="bg-white border-b">
+    <div class="bg-white dark:bg-[#121212]">
         <Header
             v-show="!state.isLoading"
             class="sm:hidden sticky"
@@ -18,18 +18,18 @@
         </Header>
         <div
             v-if="state.data.createdTime && !state.isLoading"
-            class="bg-blue-100 py-1 sm:hidden sticky text-[0.9rem] text-center text-zinc-500 top-[48px] z-[104]">
+            class="bg-blue-100 dark:bg-neutral-800 dark:text-white/50 py-1 sm:hidden sticky text-[0.9rem] text-center text-zinc-500 top-[48px] z-[104]">
             该帖子定于{{ standardDateTime(state.data.createdTime) }}发布
         </div>
         <div
             id="post-editor-container"
-            class="flex-col flex-nowrap max-sm:z-[103] relative sm:p-2">
+            class="bg-inherit flex-col flex-nowrap max-sm:z-[103] relative sm:p-2">
             <div
                 v-if="state.isLoading"
-                class="-translate-x-1/2 absolute bg-white h-full left-1/2 max-sm:fixed top-0 w-full z-[102]">
-                <div class="flex flex-col gap-2 h-full items-center justify-center">
-                    <IconLoading class="-ml-1 h-6 mr-3 text-[#6b7280] w-6"></IconLoading>
-                    <div class="text-[#6b7280] text-[11pt]">
+                class="-translate-x-1/2 absolute bg-white dark:bg-[#121212] h-full left-1/2 max-sm:fixed top-0 w-full z-[102]">
+                <div class="dark:text-white/50 flex flex-col gap-2 h-full items-center justify-center text-[#6b7280]">
+                    <IconLoading class="-ml-1 h-6 mr-3 w-6"></IconLoading>
+                    <div class="text-[11pt]">
                         帖子发布中...
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                 v-else
                 ref="postInput"
                 v-model="state.content"
-                class="break-all focus:outline-none leading-6 min-h-[5rem] overflow-hidden p-2 resize-none rounded text-[1rem] text-justify tracking-wide w-full"
+                class="bg-inherit break-all focus:outline-none leading-6 min-h-[5rem] overflow-hidden p-2 resize-none rounded text-[1rem] text-justify tracking-wide w-full"
                 :maxlength="state.maxContentWordCount + 50"
                 rows="3"
                 placeholder="写点什么吧~"

@@ -42,8 +42,8 @@
             <div
                 id="sidebar-l"
                 :class="{'main-route': isShowSidebarL}"
-                class="border-[#EEEEEE] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
-                <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-16 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
+                class="border-[#EEEEEE] dark:border-[#1e1e1e] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
+                <Brand class="lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-16 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:dark:border-b-[#1e1e1e] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
                 <Sidebar
                     id="menu"
                     class="h-fit lg:-translate-x-0 lg:mr-12 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16">
@@ -71,7 +71,7 @@
                 <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
                 <router-view
                     v-slot="{ Component }"
-                    class="relative sm:max-lg:border-[#EEEEEE] sm:max-lg:border-x-[1px] sm:max-lg:max-w-[36rem] w-full">
+                    class="relative sm:max-lg:border-[#EEEEEE] sm:max-lg:border-x-[1px] sm:max-lg:dark:border-[#1e1e1e] sm:max-lg:max-w-[36rem] w-full">
                     <keep-alive
                         :max="8"
                         :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
@@ -84,7 +84,7 @@
             </div>
             <div
                 id="sidebar-r"
-                class="border-[#EEEEEE] border-l-[1px] flex-1 h-screen max-lg:hidden no-scrollbar overflow-y-scroll sticky top-0 z-0">
+                class="border-[#EEEEEE] border-l-[1px] dark:border-[#1e1e1e] flex-1 h-screen max-lg:hidden no-scrollbar overflow-y-scroll sticky top-0 z-0">
                 <Recommend class="max-w-[25rem] p-4"></Recommend>
             </div>
         </div>
@@ -163,7 +163,8 @@ const state = reactive({
     token: localStorage.getItem('TOKEN'),
     showBackToTop: false,
     touchStartClientY: 0,
-    mediaQueryList: undefined,
+    mobileMediaQueryList: undefined,
+    themeMediaQueryList: undefined,
     showContextMenu: false,
     click: {x: 20, y: 20}
 })
@@ -277,8 +278,15 @@ function touchStart(e) {
     state.touchStartClientY = e.touches.item(0).clientY
 }
 
-function handleMediaChange(mq) {
-    store.MOBILE_MODE = mq.matches
+function handleMobileMediaChange(mq) {
+    store.setMobileMode(mq.matches)
+}
+
+function handleThemeMediaChange(mq) {
+    store.setSysThemeMode(mq.matches ? 'dark' : 'light')
+    if(!('theme' in localStorage)){
+        document.body.setAttribute('theme', store.SYS_THEME_MODE)
+    }
 }
 
 function handleContextMenu(e){
@@ -318,21 +326,27 @@ onMounted(() => {
     })
 
     // Media query mobile mode settings
-    state.mediaQueryList = window.matchMedia('not all and (min-width: 640px)')
-    handleMediaChange(state.mediaQueryList)
-    state.mediaQueryList.addEventListener('change', handleMediaChange)
+    state.mobileMediaQueryList = window.matchMedia('not all and (min-width: 640px)')
+    handleMobileMediaChange(state.mobileMediaQueryList)
+    state.mobileMediaQueryList.addEventListener('change', handleMobileMediaChange)
 
     // PWA standalone mode settings
     store.setPwaMode(!window.matchMedia('(display-mode: browser)').matches)
     if (store.PWA_MODE) {
         document.body.addEventListener('contextmenu', handleContextMenu)
     }
+
+    // Media query theme mode settings
+    state.themeMediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
+    handleThemeMediaChange(state.themeMediaQueryList)
+    state.themeMediaQueryList.addEventListener('change', handleThemeMediaChange)
 })
 
 onUnmounted(() => {
     disconnectToWs()
     clearTimeout(state.timeoutId)
-    state.mediaQueryList.removeEventListener('change', handleMediaChange)
+    state.mobileMediaQueryList.removeEventListener('change', handleMobileMediaChange)
+    state.themeMediaQueryList.removeEventListener('change', handleThemeMediaChange)
     document.body.removeEventListener('contextmenu', handleContextMenu)
 })
 

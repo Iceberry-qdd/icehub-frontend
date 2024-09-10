@@ -11,7 +11,7 @@
             @handle-action="handleSubmit">
         </Header>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div v-if="state.isLoading == true" class="loading">
+        <div v-if="state.isLoading" class="loading">
             <IconLoading class="-ml-1 h-5 mr-3 text-white w-5"></IconLoading>
             <div>正在提交...</div>
         </div>
@@ -174,8 +174,34 @@
     </div>
 </template>
 
+<!-- eslint-disable vue/max-lines-per-block -->
 <style scoped>
-@import url("bootstrap/dist/css/bootstrap.css");
+@import url("bootstrap/dist/css/bootstrap.min.css");
+
+/* XXX 解决bootstrap变量不生效的问题 */
+.text-info * {
+  --bs-body-color: #212529;
+  --bs-body-color-rgb: 33, 37, 41;
+  --bs-body-bg: #fff;
+  --bs-border-color: #dee2e6;
+  --bs-form-valid-border-color: #198754;
+  --bs-form-valid-color: #198754;
+  --bs-form-invalid-color: #dc3545;
+  --bs-form-invalid-border-color: #dc3545;
+  --bs-border-width: 1px;
+  --bs-border-radius: 0.375rem;
+}
+
+.text-info *:where([theme="dark"], [theme="dark"] *){
+    --bs-body-color: white;
+    --bs-body-color-rgb: 255, 255, 255;
+    --bs-body-bg: #121212;
+    --bs-border-color: #262626;
+}
+
+.text-info input+label:where([theme="dark"], [theme="dark"] *){
+    color: rgba(255, 255, 255, 0.5);
+}
 
 .material-symbols-rounded:hover {
     background-color: #000000aa;
@@ -252,6 +278,10 @@
     background-color: #00000066;
     z-index: 107;
     color: white;
+}
+
+.loading:where([theme="dark"], [theme="dark"] *){
+    background-color: #000000AA;
 }
 </style>
 
@@ -446,10 +476,7 @@ function showImageChangeProper(from) {
 
 function handleImageChangeProperSelect({ select }) {
     state.imageChangeProper.select = select
-}
-
-watch(() => state.imageChangeProper.select, (newVal, oldVal) => {
-    if (newVal === 'restore') {
+    if (select === 'restore') {
         switch (state.imageChangeProper.from) {
             case 'avatar':
                 state.newUser.avatar = undefined
@@ -461,7 +488,7 @@ watch(() => state.imageChangeProper.select, (newVal, oldVal) => {
                 break;
         }
     }
-})
+}
 
 function handleImageFile({ file }){
     switch (state.imageChangeProper.from) {

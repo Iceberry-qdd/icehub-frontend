@@ -1,9 +1,9 @@
 <template>
     <div
         id="app-title-bar"
-        class="bg-white box-border flex gap-x-2 items-center px-3">
+        class="box-border flex gap-x-2 items-center px-3">
         <div class="bg-[url('/favicon.ico')] bg-center bg-contain bg-no-repeat icon" />
-        <span class="text-gray-500 title">Icehub</span>
+        <span class="dark:text-white/75 text-gray-500 title">Icehub</span>
     </div>
 </template>
 

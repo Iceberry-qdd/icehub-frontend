@@ -4,10 +4,10 @@
         width="1rem"
         height="1rem"
         viewBox="0 0 48 48"
-        class="btn-no-select">
+        class="btn-no-select m-icon">
         <g
             fill="none"
-            stroke="#000"
+            stroke="currentColor"
             stroke-linejoin="round"
             stroke-width="4">
             <path

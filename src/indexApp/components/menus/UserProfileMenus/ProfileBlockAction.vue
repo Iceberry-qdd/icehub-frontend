@@ -1,8 +1,9 @@
 <template>
     <div @click="handleClick">
-        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
-        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">{{ `${props.user.blocking ? '解除屏蔽' : '屏蔽该用户'}` }}</div>
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
+        <div class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            {{ `${props.user.blocking ? '解除屏蔽' : '屏蔽该用户'}` }}
+        </div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmBDialogUi.show"

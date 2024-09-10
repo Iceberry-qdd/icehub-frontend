@@ -4,12 +4,12 @@
         width="1em"
         height="1em"
         viewBox="0 0 48 48"
-        class="btn-no-select">
+        class="btn-no-select m-icon">
         <mask id="ipSError0">
             <path
-                fill="#fff"
+                fill="currentColor"
                 fillRule="evenodd"
-                stroke="#fff"
+                stroke="currentColor"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="4"

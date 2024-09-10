@@ -3,9 +3,9 @@
         id="confirmDialogBox"
         class="bg-[#00000066] fixed-page flex flex-row h-screen items-center justify-center max-sm:z-[1001] sm:backdrop-blur-sm w-screen z-[111]">
         <div
-            class="bg-white fade-in flex flex-col flex-nowrap gap-y-[1rem] items-center justify-between max-h-[75%] min-h-[8rem] overflow-y-auto p-6 rounded-[8px] w-[18rem]">
+            class="bg-white dark:bg-[#1e1e1e] fade-in flex flex-col flex-nowrap gap-y-[1rem] items-center justify-between max-h-[75%] min-h-[8rem] overflow-y-auto p-6 rounded-[8px] w-[18rem]">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="text-[0.95rem] text-justify">{{ title }}</div>
+            <div class="dark:text-white/75 text-[0.95rem] text-justify">{{ title }}</div>
             <IconLoading
                 v-if="props.ui.loading.show"
                 class="h-auto w-5"
@@ -14,14 +14,14 @@
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-else class="flex flex-nowrap flex-row gap-x-[1rem] text-[0.9rem]">
                 <div
+                    id="confirmButton"
                     class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
-                    :style="confirmButtonStyle"
                     @click="confirm">
                     {{ props.ui.confirmButton.text }}
                 </div>
                 <div
+                    id="cancelButton"
                     class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
-                    :style="cancelButtonStyle"
                     @click="cancel">
                     {{ props.ui.cancelButton.text }}
                 </div>
@@ -33,6 +33,26 @@
 <style scoped>
 .fade-in {
     animation: fade-in 250ms cubic-bezier(0.78, 0.14, 0.15, 0.86) 0s 1 normal forwards;
+}
+
+#confirmButton{
+    background-color: v-bind(confirmBtnBgColor);
+    color: v-bind(confirmBtnColor);
+}
+
+#confirmButton:where([theme="dark"], [theme="dark"] *){
+    background-color: #404040;
+    color: #fca5a5;
+}
+
+#cancelButton{
+    background-color: v-bind(cancelBtnBgColor);
+    color: v-bind(cancelBtnColor);
+}
+
+#cancelButton:where([theme="dark"], [theme="dark"] *){
+    background-color: #404040;
+    color: white;
 }
 
 @keyframes fade-in {
@@ -63,27 +83,20 @@ const props = defineProps({
 })
 const emits = defineEmits(['choice'])
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+const {
+    loading: { text: loadingText, color: loadingColor },
+    title: titleText,
+    confirmButton: { color: confirmBtnColor, bgColor: confirmBtnBgColor },
+    cancelButton: { color: cancelBtnColor, bgColor: cancelBtnBgColor }
+} = props.ui
+
 const title = computed(() => {
-    return props.ui.loading.show ? props.ui.loading.text : props.ui.title
+    return props.ui.loading.show ? loadingText : titleText
 })
 
-const loadingColor = computed(() => props.ui.loading.color)
 const loadingStyle = reactive({
     color: loadingColor
-})
-
-const confirmBtnColor = computed(() => props.ui.confirmButton.color)
-const confirmBtnBgColor = computed(() => props.ui.confirmButton.bgColor)
-const confirmButtonStyle = reactive({
-    color: confirmBtnColor,
-    backgroundColor: confirmBtnBgColor
-})
-
-const cancelBtnColor = computed(() => props.ui.cancelButton.color)
-const cancelBtnBgColor = computed(() => props.ui.cancelButton.bgColor)
-const cancelButtonStyle = reactive({
-    color: cancelBtnColor,
-    backgroundColor: cancelBtnBgColor
 })
 
 function confirm() {

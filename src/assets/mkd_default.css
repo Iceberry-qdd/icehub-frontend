@@ -61,16 +61,29 @@ markdown blockquote{
     border-left: 4px solid #EEEEEE;
 }
 
+markdown blockquote:where([theme="dark"], [theme="dark"] *){
+    border-left-color: #262626;
+    color: rgba(255, 255, 255, 0.5);
+}
+
 markdown a{
     color:dodgerblue;
     text-decoration: underline;
 }
 
+markdown a:where([theme="dark"], [theme="dark"] *){
+    color: #93c5fd;
+}
+
 markdown p code{
     background-color: #EEEEEE;
-    font-size:10pt;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
+    font-size: 90%;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+}
+
+markdown p code:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
 }
 
 markdown code{
@@ -84,6 +97,10 @@ markdown pre{
     border-radius: 6px;
     margin: 0.8rem 0;
     overflow-x: auto;
+}
+
+markdown pre:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
 }
 
 markdown table{
@@ -100,6 +117,10 @@ markdown thead{
     background-color: #f6f8fa;
 }
 
+markdown thead:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
+}
+
 markdown tr th,markdown tr td{
     border: 1px solid #EEEEEE;
     padding: 0.5rem 1rem;
@@ -107,11 +128,8 @@ markdown tr th,markdown tr td{
     vertical-align: middle;
 }
 
-markdown atsign{
-    color:white;
-    padding: 0.25rem 0.5rem;
-    border-radius: 9999px;
-    cursor: pointer;
+:is(markdown tr th,markdown tr td):where([theme="dark"], [theme="dark"] *){
+    border-color: #404040;
 }
 
 markdown .emoji span{
@@ -130,4 +148,9 @@ markdown.shrink-content::before {
     height: 100%;
     left: 0;
     top: 0;
+    z-index: 1;
+}
+
+markdown.shrink-content:where([theme="dark"], [theme="dark"] *)::before{
+    background-image: linear-gradient(180deg, transparent 40%, #121212);
 }

@@ -30,6 +30,10 @@
     box-sizing: content-box;
     border-bottom: 2px solid #3b82f6;
 }
+
+.active:where([theme="dark"], [theme="dark"] *){
+    border-color: #93c5fd;
+}
 </style>
 
 <script setup>

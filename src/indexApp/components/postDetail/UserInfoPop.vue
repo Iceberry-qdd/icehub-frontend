@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
+    <div class="bg-white dark:bg-[#1e1e1e] max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
         <Banner
             :user="state.user"
             class="h-[6rem] max-sm:aspect-[5/2] max-sm:h-auto max-sm:rounded-t-[0.75rem] object-cover rounded-t-[8px] w-full"
@@ -9,12 +9,12 @@
             <div class="flex flex-row items-end justify-between">
                 <Avatar
                     :user="state.user"
-                    class="border-[0.2rem] border-white h-[3.5rem] rounded-[8px] text-[3.5rem] w-[3.5rem]">
+                    class="border-[0.2rem] border-white dark:border-[#1e1e1e] h-[3.5rem] rounded-[8px] text-[3.5rem] w-[3.5rem]">
                 </Avatar>
                 <div class="flex flex-row gap-x-2 sm:text-[0.8rem]">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
                     <div class="cursor-pointer hover:underline" @click="routeToFanList">{{ fanCountText }}</div>
-                    <span>|</span>
+                    <span class="dark:text-white/50 text-neutral-400">|</span>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
                     <div class="cursor-pointer hover:underline" @click="routeToFollowList">{{ followCountText }}</div>
                 </div>
@@ -27,42 +27,42 @@
                 </div>
                 <IconVerify
                     v-if="state.user.verified"
-                    class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
                 </IconVerify>
                 <div
                     v-if="state.user.confirmFollow"
-                    class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                    class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem] text-neutral-500">
                     lock
                 </div>
                 <div
                     v-if="state.user.yourFanStatus === 'FAN' && state.user.yourFollowStatus !== 'FOLLOW'"
-                    class="bg-blue-100 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    class="bg-blue-100 dark:bg-neutral-700 dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
                     订阅了你
                 </div>
                 <div
                     v-if="state.user.yourFanStatus === 'WAIT_PASS'"
-                    class="bg-blue-100 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    class="bg-blue-100 dark:bg-neutral-700 dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
                     请求订阅你
                 </div>
             </div>
             <div class="flex flex-nowrap flex-row items-center">
                 <div
                     :class="{'webkit-box-1': !store.MOBILE_MODE}"
-                    class="flex-1 max-sm:max-h-[12rem] max-sm:overflow-y-auto sm:text-[0.85rem]">
+                    class="dark:text-white/50 flex-1 max-sm:max-h-[12rem] max-sm:overflow-y-auto text-[0.85rem] text-neutral-500">
                     {{ brief }}
                 </div>
                 <div
                     v-if="!isCurUser && !store.MOBILE_MODE && state.user.yourFollowStatus !== 'FOLLOW'"
                     :class="followBtnClass"
-                    class="cursor-pointer flex flex-none h-auto items-center justify-center min-w-[4.5rem] px-2 py-[0.25rem] rounded-full text-[0.9rem]"
+                    class="cursor-pointer flex flex-none font-bold h-auto items-center justify-center min-w-[4.5rem] px-2 py-[0.25rem] rounded-full text-[0.9rem]"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="!state.loading"> {{ followButtonText }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconLoading v-else class="h-5 text-white w-5"></IconLoading>
+                    <IconLoading v-else class="dark:text-white/50 h-5 text-white w-5"></IconLoading>
                 </div>
             </div>
-            <div class="flex flex-row gap-x-4 items-center justify-center">
+            <div class="flex flex-row font-bold gap-x-4 items-center justify-center">
                 <div
                     :class="profileButtonClass"
                     class="flex-1 py-2 rounded-full sm:hidden text-center"
@@ -77,7 +77,7 @@
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="!state.loading"> {{ followButtonText }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
+                    <IconLoading v-else class="dark:text-white/50 h-5 text-white w-5"></IconLoading>
                 </div>
             </div>
         </div>
@@ -157,10 +157,10 @@ const state = reactive({
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500': state.user.yourFollowStatus === 'NOT_FOLLOW',
-    'bg-gray-200': state.user.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-zinc-500': state.user.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-white': state.user.yourFollowStatus === 'NOT_FOLLOW'
+    'bg-blue-500 dark:bg-neutral-700': state.user.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-gray-200 dark:bg-neutral-800': state.user.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-zinc-500 dark:text-white/25': state.user.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-white dark:text-blue-300': state.user.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 const brief = computed(() => {
@@ -195,8 +195,8 @@ const followButtonText = computed(() => {
 })
 
 const profileButtonClass = computed(() => ({
-    'bg-blue-500 text-white': isCurUser.value || state.user.yourFollowStatus === 'FOLLOW',
-    'bg-gray-200 text-black': !isCurUser.value && state.user.yourFollowStatus !== 'FOLLOW'
+    'bg-blue-500 dark:bg-neutral-700 text-white dark:text-white/75': isCurUser.value || state.user.yourFollowStatus === 'FOLLOW',
+    'bg-gray-200 dark:bg-neutral-700 dark:text-white/75': !isCurUser.value && state.user.yourFollowStatus !== 'FOLLOW'
 }))
 
 function toggleFollowState() {

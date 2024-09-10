@@ -20,6 +20,10 @@ body {
     row-gap: 1rem;
 }
 
+#pre-loading:where([theme="dark"], [theme="dark"] *){
+    background-color: #121212;
+}
+
 #pre-loading>#icon {
     width: 3rem;
     height: 3rem;
@@ -32,7 +36,11 @@ body {
 
 #pre-loading>#text{
     font-size: 0.9rem;
-    animation: show-lazy 1s ease-in-out 15s 1 normal forwards;
+    animation: show-lazy-light 1s ease-in-out 15s 1 normal forwards;
+}
+
+#pre-loading>#text:where([theme="dark"], [theme="dark"] *){
+    animation: show-lazy-night 1s ease-in-out 15s 1 normal forwards;
 }
 
 body:has(#app:not(:empty)) > #pre-loading{
@@ -57,7 +65,7 @@ body:has(#app:empty) > #pre-loading{
     }
 }
 
-@keyframes show-lazy {
+@keyframes show-lazy-light {
     0% {
         opacity: 25%;
         color: rgb(55 65 81);
@@ -66,6 +74,18 @@ body:has(#app:empty) > #pre-loading{
     100% {
         opacity: 100%;
         color: rgb(55 65 81);
+    }
+}
+
+@keyframes show-lazy-night {
+    0% {
+        opacity: 25%;
+        color: rgba(255,255,255, 0.5);
+    }
+
+    100% {
+        opacity: 100%;
+        color: rgba(255,255,255, 0.5);
     }
 }
 
@@ -91,19 +111,32 @@ img.pic.img-fluid {
         'opsz' 24
 }
 
+.material-symbols-rounded:where([theme="dark"], [theme="dark"] *){
+    color: white;
+}
+
 .material-symbols-rounded:not(.no-hover, .sm\:no-hover):hover {
     background-color: #00000022;
 }
 
-.i-icon {
-    padding: 0;
-    background-color: transparent;
-    border-radius: 99rem;
-    cursor: pointer;
+.material-symbols-rounded:not(.no-hover, .sm\:no-hover):where([theme="dark"], [theme="dark"] *):hover {
+    background-color: #262626;
 }
 
 .btn-no-select {
     user-select: none;
+}
+
+.m-icon:where([theme="dark"], [theme="dark"] *){
+    color: rgba(255,255,255, 1);
+}
+
+span:has(.m-icon):hover{
+    background-color: #e5e5e5;
+}
+
+span:has(.m-icon):hover:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
 }
 
 .webkit-box-1 {
@@ -126,6 +159,10 @@ img.pic.img-fluid {
     font-style: normal;
     font-weight: normal;
     color: #3b82f6;
+}
+
+.suggests em:where([theme="dark"], [theme="dark"] *){
+    color: #93c5fd;
 }
 
 * {
@@ -161,6 +198,10 @@ body:has(div:where(.fixed-page)) {
     -webkit-appearance: none;
     background: #00000077;
     border-radius: 9999px;
+}
+
+:is(.modern-scrollbar-y,.modern-scrollbar-x):where([theme="dark"], [theme="dark"] *)::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255, 0.5);
 }
 
 .modern-scrollbar-x::-webkit-scrollbar {

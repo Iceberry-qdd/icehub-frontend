@@ -35,8 +35,13 @@
     transition: padding 100ms ease-in-out 100ms;
 }
 
+.material-symbols-rounded:where([theme="dark"], [theme="dark"] *){
+    background-color: #1e1e1e;
+    border-color: #262626;
+    color: rgba(255, 255, 255, 0.5);
+}
+
 .material-symbols-rounded:hover{
-    background-color: #FFFFFF;
     padding: 0.75rem;
 }
 </style>

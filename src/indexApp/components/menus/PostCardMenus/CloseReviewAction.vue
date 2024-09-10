@@ -1,8 +1,8 @@
 <template>
     <div
         @click="showConfirmDialogBox">
-        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ icon }}</span>
-        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ icon }}</span>
+        <div class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">
             {{ text }}
         </div>
         <Teleport to="#app">
@@ -58,11 +58,11 @@ const state = reactive({
 })
 
 const text = computed(() => {
-    return `${state.post.allowReview ? '关闭' : '打开'}评论`
+    return `${props.post.allowReview ? '关闭' : '打开'}评论`
 })
 
 const icon = computed(() => {
-    return state.post.allowReview ? 'voice_over_off' : 'record_voice_over'
+    return props.post.allowReview ? 'voice_over_off' : 'record_voice_over'
 })
 
 function showConfirmDialogBox() {
@@ -95,7 +95,9 @@ async function toggleCloseReview() {
         const result = await response.json()
         if (result == false) throw new Error("操作失败！")
         store.setSuccessMsg(`已${text.value}！`)
-        state.post.allowReview = !state.post.allowReview
+        // XXX 此处为方便，直接修改props对象的属性值
+        // eslint-disable-next-line vue/no-mutating-props
+        props.post.allowReview = !props.post.allowReview
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {

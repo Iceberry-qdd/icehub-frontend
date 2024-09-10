@@ -128,5 +128,9 @@ export const store = reactive({
     PWA_MODE: false,
     setPwaMode(isPwa){
         this.PWA_MODE = isPwa
-    }
+    },
+    SYS_THEME_MODE: 'light',
+    setSysThemeMode(mode) {
+        this.SYS_THEME_MODE = mode
+    },
 })

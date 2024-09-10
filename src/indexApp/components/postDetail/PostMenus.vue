@@ -1,15 +1,15 @@
 <template>
     <div
         :id="`pm-${props.post.id}`"
-        class="bg-white ring-1 ring-slate-900/5 shadow-lg">
-        <div class="bg-white flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
-            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+        class="bg-white dark:bg-[#1e1e1e] ring-1 ring-slate-900/5 shadow-lg">
+        <div class="flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
+            <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
         </div>
         <div class="flex flex-col max-sm:grid max-sm:grid-cols-4 max-sm:place-items-center">
             <PinAction
                 v-if="isMySelf"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-                :post="state.post">
+                :post="props.post">
             </PinAction>
             <ShareAction
                 v-if="showShareAction"
@@ -26,26 +26,26 @@
     
             <BookmarkAction
                 v-if="showBookmarkAction"
-                :post="state.post"
+                :post="props.post"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </BookmarkAction>
     
             <FollowingAction
                 v-if="showFollowAction"
-                :user="state.post.user"
+                :user="props.post.user"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </FollowingAction>
     
             <BlockPostAction
                 v-if="showBlockPostAction"
-                :post="state.post"
+                :post="props.post"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </BlockPostAction>
     
             <BlockUserAction
                 v-if="showBlockUserAction"
-                :post="state.post"
-                :user="state.post.user"
+                :post="props.post"
+                :user="props.post.user"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </BlockUserAction>
     
@@ -59,14 +59,14 @@
                 v-if="showVisibilityAction"
                 id="post-menus-visibility-action"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-                :post="state.post"
+                :post="props.post"
                 @show-sub-action="showVisibilitySubAction">
             </VisibilityAction>
     
             <CloseReviewAction
                 v-if="showCloseReviewAction"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-                :post="state.post">
+                :post="props.post">
             </CloseReviewAction>
         
             <AdminOperationAction
@@ -77,8 +77,8 @@
     
             <DeletePostAction
                 v-if="showDeletePostAction"
-                :post="state.post"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px] text-red-500">
+                :post="props.post"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </DeletePostAction>
         </div>
     </div>
@@ -99,11 +99,19 @@
 }
 
 .action:hover{
-    background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+    background-color: #f3f4f6;
+}
+
+.action:hover:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
 }
 
 .action:active{
     background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.action:active:where([theme="dark"], [theme="dark"] *){
+    background-color: #404040;
 }
 
 .fade-enter-active {
@@ -173,6 +181,8 @@ import ReportPostProblemAction from '@/indexApp/components/menus/postCardMenus/R
 import CloseReviewAction from '@/indexApp/components/menus/postCardMenus/CloseReviewAction.vue'
 import PinAction from '@/indexApp/components/menus/postCardMenus/PinAction.vue'
 
+const { dismissPostMenus } = inject('dismissPostMenus')
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -180,22 +190,18 @@ const props = defineProps({
         required: true
     }
 })
-const { dismissPostMenus } = inject('dismissPostMenus')
-const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
-    user: props.post.user,
-    post: props.post,
     showVisibilitySubAction: false
 })
 
 const generateLink = computed(() => {
-    return `${window.location.origin}/post/${state.post.id}`
+    return `${window.location.origin}/post/${props.post.id}`
 })
 
 const isMySelf = computed(() => {
-    return state.user.id == state.curUser.id
+    return props.post.user.id == state.curUser.id
 })
 
 const isAdmin = computed(() => {
@@ -203,7 +209,7 @@ const isAdmin = computed(() => {
 })
 
 const isPlannedPost = computed(() => {
-    return state.post.plan == true
+    return props.post.plan == true
 })
 
 const showShareAction = computed(() => {
@@ -247,7 +253,7 @@ const showDeletePostAction = computed(() => {
 })
 
 const showCloseReviewAction = computed(() => {
-    return state.curUser.id === state.post.user.id && isPlannedPost.value == false && state.showVisibilitySubAction == false
+    return state.curUser.id === props.post.user.id && isPlannedPost.value == false && state.showVisibilitySubAction == false
 })
 
 function showVisibilitySubAction(){

@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white min-h-max w-[calc(5rem*3+1rem)] z-[99]">
+    <div class="min-h-max w-[calc(5rem*3+1rem)] z-[99]">
         <Teleport to="#app">
             <ImageEditor
                 v-if="state.showImageEditPanel == true"
@@ -42,9 +42,9 @@
                 </div>
                 <div
                     v-if="state.imgList.length < 9"
-                    class="active:bg-zinc-300 cursor-pointer flex h-[5rem] hover:bg-zinc-200 items-center justify-center max-w-[5rem] min-w-[5rem] rounded-[8px]"
+                    class="active:bg-zinc-300 cursor-pointer dark:active:bg-neutral-700 dark:hover:bg-[#1e1e1e] flex h-[5rem] hover:bg-zinc-200 items-center justify-center max-w-[5rem] min-w-[5rem] rounded-[8px]"
                     @click="choosePics">
-                    <IconAdd class="text-gray-500"></IconAdd>
+                    <IconAdd class="dark:text-white/25 text-gray-500"></IconAdd>
                 </div>
             </div>
         </div>

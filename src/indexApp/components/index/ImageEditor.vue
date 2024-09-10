@@ -1,7 +1,7 @@
 <template>
-    <div class="bg-[#00000066] fixed-page flex flex-row h-screen items-center justify-center max-sm:bg-black max-sm:flex-col max-sm:z-[1001] w-screen z-[111]">
+    <div class="bg-[#00000066] fixed-page flex flex-row h-screen items-center justify-center max-sm:bg-black max-sm:flex-col max-sm:z-[1001] text-white w-screen z-[111]">
         <Header
-            class="backdrop-blur-none bg-black/75 fixed sm:hidden w-full"
+            class="backdrop-blur-none fixed sm:hidden w-full"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
@@ -10,13 +10,13 @@
             icon-color="white"
             no-border
             @handle-action="submit">
-            <div class="flex font-bold gap-x-2 items-center justify-start text-white w-full">
+            <div class="flex font-bold gap-x-2 items-center justify-start w-full">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                <div class="close-btn material-symbols-rounded text-[1.125rem] text-white" @click="dismiss">arrow_back_ios_new</div>
+                <div class="close-btn material-symbols-rounded text-[1.125rem] text-inherit" @click="dismiss">arrow_back_ios_new</div>
                 <div>返回</div>
             </div>
         </Header>
-        <div class="bg-white h-fit max-h-[90vh] max-sm:bg-black max-sm:rounded-none modern-scrollbar-y overflow-y-auto relative rounded-[8px] w-[min(25rem,100vw)]">
+        <div class="bg-white h-fit max-h-[90vh] max-sm:bg-black max-sm:rounded-none modern-scrollbar-y overflow-y-auto relative rounded-[8px] sm:dark:bg-[#1e1e1e] sm:w-[min(25rem,100vw)]">
             <div
                 id="imgWrapper"
                 class="flex flex-row items-center justify-center relative w-full">
@@ -45,7 +45,7 @@
                                 @dismiss="state.cropper.show = false">
                             </ImageCropper>
                         </Teleport>
-                        <div class="sm:hidden text-[0.75rem] text-white">裁剪</div>
+                        <div class="sm:hidden text-[0.75rem]">裁剪</div>
                     </button>
                     <button
                         v-if="state.imageInfo.hidden == false"
@@ -55,7 +55,7 @@
                         <IconFlagOn
                             class="bg-[#000000BB] box-content cursor-pointer h-[1.2rem] max-sm:bg-transparent p-[0.3rem] rounded-full text-[1rem] text-white w-[1.2rem]">
                         </IconFlagOn>
-                        <div class="sm:hidden text-[0.75rem] text-white">隐藏</div>
+                        <div class="sm:hidden text-[0.75rem]">隐藏</div>
                     </button>
                     <button
                         v-else
@@ -65,7 +65,7 @@
                         <IconFlagOff
                             class="bg-[#000000BB] box-content cursor-pointer h-[1.2rem] max-sm:bg-transparent p-[0.3rem] rounded-full text-[1rem] text-white w-[1.2rem]">
                         </IconFlagOff>
-                        <div class="sm:hidden text-[0.75rem] text-white">隐藏</div>
+                        <div class="sm:hidden text-[0.75rem]">隐藏</div>
                     </button>
                     <button
                         v-if="state.showAltEditor == true"
@@ -75,7 +75,7 @@
                         <IconAltOn
                             class="bg-[#000000BB] box-content cursor-pointer h-[1.2rem] max-sm:bg-transparent p-[0.3rem] rounded-full text-[11pt] text-white w-[1.2rem]">
                         </IconAltOn>
-                        <div class="sm:hidden text-[0.75rem] text-white">注释</div>
+                        <div class="sm:hidden text-[0.75rem]">注释</div>
                     </button>
                     <button
                         v-else
@@ -85,7 +85,7 @@
                         <IconAltOff
                             class="bg-[#000000BB] box-content cursor-pointer h-[1.2rem] max-sm:bg-transparent p-[0.3rem] rounded-full text-[11pt] text-white w-[1.2rem]">
                         </IconAltOff>
-                        <div class="sm:hidden text-[0.75rem] text-white">注释</div>
+                        <div class="sm:hidden text-[0.75rem]">注释</div>
                     </button>
                 </div>
             </div>
@@ -95,7 +95,7 @@
                 v-if="state.showAltEditor == true"
                 id="post-input"
                 v-model="state.imageInfo.altText"
-                class="break-all focus:outline-none leading-6 max-sm:bg-black/75 max-sm:bottom-[calc(1rem+1.2rem+1.2rem)] max-sm:fixed max-sm:h-fit max-sm:rounded-none max-sm:text-white overflow-y-auto p-3 resize-none rounded text-[1rem] text-justify tracking-wide w-full"
+                class="break-all focus:outline-none leading-6 max-sm:bg-black/75 max-sm:bottom-[calc(1rem+1.2rem+1.2rem)] max-sm:fixed max-sm:h-fit max-sm:rounded-none overflow-y-auto p-3 resize-none rounded sm:bg-inherit sm:dark:text-inherit sm:text-[initial] text-[1rem] text-justify tracking-wide w-full"
                 maxlength="100"
                 rows="2"
                 placeholder="简述此图片的内容"
@@ -103,7 +103,7 @@
                 @keydown="resize">
             </textarea>
             <div
-                class="bg-blue-500 cursor-pointer font-bold max-sm:hidden mb-3 ml-3 mr-0 mt-3 px-4 py-1 rounded-full text-[11pt] text-white w-fit"
+                class="active:bg-blue-700 bg-blue-500 cursor-pointer dark:active:bg-neutral-700 dark:bg-transparent dark:hover:bg-neutral-700 dark:text-blue-300 font-bold max-sm:hidden ml-[20rem] mr-2 my-2 py-2 rounded-full text-[11pt] text-center tracking-widest"
                 @click="submit">
                 确定
             </div>
@@ -126,6 +126,10 @@
     button:active{
         background-color: rgba(255, 255, 255, 0.25);
     }
+}
+
+#h{
+    background-color: #000000dd;
 }
 </style>
 
