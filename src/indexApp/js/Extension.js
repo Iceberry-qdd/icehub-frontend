@@ -1,6 +1,6 @@
-import { atSignExt } from "../extensions/AtSignExt"
-import { katexExt } from "../extensions/katexExt"
+import { katexExt } from "@/indexApp/extensions/katexExt.js"
+import { domCleanExt } from "@/indexApp/extensions/DomCleanExt.js"
 
 export const extensions = () => {
-    return [atSignExt, katexExt]
+    return [katexExt, domCleanExt]
 }
