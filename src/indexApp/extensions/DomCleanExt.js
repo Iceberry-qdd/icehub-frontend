@@ -32,7 +32,6 @@ DOMPurify.setConfig(config)
 export const domCleanExt = {
     type: 'output',
     filter: function(text, converter, options){
-        const clean = DOMPurify.sanitize(text)
-        return clean.innerHTML
+        return DOMPurify.sanitize(text).innerHTML
     }
 }

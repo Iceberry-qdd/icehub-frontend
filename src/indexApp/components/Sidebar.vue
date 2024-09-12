@@ -1,5 +1,5 @@
 <template>
-    <ul class="flex flex-col flex-nowrap justify-start max-lg:gap-y-2 max-sm:bg-white max-sm:border-neutral-700 max-sm:border-t-[1px] max-sm:bottom-0 max-sm:dark:bg-[#121212] max-sm:flex-row max-sm:py-2">
+    <ul class="flex flex-col flex-nowrap justify-start max-lg:gap-y-2 max-sm:bg-white max-sm:border-t-[1px] max-sm:bottom-0 max-sm:dark:bg-[#121212] max-sm:dark:border-neutral-700 max-sm:flex-row max-sm:py-2">
         <li
             v-for="menu in state.menus.filter(menu => menu.visible == true)"
             :key="menu.id"

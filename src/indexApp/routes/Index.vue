@@ -166,9 +166,9 @@ const state = reactive({
     headerConfig: {
         title: '动态',
         goBack: false,
-        showMenu: showUnImpl, // TODO implement it.
+        showMenu: true,
         menuIcon: 'campaign',
-        iconTooltip: '深色模式'
+        iconTooltip: '切换主题'
     },
     isShowGlobalRefresh: true,
     isLoading: false,

@@ -86,14 +86,14 @@ markdown p code:where([theme="dark"], [theme="dark"] *){
     background-color: #262626;
 }
 
-markdown code{
+markdown p code{
     margin: 0 0.25rem;
 }
 
 markdown pre{
     background-color: #f6f8fa;
     font-size:10pt;
-    padding: 1rem;
+    padding: 1.5rem 1rem 1rem 1rem;
     border-radius: 6px;
     margin: 0.8rem 0;
     overflow-x: auto;
@@ -101,6 +101,17 @@ markdown pre{
 
 markdown pre:where([theme="dark"], [theme="dark"] *){
     background-color: #262626;
+}
+
+markdown pre>code{
+    position: relative;
+}
+
+markdown pre>code::before{
+    content: attr(data-lang);
+    position: absolute;
+    top: -1.5rem;
+    color: darkgray;
 }
 
 markdown table{

@@ -13,8 +13,11 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap" >
+    <link rel="stylesheet" href="./src/assets/main.css">
+    <link rel="stylesheet" href="./src/assets/mkd_default.css">
+    <link rel="stylesheet" href="./src/assets/prism_theme.css">
     <style>
         body {
             background-color: white;
@@ -35,8 +38,6 @@
     </div>
     <div id="app"></div>
     <script type="module" src="./src/indexApp/js/main.js"></script>
-    <link rel="stylesheet" href="./src/assets/mkd_default.css">
-    <link rel="stylesheet" href="./src/assets/main.css">
     <script type="text/javascript">
         // On page load or when changing themes, best to add inline in `head` to avoid FOUC
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
