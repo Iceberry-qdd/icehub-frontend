@@ -2,21 +2,19 @@
     <div id="follow">
         <Header
             class="sticky"
-            :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
-            :menu-icon="state.headerConfig.menuIcon"
-            :menu-action="state.headerConfig.menuAction">
+            :menu-icon="state.headerConfig.menuIcon">
         </Header>
         <div class="flex flex-row h-[3rem] items-center text-center">
             <div
                 v-for="(menu, index) in state.menus"
                 :key="menu.id"
                 :index="index"
-                :class="{ active: menu.isActive }"
+                :class="{ 'active': $route.name === menu.id }"
                 class="basis-full cursor-pointer flex h-full items-center justify-center w-full"
-                @click="routeTo(menu.routeTo, menu.id)">
+                @click="routeTo(menu.id)">
                 {{ menu.name }}
             </div>
         </div>
@@ -47,19 +45,17 @@ import { store } from '@/indexApp/js/store.js'
 const route = useRoute()
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
-    user: null,
+    user: undefined,
     menus: [
-        { id: 1, name: '我的订阅', isActive: route.name == 'followList', routeTo: `/follow/${route.params.nickname}` },
-        { id: 2, name: '订阅我的', isActive: route.name == 'fanList', routeTo: `/fan/${route.params.nickname}` },
-        { id: 3, name: '共同订阅', isActive: route.name == 'coFollowingList', routeTo: `/coFollow/${route.params.nickname}` }
+        { id: 'followList', name: '我的订阅' },
+        { id: 'fanList', name: '订阅我的' },
+        { id: 'coFollowingList', name: '共同订阅' }
     ],
     headerConfig: {
         title: route.params.nickname,
         goBack: true,
         showMenu: false,
-        menuIcon: null,
-        menuAction: { action: 'route', param: '' },
-        width: 0
+        menuIcon: undefined
     }
 })
 
@@ -72,10 +68,8 @@ const menuText = computed(() => {
 
 const isMyself = computed(() => { return state.curUser.id == state.user.id })
 
-function routeTo(url, id) {
-    state.menus.forEach(menu => { menu.isActive = false })
-    state.menus[id - 1].isActive = true
-    router.push(url)
+function routeTo(name) {
+    router.replace({ name: name, params: route.params })
 }
 
 async function getUserInfo(nickname) {

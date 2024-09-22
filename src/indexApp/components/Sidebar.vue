@@ -108,7 +108,7 @@ const state = reactive({
         { id: 7, name: '活动', routeName: 'activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
         { id: 8, name: '管理', routeName: 'manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: showUnImpl && JSON.parse(localStorage.getItem("CUR_USER")).type === 'ADMIN', active: false, mobileShow: false }, // TODO implement it.
         { id: 9, name: getCurUserNickname(), routeName: 'profile', routeParams: { nickname: getCurUserNickname() }, icon: null, badgeCount: 0, visible: true, active: false, mobileShow: true },
-        { id: 10, name: '设置', routeName: 'setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false } // TODO implement it.
+        { id: 10, name: '设置', routeName: 'setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }
     ],
     user: JSON.parse(localStorage.getItem("CUR_USER")),
 })
@@ -152,7 +152,7 @@ function getCurUserNickname() {
     return nickname || ''
 }
 
-watch(() => ws.connectState, function (newVal, oldVal) {
+watch(() => ws.connectState, function (newVal, _) {
     if (newVal == 'CONNECTED') {
         ws.subscribeTopic(`/queue/user.${state.user.id}.interact`, function (response) {
             const msgPack = JSON.parse(response.body) //TODO 对消息类型进行判断和处理，更新UI
@@ -161,8 +161,9 @@ watch(() => ws.connectState, function (newVal, oldVal) {
     }
 })
 
-watch(() => route.name, (newVal, _) => {
-    const activeMenuId = state.menus.find(it => it.routeName === newVal)?.id
+watch(() => route.matched, (newVal, _) => {
+    const rootRouteName = newVal.at(0).name
+    const activeMenuId = state.menus.find(it => it.routeName === rootRouteName)?.id
     activeMenu(activeMenuId)
 }, { immediate: true })
 

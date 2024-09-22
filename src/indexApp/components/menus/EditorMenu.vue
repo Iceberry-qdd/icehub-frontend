@@ -54,7 +54,7 @@
                             class="absolute max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-4 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-full ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] z-[1001]"
                             :visibility="props.visibility"
                             :ui="state.visibilityOptions"
-                            @dismiss-visibility-action="dismissVisibilityAction"
+                            @dismiss="dismissVisibilityAction"
                             @picked-visibility="pickVisibility">
                         </VisibilityAction>
                     </Transition>

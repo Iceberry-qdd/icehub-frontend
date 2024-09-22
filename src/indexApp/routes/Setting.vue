@@ -1,7 +1,7 @@
 <template>
-    <div class="divide-x flex flex-nowrap flex-row relative">
+    <div class="divide-x flex flex-nowrap flex-row modern-scrollbar-y overflow-y-auto relative">
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div id="setting" class="basis-[40%] h-screen">
+        <div id="setting" class="basis-[30%] h-screen">
             <Header
                 class="sticky"
                 :width="state.headerConfig.width"
@@ -12,41 +12,30 @@
                 :no-border="state.headerConfig.noBorder"
                 :menu-action="state.headerConfig.menuAction">
             </Header>
-            <div class="text-[#303133]">
+            <div class="cursor-pointer text-[#303133]">
                 <div
                     v-for="menu in state.menus"
                     :key="menu.id"
                     :class="[menu.isActive ? 'bg-[#f4f4f5] border-l-[#3b82f6] border-l-4 pl-[calc(1rem-4px)]' : '']"
-                    class="cursor-pointer flex flex-row hover:bg-[#f4f4f5] items-center justify-between px-4 py-4 text-[12pt]"
-                    @click="routeTo(menu.routeTo)">
-                    <div>{{ menu.name }}</div>
+                    class="flex flex-row hover:bg-[#f4f4f5] items-center justify-between px-4 py-4 text-[12pt]"
+                    @click="routeTo(menu.id)">
+                    <div class="flex flex-row gap-x-2 items-center">
+                        <span class="material-symbols-rounded no-hover p-0">{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="cursor-pointer material-symbols-rounded mr-[0.5rem] text-[12pt]">arrow_forward_ios</div>
+                    <div class="material-symbols-rounded no-hover p-0 text-[1rem]">arrow_forward_ios</div>
                 </div>
             </div>
         </div>
-        <div class="basis-[70%] h-screen">
-            <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
-            <router-view></router-view>
+        <div class="basis-[50%] h-screen no-scrollbar overflow-y-auto">
+            <!-- eslint-disable-next-line vue/no-undef-components, vue/component-name-in-template-casing -->
+            <router-view @route-to="(name) => { routeTo(name) }"></router-view>
         </div>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div id="placeholder" class="basis-[15%] h-screen" />
+        <div id="placeholder" class="basis-[20%] h-screen" />
     </div>
 </template>
-
-<style scoped>
-.material-symbols-rounded {
-    font-size: 12pt;
-    padding: 0;
-    margin: 0;
-    color: #303133;
-}
-
-.material-symbols-rounded:hover {
-    background-color: transparent;
-    padding: 0;
-}
-</style>
 
 <script setup>
 import { reactive } from 'vue'
@@ -60,23 +49,20 @@ const state = reactive({
         title: '设置',
         goBack: false,
         showMenu: false,
-        menuIcon: null,
-        menuAction: { action: 'route', param: '' },
+        menuIcon: undefined,
         noBorder: true
     },
     menus: [
-        { id: 1, name: '账号与安全', routeTo: 'account&safe', isActive: route.params == 'accountSafe' },
-        { id: 2, name: '消息通知', routeTo: 'notify&msg', isActive: route.params == 'notifyMsg' },
-        { id: 3, name: '数据与隐私', routeTo: 'data&privacy', isActive: route.params == 'dataPrivacy' },
-        { id: 4, name: '界面个性化设置', routeTo: 'display&theme', isActive: route.params == 'displayTheme' },
-        { id: 5, name: '帮助与反馈', routeTo: 'help&feedback', isActive: route.params == 'helpFeedback' },
-        { id: 6, name: '关于', routeTo: 'about', isActive: route.params == 'about' }
+        { id: "accountSafe", name: '账号与安全', icon:"shield_person", isActive: route.name === 'accountSafe' },
+        { id: "notifyMsg", name: '消息通知', icon:"notifications", isActive: route.name === 'notifyMsg' },
+        { id: "dataPrivacy", name: '数据与隐私', icon:"encrypted", isActive: route.name === 'dataPrivacy' },
+        { id: "displayTheme", name: '界面个性化设置', icon:"palette", isActive: route.name === 'displayTheme' },
+        { id: "helpFeedback", name: '帮助与反馈', icon:"help", isActive: route.name === 'helpFeedback' },
+        { id: "about", name: '关于', icon:"info", isActive: route.name === 'about' }
     ]
 })
 
-function routeTo(url) {
-    state.menus.forEach(menu => menu.isActive = false)
-    state.menus.filter(menu => menu.routeTo == url)[0].isActive = true
-    router.push(`/setting/${url}`)
+function routeTo(name) {
+    router.push({ name: name })
 }
 </script>

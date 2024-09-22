@@ -1,7 +1,7 @@
 <template>
     <div
         id="h"
-        class="backdrop-blur-xl bg-white/80 dark:bg-[#121212dd] flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:px-2 max-sm:z-[104] px-[1rem] text-lg top-0 z-[1002]"
+        class="backdrop-blur-xl bg-white/80 dark:bg-[#121212dd] flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:px-2 max-sm:z-[104] px-3 text-lg top-0 z-[1002]"
         :class="[!state.noBorder ? 'border-b-[1px] border-[#EEEEEE] dark:border-[#1e1e1e]' : '']">
         <div class="flex flex-none flex-row h-full items-center">
             <div

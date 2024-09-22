@@ -25,7 +25,7 @@
 <script setup>
 import {onMounted, onUnmounted } from 'vue'
 
-const emits = defineEmits(['pickedVisibility', 'dismissVisibilityAction'])
+const emits = defineEmits(['pickedVisibility', 'dismiss'])
 const props = defineProps({
     /** 默认选择的可见性字符串 */
     visibility: {
@@ -56,13 +56,12 @@ function clickListener(event){
     const isClickAction = visibilityAction && visibilityAction.contains(event.target)
     const isClickActionBtn = visibilityActionBtn && visibilityActionBtn.contains(event.target)
     if (!isClickAction && !isClickActionBtn) {
-        emits('dismissVisibilityAction')
+        emits('dismiss')
     }
 }
 
 onMounted(() => {
     if(props.switchId){
-
         document.addEventListener('click', clickListener)
     }
 })

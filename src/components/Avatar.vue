@@ -31,9 +31,8 @@
 }
 </style>
 
-<!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { computed, reactive, watch } from 'vue'
+import { computed } from 'vue'
 
 // eslint-disable-next-line vue/no-unsupported-features
 defineOptions({
@@ -42,7 +41,6 @@ defineOptions({
 
 const props = defineProps({
     /** 传入的用户对象 */
-    // eslint-disable-next-line vue/no-unused-properties
     user: {
         type: Object,
         required: true

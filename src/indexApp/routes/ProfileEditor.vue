@@ -288,7 +288,7 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { reactive, computed, watch, ref, onUnmounted, defineAsyncComponent } from 'vue'
+import { reactive, computed, ref, onUnmounted, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'

@@ -79,7 +79,6 @@ import 'prismjs/components/prism-yaml'
 
 const parse = new DOMParser()
 const supportedLanguages = Object.getOwnPropertyNames(Prism.languages)
-console.log(Prism)
 
 export const highlightExt = {
     type: 'output',
