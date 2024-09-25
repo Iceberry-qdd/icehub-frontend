@@ -161,8 +161,11 @@ watch(() => ws.connectState, function (newVal, _) {
     }
 })
 
-watch(() => route.matched, (newVal, _) => {
-    const rootRouteName = newVal.at(0).name
+watch(() => route.fullPath, (newVal, _) => {
+    // XXX 特判个人主页页面，非当前登录用户主页，不选中
+    if(route.name === 'profile' && route.params?.nickname !== state.user.nickname) return
+
+    const rootRouteName = route.meta.key || route.name
     const activeMenuId = state.menus.find(it => it.routeName === rootRouteName)?.id
     activeMenu(activeMenuId)
 }, { immediate: true })

@@ -16,7 +16,7 @@
             <div
                 v-if="props.title"
                 :style="{color: props.textColor}"
-                class="font-bold max-sm:ml-2">
+                class="cursor-default font-bold max-sm:ml-2">
                 {{ props.title }}
             </div>
         </div>

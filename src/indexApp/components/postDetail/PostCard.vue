@@ -156,7 +156,7 @@
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-start py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="repostIt">
                 <span
-                    class="icon-share p-[0.4rem] rounded-full"
+                    class="-ml-2 icon-share p-[0.4rem] rounded-full"
                     :class="{ 'reposted': isReposted }">
                     <IconShare
                         :stroke-width="3">
@@ -280,9 +280,7 @@ const state = reactive({
 })
 
 const isIndentBody = computed(() => {
-    const isPostDetailRoute = route.name === 'postDetail'
-    const isMarkdown = state.post.type === 'MARKDOWN'
-    return !isPostDetailRoute && !isMarkdown
+    return route.meta.key !== 'postDetail'
 })
 
 const cardContainerClass = computed(() => ({
@@ -369,7 +367,7 @@ const hasTags = computed(() => {
     return state.post.tags != undefined && state.post.tags.length != 0
 })
 const showPinTop = computed(() => {
-    return state.post.top && route.name === 'profile'
+    return state.post.top && route.meta.key === 'profile'
 })
 
 const isLiked = computed(() => { return state.post.liked })
@@ -381,7 +379,7 @@ const likedIconFillColor = computed(() => {
 })
 
 const formattedTime = computed(() => {
-    return route.name === 'postDetail' ? standardDateTime(state.post.createdTime) : humanizedTime(state.post.createdTime)
+    return route.meta.key === 'postDetail' ? standardDateTime(state.post.createdTime) : humanizedTime(state.post.createdTime)
 })
 
 const cardMaskClass = computed(() => ({
@@ -437,7 +435,7 @@ function handleClickReviewBtn() {
 provide('dismissPostMenus', { dismissPostMenus })
 
 onMounted(() => {
-    if (route.name !== 'postDetail') {
+    if (route.meta.key !== 'postDetail') {
         setSuitableHeight()
     } else {
         state.shrinkContent = false

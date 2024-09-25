@@ -39,24 +39,26 @@ const routes = [
     {
         path: '/',
         component: Follow,
+        meta: { key: 'follow' },
         children: [
-            { name: 'followList', path: '/follow/:nickname', component: FollowList },
-            { name: 'fanList', path: '/fan/:nickname', component: FanList },
+            { name: 'followList', path: '/follow/:nickname', component: FollowList, meta: { key: 'follow' } },
+            { name: 'fanList', path: '/fan/:nickname', component: FanList, meta: { key: 'follow' } },
         ]
     },
     {
         path: '/setting',
         component: Setting,
         name: 'setting',
+        meta: { key: 'setting' },
         children: [
-            { name: 'accountSafe', path: 'account&safe', component: SettingAccountSafe, alias: ['/setting'] },
-            { name: 'accountActivity', path: 'account&safe/activity', component: SettingAccountActivityManage },
-            { name: 'notifyMsg', path: 'notify&msg', component: SettingNotifyMsg },
-            { name: 'dataPrivacy', path: 'data&privacy', component: SettingDataPrivacy },
-            { name: 'blacklist', path: 'data&privacy/blacklist', component: SettingBlacklistManage },
-            { name: 'displayTheme', path: 'display&theme', component: SettingDisplayTheme },
-            { name: 'helpFeedback', path: 'help&feedback', component: SettingHelpFeedback },
-            { name: 'about', path: 'about', component: SettingAbout }
+            { name: 'accountSafe', path: 'account&safe', component: SettingAccountSafe, alias: ['/setting'], meta: { key: 'setting' } },
+            { name: 'accountActivity', path: 'account&safe/activity', component: SettingAccountActivityManage, meta: { key: 'setting', parent: 'accountSafe' } },
+            { name: 'notifyMsg', path: 'notify&msg', component: SettingNotifyMsg, meta: { key: 'setting' } },
+            { name: 'dataPrivacy', path: 'data&privacy', component: SettingDataPrivacy, meta: { key: 'setting' } },
+            { name: 'blacklist', path: 'data&privacy/blacklist', component: SettingBlacklistManage, meta: { key: 'setting', parent: 'dataPrivacy' } },
+            { name: 'displayTheme', path: 'display&theme', component: SettingDisplayTheme, meta: { key: 'setting' } },
+            { name: 'helpFeedback', path: 'help&feedback', component: SettingHelpFeedback, meta: { key: 'setting' } },
+            { name: 'about', path: 'about', component: SettingAbout, meta: { key: 'setting' } }
         ]
     },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: GlobalNotFoundPage }

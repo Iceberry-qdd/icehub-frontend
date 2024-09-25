@@ -78,7 +78,7 @@
                         :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
                         <component
                             :is="Component"
-                            :key="route.fullPath">
+                            :key="routerViewKey">
                         </component>
                     </keep-alive>
                 </router-view>
@@ -250,7 +250,7 @@ const mainRouteSet = new Set(['index', 'explore', 'notify', 'profile'])
 const isShowSidebarL = computed(() => {
     // XXX 特判，待改进
     if(route.name === 'profile' && route.params?.nickname !== state.user.nickname) return false
-    return mainRouteSet.has(route.name)
+    return mainRouteSet.has(route.name) || mainRouteSet.has(route.meta.key)
 })
 
 function closeProgressIndicator() {
@@ -302,12 +302,18 @@ function dismissContextMenu(){
     state.showContextMenu = false
 }
 
-watch(() => route.query?.url, (url, oldVal) => {
+watch(() => route.query?.url, (url, _) => {
     window.location = `${window.location.origin}${decodeURIComponent(atob(url))}`
 }, {once: true})
 
 const isSetting = computed(() => {
     return route.path.startsWith('/setting')
+})
+
+const routerViewKey = computed(() => {
+    const suffix = `/${Object.values(route.params).join('/')}`
+    if(!!route.meta.key) return `${route.meta.key}${suffix}`
+    else return route.name
 })
 
 onMounted(() => {

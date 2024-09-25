@@ -15,8 +15,7 @@
                 class="material-symbols-rounded no-hover p-0 sm:text-[1.25rem] text-[1.5rem] text-inherit">
                 {{ action.icon }}
             </span>
-            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="btn-no-select">{{ action.name }}</div>
+            <span class="btn-no-select">{{ action.name }}</span>
         </div>
     </div>
 </template>

@@ -34,6 +34,8 @@ import { computed, reactive } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import AccountActivityItem from '@/indexApp/components/setting/accountSafe/AccountActivityItem.vue'
 
+// eslint-disable-next-line vue/no-unused-emit-declarations
+const emits = defineEmits(['routeTo'])
 const state = reactive({
     headerConfig: {
         title: '账号活动记录',

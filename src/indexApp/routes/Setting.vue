@@ -4,19 +4,17 @@
         <div id="setting" class="basis-[30%] h-screen">
             <Header
                 class="sticky"
-                :width="state.headerConfig.width"
                 :title="state.headerConfig.title"
                 :go-back="state.headerConfig.goBack"
                 :show-menu="state.headerConfig.showMenu"
                 :menu-icon="state.headerConfig.menuIcon"
-                :no-border="state.headerConfig.noBorder"
-                :menu-action="state.headerConfig.menuAction">
+                :no-border="state.headerConfig.noBorder">
             </Header>
             <div class="cursor-pointer text-[#303133]">
                 <div
                     v-for="menu in state.menus"
                     :key="menu.id"
-                    :class="[menu.isActive ? 'bg-[#f4f4f5] border-l-[#3b82f6] border-l-4 pl-[calc(1rem-4px)]' : '']"
+                    :class="{'bg-[#f4f4f5] border-l-[#3b82f6] border-l-4 pl-[calc(1rem-4px)]': [$route.name, $route.meta?.parent].includes(menu.id)}"
                     class="flex flex-row hover:bg-[#f4f4f5] items-center justify-between px-4 py-4 text-[12pt]"
                     @click="routeTo(menu.id)">
                     <div class="flex flex-row gap-x-2 items-center">
@@ -30,7 +28,15 @@
         </div>
         <div class="basis-[50%] h-screen no-scrollbar overflow-y-auto">
             <!-- eslint-disable-next-line vue/no-undef-components, vue/component-name-in-template-casing -->
-            <router-view @route-to="(name) => { routeTo(name) }"></router-view>
+            <router-view v-slot="{ Component }">
+                <keep-alive>
+                    <component
+                        :is="Component"
+                        :key="$route.name"
+                        @route-to="(name) => routeTo(name)">
+                    </component>
+                </keep-alive>
+            </router-view>
         </div>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div id="placeholder" class="basis-[20%] h-screen" />
@@ -53,12 +59,12 @@ const state = reactive({
         noBorder: true
     },
     menus: [
-        { id: "accountSafe", name: '账号与安全', icon:"shield_person", isActive: route.name === 'accountSafe' },
-        { id: "notifyMsg", name: '消息通知', icon:"notifications", isActive: route.name === 'notifyMsg' },
-        { id: "dataPrivacy", name: '数据与隐私', icon:"encrypted", isActive: route.name === 'dataPrivacy' },
-        { id: "displayTheme", name: '界面个性化设置', icon:"palette", isActive: route.name === 'displayTheme' },
-        { id: "helpFeedback", name: '帮助与反馈', icon:"help", isActive: route.name === 'helpFeedback' },
-        { id: "about", name: '关于', icon:"info", isActive: route.name === 'about' }
+        { id: "accountSafe", name: '账号与安全', icon:"shield_person" },
+        { id: "notifyMsg", name: '消息通知', icon:"notifications" },
+        { id: "dataPrivacy", name: '数据与隐私', icon:"encrypted" },
+        { id: "displayTheme", name: '界面个性化设置', icon:"palette" },
+        { id: "helpFeedback", name: '帮助与反馈', icon:"help" },
+        { id: "about", name: '关于', icon:"info" }
     ]
 })
 
