@@ -117,20 +117,36 @@ export const store = reactive({
         this.REVIEW_PANEL_DATA = null
     },
 
-    UNREAD_MSG_COUNT: 0,
-    setUnreadMsgCount(count) {
-        this.UNREAD_MSG_COUNT = count
-    },
     MOBILE_MODE: false,
     setMobileMode(isMobile) {
         this.MOBILE_MODE = isMobile
     },
+
     PWA_MODE: false,
     setPwaMode(isPwa){
         this.PWA_MODE = isPwa
     },
+
     SYS_THEME_MODE: 'light',
     setSysThemeMode(mode) {
         this.SYS_THEME_MODE = mode
     },
+
+    NOTIFY_STATISTIC: [],
+    setNotifyStatistic(statistic){
+        this.NOTIFY_STATISTIC = statistic
+    },
+    incrNotifyUnreadCountByType({type, delta}){
+        this.NOTIFY_STATISTIC.find(it => it?.type === type).unreadCount += delta
+    },
+    setAllNotifyRead(){
+        this.NOTIFY_STATISTIC.forEach(it => it.unreadCount = 0)
+    },
+    setAllNotifyReadByTypes(types = []){
+        if(!types || types.length == 0){
+            this.setAllNotifyRead()
+            return
+        }
+        this.NOTIFY_STATISTIC.filter(it => types.includes(it.type)).forEach(it => it.unreadCount = 0)
+    }
 })

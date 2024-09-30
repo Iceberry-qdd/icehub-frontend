@@ -42,7 +42,7 @@ li:not(.active):hover {
     background-color: #F5F5F5;
 }
 
-li.active{
+li.active {
     background-color: #cfe2ff;
 }
 
@@ -50,7 +50,7 @@ li:not(.active):hover:where([theme="dark"], [theme="dark"] *) {
     background-color: #1e1e1e;
 }
 
-li.active:where([theme="dark"], [theme="dark"] *){
+li.active:where([theme="dark"], [theme="dark"] *) {
     background-color: #1e1e1e;
 }
 
@@ -63,23 +63,23 @@ li.active:where([theme="dark"], [theme="dark"] *){
         background-color: inherit;
     }
 
-    li.active{
+    li.active {
         background-color: inherit;
     }
 
-    li.active :is(.material-symbols-rounded, .avatar){
+    li.active :is(.material-symbols-rounded, .avatar) {
         background-color: #cfe2ff;
     }
 
-    li:not(.active) :is(.material-symbols-rounded, .avatar):hover{
+    li:not(.active) :is(.material-symbols-rounded, .avatar):hover {
         background-color: #F5F5F5;
     }
 
-    li.active :is(.material-symbols-rounded, .avatar):where([theme="dark"], [theme="dark"] *){
+    li.active :is(.material-symbols-rounded, .avatar):where([theme="dark"], [theme="dark"] *) {
         background-color: #1e1e1e;
     }
 
-    li:not(.active) :is(.material-symbols-rounded, .avatar):hover:where([theme="dark"], [theme="dark"] *){
+    li:not(.active) :is(.material-symbols-rounded, .avatar):hover:where([theme="dark"], [theme="dark"] *) {
         background-color: #1e1e1e;
     }
 }
@@ -89,7 +89,7 @@ li.active:where([theme="dark"], [theme="dark"] *){
 import { reactive, onMounted, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
-import { queryCurUserUnreadNotifyCount } from '@/indexApp/js/api.js'
+import { queryCurUserNotifyStatistic } from '@/indexApp/js/api.js'
 import { ws } from '@/indexApp/js/websocket.js'
 import Avatar from '@/components/Avatar.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
@@ -97,12 +97,17 @@ import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
 const router = useRouter()
 const route = useRoute()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
+
+const unreadNotifyCount = computed(() => {
+    return store.NOTIFY_STATISTIC.map(it => it.unreadCount).reduce((acc, val) => acc + val, 0)
+})
+
 const state = reactive({
     menus: [
         { id: 1, name: '主页', routeName: 'index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: false, mobileShow: true },
         { id: 2, name: '探索', routeName: 'explore', routeParams: {}, icon: 'explore', badgeCount: 0, visible: true, active: false, mobileShow: true },
         { id: 3, name: '话题', routeName: 'hashtag', routeParams: {}, icon: 'tag', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
-        { id: 4, name: '消息', routeName: 'notify', routeParams: {}, icon: 'notifications', badgeCount: computed(() => store.UNREAD_MSG_COUNT), visible: true, active: false, mobileShow: true },
+        { id: 4, name: '消息', routeName: 'notify', routeParams: {}, icon: 'notifications', badgeCount: unreadNotifyCount, visible: true, active: false, mobileShow: true },
         { id: 5, name: '书签', routeName: 'bookmark', routeParams: {}, icon: 'bookmark', badgeCount: 0, visible: true, active: false, mobileShow: false },
         { id: 6, name: '勋章', routeName: 'badge', routeParams: {}, icon: 'local_police', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
         { id: 7, name: '活动', routeName: 'activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
@@ -129,20 +134,20 @@ function activeMenu(menuId) {
 
 async function getUnreadNotifyCount() {
     try {
-        const response = await queryCurUserUnreadNotifyCount()
+        const response = await queryCurUserNotifyStatistic()
         if (!response.ok) throw new Error((await response.json()).message)
 
-        const { unreadCount } = await response.json()
-        store.setUnreadMsgCount(unreadCount)
+        const statistic = await response.json()
+        store.setNotifyStatistic(statistic)
     } catch (e) {
         store.setErrorMsg(e.message)
     }
 }
 
-watch(() => store.UNREAD_MSG_COUNT, (newVal, oldVal) => {
-    if(newVal <= 0){
+watch(() => unreadNotifyCount.value, (newVal, oldVal) => {
+    if (newVal <= 0) {
         navigator.clearAppBadge()
-    }else{
+    } else {
         navigator.setAppBadge(newVal)
     }
 })
@@ -163,7 +168,7 @@ watch(() => ws.connectState, function (newVal, _) {
 
 watch(() => route.fullPath, (newVal, _) => {
     // XXX 特判个人主页页面，非当前登录用户主页，不选中
-    if(route.name === 'profile' && route.params?.nickname !== state.user.nickname) return
+    if (route.name === 'profile' && route.params?.nickname !== state.user.nickname) return
 
     const rootRouteName = route.meta.key || route.name
     const activeMenuId = state.menus.find(it => it.routeName === rootRouteName)?.id

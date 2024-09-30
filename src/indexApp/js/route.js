@@ -14,6 +14,16 @@ const FollowList = () => import('@/indexApp/routes/follow/FollowList.vue')
 const FanList = () => import('@/indexApp/routes/follow/FanList.vue')
 const Notify = () => import('@/indexApp/routes/Notify.vue')
 const ReplyDetail = () => import('@/indexApp/routes/ReplyDetail.vue')
+
+const Notify = () => import('@/indexApp/routes/Notify.vue')
+const NotifyAllNotifyTimePage = () => import('@/indexApp/routes/notify/AllNotifyTimelinePage.vue')
+const NotifyLikeNotifyTimePage = () => import('@/indexApp/routes/notify/LikeNotifyTimelinePage.vue')
+const NotifyReviewNotifyTimePage = () => import('@/indexApp/routes/notify/ReviewNotifyTimelinePage.vue')
+const NotifyFanNotifyTimePage = () => import('@/indexApp/routes/notify/FanNotifyTimelinePage.vue')
+const NotifyRepostNotifyTimePage = () => import('@/indexApp/routes/notify/RepostNotifyTimelinePage.vue')
+const NotifyAtSignNotifyTimePage = () => import('@/indexApp/routes/notify/AtSignNotifyTimelinePage.vue')
+const NotifySysNotifyTimePage = () => import('@/indexApp/routes/notify/SysNotifyTimelinePage.vue')
+
 const Setting = () => import('@/indexApp/routes/Setting.vue')
 const SettingAccountSafe = () => import('@/indexApp/routes/setting/AccountSafe.vue')
 const SettingAccountActivityManage = () => import('@/indexApp/routes/setting/AccountSafe/AccountActivityManage.vue')
@@ -36,6 +46,21 @@ const routes = [
     { name: 'profileEdit', path: '/profile/edit', component: ProfileEditor },
     { name: 'notify', path: '/notify', component: Notify },
     { name: 'replyDetail', path: '/reply/:id', component: ReplyDetail },
+    {
+        path: '/notify',
+        component: Notify,
+        meta: { key: 'notify' },
+        children: [
+            { name: 'notify', path: '', component: NotifyAllNotifyTimePage, meta: { key: 'notify' } },
+            { name: 'notifyAllTimelinePage', path: 'all', component: NotifyAllNotifyTimePage, meta: { key: 'notify' } },
+            { name: 'notifyLikeTimelinePage', path: 'like', component: NotifyLikeNotifyTimePage, meta: { key: 'notify' } },
+            { name: 'notifyReviewTimelinePage', path: 'review', component: NotifyReviewNotifyTimePage, meta: { key: 'notify' } },
+            { name: 'notifyFanNotifyTimePage', path: 'fan', component: NotifyFanNotifyTimePage, meta: { key: 'notify' } },
+            { name: 'notifyRepostNotifyTimePage', path: 'repost', component: NotifyRepostNotifyTimePage, meta: { key: 'notify' } },
+            { name: 'notifyAtSignNotifyTimePage', path: 'atSign', component: NotifyAtSignNotifyTimePage, meta: { key: 'notify' } },
+            { name: 'notifySysNotifyTimePage', path: 'sys', component: NotifySysNotifyTimePage, meta: { key: 'notify' } }
+        ]
+    },
     {
         path: '/',
         component: Follow,

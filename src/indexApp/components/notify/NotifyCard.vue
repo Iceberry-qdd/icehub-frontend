@@ -61,8 +61,7 @@
                         @click="routeToUserProfile">
                         {{ props.message.from.nickname }}
                     </span>
-                    &nbsp;
-                    <span class="dark:text-white-50 text-[#9ca3af]">{{ brief }}</span>
+                    <span class="dark:text-white-50 pl-1">{{ brief }}</span>
                 </div>
                 <div 
                     class="dark:text-white/50 text-[0.8rem] text-neutral-400 time z-[97]"

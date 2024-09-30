@@ -549,10 +549,12 @@ export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
  * @param {number} pageIndex 分页页码
  * @param {number} pageSize 分页页大小
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {Array<String>} types 要获取的消息类型，可包含多个，以数组形式提供，不传即代表获取所有类型的消息
  * @returns 该用户的消息列表
  */
-export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp, types=[]) {
+    const type = !types || types.length === 0 ? '' : `&${types.map(it => `type=${it}`).join('&')}`
+    return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}${type}`, {
         method: 'GET',
         headers: {
             'Authorization': TOKEN
@@ -597,10 +599,10 @@ export function markNotifyRead(notifyId) {
 }
 
 /**
- * 查询当前用户未读消息数量
+ * 查询当前用户消息统计项
  * @returns 用户帖子统计值
  */
-export function queryCurUserUnreadNotifyCount() {
+export function queryCurUserNotifyStatistic() {
     return fetch(`${BASE_URL}/notify/user/statistic`, {
         method: 'GET',
         headers: {
@@ -702,15 +704,17 @@ export function deleteOneBlacklist(type, contentId, curUserId) {
 
 /**
  * 将当前用户所有未读通知标记为已读
+ * @param {Array<String>} types 要已读的消息类型，不传表示已读全部
  * @returns 标记的数量
  */
-export function markAllNotifyRead() {
-    return fetch(`${BASE_URL}/notify/read/batch/all`, {
+export function markAllNotifyReadByTypes(types = undefined) {
+    return fetch(`${BASE_URL}/notify/read/all`, {
         method: 'POST',
         headers: {
             'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
+        body: JSON.stringify(types),
         redirect: 'follow',
         credentials: 'same-origin'
     })

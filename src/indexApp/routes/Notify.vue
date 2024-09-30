@@ -2,7 +2,6 @@
     <div id="notify">
         <Header
             class="sticky"
-            :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
@@ -20,39 +19,58 @@
             </ConfirmDialogBox>
         </Teleport>
 
-        <div id="container">
-            <div id="notify-cards">
+        <div class="max-sm:top-[48px] no-scrollbar overflow-x-auto sticky top-[56px] w-full z-[104]">
+            <div
+                class="after:bg-blue-500 backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-blue-300 dark:bg-[#121212dd] dark:text-white/50 flex flex-row min-w-full tab text-[0.9rem] text-zinc-500 w-fit">
                 <div
-                    v-for="(msg, index) in state.messages"
-                    :key="index"
-                    class="relative">
-                    <div
-                        class="absolute bg-transparent cursor-pointer h-full w-full z-[96]"
-                        @click.self="AckMsgAndRouteTo(msg)" />
-                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <NotifyCard v-if="msg.from && msg.content" :message="msg"></NotifyCard>
+                    v-for="tab in state.tabs"
+                    :key="tab.id"
+                    :class="{ 'text-blue-500 dark:text-blue-300': tab.id === $route.name }"
+                    class="flex flex-1 hover:dark:text-blue-300 hover:text-blue-500 items-center justify-center min-w-fit py-2 w-[4.5rem]"
+                    @click="$router.replace({ name: tab.id })">
+                    {{ `${tab.name} ${tab.count || ''}` }}
                 </div>
             </div>
-            <Footer
-                :is-loading="state.isLoading"
-                :has-more="hasMore"
-                @fetch-more="fetchNewList">
-            </Footer>
+        </div>
+        <div id="container">
+            <!-- eslint-disable-next-line vue/no-undef-components, vue/component-name-in-template-casing -->
+            <router-view v-slot="{ Component }">
+                <keep-alive>
+                    <component
+                        :is="Component"
+                        :tab="state.tabs.find(it => it.id === $route.name)"
+                        :mark-read-tab-id="state.markReadTabId">
+                    </component>
+                </keep-alive>
+            </router-view>
         </div>
     </div>
 </template>
 
+<style scoped>
+.tab::after {
+    content: '';
+    width: v-bind(tabAccentWidth);
+    translate: v-bind(tabTranslateX);
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    transition: translate 100ms ease-in-out;
+}
+</style>
+
 <script setup>
 import Header from '@/indexApp/components/Header.vue'
-import { computed, onMounted, reactive } from 'vue'
-import NotifyCard from '@/indexApp/components/notify/NotifyCard.vue'
-import { getUsersNotifyList, markNotifyRead, markAllNotifyRead } from '@/indexApp/js/api.js'
+import { computed, reactive, watch } from 'vue'
+import { markAllNotifyReadByTypes } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
-import Footer from '@/indexApp/components/Footer.vue'
 
-const router = useRouter()
+const route = useRoute()
+const unreadNotifyCount = computed(() => {
+    return store.NOTIFY_STATISTIC.map(it => it.unreadCount).reduce((acc, val) => acc + val, 0)
+})
 const state = reactive({
     headerConfig: {
         title: '消息',
@@ -62,12 +80,6 @@ const state = reactive({
         width: 0,
         iconTooltip: '全部已读'
     },
-    messages: [],
-    pageIndex: 1,
-    pageSize: 10,
-    lastTimestamp: new Date().getTime(),
-    totalPages: 0,
-    isLoading: false,
     confirmBDialogUi: {
         show: false,
         title: '确定要已读全部消息吗？(已读后不可撤回)',
@@ -89,101 +101,43 @@ const state = reactive({
             color: 'rgb(239 68 68)'
         }
     },
+    tabs: [
+        { id: 'notify', name: '全部', types: [], count: unreadNotifyCount },
+        { id: 'notifyLikeTimelinePage', name: '点赞', types: ['POST_LIKE', 'REVIEW_LIKE'], count: 0 },
+        { id: 'notifyReviewTimelinePage', name: '评论', types: ['REVIEW', 'REVIEW_REPLY'], count: 0 },
+        { id: 'notifyFanNotifyTimePage', name: '关注', types: ['USER_FOLLOW'], count: 0 },
+        { id: 'notifyRepostNotifyTimePage', name: '转发', types: ['REPOST'], count: 0 },
+        { id: 'notifyAtSignNotifyTimePage', name: '提及', types: ['AT_SIGN'], count: 0 },
+        { id: 'notifySysNotifyTimePage', name: '系统', types: ['SYS_NOTIFY_INFO', 'SYS_NOTIFY_WARNING', 'SYS_NOTIFY_ERROR', 'SYS_NOTIFY_ACTIVITY'], count: 0 }
+    ],
+    markReadTabId: undefined
 })
 
-const hasMore = computed(() => {
-    return state.pageIndex < state.totalPages
+const tabAccentWidth = computed(() => `${1 / state.tabs.length * 100}%`)
+
+const tabTranslateX = computed(() => {
+    const activeIndex = Math.max(state.tabs.findIndex(it => it.id === route.name), 0)
+    return `${activeIndex * 100}% 0`
 })
-
-function fetchNewList() {
-    fetchNotify()
-}
-
-async function fetchNotify() {
-    state.isLoading = true
-    try {
-        const response = await getUsersNotifyList(state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).message)
-
-        const { content, totalPages } = await response.json()
-        state.messages.push(...content)
-        state.totalPages = totalPages
-
-        if (content.length > 1) {
-            state.lastTimestamp = content.slice(-1)[0].timestamps
-        }
-    } catch (e) {
-        store.setErrorMsg(e.message)
-    } finally {
-        state.isLoading = false
-    }
-}
-
-async function ackMessage(messageId) {
-    try {
-        const response = await markNotifyRead(messageId)
-        if (!response.ok) throw new Error((await response.json()).message)
-
-        const result = await response.json()
-        if (result == false) { throw new Error("无法设置消息状态！") }
-        state.messages.filter(message => message.id == messageId)[0].read = true
-        const lastUnreadCount = store.UNREAD_MSG_COUNT
-        store.setUnreadMsgCount(lastUnreadCount - 1)
-        return true
-    } catch (e) {
-        store.setErrorMsg(e.message)
-        return false
-    }
-}
-
-async function AckMsgAndRouteTo(message) {
-    let contentId = message.content.id
-    let isAck = false
-    if (!message.read) { isAck = await ackMessage(message.id) }
-    if (!isAck && !message.read) return
-
-    switch (message.type) {
-        case 'POST_LIKE':
-            contentId = message.content.id
-            router.push({ name: 'postDetail', params: { id: contentId } })
-            break
-        case 'REVIEW':
-            contentId = message.content.postId
-            router.push({ name: 'postDetail', params: { id: contentId } })
-            break
-        case 'REVIEW_LIKE':
-            contentId = message.content.postId
-            router.push({ name: 'postDetail', params: { id: contentId } })
-            break
-        case 'REPOST':
-            contentId = message.content.id
-            router.push({ name: 'postDetail', params: { id: contentId } })
-            break
-        case 'USER_FOLLOW':
-            contentId = message.content.nickname
-            router.push({ name: 'profile', params: { nickname: contentId } })
-            return
-        default:
-            break
-    }
-}
 
 async function markAllNotifyReadOfCurUser({ choice }) {
     try {
         state.confirmBDialogUi.loading.show = true
-        if (choice != 'confirm') return
-        if (store.UNREAD_MSG_COUNT <= 0) {
-            store.setWarningMsg(`所有消息已全部已读！`)
+        const { id, count: unreadCount, types, name } = state.tabs.find(it => it.id === route.name)
+
+        if (choice !== 'confirm') return
+        if (unreadCount <= 0) {
+            store.setWarningMsg(`${name}消息已全部已读, 无需操作！`)
             state.confirmBDialogUi.show = false
             return
         }
 
-        const response = await markAllNotifyRead()
+        const response = await markAllNotifyReadByTypes(types)
         if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
-        state.messages.forEach(it => it.read = true)
-        store.setUnreadMsgCount(0)
+        store.setAllNotifyReadByTypes(types)
+        state.markReadTabId = id
         store.setSuccessMsg(`已将${result}条消息设为已读`)
     } catch (e) {
         store.setErrorMsg(e.message)
@@ -197,7 +151,22 @@ function handleAction() {
     state.confirmBDialogUi.show = true
 }
 
-onMounted(() => {
-    fetchNotify()
-})
+// Control tab badge count
+watch(() => unreadNotifyCount.value, (newVal, oldVal) => {
+    state.tabs.filter(it => it.id !== 'notify').forEach(it => it.count = 0)
+    store.NOTIFY_STATISTIC.forEach(it => state.tabs.find(tab => tab.types.includes(it.type)).count += it.unreadCount)
+}, { immediate: true })
+
+watch(() => route.name, (newVal, _) => {
+    const tab = state.tabs.find(it => it.id === newVal)
+
+    if (!tab || tab.id === 'notifyAllTimelinePage') {
+        state.confirmBDialogUi.title = `确定要已读全部消息吗？`
+        state.headerConfig.showMenu = false
+        return
+    }
+
+    // Change confirmDialogUi title
+    state.confirmBDialogUi.title = `确定要已读全部${tab.name}消息吗？`
+}, { immediate: true })
 </script>
