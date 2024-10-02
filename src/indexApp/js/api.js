@@ -1,5 +1,15 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
-const TOKEN = localStorage.getItem('TOKEN')
+const {fetch:_fetch} = window
+
+window.fetch = async(...args) => {
+    const [url, config] = args
+    const response = await _fetch(url, {...config, credentials: 'include', redirect: 'follow'})
+    if(!response.ok && response.status === 401){
+        location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
+    }
+
+    return response
+}
 
 /**
  * 拉取公共时间线上的帖子
@@ -10,12 +20,7 @@ const TOKEN = localStorage.getItem('TOKEN')
  */
 export function getTimeline(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/timeline/public?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -28,12 +33,7 @@ export function getTimeline(pageIndex, pageSize, lastTimestamp) {
  */
 export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -51,9 +51,8 @@ export function uploadImages(files) {
         }
 
         const xhr = new XMLHttpRequest()
-        xhr.withCredentials = true;
+        xhr.withCredentials = true
         xhr.open('POST', `${BASE_URL}/object/upload/image`, true)
-        xhr.setRequestHeader('Authorization', TOKEN)
         xhr.onload = function () {
             if (xhr.status === 201) resolve(xhr.response)
             else reject(Error(xhr.response.error))
@@ -82,12 +81,9 @@ export function posting(data) {
     return fetch(`${BASE_URL}/post`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': "application/json"
         },
-        body: JSON.stringify(data),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(data)
     })
 }
 
@@ -100,12 +96,9 @@ export function postingPlan(data) {
     return fetch(`${BASE_URL}/post/plan`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': "application/json"
         },
-        body: JSON.stringify(data),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(data)
     })
 }
 
@@ -117,11 +110,6 @@ export function postingPlan(data) {
 export function likeAPost(postId) {
     return fetch(`${BASE_URL}/post/like/${postId}`, {
         method: 'POST',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
     })
 }
 
@@ -132,12 +120,7 @@ export function likeAPost(postId) {
  */
 export function dislikeAPost(postId) {
     return fetch(`${BASE_URL}/post/like/${postId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'DELETE'
     })
 }
 
@@ -148,12 +131,7 @@ export function dislikeAPost(postId) {
  */
 export function getUserInfoById(id) {
     return fetch(`${BASE_URL}/user/${id}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -164,12 +142,7 @@ export function getUserInfoById(id) {
  */
 export function getUserInfoByNickname(nickname) {
     return fetch(`${BASE_URL}/user/${nickname}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -180,12 +153,7 @@ export function getUserInfoByNickname(nickname) {
  */
 export function getPostById(id) {
     return fetch(`${BASE_URL}/post/${id}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -199,12 +167,7 @@ export function getPostById(id) {
  */
 export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -217,12 +180,9 @@ export function reviewing(data) {
     return fetch(`${BASE_URL}/review`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(data)
     })
 }
 
@@ -233,12 +193,7 @@ export function reviewing(data) {
  */
 export function getReviewById(id) {
     return fetch(`${BASE_URL}/review/${id}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -252,12 +207,7 @@ export function getReviewById(id) {
  */
 export function getSubReviewById(id, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -268,12 +218,7 @@ export function getSubReviewById(id, pageIndex, pageSize, lastTimestamp) {
  */
 export function likeAReview(reviewId) {
     return fetch(`${BASE_URL}/review/like/${reviewId}`, {
-        method: 'PUT',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'PUT'
     })
 }
 
@@ -284,12 +229,7 @@ export function likeAReview(reviewId) {
  */
 export function dislikeAReview(reviewId) {
     return fetch(`${BASE_URL}/review/like/${reviewId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'DELETE'
     })
 }
 
@@ -303,13 +243,7 @@ export function dislikeAReview(reviewId) {
  */
 export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/post?uid=${uid}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -323,12 +257,7 @@ export function uploadUserBanner(file) {
     formData.append('files', file, file.name)
     return fetch(`${BASE_URL}/object/upload/image`, {
         method: 'POST',
-        headers: {
-            'Authorization': TOKEN
-        },
-        body: formData,
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: formData
     })
 }
 
@@ -342,12 +271,7 @@ export function uploadUserAvatar(file) {
     formData.append('files', file, file.name)
     return fetch(`${BASE_URL}/object/upload/image`, {
         method: 'POST',
-        headers: {
-            'Authorization': TOKEN
-        },
-        body: formData,
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: formData
     })
 }
 
@@ -360,12 +284,9 @@ export function updateUserProfile(user) {
     return fetch(`${BASE_URL}/user`, {
         method: 'PUT',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(user),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(user)
     })
 }
 
@@ -376,12 +297,7 @@ export function updateUserProfile(user) {
  */
 export function isUserExists(nickname) {
     return fetch(`${BASE_URL}/user?n=${nickname}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -392,12 +308,7 @@ export function isUserExists(nickname) {
  */
 export function followUser(userId) {
     return fetch(`${BASE_URL}/user/following/${userId}`, {
-        method: 'PUT',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'PUT'
     })
 }
 
@@ -408,12 +319,7 @@ export function followUser(userId) {
  */
 export function unFollowUser(userId) {
     return fetch(`${BASE_URL}/user/following/${userId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'DELETE'
     })
 }
 
@@ -427,13 +333,7 @@ export function unFollowUser(userId) {
  */
 export function getFollowList(userId, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/user/following/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -447,13 +347,7 @@ export function getFollowList(userId, pageIndex, pageSize, lastTimestamp) {
  */
 export function getFanList(userId, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/user/follower/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -464,12 +358,7 @@ export function getFanList(userId, pageIndex, pageSize, lastTimestamp) {
  */
 export function markAPost(postId) {
     return fetch(`${BASE_URL}/post/mark/${postId}`, {
-        method: 'POST',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'POST'
     })
 }
 
@@ -480,12 +369,7 @@ export function markAPost(postId) {
  */
 export function unMarkAPost(postId) {
     return fetch(`${BASE_URL}/post/mark/${postId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'DELETE'
     })
 }
 
@@ -498,12 +382,7 @@ export function unMarkAPost(postId) {
  */
 export function getMarkPostList(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -516,12 +395,9 @@ export function updatePost(post) {
     return fetch(`${BASE_URL}/post/`, {
         method: 'PUT',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(post),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(post)
     })
 }
 
@@ -534,13 +410,7 @@ export function updatePost(post) {
  */
 export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
     return fetch(`${BASE_URL}/${type}/image?id=${id}&attrId=${imageId}&ih=true`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -555,12 +425,7 @@ export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
 export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp, types=[]) {
     const type = !types || types.length === 0 ? '' : `&${types.map(it => `type=${it}`).join('&')}`
     return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}${type}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -573,12 +438,9 @@ export function markNotifiesRead(notifyIds) {
     return fetch(`${BASE_URL}/notify/read/multiple`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(notifyIds),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(notifyIds)
     })
 }
 
@@ -589,12 +451,7 @@ export function markNotifiesRead(notifyIds) {
  */
 export function markNotifyRead(notifyId) {
     return fetch(`${BASE_URL}/notify/read/${notifyId}`, {
-        method: 'POST',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'POST'
     })
 }
 
@@ -604,12 +461,7 @@ export function markNotifyRead(notifyId) {
  */
 export function queryCurUserNotifyStatistic() {
     return fetch(`${BASE_URL}/notify/user/statistic`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -619,13 +471,7 @@ export function queryCurUserNotifyStatistic() {
  */
 export function deleteOnePost(postVO) {
     return fetch(`${BASE_URL}/post/${postVO.id}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'DELETE'
     })
 }
 
@@ -643,13 +489,10 @@ export function createOneBlacklist(type, contentId, curUserId) {
     }
     return fetch(`${BASE_URL}/blacklist`, {
         method: 'POST',
-        body: JSON.stringify(blacklist),
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(blacklist)
     })
 }
 
@@ -668,13 +511,10 @@ export function modifyPostVisibility(post, oldVisibility) {
 
     return fetch(`${BASE_URL}/post/visibility`, {
         method: 'PUT',
-        body: JSON.stringify(requestBody),
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(requestBody)
     })
 }
 
@@ -692,13 +532,10 @@ export function deleteOneBlacklist(type, contentId, curUserId) {
     }
     return fetch(`${BASE_URL}/blacklist`, {
         method: 'DELETE',
-        body: JSON.stringify(blacklist),
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(blacklist)
     })
 }
 
@@ -711,12 +548,9 @@ export function markAllNotifyReadByTypes(types = undefined) {
     return fetch(`${BASE_URL}/notify/read/all`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(types),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(types)
     })
 }
 
@@ -734,12 +568,9 @@ export function toggleCloseReviewApi({ id, allowReview }) {
     return fetch(`${BASE_URL}/post/allowReview`, {
         method: 'PUT',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(requestBody)
     })
 }
 
@@ -763,12 +594,9 @@ export function globalSearchSuggest(word, type = ['USER', 'POST', 'REVIEW'], tim
     return fetch(`${BASE_URL}/search/suggest`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(requestBody)
     })
 }
 
@@ -794,12 +622,9 @@ export function globalSearch(word, pageSize, pageIndex, type = ['USER', 'POST', 
     return fetch(`${BASE_URL}/search`, {
         method: 'POST',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(requestBody)
     })
 }
 
@@ -810,13 +635,7 @@ export function globalSearch(word, pageSize, pageIndex, type = ['USER', 'POST', 
  */
 export function getHotSearch(count) {
     return fetch(`${BASE_URL}/search/hot?n=${count}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'GET'
     })
 }
 
@@ -825,14 +644,7 @@ export function getHotSearch(count) {
  */
 export function logout() {
     return fetch(`${BASE_URL}/auth/logout`, {
-        method: 'POST',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin',
-        cache: 'no-cache'
+        method: 'POST'
     })
 }
 
@@ -843,12 +655,7 @@ export function logout() {
  */
 export function deleteOneReview(id) {
     return fetch(`${BASE_URL}/review/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': TOKEN
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'DELETE'
     })
 }
 
@@ -868,12 +675,9 @@ export function togglePin(id, oldPin, newPin) {
     return fetch(`${BASE_URL}/post/pin`, {
         method: 'PUT',
         headers: {
-            'Authorization': TOKEN,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(requestBody),
-        redirect: 'follow',
-        credentials: 'same-origin'
+        body: JSON.stringify(requestBody)
     })
 }
 
@@ -884,13 +688,7 @@ export function togglePin(id, oldPin, newPin) {
  */
 export function removeFan(fanId){
     return fetch(`${BASE_URL}/user/follower/${fanId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'DELETE'
     })
 }
 
@@ -900,12 +698,6 @@ export function removeFan(fanId){
  */
 export function confirmFanRequest(fanId){
     return fetch(`${BASE_URL}/user/follower/confirm/${fanId}`, {
-        method: 'POST',
-        headers: {
-            'Authorization': TOKEN,
-            'Content-Type': 'application/json'
-        },
-        redirect: 'follow',
-        credentials: 'same-origin'
+        method: 'POST'
     })
 }

@@ -65,8 +65,7 @@ import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
 import { authStore } from '@/authApp/js/store.js'
-import { getPublicKey, register } from '@/authApp/js/api.js'
-import { encodePwd } from '@/authApp/util/util.js'
+import { register } from '@/authApp/js/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Turnstile from '@/authApp/components/Turnstile.vue'
 
@@ -103,13 +102,9 @@ async function tryRegister() {
             throw new Error("两次输入密码不一致！")
         }
 
-        if (state.publicKey == "" || state.publicKey == null) {
-            await getPK()
-        }
-        const encryptedPK = encodePwd(state.publicKey, state.password)
-        const response = await register(state.nickname, encryptedPK, undefined, state.turnstile.token)
+        const response = await register(state.nickname, state.password, undefined, state.turnstile.token)
         if (!response.ok) throw new Error((await response.json()).message)
-        store.setSuccessMsg("注册成功！");
+        store.setSuccessMsg("注册成功！")
         state.password = ''
         state.rePassword = ''
         routeTo('login')
@@ -119,18 +114,6 @@ async function tryRegister() {
         state.turnstile.token = undefined
     } finally {
         state.loading = false
-    }
-}
-
-async function getPK() {
-    try {
-        const response = await getPublicKey()
-        if (!response.ok) throw new Error((await response.json()).message)
-
-        const result = await response.text()
-        state.publicKey = result
-    } catch (e) {
-        store.setErrorMsg(e.message)
     }
 }
 

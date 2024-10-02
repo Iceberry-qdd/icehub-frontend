@@ -162,7 +162,6 @@ const state = reactive({
     startRoute: false,
     showProgressIndicator: false,
     timeoutId: 0,
-    token: localStorage.getItem('TOKEN'),
     showBackToTop: false,
     touchStartClientY: 0,
     mobileMediaQueryList: undefined,
@@ -173,21 +172,16 @@ const state = reactive({
 
 async function curUser() {
     try {
-        if (!state.token || state.token.trim() == "") throw new Error('Not Login!')
-
         const response = await getCurUserInfo()
         if (response.status === 401) throw new Error('Not Login!')
-        if(!response.ok) throw new Error(await response.text())
+        if(!response.ok) throw new Error(await response.json())
 
         state.user = await response.json()
-        // if (state.user == null) throw new Error('Not Login!')
-
         const user = JSON.stringify(state.user)
         localStorage.setItem('CUR_USER', user)
     } catch (e) {
         store.setErrorMsg(e.message)
         if(e.message === 'Not Login!'){
-            localStorage.removeItem('TOKEN')
             localStorage.removeItem('CUR_USER')
             location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
         }
@@ -195,7 +189,7 @@ async function curUser() {
 }
 
 const showGlobalNotifyBannerMsg = computed(() => {
-    return store.GLOBAL_NOTIFY_BANNER_MSG
+    return !!store.GLOBAL_NOTIFY_BANNER_MSG
 })
 
 function closeGlobalNotifyBannerMsg() {
@@ -307,7 +301,7 @@ watch(() => route.query?.url, (url, _) => {
 }, {once: true})
 
 const isSetting = computed(() => {
-    return route.path.startsWith('/setting')
+    return route.meta.key === 'setting'
 })
 
 const routerViewKey = computed(() => {

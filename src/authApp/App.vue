@@ -68,12 +68,6 @@ onMounted(() => {
     history.pushState(null, null, document.URL)
     window.addEventListener('popstate', handlePopstate)
     
-    const token = localStorage.getItem('TOKEN')
-    if (token) {
-        referer()
-        return
-    }
-    
     document.getElementById('pre-loading').style.display = 'none'
 
     // Media query theme mode settings

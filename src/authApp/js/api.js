@@ -1,5 +1,4 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
-const TOKEN = localStorage.getItem('TOKEN')
 
 /**
  * 用户登录
@@ -11,24 +10,12 @@ export function login(authorization, turnstileCode) {
     return fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: {
-            'Content-Type': "application/json",
-            'Authorization': authorization,
+            'Content-Type': "application/x-www-form-urlencoded",
             'cf-turnstile-response': turnstileCode
         },
+        body: `username=${authorization.username}&password=${authorization.password}`,
         redirect: 'follow',
-        credentials: 'same-origin'
-    })
-}
-
-/**
- * 获取公钥
- * @returns 公钥
- */
-export function getPublicKey() {
-    return fetch(`${BASE_URL}/auth/publicKey`, {
-        method: 'GET',
-        redirect: 'follow',
-        credentials: 'same-origin'
+        credentials: 'include'
     })
 }
 
@@ -43,17 +30,17 @@ export function getPublicKey() {
 export function register(nickname, password, avatarUrl, turnstileCode) {
     return fetch(`${BASE_URL}/auth/register`, {
         method: 'PUT',
+        headers: {
+            'Content-Type': "application/json",
+            'cf-turnstile-response': turnstileCode
+        },
         body: JSON.stringify({
             'nickname': nickname,
             'password': password,
             'avatarUrl': avatarUrl
         }),
-        headers: {
-            'Content-Type': "application/json",
-            'cf-turnstile-response': turnstileCode
-        },
         redirect: 'follow',
-        credentials: 'same-origin'
+        credentials: 'include'
 
     })
 }
@@ -65,10 +52,7 @@ export function register(nickname, password, avatarUrl, turnstileCode) {
 export function getCurUserInfo() {
     return fetch(`${BASE_URL}/curUser`, {
         method: 'GET',
-        headers: {
-            'Authorization': TOKEN,
-        },
         redirect: 'follow',
-        credentials: 'same-origin'
+        credentials: 'include'
     })
 }

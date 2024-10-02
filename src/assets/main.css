@@ -1,6 +1,6 @@
 html,body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', system-ui, 'Apple Color Emoji', 'Noto Color Emoji', sans-serif, 'Segoe UI' !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'San Francisco Pro', 'Microsoft YaHei UI', system-ui, 'Apple Color Emoji','Fluent Emoji', 'Noto Color Emoji', 'Segoe UI Emoji', sans-serif, 'Segoe UI' !important;
 }
 
 body {
@@ -50,6 +50,17 @@ body:has(#app:not(:empty)) > #pre-loading{
 body:has(#app:empty) > #pre-loading{
     overflow: none;
 }
+
+/* #app {
+
+    position: fixed;
+    top: env(titlebar-area-height, 0);
+}
+
+#app>div{
+    height: 100vh;
+    overflow: hidden auto;
+} */
 
 @keyframes loading {
     0% {

@@ -18,7 +18,7 @@
                     class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
                     type="text"
                     placeholder="请输入账号名"
-                    @keyup.enter.exact="tryLogin(false)" />
+                    @keyup.enter.exact="tryLogin" />
                 <input
                     id="password"
                     v-model="state.password"
@@ -26,7 +26,7 @@
                     class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
                     type="password"
                     placeholder="请输入密码"
-                    @keyup.enter.exact="tryLogin(false)" />
+                    @keyup.enter.exact="tryLogin" />
                 <Turnstile
                     class="w-fit"
                     action="login"
@@ -40,7 +40,7 @@
                     :disabled="state.loading"
                     :class="[state.loading || !state.turnstile.token ? 'dark:shadow-neutral-800/50 bg-blue-300 dark:bg-neutral-800 dark:text-blue-300/25 cursor-not-allowed pointer-events-none' : 'dark:text-blue-300 dark:shadow-neutral-700/50 bg-blue-500 dark:bg-neutral-700']"
                     class="3xl:p-4 3xl:text-[2rem] font-bold lg:max-xl:text-[0.9rem] max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-[300px]"
-                    @click="tryLogin(false)">
+                    @click="tryLogin">
                     <IconLoading
                         v-if="state.loading"
                         class="3xl:h-10 3xl:left-[calc(50%-1.25rem)] 3xl:w-10 animate-spin dark:text-white/25 h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
@@ -69,11 +69,10 @@
 
 <script setup>
 import { reactive } from 'vue'
-import { getPublicKey, login } from '@/authApp/js/api.js'
+import { login } from '@/authApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { authStore } from '@/authApp/js/store.js'
 import { useRouter } from 'vue-router'
-import { encodePwd } from '@/authApp/util/util.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Turnstile from '@/authApp/components/Turnstile.vue'
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
@@ -93,7 +92,7 @@ function routeTo(routeName) {
     router.push({ name: routeName })
 }
 
-async function tryLogin(skipEncodePassword) {
+async function tryLogin() {
     state.loading = true
     try {
         if (!state.nickname || !state.password) {
@@ -102,15 +101,11 @@ async function tryLogin(skipEncodePassword) {
         if (!state.turnstile.token) {
             throw new Error('需要填充验证码！')
         }
-        if (!state.publicKey) { await getPK() }
 
-        const encryptedPK = skipEncodePassword ? state.password : encodePwd(state.publicKey, state.password)
-        const authorization = `Basic ${btoa(`${encodeURIComponent(state.nickname)}:${encryptedPK}`)}`
+        const authorization = { username: state.nickname, password: state.password }
         const response = await login(authorization, state.turnstile.token)
         if (!response.ok) throw new Error((await response.json()).message)
 
-        const token = await response.text()
-        localStorage.setItem("TOKEN", token)
         store.setSuccessMsg("登录成功！")
         emits('referer')
     } catch (e) {
@@ -119,18 +114,6 @@ async function tryLogin(skipEncodePassword) {
         state.turnstile.token = undefined
     } finally {
         state.loading = false
-    }
-}
-
-async function getPK() {
-    try {
-        const response = await getPublicKey()
-        if (!response.ok) throw new Error((await response.json()).message)
-
-        const result = await response.text()
-        state.publicKey = result
-    } catch (e) {
-        store.setErrorMsg(e.message)
     }
 }
 
