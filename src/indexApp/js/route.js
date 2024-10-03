@@ -12,8 +12,12 @@ const ProfileEditor = () => import('@/indexApp/routes/ProfileEditor.vue')
 const Follow = () => import('@/indexApp/routes/Follow.vue')
 const FollowList = () => import('@/indexApp/routes/follow/FollowList.vue')
 const FanList = () => import('@/indexApp/routes/follow/FanList.vue')
-const Notify = () => import('@/indexApp/routes/Notify.vue')
 const ReplyDetail = () => import('@/indexApp/routes/ReplyDetail.vue')
+
+const PostDetail = () => import('@/indexApp/routes/PostDetail.vue')
+const PostLikeListPage = () => import('@/indexApp/routes/postDetail/PostLikeListPage.vue')
+const PostReviewListPage = () => import('@/indexApp/routes/postDetail/PostReviewListPage.vue')
+const PostRepostListPage = () => import('@/indexApp/routes/postDetail/PostRepostListPage.vue')
 
 const Notify = () => import('@/indexApp/routes/Notify.vue')
 const NotifyAllNotifyTimePage = () => import('@/indexApp/routes/notify/AllNotifyTimelinePage.vue')
@@ -44,8 +48,18 @@ const routes = [
     { name: 'postDetail', path: '/post/:id', component: PostDetail },
     { name: 'profile', path: '/profile/:nickname', component: Profile },
     { name: 'profileEdit', path: '/profile/edit', component: ProfileEditor },
-    { name: 'notify', path: '/notify', component: Notify },
     { name: 'replyDetail', path: '/reply/:id', component: ReplyDetail },
+    {
+        path: '/post/:id',
+        component: PostDetail,
+        meta: { key: 'postDetail' },
+        children: [
+            { name: 'postDetail', path: '', component: PostReviewListPage, meta: { key: 'postDetail' } },
+            { name: 'postLikeListPage', path: 'like', component: PostLikeListPage, meta: { key: 'postDetail' } },
+            { name: 'postReviewListPage', path: 'review', component: PostReviewListPage, meta: { key: 'postDetail' } },
+            { name: 'postRepostListPage', path: 'repost', component: PostRepostListPage, meta: { key: 'postDetail' } }
+        ]
+    },
     {
         path: '/notify',
         component: Notify,

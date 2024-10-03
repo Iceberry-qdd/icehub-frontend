@@ -1,10 +1,10 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL
-const {fetch:_fetch} = window
+const { fetch: _fetch } = window
 
-window.fetch = async(...args) => {
+window.fetch = async (...args) => {
     const [url, config] = args
-    const response = await _fetch(url, {...config, credentials: 'include', redirect: 'follow'})
-    if(!response.ok && response.status === 401){
+    const response = await _fetch(url, { ...config, credentials: 'include', redirect: 'follow' })
+    if (!response.ok && response.status === 401) {
         location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
     }
 
@@ -163,10 +163,12 @@ export function getPostById(id) {
  * @param {string} pageIndex 评论页数
  * @param {long} lastTimestamp 上一页最后一条消息的时间戳
  * @param {string} pageSize 评论每页条数
+ * @param {string} sortBy 排序依据字段
+ * @param {string} direction 排序方向
  * @returns 该帖子的评论信息
  */
-export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp, sortBy, direction) {
+    return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&sortBy=${sortBy}&direction=${direction}`, {
         method: 'GET'
     })
 }
@@ -422,7 +424,7 @@ export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
  * @param {Array<String>} types 要获取的消息类型，可包含多个，以数组形式提供，不传即代表获取所有类型的消息
  * @returns 该用户的消息列表
  */
-export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp, types=[]) {
+export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp, types = []) {
     const type = !types || types.length === 0 ? '' : `&${types.map(it => `type=${it}`).join('&')}`
     return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}${type}`, {
         method: 'GET'
@@ -686,7 +688,7 @@ export function togglePin(id, oldPin, newPin) {
  * @param {String} fanId 粉丝id
  * @returns 移除结果， true-移除成功
  */
-export function removeFan(fanId){
+export function removeFan(fanId) {
     return fetch(`${BASE_URL}/user/follower/${fanId}`, {
         method: 'DELETE'
     })
@@ -696,8 +698,36 @@ export function removeFan(fanId){
  * 通过粉丝的关注请求
  * @param {String} fanId 粉丝id
  */
-export function confirmFanRequest(fanId){
+export function confirmFanRequest(fanId) {
     return fetch(`${BASE_URL}/user/follower/confirm/${fanId}`, {
         method: 'POST'
+    })
+}
+
+/**
+ * 根据帖子id，分页获取点赞此帖子的用户列表
+ * @param {string} postId 帖子id
+ * @param {int} pageIndex 当前页码
+ * @param {int} pageSize 每页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @returns 用户分页对象
+ */
+export function getLikeListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/post/like/${postId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET'
+    })
+}
+
+/**
+ * 根据帖子id，分页获取转发此帖子的用户列表
+ * @param {string} postId 帖子id
+ * @param {int} pageIndex 当前页码
+ * @param {int} pageSize 每页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @returns 用户分页对象
+ */
+export function getRepostListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/repost/${postId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET'
     })
 }
