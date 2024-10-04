@@ -13,6 +13,7 @@
             @show-review-panel="state.showReviewPanel = true">
         </PostCard>
         <StatisticAndSorting
+            class="backdrop-blur-xl bg-white/80 dark:bg-[#121212dd] dark:border-[#1e1e1e] dark:text-white/50 max-sm:top-[48px] sticky text-neutral-500 top-[56px] z-[99]"
             :like-count="state.post?.likeCount"
             :review-count="state.post?.reviewCount"
             :repost-count="state.post?.repostCount"
@@ -38,7 +39,9 @@
                     :is="Component"
                     :allow-review="allowReview"
                     :post="state.post"
-                    :sort="state.sort">
+                    :sort="state.sort"
+                    :new-review="state.newReview"
+                    @incr-review-count="state.post.reviewCount++">
                 </component>
             </keep-alive>
         </router-view>
@@ -91,7 +94,8 @@ const state = reactive({
     sort: {
         by: 'CREATE_TIME',
         direction: 'DESC'
-    }
+    },
+    newReview: undefined
 })
 
 const allowReview = computed(() => {
@@ -125,6 +129,10 @@ function postingNew(post) {
     // Ignore this method body, nothing todo.
 }
 
+function newReview(review){
+    state.newReview = review
+}
+
 onMounted(() => {
     const postId = route.params.id
     if (!state.post) {
@@ -136,4 +144,5 @@ provide('dismissPostMenus', { dismissPostMenus })
 provide('deletePostOnUi', { deletePostOnUi })
 provide('postingNew', { postingNew })
 provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
+provide('newReview', { newReview })
 </script>

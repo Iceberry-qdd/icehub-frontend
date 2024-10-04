@@ -15,9 +15,9 @@
         <span
             v-else
             class="flex items-center px-12 text-[0.85rem] text-neutral-400 w-full">
-            <span class="bg-gradient-to-l flex-1 from-gray-100 h-px" />
+            <span class="bg-gradient-to-l dark:from-neutral-800 flex-1 from-gray-100 h-px" />
             <span class="px-6 shrink-0">{{ props.placeholder }}</span>
-            <span class="bg-gradient-to-r flex-1 from-gray-100 h-px" />
+            <span class="bg-gradient-to-r dark:from-neutral-800 flex-1 from-gray-100 h-px" />
         </span>
     </div>
 </template>

@@ -1,14 +1,14 @@
 <template>
     <div
         id="sortingMenu"
-        class="bg-white dark:bg-[#1e1e1e] flex flex-col max-sm:grid max-sm:grid-cols-4 max-sm:place-items-center ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
+        class="bg-white dark:bg-[#1e1e1e] flex flex-col ring-1 ring-slate-900/5 rounded-[8px] shadow-lg">
         <div
             v-for="(menu, key) in props.menus"
             :key="key"
             :class="[key === props.orderBy ? 'bg-blue-100 text-blue-500 dark:text-inherit dark:bg-neutral-700 hover:bg-blue-100 hover:dark:bg-neutral-700' : 'hover:bg-gray-100 hover:dark:bg-neutral-800 active:bg-gray-200 active:dark:bg-neutral-700']"
-            class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-[8px] px-4 py-[0.6rem] sm:first:rounded-t-[inherit] sm:last:rounded-b-[inherit]"
+            class="cursor-pointer first:rounded-t-[inherit] flex flex-row gap-x-3 item items-center justify-left last:rounded-b-[inherit] px-4 py-[0.6rem]"
             @click="emits('pick', key)">
-            <span class="material-symbols-rounded no-hover p-0 sm:text-[1.25rem] text-[1.5rem] text-inherit">{{ menu.icon }}</span>
+            <span class="material-symbols-rounded no-hover p-0 text-[1.25rem] text-inherit">{{ menu.icon }}</span>
             <span class="btn-no-select">{{ menu.zh }}</span>
         </div>
     </div>

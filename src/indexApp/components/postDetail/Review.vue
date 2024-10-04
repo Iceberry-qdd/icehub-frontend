@@ -28,7 +28,7 @@
                             <UserInfoPop
                                 v-if="state.showUserInfoPop"
                                 :user="state.review.user"
-                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[103]"
+                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[98]"
                                 @mouseleave="state.showUserInfoPop = false">
                             </UserInfoPop>
                         </Transition>
@@ -252,6 +252,7 @@ const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/repl
 const router = useRouter()
 const route = useRoute()
 const reviewBody = ref()
+const emits = defineEmits(['incrReviewCount'])
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -363,6 +364,7 @@ function routeToUser(nickname) {
 
 function newReview({ review }) {
     state.totalReplyCount++;
+    emits('incrReviewCount')
     state.replies.unshift(review)
 }
 

@@ -5,7 +5,7 @@
                 v-for="user in state.users"
                 :key="user.id"
                 :user="user"
-                class="active:bg-gray-100 cursor-pointer hover:bg-gray-50 px-4"
+                class="active:bg-gray-100 cursor-pointer dark:hover:bg-neutral-900 hover:bg-gray-50 px-4"
                 @click="$router.push({name: 'profile', params: {nickname: user.nickname}})">
             </SimpleUserListItem>
         </div>

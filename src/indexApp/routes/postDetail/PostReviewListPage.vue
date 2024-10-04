@@ -18,7 +18,8 @@
                     :key="review.id"
                     :review="review"
                     :post="props.post"
-                    :index="index">
+                    :index="index"
+                    @incr-review-count="review.reviewCount++">
                 </Review>
             </TransitionGroup>
         </div>
@@ -39,6 +40,7 @@ import ReviewEditor from '@/indexApp/components/postDetail/ReviewEditor.vue'
 import IconInfo from '@/components/icons/IconInfo.vue'
 import Footer from '@/indexApp/components/Footer.vue'
 
+const emits = defineEmits(['incrReviewCount'])
 const props = defineProps({
     /** 是否允许评论 */
     allowReview: {
@@ -57,6 +59,12 @@ const props = defineProps({
         type: Object,
         required: false,
         default: () => { return { by: 'CREATE_TIME', direction: 'DESC' } }
+    },
+    /** 父级新发布的帖子 */
+    newReview: {
+        type: Object,
+        required: false,
+        default: undefined
     }
 })
 const state = reactive({
@@ -96,8 +104,8 @@ function fetchNewReview() {
     getReviews()
 }
 
-function newReview({ review }) {
-    state.post.reviewCount++
+function newReviewOnUi({ review }) {
+    emits('incrReviewCount')
     state.reviews.unshift(review)
 }
 
@@ -125,6 +133,12 @@ watch(() => props.sort.direction, (_newVal, _) => {
     getReviews()
 })
 
+watch(() => props.newReview, (newVal, _) => {
+    if(!!newVal){
+        newReviewOnUi(newVal)
+    }
+})
+
 function resetPageParams() {
     state.reviews = []
     state.pageIndex = 1
@@ -140,5 +154,5 @@ onMounted(async () => {
 })
 
 provide('deleteReviewOnUi', { deleteReviewOnUi })
-provide('newReview', { newReview })
+provide('newReview', { newReviewOnUi })
 </script>

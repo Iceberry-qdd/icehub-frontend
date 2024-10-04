@@ -1,23 +1,23 @@
 <template>
-    <div class="border-b-[1px] flex flex-row items-center justify-between pl-4 pr-2 text-[0.85rem] text-neutral-500">
+    <div class="border-b-[1px] flex flex-row items-center justify-between pl-4 pr-2 text-[0.85rem]">
         <div class="flex flex-row gap-x-3">
             <div
                 class="cursor-pointer hover:underline py-2"
-                :class="{'text-blue-500': $route.name === 'postLikeListPage'}"
+                :class="{'text-blue-500 dark:text-blue-300': $route.name === 'postLikeListPage'}"
                 @click="$router.replace({name: 'postLikeListPage'})">
                 <span>{{ props.likeCount }}</span>
                 <span>点赞</span>
             </div>
             <div
                 class="cursor-pointer hover:underline py-2"
-                :class="{'text-blue-500': $route.name === 'postReviewListPage' || $route.name === 'postDetail'}"
+                :class="{'text-blue-500 dark:text-blue-300': $route.name === 'postReviewListPage' || $route.name === 'postDetail'}"
                 @click="$router.replace({name: 'postReviewListPage'})">
                 <span>{{ props.reviewCount }}</span>
                 <span>评论</span>
             </div>
             <div
                 class="cursor-pointer hover:underline py-2"
-                :class="{'text-blue-500': $route.name === 'postRepostListPage'}"
+                :class="{'text-blue-500 dark:text-blue-300': $route.name === 'postRepostListPage'}"
                 @click="$router.replace({name: 'postRepostListPage'})">
                 <span>{{ props.repostCount }}</span>
                 <span>转发</span>
@@ -33,20 +33,20 @@
             class="-gap-x-2 flex flex-row my-1">
             <div
                 :title="state.orderDirection[props.sort.direction].zh[props.sort.by]"
-                class="hover:bg-gray-100 material-symbols-rounded no-hover text-[length:inherit] translate-x-2"
+                class="hover:bg-gray-100 hover:dark:bg-[#262626] material-symbols-rounded no-hover text-[length:inherit] text-inherit translate-x-2"
                 @click="emits('selectOrderDirection', props.sort.direction === 'ASC' ? 'DESC' : 'ASC')">
                 {{ state.orderDirection[props.sort.direction].icon }}
             </div>
             <div
                 id="sortingMenuBtn"
                 title="排序方式"
-                class="cursor-pointer hover:bg-gray-100 px-3 py-1 relative rounded-full"
+                class="cursor-pointer hover:bg-gray-100 hover:dark:bg-[#262626] px-3 py-1 relative rounded-full"
                 @click="state.showSortingMenu = true">
                 {{ state.orderByOptions[props.sort.by].zh }}
                 <Transition name="fade">
                     <SortingMenu
                         v-if="state.showSortingMenu"
-                        class="absolute right-0 sm:max-w-[12rem] sm:min-w-[9rem] top-0 z-[100]"
+                        class="absolute max-w-[12rem] min-w-[9rem] right-0 top-0 z-[100]"
                         :menus="state.orderByOptions"
                         :order-by="props.sort.by"
                         @pick="selectOrderBy"
