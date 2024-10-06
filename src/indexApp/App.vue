@@ -307,7 +307,7 @@ const isSetting = computed(() => {
 const routerViewKey = computed(() => {
     const suffix = `/${Object.values(route.params).join('/')}`
     if(!!route.meta.key) return `${route.meta.key}${suffix}`
-    else return route.name
+    else return `${route.name}${suffix}`
 })
 
 onMounted(() => {

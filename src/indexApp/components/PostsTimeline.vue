@@ -34,6 +34,7 @@ import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
 import { reactive, provide } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 
+const emits = defineEmits(['deleteCount'])
 const props = defineProps({
     /** 要显示的帖子列表 */
     posts: {
@@ -52,6 +53,7 @@ function deletePostOnUi(postId) {
     if (preDeletePostIndex != -1) {
         state.posts.splice(preDeletePostIndex, 1)
     }
+    emits('deleteCount', 1)
 }
 
 function deleteAllPostsOfUserOnUi(userId) {
@@ -67,6 +69,7 @@ function deleteAllPostsOfUserOnUi(userId) {
         const index = state.posts.indexOf(post)
         state.posts.splice(index, 1)
     })
+    emits('deleteCount', preDeletePosts.length)
 }
 
 provide('deletePostOnUi', { deletePostOnUi })

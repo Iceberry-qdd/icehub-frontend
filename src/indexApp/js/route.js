@@ -6,9 +6,6 @@ const Explore = () => import('@/indexApp/routes/Explore.vue')
 // const Manage = () => import('@/indexApp/routes/Manage.vue')
 const Search = () => import('@/indexApp/routes/Search.vue')
 const Bookmark = () => import('@/indexApp/routes/Bookmark.vue')
-const PostDetail = () => import('@/indexApp/routes/PostDetail.vue')
-const Profile = () => import('@/indexApp/routes/Profile.vue')
-const ProfileEditor = () => import('@/indexApp/routes/ProfileEditor.vue')
 const Follow = () => import('@/indexApp/routes/Follow.vue')
 const FollowList = () => import('@/indexApp/routes/follow/FollowList.vue')
 const FanList = () => import('@/indexApp/routes/follow/FanList.vue')
@@ -27,6 +24,13 @@ const NotifyFanNotifyTimePage = () => import('@/indexApp/routes/notify/FanNotify
 const NotifyRepostNotifyTimePage = () => import('@/indexApp/routes/notify/RepostNotifyTimelinePage.vue')
 const NotifyAtSignNotifyTimePage = () => import('@/indexApp/routes/notify/AtSignNotifyTimelinePage.vue')
 const NotifySysNotifyTimePage = () => import('@/indexApp/routes/notify/SysNotifyTimelinePage.vue')
+
+const Profile = () => import('@/indexApp/routes/Profile.vue')
+const ProfilePostTimelinePage = () => import('@/indexApp/routes/profile/PostTimelinePage.vue')
+const ProfileReviewTimelinePage = () => import('@/indexApp/routes/profile/ReviewTimelinePage.vue')
+const ProfileMediaTimelinePage = () => import('@/indexApp/routes/profile/MediaTimelinePage.vue')
+const ProfileLikeTimelinePage = () => import('@/indexApp/routes/profile/LikeTimelinePage.vue')
+const ProfileEditor = () => import('@/indexApp/routes/ProfileEditor.vue')
 
 const Setting = () => import('@/indexApp/routes/Setting.vue')
 const SettingAccountSafe = () => import('@/indexApp/routes/setting/AccountSafe.vue')
@@ -73,6 +77,18 @@ const routes = [
             { name: 'notifyRepostNotifyTimePage', path: 'repost', component: NotifyRepostNotifyTimePage, meta: { key: 'notify' } },
             { name: 'notifyAtSignNotifyTimePage', path: 'atSign', component: NotifyAtSignNotifyTimePage, meta: { key: 'notify' } },
             { name: 'notifySysNotifyTimePage', path: 'sys', component: NotifySysNotifyTimePage, meta: { key: 'notify' } }
+        ]
+    },
+    {
+        path: '/profile/:nickname',
+        component: Profile,
+        meta: { key: 'profile' },
+        children: [
+            { name: 'profile', path: '', component: ProfilePostTimelinePage, meta: { key: 'profile' } },
+            { name: 'postTimelinePage', path: 'posts', component: ProfilePostTimelinePage, meta: { key: 'profile' } },
+            { name: 'reviewTimelinePage', path: 'reviews', component: ProfileReviewTimelinePage, meta: { key: 'profile' } },
+            { name: 'mediaTimelinePage', path: 'medias', component: ProfileMediaTimelinePage, meta: { key: 'profile' } },
+            { name: 'likeTimelinePage', path: 'likes', component: ProfileLikeTimelinePage, meta: { key: 'profile' } }
         ]
     },
     {

@@ -28,7 +28,7 @@
                             <UserInfoPop
                                 v-if="state.showUserInfoPop"
                                 :user="state.review.user"
-                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[98]"
+                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-0 w-[20rem] z-[98]"
                                 @mouseleave="state.showUserInfoPop = false">
                             </UserInfoPop>
                         </Transition>
@@ -294,9 +294,10 @@ async function getReply() {
     try {
         const response = await getSubReviewById(state.review.id, state.pageIndex, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).message)
-        const { content, totalCount } = await response.json()
+
+        const { content } = await response.json()
         state.replies.push(...content)
-        state.totalReplyCount = totalCount
+
         if (content.length > 1) {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }

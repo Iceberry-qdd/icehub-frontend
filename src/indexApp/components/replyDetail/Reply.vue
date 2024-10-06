@@ -25,7 +25,7 @@
                             <UserInfoPop
                                 v-if="state.showUserInfoPop"
                                 :user="state.reply.user"
-                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[98]"
+                                class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-0 w-[20rem] z-[98]"
                                 @mouseleave="state.showUserInfoPop = false">
                             </UserInfoPop>
                         </Transition>
@@ -34,8 +34,8 @@
                         <Avatar
                             :user="state.reply.user"
                             class="h-[2.5rem] rounded-[6px] text-[2.5rem] w-[2.5rem]"
-                            @mouseenter="handleAvatarMouseenter()"
-                            @click="handleAvatarClick()">
+                            @mouseenter="handleAvatarMouseenter"
+                            @click="handleAvatarClick">
                         </Avatar>
                     </div>
                     <div class="z-20">
@@ -51,7 +51,7 @@
                             </IconVerify>
                             <div
                                 v-if="state.reply.user.confirmFollow"
-                                class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1.25rem]">
+                                class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
                                 lock
                             </div>
                         </div>
@@ -225,12 +225,17 @@ const props = defineProps({
     /** 传入的评论对象 */
     review: {
         type: Object,
-        required: true
+        required: false,
+        default: undefined
     },
     /** 时间线位置，top | mid | bottom */
     tieSub: {
         type: String,
-        required: true
+        required: false,
+        default: undefined,
+        validator(value, _) {
+            return ['top', 'mid', 'bottom'].includes(value)
+        }
     },
     /** 传入的回复对象 */
     reply: {
@@ -255,7 +260,8 @@ const props = defineProps({
     /** 是否允许回复 */
     allowReply: {
         type:Boolean,
-        required: true,
+        required: false,
+        default: true
     }
 })
 const emits = defineEmits(['fetchMoreReply'])
@@ -355,7 +361,7 @@ function dismissReplyMenus() {
 
 function handleAvatarClick(){
     if(!store.MOBILE_MODE){
-        routeToUser(state.review.user.nickname)
+        routeToUser(state.reply.user.nickname)
     } else {
         state.showUserInfoPop = true
     }

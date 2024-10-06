@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="absolute p-4 top-0 w-full z-[109]">
+        <div class="absolute p-4 sm:z-[1002] top-0 w-full z-[109]">
             <div
                 v-if="state.yourFanStatus === 'WAIT_PASS' && state.showConfirmFollowBanner"
                 class="bg-white dark:bg-neutral-800 flex flex-row items-center justify-between px-2 py-2 relative rounded-[8px] w-full">

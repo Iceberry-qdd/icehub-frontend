@@ -130,7 +130,7 @@
                 :id="`img-${state.post.id}`"
                 :images="state.post.images"
                 type="post"
-                class="bottom-[0.5rem]  mt-[0.5rem]"
+                class="bottom-[0.5rem] mt-[0.5rem]"
                 @real-image="handleRealImage">
             </ImageGrid>
         </div>

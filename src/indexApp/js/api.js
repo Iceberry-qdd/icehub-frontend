@@ -174,6 +174,22 @@ export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp, sortB
 }
 
 /**
+ * 根据用户id获取评论信息
+ * @param {string} userId 用户id
+ * @param {string} pageIndex 评论页数
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {string} pageSize 评论每页条数
+ * @param {string} sortBy 排序依据字段
+ * @param {string} direction 排序方向
+ * @returns 该用户的评论信息
+ */
+export function getUserReviews(userId, pageIndex, pageSize, lastTimestamp, sortBy, direction) {
+    return fetch(`${BASE_URL}/review?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&sortBy=${sortBy}&direction=${direction}`, {
+        method: 'GET'
+    })
+}
+
+/**
  * 发布评论
  * @param {string} data 待发布评论内容
  * @returns 发布结果
@@ -426,7 +442,7 @@ export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
  */
 export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp, types = []) {
     const type = !types || types.length === 0 ? '' : `&${types.map(it => `type=${it}`).join('&')}`
-    return fetch(`${BASE_URL}/notify/user?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}${type}`, {
+    return fetch(`${BASE_URL}/notify?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}${type}`, {
         method: 'GET'
     })
 }
@@ -462,7 +478,7 @@ export function markNotifyRead(notifyId) {
  * @returns 用户帖子统计值
  */
 export function queryCurUserNotifyStatistic() {
-    return fetch(`${BASE_URL}/notify/user/statistic`, {
+    return fetch(`${BASE_URL}/notify/stat`, {
         method: 'GET'
     })
 }
@@ -713,7 +729,7 @@ export function confirmFanRequest(fanId) {
  * @returns 用户分页对象
  */
 export function getLikeListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/post/like/${postId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_URL}/user/like?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -728,6 +744,35 @@ export function getLikeListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
  */
 export function getRepostListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/repost/${postId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET'
+    })
+}
+
+/**
+ * 根据用户id，分页获取该用户在帖子中包含的媒体文件
+ * @param {string} userId 用户id
+ * @param {int} pageIndex 当前页码
+ * @param {int} pageSize 每页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {String} from 媒体来源，POST | REVIEW
+ * @returns 媒体分页对象
+ */
+export function getMediasOfUser(userId, pageIndex, pageSize, lastTimestamp, from) {
+    return fetch(`${BASE_URL}/object/image/user/${userId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&from=${from}`, {
+        method: 'GET'
+    })
+}
+
+/**
+ * 根据用户id，分页获取该用户点赞过的帖子
+ * @param {string} postId 用户id
+ * @param {int} pageIndex 当前页码
+ * @param {int} pageSize 每页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @returns 帖子分页对象
+ */
+export function getLikePostsOfUser(userId, pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/post/like?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
