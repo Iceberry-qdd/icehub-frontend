@@ -7,30 +7,38 @@
             :show-menu="state.headerConfig.showMenu"
             :menu-icon="state.headerConfig.menuIcon">
         </Header>
-        <div class="flex flex-row h-[3rem] items-center text-center">
+        <div class="max-sm:top-[48px] no-scrollbar overflow-x-auto sticky top-[56px] w-full z-[104]">
             <div
-                v-for="(menu, index) in state.menus"
-                :key="menu.id"
-                :index="index"
-                :class="{ 'active': $route.name === menu.id }"
-                class="basis-full cursor-pointer flex h-full items-center justify-center w-full"
-                @click="routeTo(menu.id)">
-                {{ menu.name }}
+                class="after:bg-blue-500 backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-blue-300 dark:bg-[#121212dd] dark:text-white/50 flex flex-row min-w-full tab text-[0.9rem] text-zinc-500 w-fit">
+                <div
+                    v-for="(menu, index) in state.menus"
+                    :key="menu.id"
+                    :index="index"
+                    :class="{ 'text-blue-500 dark:text-blue-300': $route.name === menu.id }"
+                    class="flex flex-1 hover:dark:text-blue-300 hover:text-blue-500 items-center justify-center min-w-fit py-2 w-[4.5rem]"
+                    @click="routeTo(menu.id)">
+                    {{ menu.name }}
+                </div>
             </div>
         </div>
         <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
-        <router-view></router-view>
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+                <component :is="Component"></component>
+            </keep-alive>
+        </router-view>
     </div>
 </template>
 
 <style scoped>
-.active {
-    box-sizing: content-box;
-    border-bottom: 2px solid #3b82f6;
-}
-
-.active:where([theme="dark"], [theme="dark"] *){
-    border-color: #93c5fd;
+.tab::after {
+    content: '';
+    width: v-bind(tabAccentWidth);
+    translate: v-bind(tabTranslateX);
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    transition: translate 100ms ease-in-out;
 }
 </style>
 
@@ -71,6 +79,13 @@ const isMyself = computed(() => { return state.curUser.id == state.user.id })
 function routeTo(name) {
     router.replace({ name: name, params: route.params })
 }
+
+const tabAccentWidth = computed(() => `${1 / state.menus.length * 100}%`)
+
+const tabTranslateX = computed(() => {
+    const activeIndex = Math.max(state.menus.findIndex(it => it.id === route.name), 0)
+    return `${activeIndex * 100}% 0`
+})
 
 async function getUserInfo(nickname) {
     try {

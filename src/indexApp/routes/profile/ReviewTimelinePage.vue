@@ -38,7 +38,7 @@
 </style>
 
 <script setup>
-import { reactive, watch, computed, provide, onMounted } from 'vue'
+import { reactive, watch, computed, provide } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getUserReviews as getReviews } from '@/indexApp/js/api.js'
 import Reply from '@/indexApp/components/replyDetail/Reply.vue'
@@ -50,12 +50,20 @@ const props = defineProps({
     user: {
         type: Object,
         required: false,
-        default: undefined // XXX 实际不应该接收undefined值，但传递过来的值可能为undefined
+        default: undefined // XXX 实际不应该接收undefined值，但由于异步路由初次传递来的值可能为undefined, tab同
     },
     /** 表示从哪个tab路由过来的 */
-    tabId: {
+    tab: {
+        type: Object,
+        required: false,
+        default: undefined
+    },
+    /** 需要标记所有消息为已读的tab id，从Notify.vue组件移植过来，仅为消除控制台警告，不使用 */
+    // eslint-disable-next-line vue/no-unused-properties
+    markReadTabId: {
         type: String,
-        required: true
+        required: false,
+        default: undefined
     }
 })
 const state = reactive({
@@ -77,7 +85,7 @@ const isPrivateAccountAndNotFollowed = computed(() => {
     return props.user.confirmFollow && props.user.yourFollowStatus !== 'FOLLOW' && state.curUser.id !== props.user.id
 })
 
-async function fetchReviews(){
+async function fetchReviews() {
     try {
         state.isLoading = true
         const response = await getReviews(props.user.id, state.pageIndex, state.pageSize, state.lastTimestamp)
@@ -114,26 +122,26 @@ function deleteReviewOnUi(reviewId) {
 }
 
 watch(() => state.totalCount, (newVal, _) => {
-    emits('updateTabCount', {id: props.tabId, count: newVal})
+    emits('updateTabCount', { id: props.tab.id, count: newVal })
 })
 
-watch(() => props.user, (user, old) => {
-    console.log({new: user.id, old: old?.id || old})
+watch(() => props.user, (user, _) => {
     state.replies.forEach(reply => {
         reply.user.avatar = user.avatar
         reply.user.banner = user.banner
     })
 })
 
-onMounted(async () => {
-    if (!props.user) return
+watch(() => props.user?.id, (id, oldVal) => {
+    // 仅在id第一次不为undefined时才调用
+    if (!id || !!oldVal) return
 
     const { lastPostAt, blocked, blocking } = props.user
     state.lastTimestamp = lastPostAt || Date.now()
     if (!blocked && !blocking && !isPrivateAccountAndNotFollowed.value) {
-        await fetchReviews()
+        fetchReviews()
     }
-})
+}, { immediate: true })
 
 provide('postingNew', { postingNew })
 provide('deleteReviewOnUi', { deleteReviewOnUi })

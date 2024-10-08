@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { reactive, computed, watch, onMounted, ref } from 'vue'
+import { reactive, computed, watch, ref } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import Footer from '@/indexApp/components/Footer.vue'
 import { getMediasOfUser } from '@/indexApp/js/api'
@@ -37,12 +37,13 @@ const props = defineProps({
     user: {
         type: Object,
         required: false,
-        default: undefined // XXX 实际不应该接收undefined值，但传递过来的值可能为undefined
+        default: undefined // XXX 实际不应该接收undefined值，但由于异步路由初次传递来的值可能为undefined, tab同
     },
     /** 表示从哪个tab路由过来的 */
-    tabId: {
-        type: String,
-        required: true
+    tab: {
+        type: Object,
+        required: false,
+        default: undefined
     }
 })
 const state = reactive({
@@ -112,16 +113,17 @@ function getFirstNonDuplicateIndex(content) {
 }
 
 watch(() => state.totalCount, (newVal, _) => {
-    emits('updateTabCount', { id: props.tabId, count: newVal })
+    emits('updateTabCount', { id: props.tab.id, count: newVal })
 })
 
-onMounted(async () => {
-    if (!props.user) return
+watch(() => props.user?.id, (id, oldVal) => {
+    // 仅在id第一次不为undefined时才调用
+    if (!id || !!oldVal) return
 
     const { lastPostAt, blocked, blocking } = props.user
     state.lastTimestamp = lastPostAt || Date.now()
     if (!blocked && !blocking && !isPrivateAccountAndNotFollowed.value) {
-        await getMedias()
+        getMedias()
     }
-})
+}, { immediate: true })
 </script>

@@ -82,7 +82,7 @@
                     <component
                         :is="Component"
                         :user="state.user"
-                        :tab-id="state.tabs.find(it => it.id === $route.name)?.id || 'postTimelinePage'"
+                        :tab="state.tabs.find(it => it.id === $route.name) || state.tabs.find(it => it.id === 'postTimelinePage')"
                         @update-tab-count="({id, count}) => state.tabs.find(it => it.id === id).count = count">
                     </component>
                 </keep-alive>
@@ -120,10 +120,6 @@
 
 .material-symbols-rounded:hover {
     background-color: transparent;
-}
-
-.material-symbols-rounded {
-    font-size: 24pt;
 }
 
 @supports (animation-timeline: scroll()){

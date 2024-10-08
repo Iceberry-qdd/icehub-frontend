@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { reactive, computed, provide, watch, onMounted } from 'vue'
+import { reactive, computed, provide, watch } from 'vue'
 import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
 import { getUserPosts } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
@@ -25,12 +25,13 @@ const props = defineProps({
     user: {
         type: Object,
         required: false,
-        default: undefined // XXX 实际不应该接收undefined值，但传递过来的值可能为undefined
+        default: undefined // XXX 实际不应该接收undefined值，但由于异步路由初次传递来的值可能为undefined, tab同
     },
     /** 表示从哪个tab路由过来的 */
-    tabId: {
-        type: String,
-        required: true
+    tab: {
+        type: Object,
+        required: false,
+        default: undefined
     }
 })
 const state = reactive({
@@ -104,26 +105,26 @@ function postingNew(post) {
 }
 
 watch(() => state.totalCount, (newVal, _) => {
-    emits('updateTabCount', {id: props.tabId, count: newVal})
+    emits('updateTabCount', {id: props.tab.id, count: newVal})
 })
 
-watch(() => props.user, (user, old) => {
-    console.log({new: user.id, old: old?.id || old})
+watch(() => props.user, (user, _) => {
     state.posts.forEach(post => {
         post.user.avatar = user.avatar
         post.user.banner = user.banner
     })
 })
 
-onMounted(async () => {
-    if (!props.user) return
+watch(() => props.user?.id, (id, oldVal) => {
+    // 仅在id第一次不为undefined时才调用
+    if (!id || !!oldVal) return
 
-    const {lastPostAt, blocked, blocking} = props.user
+    const { lastPostAt, blocked, blocking } = props.user
     state.lastTimestamp = lastPostAt || Date.now()
     if (!blocked && !blocking && !isPrivateAccountAndNotFollowed.value) {
-        await getPosts()
+        getPosts()
     }
-})
+}, { immediate: true })
 
 provide('postingNew', { postingNew })
 provide('pinPostOnUi', { pinPostOnUi: pinPostOnUi })

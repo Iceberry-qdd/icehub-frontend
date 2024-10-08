@@ -16,8 +16,7 @@ const props = defineProps({
     /** 消息类型描述对象 */
     tab: {
         type: Object,
-        required: false,
-        default: new Array()
+        required: true
     },
     /** 需要标记所有消息为已读的tab id */
     markReadTabId: {
