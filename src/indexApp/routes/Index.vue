@@ -167,7 +167,7 @@ const state = reactive({
         title: '动态',
         goBack: false,
         showMenu: true,
-        menuIcon: 'campaign',
+        menuIcon: undefined,
         iconTooltip: '切换主题'
     },
     isShowGlobalRefresh: true,

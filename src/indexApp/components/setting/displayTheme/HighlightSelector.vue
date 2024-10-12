@@ -8,7 +8,7 @@
                 <div
                     :class="{'ring-[3px] ring-offset-2': props.highlight === name}"
                     :style="{backgroundImage: `url('${item.preview}')`}"
-                    class="aspect-video bg-[length:120%] bg-repeat-y bg-top border-[1px] cursor-pointer overflow-hidden p-2 rounded-[12px] select-none"
+                    class="aspect-video bg-[length:250%] bg-left-top bg-no-repeat border-[1px] cursor-pointer overflow-hidden p-2 rounded-[12px] select-none"
                     @click="emits('select', name)" />
                 <div class="cursor-default mt-2">{{ item.zh }}</div>
             </div>
@@ -21,12 +21,12 @@ import { reactive } from 'vue'
 
 const emits = defineEmits(['select'])
 const props = defineProps({
-    /** 选中的表情类型 */
+    /** 选中的代码高亮类型 */
     highlight: {
         type:String,
         required: true
     },
-    /** 支持的表情类型 */
+    /** 支持的代码高亮类型 */
     highlightOptions: {
         type: Object,
         required: true

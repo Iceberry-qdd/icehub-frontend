@@ -12,6 +12,7 @@
         <div>
             <NativeNotifyAction
                 :checked="state.setting.enableNativeNotify"
+                :enabled="!state.setting.enableNativeNotify"
                 @toggle="state.setting.enableNativeNotify = !state.setting.enableNativeNotify">
             </NativeNotifyAction>
         </div>
@@ -32,7 +33,7 @@ const state = reactive({
         noBorder: false
     },
     setting: {
-        enableNativeNotify: false
+        enableNativeNotify: Notification.permission === 'granted'
     }
 })
 </script>

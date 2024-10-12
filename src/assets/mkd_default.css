@@ -99,7 +99,7 @@ markdown pre{
     overflow-x: auto;
 }
 
-markdown pre:where([theme="dark"], [theme="dark"] *){
+markdown pre:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *){
     background-color: #262626;
 }
 

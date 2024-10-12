@@ -24,7 +24,7 @@ pre[class*="language-"] {
 }
 
 :is(code[class*="language-"],
-pre[class*="language-"]):where([theme="dark"], [theme="dark"] *) {
+pre[class*="language-"]):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	color: white;
 }
 
@@ -64,12 +64,12 @@ pre[class*="language-"] {
 }
 
 :is(:not(pre)>code[class*="language-"],
-pre[class*="language-"]):where([theme="dark"], [theme="dark"] *) {
+pre[class*="language-"]):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
     background: hsl(30, 20%, 25%);
 }
 
 /* Code blocks */
-pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
+pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	padding: 1em;
 	margin: .5em 0;
 	overflow: auto;
@@ -86,7 +86,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
 }
 
 /* Inline code */
-:not(pre)>code[class*="language-"]:where([theme="dark"], [theme="dark"] *){
+:not(pre)>code[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *){
 	padding: .15em .2em .05em;
 	border-radius: .3em;
 	border: .13em solid hsl(30, 20%, 40%);
@@ -103,7 +103,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
 :is(.token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata):where([theme="dark"], [theme="dark"] *) {
+.token.cdata):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	color: hsl(30, 20%, 50%);
 }
 
@@ -111,7 +111,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
     color: #999;
 }
 
-.token.punctuation:where([theme="dark"], [theme="dark"] *) {
+.token.punctuation:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	opacity: .7;
 }
 
@@ -134,7 +134,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
 .token.boolean,
 .token.number,
 .token.constant,
-.token.symbol):where([theme="dark"], [theme="dark"] *) {
+.token.symbol):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	color: hsl(350, 40%, 70%);
 }
 
@@ -152,7 +152,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
 .token.string,
 .token.char,
 .token.builtin,
-.token.inserted):where([theme="dark"], [theme="dark"] *) {
+.token.inserted):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	color: hsl(75, 70%, 60%);
 }
 
@@ -169,7 +169,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
 .token.url,
 .language-css .token.string,
 .style .token.string,
-.token.variable):where([theme="dark"], [theme="dark"] *) {
+.token.variable):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	color: hsl(40, 90%, 60%);
 }
 
@@ -181,7 +181,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
 
 :is(.token.atrule,
 .token.attr-value,
-.token.keyword):where([theme="dark"], [theme="dark"] *) {
+.token.keyword):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	color: hsl(350, 40%, 70%);
 }
 
@@ -209,6 +209,6 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *) {
     cursor: help;
 }
 
-.token.deleted:where([theme="dark"], [theme="dark"] *) {
+.token.deleted:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
 	color: red;
 }

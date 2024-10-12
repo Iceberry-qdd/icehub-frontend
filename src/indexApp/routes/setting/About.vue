@@ -24,6 +24,12 @@
     </div>
 </template>
 
+<style scoped>
+markdown{
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+}
+</style>
+
 <script setup>
 import { computed, reactive, version } from 'vue'
 import Header from '@/indexApp/components/Header.vue'

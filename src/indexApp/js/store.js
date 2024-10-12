@@ -148,5 +148,9 @@ export const store = reactive({
             return
         }
         this.NOTIFY_STATISTIC.filter(it => types.includes(it.type)).forEach(it => it.unreadCount = 0)
+    },
+    AVATAR_STYLE: 'rounded',
+    setAvatarStyle(style){
+        this.AVATAR_STYLE = style
     }
 })

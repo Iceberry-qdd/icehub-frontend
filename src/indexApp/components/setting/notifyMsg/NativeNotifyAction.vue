@@ -20,6 +20,7 @@
 import ToggleButton from '@/components/ToggleButton.vue'
 import { store } from '@/indexApp/js/store'
 import { computed, nextTick, reactive } from 'vue'
+import icon from '@/assets/logo.svg'
 
 const emits = defineEmits(['toggle'])
 const props = defineProps({
@@ -45,14 +46,29 @@ const info = computed(() => {
 
 function toggle(){
     if(state.loading) return
-
     state.loading = true
-    setTimeout(() => {
+    askNotificationPermission()
+}
+
+function askNotificationPermission() {
+  if (!("Notification" in window)) {
+    store.setErrorMsg('此浏览器不支持原生通知！')
+    return
+  }
+
+  Notification.requestPermission().then((permission) => {
+    state.loading = false
+    if(permission === 'granted'){
         emits('toggle')
-        nextTick(() => {
-            store.setInfoMsg(`切换成功：切换至${props.checked}`)
-            state.loading = false
-        })
-    }, 3000)
+        createNotify()
+    } else {
+        store.setErrorMsg('获取通知权限失败！')
+    }
+  })
+}
+
+function createNotify() {
+    const text = `您已成功启用系统通知权限，新消息将使用系统通道发送。`
+    new Notification("成功启用原生通知！", { body: text, icon: icon })
 }
 </script>

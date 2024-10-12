@@ -75,8 +75,8 @@ import { authStore } from '@/authApp/js/store.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Turnstile from '@/authApp/components/Turnstile.vue'
-const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const router = useRouter()
 const emits = defineEmits(['referer'])
 const state = reactive({

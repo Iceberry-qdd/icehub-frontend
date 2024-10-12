@@ -13,7 +13,7 @@
         </picture>
         <div
             v-else
-            class="default-bg flex items-center justify-center"
+            class="default-bg flex img items-center justify-center"
             v-bind="$attrs">
             <!-- eslint-disable-next-line vue/static-class-names-order, vue/singleline-html-element-content-newline -->
             <div class="text-white dark:text-white/75 font-bold text-[45%]">{{ noPicAvatarText }}</div>
@@ -29,9 +29,14 @@
 .default-bg:where([theme="dark"], [theme="dark"] *){
     background-color: #262626;
 }
+
+img,.img{
+    border-radius: v-bind(borderRadius);
+}
 </style>
 
 <script setup>
+import { store } from '@/indexApp/js/store.js'
 import { computed } from 'vue'
 
 // eslint-disable-next-line vue/no-unsupported-features
@@ -70,5 +75,18 @@ const avatar = computed(() => {
 
 const defaultBgColor = computed(() => {
     return props.user?.avatar?.emoji?.bgColor || '#3b82f6'
+})
+
+const borderRadius = computed(() => {
+    switch (store.AVATAR_STYLE) {
+        case 'circle':
+            return '100%'
+        case 'rounded':
+            return '16%'
+        case 'square':
+            return '0'
+        default:
+            return '16%'
+    }
 })
 </script>

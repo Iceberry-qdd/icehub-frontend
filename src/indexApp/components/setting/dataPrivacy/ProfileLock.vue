@@ -1,5 +1,6 @@
 <template>
-    <div class="cursor-default flex flex-row hover:bg-gray-100 items-center justify-between px-4 py-2">
+    <div
+        class="cursor-default flex flex-row hover:bg-gray-100 items-center justify-between px-4 py-2">
         <div>
             <p>设为私密账号</p>
             <p class="text-[0.85rem] text-neutral-400">
@@ -13,13 +14,24 @@
             :loading="state.loading"
             @click="toggle">
         </ToggleButton>
+        <Teleport to="#app">
+            <ConfirmDialogBox
+                v-if="state.confirmBDialogUi.show"
+                class="fixed top-0"
+                :ui="state.confirmBDialogUi"
+                @choice="choose">
+            </ConfirmDialogBox>
+        </Teleport>
     </div>
 </template>
 
 <script setup>
+import { computed, reactive } from 'vue'
+import { store } from '@/indexApp/js/store.js'
+import { getCurUserInfo } from '@/authApp/js/api.js'
 import ToggleButton from '@/components/ToggleButton.vue'
-import { store } from '@/indexApp/js/store'
-import { computed, nextTick, reactive } from 'vue'
+import { updateUserProfile } from '@/indexApp/js/api.js'
+import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 
 const emits = defineEmits(['toggle'])
 const props = defineProps({
@@ -35,9 +47,73 @@ const props = defineProps({
         required: true
     }
 })
+
 const state = reactive({
+    confirmBDialogUi: {
+        show: false,
+        title: '',
+        confirmButton: {
+            text: '确定',
+            color: 'rgb(239 68 68)',
+            bgColor: 'rgb(254 226 226)',
+            selected: false
+        },
+        cancelButton: {
+            text: '取消',
+            color: '#000000',
+            bgColor: 'rgb(243 244 246)',
+            selected: false
+        },
+        loading: {
+            show: false,
+            text: '请稍后...',
+            color: 'rgb(239 68 68)'
+        }
+    },
     loading: false
 })
+
+const confirmDialogTitle = computed(() => {
+    return `确定要设为${props.locked ? '公开' : '私密'}账户吗？设为${props.locked ? '公开' : '私密'}后，他人订阅您时，${props.locked ? '不' : ''}需要得到您的批准`
+})
+
+function choose(args) {
+    const choice = args.choice
+    if (choice === 'confirm') {
+        doToggleLockProfile()
+    } else {
+        dismissConfirmDialogBox()
+    }
+}
+
+async function doToggleLockProfile(){
+    try{
+        state.confirmBDialogUi.loading.show = true
+        const response = await getCurUserInfo()
+        if (!response.ok) throw new Error((await response.json()).message)
+
+        const user = await response.json()
+        user.confirmFollow = !props.locked
+
+        const response2 = await updateUserProfile(user)
+        if (!response2.ok) throw new Error((await response2.json()).message)
+        const newUser = await response2.json()
+        localStorage.setItem('CUR_USER', JSON.stringify(newUser))
+
+        emits('toggle')
+        store.setSuccessMsg(`已设为${props.locked ? '公开':  '私密'}账户`)
+    }catch(e){
+        store.setErrorMsg(e.message)
+    }finally{
+        state.confirmBDialogUi.loading.show = false
+        dismissConfirmDialogBox()
+    }
+}
+
+function dismissConfirmDialogBox() {
+    state.confirmBDialogUi.show = false
+    state.loading = false
+}
 
 const info = computed(() => {
     return '启用后，您主页中的帖子、粉丝列表等仅关注者可见。'
@@ -46,13 +122,8 @@ const info = computed(() => {
 function toggle(){
     if(state.loading) return
 
+    state.confirmBDialogUi.title = confirmDialogTitle.value
+    state.confirmBDialogUi.show = true
     state.loading = true
-    setTimeout(() => {
-        emits('toggle')
-        nextTick(() => {
-            store.setInfoMsg(`切换成功：切换至${props.locked}`)
-            state.loading = false
-        })
-    }, 3000)
 }
 </script>

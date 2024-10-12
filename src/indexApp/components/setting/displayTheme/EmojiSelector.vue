@@ -3,9 +3,9 @@
         <div class="gap-x-2 gap-y-4 grid grid-cols-3">
             <div class="flex-1 text-center">
                 <div
-                    :class="{'ring-[3px] ring-offset-2': props.emoji === 'notoColorEmoji'}"
+                    :class="{'ring-[3px] ring-offset-2': props.emoji === 'noto'}"
                     class="aspect-video border-[1px] cursor-pointer font-['Noto_Color_Emoji'] grid grid-cols-6 p-2 rounded-[12px] select-none"
-                    @click="emits('select', 'notoColorEmoji')">
+                    @click="emits('select', 'noto')">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <span v-for="(item, idx) in state.emojiList" :key="idx">{{ item }}</span>
                 </div>

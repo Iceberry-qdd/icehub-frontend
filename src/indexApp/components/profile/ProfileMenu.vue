@@ -50,11 +50,6 @@
                 :fan-id="props.user.id"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </RemoveFanAction>
-    
-            <LogoutAction
-                v-if="state.actionVisMap.get('LogoutAction')"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
-            </LogoutAction>
         </div>
     </div>
 </template>

@@ -10,17 +10,25 @@
         </Header>
         <div>
             <LookupProfile></LookupProfile>
-            <ChangePwd></ChangePwd>
+            <ChangePwd v-if="showUnImpl"></ChangePwd>
             <ChangeEmail
+                v-if="showUnImpl"
                 :old-email="state.setting.changeEmail.oldEmail">
             </ChangeEmail>
             <TwoFA
+                v-if="showUnImpl"
                 :checked="state.setting.twoFA.checked"
                 @toggle="state.setting.twoFA.checked = !state.setting.twoFA.checked">
             </TwoFA>
-            <AccountActivity @click="emits('routeTo', 'accountActivity')"></AccountActivity>
+            <AccountActivity
+                v-if="showUnImpl"
+                @click="emits('routeTo', 'accountActivity')">
+            </AccountActivity>
             <Logout></Logout>
-            <DeleteAccount class="text-red-500"></DeleteAccount>
+            <DeleteAccount
+                v-if="showUnImpl"
+                class="text-red-500">
+            </DeleteAccount>
         </div>
     </div>
 </template>
@@ -36,6 +44,7 @@ import Logout from '@/indexApp/components/setting/accountSafe/Logout.vue'
 import DeleteAccount from '@/indexApp/components/setting/accountSafe/DeleteAccount.vue'
 import AccountActivity from '@/indexApp/components/setting/accountSafe/AccountActivity.vue'
 
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const emits = defineEmits(['routeTo'])
 const state = reactive({
     headerConfig: {

@@ -22,20 +22,47 @@
             </AccountActivityItem>
         </div>
     </div>
-    <span class="flex items-center mt-1 px-12 text-[0.85rem] text-neutral-400">
-        <span class="bg-gray-200 flex-1 h-px" />
-        <span class="px-6 shrink-0">仅显示最近30天的记录</span>
-        <span class="bg-gray-200 flex-1 h-px" />
-    </span>
+    <Footer
+        :is-loading="state.isLoading"
+        :has-more="hasMore"
+        placeholder="仅显示最近30天的记录"
+        @fetch-more="fetchMoreItems">
+    </Footer>
 </template>
 
 <script setup>
 import { computed, reactive } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import AccountActivityItem from '@/indexApp/components/setting/accountSafe/AccountActivityItem.vue'
+import Footer from '@/indexApp/components/Footer.vue'
 
+// XXX 仅为消除控制台警告，无实际意义
 // eslint-disable-next-line vue/no-unused-emit-declarations
-const emits = defineEmits(['routeTo'])
+const emits = defineEmits(['routeTo', 'updateTabCount'])
+// XXX 以下props仅为消除控制台警告，无实际意义
+const props = defineProps({
+    /** 表示从哪个tab路由过来的 */
+    // eslint-disable-next-line vue/no-unused-properties
+    tab: {
+        type: Object,
+        required: false,
+        default: undefined
+    },
+    /** 需要标记所有消息为已读的tab id */
+    // eslint-disable-next-line vue/no-unused-properties
+    markReadTabId: {
+        type: String,
+        required: false,
+        default: undefined
+    },
+    /** 表明是谁的主页 */
+    // eslint-disable-next-line vue/no-unused-properties
+    user: {
+        type: Object,
+        required: false,
+        default: undefined
+    },
+})
 const state = reactive({
     headerConfig: {
         title: '账号活动记录',
@@ -48,7 +75,8 @@ const state = reactive({
         {id: 1, timestamp: Date.now(), device: {type: 'DESKTOP_WINDOWS', name: 'LAPTOP-3AEH3R0D(Chrome128.0.10.2)'}, ip: {country: '中国', province: '北京市'}, isActive: true, isLocal: true},
         {id: 1, timestamp: Date.now(), device: {type: 'MOBILE_IPHONE', name: 'qdd的iPhone(Safari-9.5.16)'}, ip: {country: '中国', province: '四川省'}, isActive: true, isLocal: true},
         {id: 1, timestamp: Date.now(), device: {type: 'DESKTOP', name: 'LAPTOP-3AEH3R0D(APP-1.0.9.1)'}, ip: {country: '美国', province: '纽约州'}, isActive: false, isLocal: true}
-    ]
+    ],
+    isLoading: false
 })
 
 const activeActivities = computed(() => {
@@ -58,4 +86,12 @@ const activeActivities = computed(() => {
 const inactiveActivities = computed(() => {
     return state.activities.filter(it => it.isActive === false)
 })
+
+const hasMore = computed(() => {
+    return false
+})
+
+function fetchMoreItems(){
+    //TODO
+}
 </script>

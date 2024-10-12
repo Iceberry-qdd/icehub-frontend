@@ -33,11 +33,11 @@
             </div>
             <div class="cursor-default mt-2">深色模式</div>
         </div>
-        <div class="flex-1 followSys text-center">
+        <div class="flex-1 followSystem text-center">
             <div
-                :class="{'ring-[3px] ring-offset-2': props.theme === 'followSys'}"
+                :class="{'ring-[3px] ring-offset-2': props.theme === 'followSystem'}"
                 class="aspect-[168.61/112] border-[1px] cursor-pointer gap-2 grid grid-cols-3 p-4 relative rounded-[12px]"
-                @click="emits('select', 'followSys')">
+                @click="emits('select', 'followSystem')">
                 <span class="col-span-2"></span>
                 <span></span>
                 <span></span>
@@ -61,31 +61,31 @@ div[class~="dark"] span{
     background-color: #404040;
 }
 
-div[class~="followSys"] span{
+div[class~="followSystem"] span{
     background-color: #f4f4f5;
 }
 
-div[class~="followSys"] :is(span:nth-child(3),span:nth-child(7)){
+div[class~="followSystem"] :is(span:nth-child(3),span:nth-child(7)){
     background-color: #404040;
 }
 
-div[class~="followSys"]>div:first-child{
+div[class~="followSystem"]>div:first-child{
     background: linear-gradient(45deg, #121212 50%, white 50%);
 }
 
-div[class~="followSys"] span:first-child{
+div[class~="followSystem"] span:first-child{
     background: linear-gradient(45deg, #404040 41.5%, #f4f4f5 41.5%);
 }
 
-div[class~="followSys"] span:nth-child(4){
+div[class~="followSystem"] span:nth-child(4){
     background: linear-gradient(45deg, #404040 30.5%, #f4f4f5 30.5%);
 }
 
-div[class~="followSys"] span:nth-child(6){
+div[class~="followSystem"] span:nth-child(6){
     background: linear-gradient(45deg, #404040 57.2%, #f4f4f5 57.2%);
 }
 
-div[class~="followSys"] span:nth-child(8){
+div[class~="followSystem"] span:nth-child(8){
     background: linear-gradient(45deg, #404040 58.5%, #f4f4f5 58.5%);
 }
 </style>
