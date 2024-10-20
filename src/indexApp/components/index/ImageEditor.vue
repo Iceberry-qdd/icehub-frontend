@@ -103,7 +103,7 @@
                 @keydown="resize">
             </textarea>
             <div
-                class="active:bg-blue-700 bg-blue-500 cursor-pointer dark:active:bg-neutral-700 dark:bg-transparent dark:hover:bg-neutral-700 dark:text-blue-300 font-bold max-sm:hidden ml-[20rem] mr-2 my-2 py-2 rounded-full text-[11pt] text-center tracking-widest"
+                class="active:bg-primary-inActive bg-primary cursor-pointer font-bold max-sm:hidden ml-[20rem] mr-2 my-2 py-2 rounded-full text-[11pt] text-center text-onPrimary tracking-widest"
                 @click="submit">
                 确定
             </div>

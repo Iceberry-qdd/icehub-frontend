@@ -10,7 +10,7 @@
                 <div class="font-bold hover:underline text-[0.9rem]">{{ props.user.nickname }}</div>
                 <IconVerify
                     v-if="props.user.verified"
-                    class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                 </IconVerify>
                 <div
                     v-if="props.user.confirmFollow"

@@ -27,7 +27,7 @@
                 </div>
                 <IconVerify
                     v-if="state.user.verified"
-                    class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                 </IconVerify>
                 <div
                     v-if="state.user.confirmFollow"
@@ -36,12 +36,12 @@
                 </div>
                 <div
                     v-if="state.user.yourFanStatus === 'FAN' && state.user.yourFollowStatus !== 'FOLLOW'"
-                    class="bg-blue-100 dark:bg-neutral-700 dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    class="bg-primaryContainer dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-primary">
                     订阅了你
                 </div>
                 <div
                     v-if="state.user.yourFanStatus === 'WAIT_PASS'"
-                    class="bg-blue-100 dark:bg-neutral-700 dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    class="bg-primaryContainer dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-primary">
                     请求订阅你
                 </div>
             </div>
@@ -157,10 +157,10 @@ const state = reactive({
 const isMyself = computed(() => { return state.user.id == state.curUser.id })
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500 dark:bg-neutral-700': state.user.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-primary': state.user.yourFollowStatus === 'NOT_FOLLOW',
     'bg-gray-200 dark:bg-neutral-800': state.user.yourFollowStatus !== 'NOT_FOLLOW',
     'text-zinc-500 dark:text-white/25': state.user.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-white dark:text-blue-300': state.user.yourFollowStatus === 'NOT_FOLLOW'
+    'text-onPrimary': state.user.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 const brief = computed(() => {
@@ -195,7 +195,7 @@ const followButtonText = computed(() => {
 })
 
 const profileButtonClass = computed(() => ({
-    'bg-blue-500 dark:bg-neutral-700 text-white dark:text-white/75': isCurUser.value || state.user.yourFollowStatus === 'FOLLOW',
+    'bg-primary text-onPrimary dark:text-white/75': isCurUser.value || state.user.yourFollowStatus === 'FOLLOW',
     'bg-gray-200 dark:bg-neutral-700 dark:text-white/75': !isCurUser.value && state.user.yourFollowStatus !== 'FOLLOW'
 }))
 

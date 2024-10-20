@@ -5,7 +5,7 @@
         <div
             v-for="(menu, key) in props.menus"
             :key="key"
-            :class="[key === props.orderBy ? 'bg-blue-100 text-blue-500 dark:text-inherit dark:bg-neutral-700 hover:bg-blue-100 hover:dark:bg-neutral-700' : 'hover:bg-gray-100 hover:dark:bg-neutral-800 active:bg-gray-200 active:dark:bg-neutral-700']"
+            :class="[key === props.orderBy ? 'bg-primaryContainer text-primary dark:text-inherit dark:bg-neutral-700 hover:bg-primaryContainer hover:dark:bg-neutral-700' : 'hover:bg-gray-100 hover:dark:bg-neutral-800 active:bg-gray-200 active:dark:bg-neutral-700']"
             class="cursor-pointer first:rounded-t-[inherit] flex flex-row gap-x-3 item items-center justify-left last:rounded-b-[inherit] px-4 py-[0.6rem]"
             @click="emits('pick', key)">
             <span class="material-symbols-rounded no-hover p-0 text-[1.25rem] text-inherit">{{ menu.icon }}</span>

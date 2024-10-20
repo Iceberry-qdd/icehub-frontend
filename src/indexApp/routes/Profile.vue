@@ -61,12 +61,12 @@
         </div>
         <div v-else>
             <div
-                class="after:bg-blue-500 backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-blue-300 dark:bg-[#121212dd] dark:border-[#1e1e1e] dark:text-white/50 flex flex-row max-sm:top-[48px] sticky tab text-[0.9rem] text-zinc-500 top-[56px] z-[104]">
+                class="after:bg-primary backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-onPrimary dark:bg-[#121212dd] dark:border-[#1e1e1e] dark:text-white/50 flex flex-row max-sm:top-[48px] sticky tab text-[0.9rem] text-zinc-500 top-[56px] z-[104]">
                 <div
                     v-for="tab in state.tabs"
                     :key="tab.id"
-                    :class="{'text-blue-500 dark:text-blue-300': [tab.id].includes($route.name === 'profile' ? 'postTimelinePage' : $route.name)}"
-                    class="flex flex-1 hover:dark:text-blue-300 hover:text-blue-500 items-center justify-center py-2"
+                    :class="{'text-primary dark:text-onPrimary': [tab.id].includes($route.name === 'profile' ? 'postTimelinePage' : $route.name)}"
+                    class="flex flex-1 hover:dark:text-onPrimary hover:text-primary items-center justify-center py-2"
                     @click="$router.replace({name: tab.id})">
                     {{ `${tab.name} ${tab.count || ''}` }}
                     <span

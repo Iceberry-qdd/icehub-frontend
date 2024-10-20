@@ -2,28 +2,28 @@
     <div class="border-b-[1px] flex flex-row items-center justify-between pl-4 pr-2 text-[0.85rem]">
         <div class="flex flex-row gap-x-3">
             <div
-                class="cursor-pointer hover:dark:text-blue-300 hover:text-blue-500 hover:underline py-2"
-                :class="{'text-blue-500 dark:text-blue-300': $route.name === 'postLikeListPage'}"
+                class="cursor-pointer hover:dark:text-onPrimary hover:text-primary hover:underline py-2"
+                :class="{'text-primary dark:text-onPrimary': $route.name === 'postLikeListPage'}"
                 @click="$router.replace({name: 'postLikeListPage'})">
                 <span>{{ props.likeCount }}</span>
                 <span>点赞</span>
             </div>
             <div
-                class="cursor-pointer hover:dark:text-blue-300 hover:text-blue-500 hover:underline py-2"
-                :class="{'text-blue-500 dark:text-blue-300': ['postDetail', 'postReviewListPage'].includes($route.name)}"
+                class="cursor-pointer hover:dark:text-onPrimary hover:text-primary hover:underline py-2"
+                :class="{'text-primary dark:text-onPrimary': ['postDetail', 'postReviewListPage'].includes($route.name)}"
                 @click="$router.replace({name: 'postReviewListPage'})">
                 <span>{{ props.reviewCount }}</span>
                 <span>评论</span>
             </div>
             <div
-                class="cursor-pointer hover:dark:text-blue-300 hover:text-blue-500 hover:underline py-2"
-                :class="{'text-blue-500 dark:text-blue-300': $route.name === 'postRepostListPage'}"
+                class="cursor-pointer hover:dark:text-onPrimary hover:text-primary hover:underline py-2"
+                :class="{'text-primary dark:text-onPrimary': $route.name === 'postRepostListPage'}"
                 @click="$router.replace({name: 'postRepostListPage'})">
                 <span>{{ props.repostCount }}</span>
                 <span>转发</span>
             </div>
             <div
-                class="hover:dark:text-blue-300 hover:text-blue-500 hover:underline pointer-events-none py-2">
+                class="hover:dark:text-onPrimary hover:text-primary hover:underline pointer-events-none py-2">
                 <span>{{ props.bookmarkCount }}</span>
                 <span>收藏</span>
             </div>

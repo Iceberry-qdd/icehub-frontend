@@ -8,7 +8,7 @@
         </IconLoading>
         <div
             v-else-if="props.hasMore"
-            class="cursor-pointer dark:text-blue-300 h-fit hover:underline text-blue-500"
+            class="cursor-pointer dark:text-onPrimary h-fit hover:underline text-primary"
             @click="fetchMore">
             加载更多
         </div>

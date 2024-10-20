@@ -80,7 +80,7 @@
                     </div>
                     <IconVerify
                         v-if="state.post.user.verified"
-                        class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
+                        class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                     </IconVerify>
                     <div
                         v-if="state.post.user.confirmFollow"
@@ -107,7 +107,7 @@
             <div class="relative">
                 <div
                     v-if="state.shrinkContent"
-                    class="-translate-x-1/2 absolute bg-blue-100 bottom-2 cursor-pointer dark:bg-neutral-800 dark:text-blue-200 left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                    class="-translate-x-1/2 absolute bg-primaryContainer-inActive bottom-2 cursor-pointer dark:bg-neutral-800 dark:text-onPrimary left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
                     @click="state.shrinkContent = false">
                     展开
                 </div>

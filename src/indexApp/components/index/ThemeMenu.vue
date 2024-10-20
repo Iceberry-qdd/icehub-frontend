@@ -1,28 +1,28 @@
 <template>
     <div
         id="theme-menu"
-        class="bg-white dark:bg-[#1e1e1e] min-h-max min-w-[12rem]">
+        class="bg-surface min-h-max min-w-[12rem]">
         <div class="flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
-            <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
+            <div class="bg-border h-[0.35rem] rounded-full w-12" />
         </div>
         <LightAction
             :icon="props.iconMap.get('light')"
             text="浅色模式"
-            :class="['light' === props.activeMode ? 'bg-blue-100 dark:bg-neutral-700 hover:bg-blue-100 hover:dark:bg-neutral-700 text-blue-500 dark:text-inherit' : 'hover:bg-gray-100 hover:dark:bg-neutral-800 active:bg-gray-200 active:dark:bg-neutral-700']"
+            :class="['light' === props.activeMode ? 'bg-primaryContainer hover:bg-primaryContainer text-primary dark:text-onPrimaryContainer' : 'hover:bg-helper active:bg-border text-onSurface-inActive']"
             class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-xl px-4 py-[0.6rem] sm:[&:nth-child(2)]:rounded-t-[6px] sm:last:rounded-b-[6px]"
             @click="toggleMode('light')">
         </LightAction>
         <DarkAction
             :icon="props.iconMap.get('dark')"
             text="深色模式"
-            :class="['dark' === props.activeMode ? 'bg-blue-100 dark:bg-neutral-700 hover:bg-blue-100 hover:dark:bg-neutral-700 text-blue-500 dark:text-inherit' : 'hover:bg-gray-100 hover:dark:bg-neutral-800 active:bg-gray-200 active:dark:bg-neutral-700']"
+            :class="['dark' === props.activeMode ? 'bg-primaryContainer hover:bg-primaryContainer text-primary dark:text-onPrimaryContainer' : 'hover:bg-helper active:bg-border text-onSurface-inActive']"
             class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-xl px-4 py-[0.6rem] sm:[&:nth-child(2)]:rounded-t-[6px] sm:last:rounded-b-[6px]"
             @click="toggleMode('dark')">
         </DarkAction>
         <FollowSystemAction
             :icon="props.iconMap.get('followSystem')"
             text="跟随系统"
-            :class="['followSystem' === props.activeMode ? 'bg-blue-100 dark:bg-neutral-700 hover:bg-blue-100 hover:dark:bg-neutral-700 text-blue-500 dark:text-inherit' : 'hover:bg-gray-100 hover:dark:bg-neutral-800 active:bg-gray-200 active:dark:bg-neutral-700']"
+            :class="['followSystem' === props.activeMode ? 'bg-primaryContainer hover:bg-primaryContainer text-primary dark:text-onPrimary' : 'hover:bg-helper active:bg-border text-onSurface-inActive']"
             class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-xl px-4 py-[0.6rem] sm:[&:nth-child(2)]:rounded-t-[inherit] sm:last:rounded-b-[inherit]"
             @click="toggleMode('followSystem')">
         </FollowSystemAction>

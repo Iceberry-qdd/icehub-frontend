@@ -9,13 +9,13 @@
         </Header>
         <div class="max-sm:top-[48px] no-scrollbar overflow-x-auto sticky top-[56px] w-full z-[104]">
             <div
-                class="after:bg-blue-500 backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-blue-300 dark:bg-[#121212dd] dark:text-white/50 flex flex-row min-w-full tab text-[0.9rem] text-zinc-500 w-fit">
+                class="after:bg-primary backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-onPrimary dark:bg-[#121212dd] dark:text-white/50 flex flex-row min-w-full tab text-[0.9rem] text-zinc-500 w-fit">
                 <div
                     v-for="(menu, index) in state.menus"
                     :key="menu.id"
                     :index="index"
-                    :class="{ 'text-blue-500 dark:text-blue-300': $route.name === menu.id }"
-                    class="flex flex-1 hover:dark:text-blue-300 hover:text-blue-500 items-center justify-center min-w-fit py-2 w-[4.5rem]"
+                    :class="{ 'text-primary': $route.name === menu.id }"
+                    class="flex flex-1 hover:dark:text-onPrimary hover:text-primary items-center justify-center min-w-fit py-2 w-[4.5rem]"
                     @click="routeTo(menu.id)">
                     {{ menu.name }}
                 </div>

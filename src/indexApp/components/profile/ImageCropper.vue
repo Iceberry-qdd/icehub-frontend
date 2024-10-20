@@ -156,12 +156,12 @@
                 </div>
                 <div class="backdrop-blur-md border-t-[1px] bottom-0 dark:border-t-neutral-700 flex flex-row gap-x-3 h-fit items-center justify-center max-sm:hidden py-2 rounded-br-[8px] sticky w-full">
                     <div
-                        class="active:bg-blue-500/75 bg-blue-500 cursor-pointer h-[2.25rem] hover:bg-blue-600 px-3 py-2 rounded-full text-[0.9rem] text-center text-white w-[40%]"
+                        class="active:bg-primary-inActive bg-primary cursor-pointer h-[2.25rem] px-3 py-2 rounded-full text-[0.9rem] text-center text-onPrimary w-[40%]"
                         @click="applyImg">
                         应用
                     </div>
                     <div
-                        class="active:bg-gray-200/75 active:text-zinc-500 bg-gray-200 cursor-pointer h-[2.25rem] hover:bg-gray-300 px-3 py-2 rounded-full text-[0.9rem] text-black/75 text-center w-[40%]"
+                        class="active:bg-gray-200/75 bg-gray-200 cursor-pointer dark:active:bg-primary-inActive dark:bg-primary h-[2.25rem] px-3 py-2 rounded-full text-[0.9rem] text-center text-onPrimaryContainer-inActive w-[40%]"
                         @click="skip">
                         跳过裁剪
                     </div>

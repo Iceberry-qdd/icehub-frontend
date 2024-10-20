@@ -74,7 +74,7 @@ const avatar = computed(() => {
 })
 
 const defaultBgColor = computed(() => {
-    return props.user?.avatar?.emoji?.bgColor || '#3b82f6'
+    return props.user?.avatar?.emoji?.bgColor || 'rgb(var(--color-primary))'
 })
 
 const borderRadius = computed(() => {

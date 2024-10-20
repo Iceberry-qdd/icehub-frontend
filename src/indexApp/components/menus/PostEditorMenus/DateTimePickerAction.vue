@@ -2,21 +2,21 @@
     <div class="bg-white dark:bg-[#1e1e1e] dark:text-white/50 flex flex-col gap-2 items-center justify-start no-scrollbar p-4 text-[#606266] text-[0.9rem]">
         <div
             v-if="props.noteMsg"
-            class="bg-[#f1f3f4] cursor-default dark:bg-neutral-700 flex gap-2 h-[2.5rem] items-center justify-left p-3 rounded-lg w-full">
-            <IconInfo class="bg-[#cfe2ff] box-content dark:bg-neutral-500 p-[0.1rem] rounded-full"></IconInfo>
+            class="bg-primaryContainer-inActive cursor-default dark:bg-neutral-700 flex gap-2 h-[2.5rem] items-center justify-left p-3 rounded-lg w-full">
+            <IconInfo class="bg-primary box-content dark:bg-onPrimaryContainer-disable dark:text-onPrimaryContainer p-[0.1rem] rounded-full text-onPrimary"></IconInfo>
             {{ props.noteMsg }}
         </div>
         <div id="date-picker">
             <div class="flex flex-nowrap flex-row items-center justify-between w-full">
                 <div
-                    class="btn-no-select cursor-pointer dark:text-blue-300 text-[#409EFF]"
+                    class="btn-no-select cursor-pointer dark:text-onPrimaryContainer text-primary"
                     @click="closeAndClear">
                     清除
                 </div>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div>{{ formattedPickedDateTime }}</div>
                 <div
-                    class="btn-no-select cursor-pointer dark:text-blue-300 text-[#409EFF]"
+                    class="btn-no-select cursor-pointer dark:text-onPrimaryContainer text-primary"
                     @click="closeAndOk">
                     确定
                 </div>
@@ -69,7 +69,7 @@
                     <div
                         v-for="i in daysCountOfPickedMonth"
                         :key="i"
-                        :class="[state.pickedDay == i ? 'text-white bg-blue-500 dark:bg-neutral-700' : 'hover:bg-[#EBEEF5] dark:hover:bg-neutral-800', canPickThisDay(i) ? 'text-initial dark:text-white' : 'm-disabled']"
+                        :class="[state.pickedDay === i ? 'text-white bg-primary' : 'hover:bg-helper', canPickThisDay(i) ? 'text-initial dark:text-white' : 'm-disabled']"
                         class="btn-no-select flex h-[2.5rem] items-center justify-center rounded-full w-[2.5rem]"
                         @click="canPickThisDay(i) ? state.pickedDay = i : ''">
                         {{ i }}
@@ -82,11 +82,11 @@
             <select
                 id="hour-picker"
                 v-model="state.pickedHour"
-                class="border-[1px] dark:bg-neutral-700 dark:border-neutral-700 dark:focus:ring-0 focus-visible:outline-none focus:ring-2 px-4 py-1 ring-blue-500 ring-offset-2 rounded-[6px]"
+                class="border-[1px] dark:bg-neutral-700 dark:border-neutral-700 dark:focus:ring-0 focus-visible:outline-none focus:ring-2 px-4 py-1 ring-offset-2 ring-primary rounded-[6px]"
                 required
                 name="hour-picker">
                 <option
-                    v-for="(hour, index) in 24"
+                    v-for="(_, index) in 24"
                     :key="index"
                     class="font-normal text-[1rem] text-[initial]"
                     :value="index">
@@ -100,7 +100,7 @@
             <select
                 id="minute-picker"
                 v-model="state.pickedMinute"
-                class="border-[1px] dark:bg-neutral-700 dark:border-neutral-700 dark:focus:ring-0 focus-visible:outline-none focus:ring-2 px-4 py-1 ring-blue-500 ring-offset-2 rounded-[6px]"
+                class="border-[1px] dark:bg-neutral-700 dark:border-neutral-700 dark:focus:ring-0 focus-visible:outline-none focus:ring-2 px-4 py-1 ring-offset-2 ring-primary rounded-[6px]"
                 required
                 name="minute-picker">
                 <option

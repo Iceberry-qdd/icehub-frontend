@@ -67,12 +67,12 @@ markdown blockquote:where([theme="dark"], [theme="dark"] *){
 }
 
 markdown a{
-    color:dodgerblue;
+    color: rgb(var(--color-primary));
     text-decoration: underline;
 }
 
 markdown a:where([theme="dark"], [theme="dark"] *){
-    color: #93c5fd;
+    color: rgb(var(--color-on-primary));
 }
 
 markdown p code{

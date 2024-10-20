@@ -283,6 +283,11 @@
 .loading:where([theme="dark"], [theme="dark"] *){
     background-color: #000000AA;
 }
+
+:is(.form-control, .form-select):focus{
+    border-color: rgb(var(--color-primary));
+    box-shadow: 0 0 0 .25rem rgba(var(--color-primary) / 0.3);
+}
 </style>
 
 <!-- eslint-disable vue/max-lines-per-block -->

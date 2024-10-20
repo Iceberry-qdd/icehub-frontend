@@ -14,7 +14,7 @@
                 <div
                     v-for="menu in state.menus"
                     :key="menu.id"
-                    :class="{'bg-[#f4f4f5] border-l-[#3b82f6] border-l-4 pl-[calc(1rem-4px)]': [$route.name, $route.meta?.parent].includes(menu.id)}"
+                    :class="{'bg-[#f4f4f5] border-l-primary dark:border-l-onPrimary border-l-4 pl-[calc(1rem-4px)]': [$route.name, $route.meta?.parent].includes(menu.id)}"
                     class="flex flex-row hover:bg-[#f4f4f5] items-center justify-between px-4 py-4 text-[12pt]"
                     @click="routeTo(menu.id)">
                     <div class="flex flex-row gap-x-2 items-center">

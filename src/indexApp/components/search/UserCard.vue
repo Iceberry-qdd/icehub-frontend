@@ -14,17 +14,17 @@
                     v-if="!isSelf"
                     :class="followBtnClass"
                     class="btn-no-select flex flex-row items-center justify-center min-w-[4.5rem] px-3 py-1 rounded-full text-[0.85rem]"
-                    @click.stop="state.yourFollowStatus !== 'UN_FOLLOW' ? doUnFollowUser() : doFollowUser()">
+                    @click.stop="state.yourFollowStatus !== 'NOT_FOLLOW' ? doUnFollowUser() : doFollowUser()">
                     {{ followButtonText }}
                 </div>
             </div>
             <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
-                <div class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
+                <div class="font-bold hover:underline hover:underline-offset-4 text-[1rem]">
                     {{ state.user.nickname }}
                 </div>
                 <IconVerify
                     v-if="state.user.verified"
-                    class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                 </IconVerify>
                 <div
                     v-if="state.user.confirmFollow"
@@ -71,10 +71,10 @@ const state = reactive({
 const isSelf = computed(() => state.curUser.id === props.user.id)
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500 dark:bg-neutral-700': state.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-primary': state.yourFollowStatus === 'NOT_FOLLOW',
     'bg-gray-200 dark:bg-neutral-800': state.yourFollowStatus !== 'NOT_FOLLOW',
     'text-zinc-500 dark:text-white/25': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-white dark:text-blue-300': state.yourFollowStatus === 'NOT_FOLLOW'
+    'text-onPrimary': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 const followButtonText = computed(() => {

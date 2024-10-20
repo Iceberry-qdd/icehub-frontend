@@ -99,19 +99,11 @@
 }
 
 .action:hover{
-    background-color: #f3f4f6;
-}
-
-.action:hover:where([theme="dark"], [theme="dark"] *){
-    background-color: #262626;
+    background-color: rgb(var(--color-helper));
 }
 
 .action:active{
-    background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-}
-
-.action:active:where([theme="dark"], [theme="dark"] *){
-    background-color: #404040;
+    background-color: rgb(var(--color-border));
 }
 
 .fade-enter-active {

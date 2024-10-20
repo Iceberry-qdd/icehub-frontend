@@ -15,7 +15,7 @@
                 </div>
                 <IconVerify
                     v-if="props.user.verified"
-                    class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                 </IconVerify>
                 <div
                     v-if="props.user.confirmFollow"
@@ -28,7 +28,7 @@
             </div>
         </div>
         <div
-            class="bg-blue-500 cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
+            class="bg-primary cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-onPrimary w-[6rem]"
             @click="passFanRequest">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div v-if="!state.loading">移出</div>

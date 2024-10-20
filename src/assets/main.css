@@ -181,11 +181,11 @@ span:has(.m-icon):hover:where([theme="dark"], [theme="dark"] *){
 .suggests em {
     font-style: normal;
     font-weight: normal;
-    color: #3b82f6;
+    color: rgb(var(--color-primary))
 }
 
 .suggests em:where([theme="dark"], [theme="dark"] *){
-    color: #93c5fd;
+    color: rgb(var(--color-on-primary))
 }
 
 * {
@@ -251,3 +251,118 @@ body:has(div:where(.fixed-page)) {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base{
+    :root {
+        --color-on-primary: 255 255 255; /* white */
+
+        --color-on-primary-container: 0 0 0; /* black */
+        
+        --color-background: 255 255 255; /* white */
+        --color-on-background: 0 0 0; /* black */
+
+        --color-surface: 255 255 255; /* white */
+        --color-on-surface: 0 0 0; /* black */
+
+        --color-error: 254 226 226; /* red-100 */
+        --color-on-error: 239 68 68; /* red-500 */
+
+        --color-helper: 245 245 245; /* neutral-100 */
+        --color-on-helper: 163 163 163; /* neutral-400 */
+
+        --color-border: 229 231 235; /* gray-200 */
+    }
+
+    :where([accent="blue"], [accent="blue"] *){
+        --color-primary: 59 130 246; /* blue-500 */
+        --color-primary-container: 219 234 254; /* blue-100 */
+    }
+
+    :where([accent="rose"], [accent="rose"] *){
+        --color-primary: 244 63 94; /* rose-500 */
+        --color-primary-container: 255 228 230; /* rose-100 */
+    }
+
+    :where([accent="amber"], [accent="amber"] *){
+        --color-primary: 245 158 11; /* amber-500 */
+        --color-primary-container: 254 243 199; /* amber-100 */
+    }
+
+    :where([accent="lime"], [accent="lime"] *){
+        --color-primary: 132 204 22; /* lime-500 */
+        --color-primary-container: 236 252 203; /* lime-100 */
+    }
+
+    :where([accent="emerald"], [accent="emerald"] *){
+        --color-primary: 16 185 129; /* emerald-500 */
+        --color-primary-container: 220 252 231; /* emerald-100 */
+    }
+
+    :where([accent="teal"], [accent="teal"] *){
+        --color-primary: 20 184 166; /* teal-500 */
+        --color-primary-container: 204 251 241; /* teal-100 */
+    }
+
+    :where([accent="violet"], [accent="violet"] *){
+        --color-primary: 139 92 246; /* violet-500 */
+        --color-primary-container: 237 233 254; /* violet-100 */
+    }
+
+    :where([accent="neutral"], [accent="neutral"] *){
+        --color-primary: 115 115 115; /* neutral-500 */
+        --color-primary-container: 245 245 245; /* neutral-100 */
+    }
+
+    :where([theme="dark"], [theme="dark"] *){
+        --color-primary: 64 64 64; /* neutral-700 */
+
+        --color-primary-container: 64 64 64; /* neutral-700 */
+        --color-on-primary-container: 255 255 255; /* white */
+        
+        --color-background: 18 18 18;
+        --color-on-background: 255 255 255; /* white */
+
+        --color-surface: 30 30 30;
+        --color-on-surface: 255 255 255; /* white */
+
+        --color-error: 64 64 64; /* neutral-700 */
+        --color-on-error: 252 165 165; /* red-300 */
+
+        --color-helper: 38 38 38; /* neutral-800 */
+        --color-on-helper: 163 163 163; /* neutral-400 */
+
+        --color-border: 30 30 30;
+    }
+
+    :where([theme="dark"][accent="blue"], [theme="dark"][accent="blue"] *){
+        --color-on-primary: 147 197 253; /* blue-300 */
+    }
+
+    :where([theme="dark"][accent="rose"], [theme="dark"][accent="rose"] *){
+        --color-on-primary: 253 164 175; /* rose-300 */
+    }
+
+    :where([theme="dark"][accent="amber"], [theme="dark"][accent="amber"] *){
+        --color-on-primary: 252 211 77; /* amber-300 */
+    }
+
+    :where([theme="dark"][accent="lime"], [theme="dark"][accent="lime"] *){
+        --color-on-primary: 190 242 100; /* lime-300 */
+    }
+
+    :where([theme="dark"][accent="emerald"], [theme="dark"][accent="emerald"] *){
+        --color-on-primary: 110 231 183; /* emerald-300 */
+    }
+
+    :where([theme="dark"][accent="teal"], [theme="dark"][accent="teal"] *){
+        --color-on-primary: 94 234 212; /* teal-300 */
+    }
+
+    :where([theme="dark"][accent="violet"], [theme="dark"][accent="violet"] *){
+        --color-on-primary: 196 181 253; /* violet-300 */
+    }
+
+    :where([theme="dark"][accent="neutral"], [theme="dark"][accent="neutral"] *){
+        --color-on-primary: 212 212 212; /* neutral-300 */
+    }
+}

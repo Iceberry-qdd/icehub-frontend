@@ -7,7 +7,7 @@
                 v-for="(unified, index) in state.historyEmojis"
                 :key="index"
                 type="button"
-                class="aria-selected border border-transparent cursor-pointer dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 flex focus:bg-[#cfe2ff] h-[2rem] hover:bg-[#f1f3f4] items-center justify-center p-1 rounded-[8px] w-[2rem]"
+                class="aria-selected border border-transparent cursor-pointer flex focus:bg-primaryContainer h-[2rem] hover:bg-helper hover:dark:bg-primaryContainer items-center justify-center p-1 rounded-[8px] w-[2rem]"
                 @click="chooseEmoji(unified)">
                 <span>{{ emojiCode({ unified: unified }) }}</span>
             </button>
@@ -34,7 +34,7 @@
                         :key="emoji.unified"
                         type="button"
                         :title="emoji.short_name"
-                        class="border border-transparent cursor-pointer dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 flex flex-col focus:bg-[#cfe2ff] h-[2.5rem] hover:bg-[#f1f3f4] items-center justify-center p-1 relative rounded-[8px] text-[16pt] w-[2.5rem]"
+                        class="border border-transparent cursor-pointer flex flex-col focus:bg-primaryContainer h-[2.5rem] hover:bg-helper hover:dark:bg-primaryContainer items-center justify-center p-1 relative rounded-[8px] text-[16pt] w-[2.5rem]"
                         @mouseenter.self="toggleSkinPanel(emoji, true)"
                         @mouseleave.self="toggleSkinPanel(emoji, false)">
                         <span @click="chooseEmoji(emoji.unified)">{{ emojiCode(emoji) }}</span>
@@ -47,7 +47,7 @@
                                 <div
                                     v-for="(skinVariation, skinCode) in emoji.skin_variations"
                                     :key="skinVariation.unified"
-                                    class="box-border dark:focus:bg-neutral-700 dark:hover:bg-neutral-700 flex focus:bg-[#cfe2ff] h-[2rem] hover:bg-[#f1f3f4] items-center justify-center p-2 rounded-[8px] w-[2rem]"
+                                    class="box-border flex focus:bg-primaryContainer h-[2rem] hover:bg-helper hover:dark:bg-primaryContainer items-center justify-center p-2 rounded-[8px] w-[2rem]"
                                     @click.self="chooseEmoji(skinVariation.unified)">
                                     {{ emojiCode(emoji, skinCode) }}
                                 </div>

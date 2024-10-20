@@ -32,20 +32,17 @@ const state = reactive({
         title: '确定要退出登录吗？',
         confirmButton: {
             text: '确定退出',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
-            selected: false
+            selected: false,
+            color: 'text-onError',
+            bgColor: 'bg-error'
         },
         cancelButton: {
             text: '取消',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
             show: false,
-            text: '正在退出登录...',
-            color: 'rgb(239 68 68)'
+            text: '正在退出登录...'
         }
     },
 })

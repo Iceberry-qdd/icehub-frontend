@@ -54,7 +54,7 @@ const props = defineProps({
 
 const labelClass = computed(() => ({
     'loading ': props.loading,
-    'cursor-not-allowed has-[:checked]:bg-blue-300': !props.enabled || props.loading,
-    'cursor-pointer has-[:checked]:bg-blue-500': props.enabled && !props.loading
+    'cursor-not-allowed has-[:checked]:bg-primary-disable dark:has-[:checked]:bg-onPrimary-disable': !props.enabled || props.loading,
+    'cursor-pointer has-[:checked]:bg-primary dark:has-[:checked]:bg-onPrimary': props.enabled && !props.loading
 }))
 </script>

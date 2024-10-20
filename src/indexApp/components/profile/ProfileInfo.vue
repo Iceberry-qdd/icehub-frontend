@@ -16,11 +16,11 @@
                     </div>
                 </div>
                 <div
-                    class="bg-blue-500 cursor-pointer dark:bg-neutral-700 h-fit px-4 py-1 rounded-full text-[0.9rem] text-white"
+                    class="bg-primary cursor-pointer h-fit px-4 py-1 rounded-full text-[0.9rem] text-onPrimary"
                     @click="passFanRequest">
                     <div v-if="!state.confirmFanBtnLoading">批准</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconLoading v-else class="dark:text-white/50 h-5 text-white w-5"></IconLoading>
+                    <IconLoading v-else class="dark:text-white/50 h-5 text-onPrimary w-5"></IconLoading>
                 </div>
             </div>
         </div>
@@ -41,12 +41,12 @@
                     </div>
                     <div
                         v-if="props.user.yourFanStatus === 'FAN' && props.user.yourFollowStatus !== 'FOLLOW'"
-                        class="bg-blue-100 dark:bg-neutral-800 dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                        class="bg-primaryContainer dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-primary">
                         订阅了你
                     </div>
                     <div
                         v-if="props.user.yourFanStatus === 'WAIT_PASS'"
-                        class="bg-blue-100 dark:bg-neutral-800 dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                        class="bg-primaryContainer dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-primary">
                         请求订阅你
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                     <span class="cursor-default material-symbols-rounded no-hover">calendar_month</span>
                     <div>{{ formattedDate }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconVerify v-if="props.user.verified" class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]"></IconVerify>
+                    <IconVerify v-if="props.user.verified" class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]"></IconVerify>
                     <div v-if="props.user.verified">{{ props.user.verifiedInfo }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <span v-if="props.user.city" class="cursor-default material-symbols-rounded no-hover">location_on</span>
@@ -98,7 +98,7 @@
                     <a
                         v-if="props.user.website"
                         :href="props.user.website"
-                        class="dark:hover:decoration-blue-300 dark:hover:text-blue-300 hover:decoration-blue-500 hover:text-blue-500 hover:underline">
+                        class="dark:hover:decoration-primaryContainer dark:hover:text-onPrimary hover:decoration-primary hover:text-primary hover:underline">
                         {{ props.user.website }}
                     </a>
                 </div>
@@ -143,11 +143,7 @@ import { followUser, unFollowUser, deleteOneBlacklist, confirmFanRequest } from 
 import { store } from '@/indexApp/js/store.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import IconCalendar from '@/components/icons/IconCalendar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
-import IconLocation from '@/components/icons/IconLocation.vue'
-import IconWebsite from '@/components/icons/IconWebsite.vue'
-import IconEmail from '@/components/icons/IconEmail.vue'
 import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 import Avatar from '@/components/Avatar.vue'
 import { standardDate } from '@/indexApp/utils/formatUtils.js'
@@ -174,20 +170,15 @@ const state = reactive({
         title: '确定要解除屏蔽吗？',
         confirmButton: {
             text: '解除屏蔽',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
             selected: false
         },
         cancelButton: {
             text: '保持屏蔽',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
             show: false,
-            text: '解除屏蔽中......',
-            color: 'rgb(239 68 68)'
+            text: '解除屏蔽中......'
         }
     },
     followTextMap: new Map([
@@ -235,10 +226,10 @@ const followButtonText = computed(() => {
 })
 
 const followButtonClass = computed(() => ({
-    'bg-blue-500 dark:bg-neutral-700': state.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-primary': state.yourFollowStatus === 'NOT_FOLLOW',
     'bg-gray-200 dark:bg-neutral-800': state.yourFollowStatus !== 'NOT_FOLLOW',
     'text-zinc-500 dark:text-white/25': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-white dark:text-blue-300': state.yourFollowStatus === 'NOT_FOLLOW'
+    'text-onPrimary': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 function routeTo(routeName, routeParam) {

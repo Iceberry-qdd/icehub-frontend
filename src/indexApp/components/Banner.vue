@@ -11,7 +11,7 @@
                 v-bind="$attrs" />
         </picture>
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div v-else v-bind="$attrs" class="bg-gradient-to-r dark:bg-neutral-800 dark:bg-none from-sky-500 to-indigo-500" />
+        <div v-else v-bind="$attrs" class="bg-primary dark:bg-neutral-800" />
     </div>
 </template>
 

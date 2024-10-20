@@ -69,7 +69,7 @@
                                             v-html="suggest.content.nickname" />
                                         <IconVerify
                                             v-if="suggest.content.verified"
-                                            class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
+                                            class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                                         </IconVerify>
                                         <div
                                             v-if="suggest.content.confirmFollow"

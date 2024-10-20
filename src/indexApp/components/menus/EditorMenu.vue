@@ -36,7 +36,7 @@
                     <span
                         title="帖子可见范围"
                         class="material-symbols-rounded"
-                        :class="[state.showVisibilityPanel ? 'bg-blue-100 dark:bg-neutral-700 active' : '', curVisibility.code != 'PUBLIC' ? 'active' : '']">
+                        :class="[state.showVisibilityPanel ? 'bg-primaryContainer active' : '', curVisibility.code != 'PUBLIC' ? 'active' : '']">
                         {{ curVisibility.icon }}
                     </span>
                 </div>
@@ -71,7 +71,7 @@
                     <span
                         title="定时发送"
                         class="material-symbols-rounded"
-                        :class="[state.showSchedulePanel ? 'bg-blue-100 dark:bg-neutral-700 active' : '', props.createdTime ? 'active' : '']">
+                        :class="[state.showSchedulePanel ? 'bg-primaryContainer active' : '', props.createdTime ? 'active' : '']">
                         schedule
                     </span>
                 </div>
@@ -118,7 +118,7 @@
                     <span
                         title="表情面板"
                         class="material-symbols-rounded"
-                        :class="[state.showEmojiPanel ? 'bg-blue-100 dark:bg-neutral-700 active' : '']">
+                        :class="[state.showEmojiPanel ? 'bg-primaryContainer active' : '']">
                         mood
                     </span>
                 </div>
@@ -183,7 +183,7 @@
             </div>
             <div
                 :class="submitBtnClass"
-                class="max-sm:hidden px-6 py-2 rounded-full text-sm text-white"
+                class="max-sm:hidden px-6 py-2 rounded-full text-sm"
                 @click="emits('submit')">
                 <span>发布</span>
             </div>
@@ -199,21 +199,20 @@
 }
 
 .material-symbols-rounded.active {
-    color: rgb(59 130 246);
+    color: rgb(var(--color-primary));
 }
 
 .material-symbols-rounded.active:where([theme="dark"], [theme="dark"] *){
     color: inherit;
-    background-color: #404040;
+    background-color: rgb(var(--color-primary-container));
 }
 
 .material-symbols-rounded:hover {
-    background-color: #dbeafe !important;
-    color: rgb(59 130 246);
+    background-color: rgb(var(--color-primary-container)) !important;
+    color: rgb(var(--color-primary));
 }
 
 .material-symbols-rounded:where([theme="dark"], [theme="dark"] *):hover{
-    background-color: #262626 !important;
     color: inherit;
 }
 
@@ -438,11 +437,8 @@ const isValidContentLength = computed(() => {
 })
 
 const submitBtnClass = computed(() => ({
-    'bg-blue-500 dark:bg-neutral-700': isValidContentLength.value,
-    'cursor-pointer': isValidContentLength.value,
-    'bg-gray-300 dark:bg-neutral-800 dark:text-white/25': !isValidContentLength.value,
-    'cursor-not-allowed': !isValidContentLength.value,
-    'pointer-events-none': !isValidContentLength.value
+    'bg-primary cursor-pointer text-onPrimary dark:text-onPrimaryContainer': isValidContentLength.value,
+    'bg-border text-onPrimary dark:text-onSurface-disable cursor-not-allowed pointer-events-none': !isValidContentLength.value,
 }))
 
 const leftWordCount = computed(() => {
@@ -450,8 +446,8 @@ const leftWordCount = computed(() => {
 })
 
 const leftWordCountClass = computed(() => ({
-    'text-blue-500 dark:text-blue-300': leftWordCount.value >= 0,
-    'text-red-500': leftWordCount.value < 0,
+    'text-primary dark:text-onPrimary': leftWordCount.value >= 0,
+    'text-onError': leftWordCount.value < 0,
     'hidden': leftWordCount.value === props.maxContentWordCount
 }))
 </script>

@@ -12,8 +12,8 @@
             class="cursor-pointer font-light sm:max-lg:hidden text-[0.6rem]"
             @click="routeTo('index')">
             <span class="font-bold mr-1 text-2xl">Icehub</span>
-            <span class="align-text-bottom bg-blue-500 dark:bg-neutral-800 mr-1 px-1 py-[0.1rem] rounded-md text-white">{{ mode }}</span>
-            <span class="align-text-bottom bg-green-500 dark:bg-neutral-800 pwa-badge px-1 py-[0.1rem] rounded-md text-white">pwa</span>
+            <span class="align-text-bottom bg-primary mr-1 px-1 py-[0.1rem] rounded-md text-onPrimary">{{ mode }}</span>
+            <span class="align-text-bottom bg-green-500 dark:bg-primary pwa-badge px-1 py-[0.1rem] rounded-md text-onPrimary">pwa</span>
         </div>
     </div>
 </template>

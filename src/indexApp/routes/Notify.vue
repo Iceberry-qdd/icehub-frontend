@@ -21,12 +21,12 @@
 
         <div class="max-sm:top-[48px] no-scrollbar overflow-x-auto sticky top-[56px] w-full z-[104]">
             <div
-                class="after:bg-blue-500 backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-blue-300 dark:bg-[#121212dd] dark:text-white/50 flex flex-row min-w-full tab text-[0.9rem] text-zinc-500 w-fit">
+                class="after:bg-primary backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-onPrimary dark:bg-[#121212dd] dark:text-white/50 flex flex-row min-w-full tab text-[0.9rem] text-zinc-500 w-fit">
                 <div
                     v-for="tab in state.tabs"
                     :key="tab.id"
-                    :class="{ 'text-blue-500 dark:text-blue-300': tab.id === $route.name }"
-                    class="flex flex-1 hover:dark:text-blue-300 hover:text-blue-500 items-center justify-center min-w-fit py-2 w-[4.5rem]"
+                    :class="{ 'text-primary dark:text-onPrimary': tab.id === $route.name }"
+                    class="flex flex-1 hover:dark:text-onPrimary hover:text-primary items-center justify-center min-w-fit py-2 w-[4.5rem]"
                     @click="$router.replace({ name: tab.id })">
                     {{ `${tab.name} ${tab.count || ''}` }}
                 </div>
@@ -85,20 +85,15 @@ const state = reactive({
         title: '确定要已读全部消息吗？(已读后不可撤回)',
         confirmButton: {
             text: '全部已读',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
             selected: false
         },
         cancelButton: {
             text: '取消',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
             show: false,
-            text: '正在将全部消息设为已读...',
-            color: 'rgb(239 68 68)'
+            text: '正在将全部消息设为已读...'
         }
     },
     tabs: [

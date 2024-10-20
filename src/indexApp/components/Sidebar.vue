@@ -1,5 +1,5 @@
 <template>
-    <ul class="flex flex-col flex-nowrap justify-start max-lg:gap-y-2 max-sm:bg-white max-sm:border-t-[1px] max-sm:bottom-0 max-sm:dark:bg-[#121212] max-sm:dark:border-neutral-700 max-sm:flex-row max-sm:py-2">
+    <ul class="flex flex-col flex-nowrap justify-start max-lg:gap-y-2 max-sm:bg-background max-sm:border-border max-sm:border-t-[1px] max-sm:bottom-0 max-sm:flex-row max-sm:py-2">
         <li
             v-for="menu in state.menus.filter(menu => menu.visible == true)"
             :key="menu.id"
@@ -11,7 +11,7 @@
                 class="content-center flex flex-nowrap gap-x-[1rem] items-center justify-between max-sm:flex-col max-sm:gap-y-[0.1rem] relative sm:flex-row">
                 <div
                     v-if="menu.badgeCount"
-                    class="absolute bg-red-500 dark:text-[#121212] leading-3 left-1/2 lg:hidden min-w-[1.05rem] px-[0.3rem] py-[0.15rem] rounded-full select-none text-[0.7rem] text-center text-white top-0 z-[1]">
+                    class="absolute bg-red-500 dark:text-onPrimaryContainer leading-3 left-1/2 lg:hidden min-w-[1.05rem] px-[0.3rem] py-[0.15rem] rounded-full select-none text-[0.7rem] text-center text-onPrimary top-0 z-[1]">
                     {{ menu.badgeCount > 999 ? '999+' : menu.badgeCount }}
                 </div>
                 <div
@@ -39,19 +39,11 @@
 
 <style scoped>
 li:not(.active):hover {
-    background-color: #F5F5F5;
+    background-color: rgb(var(--color-helper));
 }
 
 li.active {
-    background-color: #cfe2ff;
-}
-
-li:not(.active):hover:where([theme="dark"], [theme="dark"] *) {
-    background-color: #1e1e1e;
-}
-
-li.active:where([theme="dark"], [theme="dark"] *) {
-    background-color: #1e1e1e;
+    background-color: rgb(var(--color-primary-container));
 }
 
 @media not all and (min-width: 640px) {
@@ -68,19 +60,11 @@ li.active:where([theme="dark"], [theme="dark"] *) {
     }
 
     li.active :is(.material-symbols-rounded, .avatar) {
-        background-color: #cfe2ff;
+        background-color: rgb(var(--color-primary-container));
     }
 
     li:not(.active) :is(.material-symbols-rounded, .avatar):hover {
-        background-color: #F5F5F5;
-    }
-
-    li.active :is(.material-symbols-rounded, .avatar):where([theme="dark"], [theme="dark"] *) {
-        background-color: #1e1e1e;
-    }
-
-    li:not(.active) :is(.material-symbols-rounded, .avatar):hover:where([theme="dark"], [theme="dark"] *) {
-        background-color: #1e1e1e;
+        background-color: rgb(var(--color-helper));
     }
 }
 </style>

@@ -44,7 +44,7 @@
                 v-show="!store.MOBILE_MODE || (store.MOBILE_MODE && state.isShowPostEditor)"
                 id="post-editor"
                 :class="{'fixed-page': store.MOBILE_MODE && state.isShowPostEditor}"
-                class="border-b-[1px] dark:border-[#1e1e1e] max-sm:fixed max-sm:h-[calc(100vh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
+                class="border-b-[1px] border-border max-sm:fixed max-sm:h-[calc(100vh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
                 @close="state.isShowPostEditor = false"
                 @get-data="getData"
                 @posting-new="postingNew">
@@ -63,7 +63,7 @@
         </Footer>
         <div
             id="create-post-btn"
-            class="bg-blue-500 bottom-20 dark:bg-neutral-800 dark:shadow-neutral-800/25 fixed material-symbols-rounded no-hover p-3 right-4 shadow-blue-500/25 shadow-lg sm:hidden text-white z-[111]"
+            class="bg-primary bottom-20 dark:shadow-neutral-800/25 fixed material-symbols-rounded no-hover p-3 right-4 shadow-lg shadow-primary-disable sm:hidden text-white z-[111]"
             @click="state.isShowPostEditor = true">
             create
         </div>

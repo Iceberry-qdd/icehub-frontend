@@ -38,20 +38,17 @@ const state = reactive({
         title: '确定要删除此评论吗？',
         confirmButton: {
             text: '删除',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
+            color: 'text-onError',
+            bgColor: 'bg-error',
             selected: false
         },
         cancelButton: {
             text: '不删除',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
             show: false,
-            text: '正在删除中......',
-            color: 'rgb(239 68 68)'
+            text: '正在删除中......'
         }
     }
 })

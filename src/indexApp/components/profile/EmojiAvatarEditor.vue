@@ -26,7 +26,7 @@
             </div>
             <div
                 :class="tabBorderClass"
-                class="after:bg-blue-500 bg-inherit cursor-pointer dark:after:bg-blue-300 dark:text-white/50 flex flex-row h-[2.5rem] max-sm:h-[3rem] sticky tab text-[1rem] text-zinc-500 z-[99]">
+                class="after:bg-primary bg-inherit cursor-pointer dark:after:bg-onPrimary dark:text-white/50 flex flex-row h-[2.5rem] max-sm:h-[3rem] sticky tab text-[1rem] text-zinc-500 z-[99]">
                 <div
                     :class="emojiPanelTabClass"
                     class="basis-1/2 flex items-center justify-center"
@@ -171,13 +171,13 @@ const state = reactive({
         avatar: {
             emoji: {
                 emoji: props?.avatar?.emoji?.emoji || '😀',
-                bgColor: props?.avatar?.emoji?.bgColor || '#3b82f6'
+                bgColor: props?.avatar?.emoji?.bgColor || 'rgb(var(--color-primary))'
             }
         }
     },
     showEmojiPanel: true,
     showBgColorPanel: false,
-    selectColor: props?.avatar?.emoji?.bgColor || '#3b82f6'
+    selectColor: props?.avatar?.emoji?.bgColor
 })
 
 function insertEmojiCode(unified){
@@ -195,11 +195,11 @@ function dismiss(){
 }
 
 const emojiPanelTabClass = computed(() => ({
-    'text-blue-500 dark:text-blue-300': state.showEmojiPanel,
+    'text-primary dark:text-onPrimary': state.showEmojiPanel,
 }))
 
 const bgColorPanelTabClass = computed(() => ({
-    'text-blue-500 dark:text-blue-300': state.showBgColorPanel,
+    'text-primary dark:text-onPrimary': state.showBgColorPanel,
 }))
 
 const tabBorderClass = computed(() => ({
@@ -208,7 +208,12 @@ const tabBorderClass = computed(() => ({
 }))
 
 const bannerBg = computed(() => {
-    return `linear-gradient(to top right, ${state.selectColor}55, ${state.selectColor}25)`
+    if(!!state.selectColor){
+        return `linear-gradient(to top right, ${state.selectColor}55, ${state.selectColor}25)`
+    } else {
+        return `linear-gradient(to top right, rgb(var(--color-primary) / 0.3), rgb(var(--color-primary) / 0.2))`
+    }
+    
 })
 
 const confirmBtnBg = computed(() => {

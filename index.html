@@ -45,6 +45,27 @@
         } else {
             document.body.setAttribute('theme', 'light')
         }
+
+        // Emoji style settings
+        if (['followSystem', undefined].includes(localStorage.emoji)) {
+            document.body.removeAttribute('emoji')
+        } else {
+            document.body.setAttribute('emoji', localStorage.emoji)
+        }
+
+        // Highlight settings
+        if (['followTheme', undefined].includes(localStorage.hl)) {
+            document.body.removeAttribute('hl')
+        } else {
+            document.body.setAttribute('hl', localStorage.hl)
+        }
+
+        // Accent color settings
+        if (!localStorage.accentColor) {
+            document.body.removeAttribute('accent')
+        } else {
+            document.body.setAttribute('accent', localStorage.accentColor)
+        }
     </script>
 </body>
 

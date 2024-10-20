@@ -1,14 +1,14 @@
 <template>
     <!-- TODO implement it. -->
     <div
-        class="bg-blue-500 cursor-pointer dark:bg-neutral-700 dark:shadow-neutral-700/25 dark:text-white/50 flex flex-row gap-x-1 items-center pointer-events-auto px-2 py-1 rounded-full shadow-blue-500/25 shadow-lg text-white"
+        class="bg-primary cursor-pointer dark:text-onHelper flex flex-row gap-x-1 items-center pointer-events-auto px-2 py-1 rounded-full shadow-lg shadow-primary-disable text-onPrimary"
         @click="dismiss">
         <div class="-space-x-4 flex justify-center userAvatars">
             <Avatar
                 v-for="user in state.users"
                 :key="user.id"
                 :user="user"
-                class="-translate-x-1 border-4 border-solid border-white dark:border-white/50 h-9 rounded-[100%!important] text-[2.25rem] w-9">
+                class="-translate-x-1 border-4 border-border border-solid dark:border-onHelper h-9 rounded-[100%!important] text-[2.25rem] w-9">
             </Avatar>
         </div>
         <div class="text-sm">新动态</div>

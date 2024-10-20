@@ -47,7 +47,7 @@
                             </div>
                             <IconVerify
                                 v-if="state.reply.user.verified"
-                                class="dark:text-blue-300 h-[0.9rem] text-blue-500 w-[0.9rem]">
+                                class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                             </IconVerify>
                             <div
                                 v-if="state.reply.user.confirmFollow"
@@ -72,20 +72,22 @@
                 </div>
             </div>
 
-            <div class="max-sm:pl-[3.25rem] overflow-x-hidden pl-[3.5rem] relative text-[12pt]">
-                <div
-                    v-if="state.shrinkContent"
-                    class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer dark:bg-neutral-800 dark:text-blue-200 left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
-                    @click="state.shrinkContent = false">
-                    展开
+            <div class="max-sm:pl-[3.25rem] overflow-x-hidden pl-[3.5rem] text-[12pt]">
+                <div class="relative">
+                    <div
+                        v-if="state.shrinkContent"
+                        class="-translate-x-1/2 absolute bg-primaryContainer-inActive bottom-2 cursor-pointer dark:bg-neutral-800 dark:text-onPrimary left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                        @click="state.shrinkContent = false">
+                        展开
+                    </div>
+                    <VueShowdown
+                        tag="markdown"
+                        :extensions="['exts']"
+                        class="break-all overflow-y-hidden"
+                        :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}"
+                        :markdown="state.reply.content">
+                    </VueShowdown>
                 </div>
-                <VueShowdown
-                    tag="markdown"
-                    :extensions="['exts']"
-                    class="break-all overflow-y-hidden"
-                    :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}"
-                    :markdown="state.reply.content">
-                </VueShowdown>
                 <ImageGrid
                     v-if="state.reply.images?.length"
                     :id="`img-${state.reply.id}`"
@@ -165,7 +167,7 @@
             </div>
             <div
                 v-if="showMoreReplyButton"
-                class="dark:text-blue-300 hover:underline max-sm:ml-[3rem] ml-[3.5rem] text-[#0d6efd] text-[11pt] z-[19]"
+                class="dark:text-onPrimary hover:underline max-sm:ml-[3rem] ml-[3.5rem] text-[11pt] text-primary z-[19]"
                 :class="[state.isLoading ? 'pointer-events-none' : 'cursor-pointer']">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <IconLoading v-if="state.isLoading == true" class="dark:text-white/50 h-5 text-slate-500 w-5"></IconLoading>
@@ -321,10 +323,6 @@ function dismissReplyPanel() {
 
 const isLiked = computed(() => {
     return state.reply.liked
-})
-
-const likedIconStrokeColor = computed(() => {
-    return isLiked.value ? '#FF0000' : '#333'
 })
 
 const likedIconFillColor = computed(() => {

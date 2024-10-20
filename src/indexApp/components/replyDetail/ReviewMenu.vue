@@ -109,7 +109,6 @@ import DeleteReviewAction from '@/indexApp/components/menus/reviewMenus/DeleteRe
 
 const { userId:postCreatorId } = inject('postCreatorId')
 const { dismissReviewMenus } = inject('dismissReviewMenus')
-const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const curUser = JSON.parse(localStorage.getItem("CUR_USER"))
 const props = defineProps({
     /** 传入的评论对象 */

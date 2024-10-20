@@ -43,20 +43,15 @@ const state = reactive({
         title: '确定要屏蔽此用户吗？屏蔽后可在黑名单界面查看',
         confirmButton: {
             text: '确定屏蔽',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
             selected: false
         },
         cancelButton: {
             text: '不屏蔽',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
             show: false,
-            text: '屏蔽后可在黑名单界面查看',
-            color: 'rgb(239 68 68)'
+            text: '屏蔽后可在黑名单界面查看'
         }
     },
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),

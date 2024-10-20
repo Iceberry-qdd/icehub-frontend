@@ -33,12 +33,6 @@
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </BookmarkAction>
     
-            <ProfileLockAction
-                v-if="state.actionVisMap.get('ProfileLockAction')"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-                :is-locked="props.user.confirmFollow">
-            </ProfileLockAction>
-    
             <ProfileBlockAction
                 v-if="state.actionVisMap.get('ProfileBlockAction')"
                 :user="props.user"
@@ -110,8 +104,6 @@ import ProfileChangeAction from '@/indexApp/components/menus/userProfileMenus/Pr
 import CalendarSearchAction from '@/indexApp/components/menus/userProfileMenus/CalendarSearchAction.vue'
 import ShareAction from '@/indexApp/components/menus/common/ShareAction.vue'
 import VerifyApplyAction from '@/indexApp/components/menus/userProfileMenus/VerifyApplyAction.vue'
-import ProfileLockAction from '@/indexApp/components/menus/userProfileMenus/ProfileLockAction.vue'
-import LogoutAction from '@/indexApp/components/menus/userProfileMenus/LogoutAction.vue'
 import ProfileBlockAction from '@/indexApp/components/menus/userProfileMenus/ProfileBlockAction.vue'
 import BookmarkAction from '@/indexApp/components/menus/userProfileMenus/BookmarkAction.vue'
 import RemoveFanAction from '@/indexApp/components/menus/userProfileMenus/RemoveFanAction.vue'
@@ -134,9 +126,7 @@ const state = reactive({
         [CalendarSearchAction.__name, !props.user.blocking && !props.user.blocked && showUnImpl],
         [ShareAction.__name, !props.user.blocking && !props.user.blocked],
         [VerifyApplyAction.__name, props.user.id === curUser.id && showUnImpl],
-        [ProfileLockAction.__name, props.user.id === curUser.id],
         [ProfileBlockAction.__name, props.user.id !== curUser.id],
-        [LogoutAction.__name, props.user.id === curUser.id],
         [BookmarkAction.__name, props.user.id === curUser.id && store.MOBILE_MODE],
         [RemoveFanAction.__name, props.user.id !== curUser.id && props.user.yourFanStatus === 'FAN'],
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示

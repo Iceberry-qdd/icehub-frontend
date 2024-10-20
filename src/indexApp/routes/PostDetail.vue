@@ -74,7 +74,7 @@
 <script setup>
 import { onMounted, reactive, computed, provide } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
-import { getPostById, getPostReviews } from '@/indexApp/js/api.js'
+import { getPostById } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
 import { useRouter, useRoute } from 'vue-router'

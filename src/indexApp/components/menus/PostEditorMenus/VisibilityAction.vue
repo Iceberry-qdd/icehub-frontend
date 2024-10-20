@@ -7,7 +7,7 @@
         <div
             v-for="action in props.ui"
             :key="action.id"
-            :class="[action.code == props.visibility ? 'bg-blue-100 text-blue-500 dark:text-inherit dark:bg-neutral-700 hover:bg-blue-100 hover:dark:bg-neutral-700' : 'hover:bg-gray-100 hover:dark:bg-neutral-800 active:bg-gray-200 active:dark:bg-neutral-700']"
+            :class="[action.code == props.visibility ? 'bg-primaryContainer hover:bg-primaryContainer text-primary dark:text-onPrimaryContainer' : 'hover:bg-helper active:bg-border text-onSurface-inActive']"
             class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-[8px] px-4 py-[0.6rem] sm:[&:nth-child(2)]:rounded-t-[inherit] sm:last:rounded-b-[inherit]"
             :index="action.id"
             @click.stop="pickedVisibility(action)">
