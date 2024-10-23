@@ -6,9 +6,9 @@
                 :key="name"
                 class="flex-1 text-center">
                 <div
-                    :class="{'ring-[3px] ring-offset-2': props.highlight === name}"
+                    :class="{'ring-[3px] ring-offset-2  ring-primary-inActive dark:ring-onPrimary ring-offset-primaryContainer': props.highlight === name}"
                     :style="{backgroundImage: `url('${item.preview}')`}"
-                    class="aspect-video bg-[length:250%] bg-left-top bg-no-repeat border-[1px] cursor-pointer overflow-hidden p-2 rounded-[12px] select-none"
+                    class="aspect-video bg-[length:250%] bg-left-top bg-no-repeat border-[1px] border-gray-300 cursor-pointer dark:border-neutral-700 overflow-hidden p-2 rounded-[12px] select-none"
                     @click="emits('select', name)" />
                 <div class="cursor-default mt-2">{{ item.zh }}</div>
             </div>
@@ -17,8 +17,6 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-
 const emits = defineEmits(['select'])
 const props = defineProps({
     /** 选中的代码高亮类型 */
@@ -31,9 +29,5 @@ const props = defineProps({
         type: Object,
         required: true
     }
-})
-const state = reactive({
-
-
 })
 </script>

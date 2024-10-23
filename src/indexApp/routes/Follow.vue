@@ -57,7 +57,6 @@ const state = reactive({
     menus: [
         { id: 'followList', name: '我的订阅' },
         { id: 'fanList', name: '订阅我的' },
-        { id: 'coFollowingList', name: '共同订阅' }
     ],
     headerConfig: {
         title: route.params.nickname,

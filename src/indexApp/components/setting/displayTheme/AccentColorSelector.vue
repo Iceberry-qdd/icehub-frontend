@@ -7,7 +7,7 @@
                 :key="color"
                 class="flex flex-col items-center justify-center">
                 <div
-                    :class="{'ring-[3px] ring-offset-2': props.accent === name}"
+                    :class="{'ring-[3px] ring-offset-2 ring-primary-inActive dark:ring-onPrimary ring-offset-primaryContainer': props.accent === name}"
                     :style="{background: `linear-gradient(45deg, ${color.light} 50%, ${color.dark} 50%)`}"
                     class="cursor-pointer h-[2.5rem] rounded-full w-[2.5rem]"
                     @click="emits('select', name)">

@@ -1,5 +1,5 @@
 <template>
-    <div class="cursor-default flex flex-row hover:bg-gray-100 items-center justify-between px-4 py-2">
+    <div class="cursor-default flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 px-4 py-2">
         <div>
             <p>谁可以查看我的粉丝列表</p>
             <p class="text-[0.85rem] text-neutral-400">
@@ -9,10 +9,10 @@
 
         <div class="relative">
             <div
-                class="border-[1px] cursor-pointer flex flex-row gap-x-2 items-center justify-left px-3 py-[0.35rem] rounded-[8px] text-neutral-500"
+                class="border-[1px] border-border cursor-pointer flex flex-row gap-x-2 items-center justify-left px-3 py-[0.35rem] rounded-[8px] text-onPrimaryContainer"
                 @click="state.showPanel = true">
                 <span
-                    class="material-symbols-rounded no-hover p-0 text-[1rem] text-inherit">
+                    class="material-symbols-rounded no-hover p-0 text-[1rem]">
                     {{ props.ui.find(it => it.code === props.visibility).icon }}
                 </span>
                 <div class="btn-no-select text-[0.85rem]">

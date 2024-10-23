@@ -34,21 +34,20 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import ProfileLock from '@/indexApp/components/setting/dataPrivacy/ProfileLock.vue'
-import FanListLock from '@/indexApp/components/setting/dataPrivacy/FanListLock.vue'
-import FollowListLock from '@/indexApp/components/setting/dataPrivacy/FollowListLock.vue'
 import Blacklist from '@/indexApp/components/setting/dataPrivacy/Blacklist.vue'
 import ExportData from '@/indexApp/components/setting/dataPrivacy/ExportData.vue'
 import BaseVisibilitySelector from '@/indexApp/components/setting/dataPrivacy/BaseVisibilitySelector.vue'
+import { store } from '@/indexApp/js/store.js'
 
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const emits = defineEmits(['routeTo'])
 const state = reactive({
     headerConfig: {
         title: '数据与隐私',
-        goBack: false,
+        goBack: computed(() => store.PAD_MODE || store.MOBILE_MODE),
         showMenu: false,
         menuIcon: undefined,
         noBorder: false

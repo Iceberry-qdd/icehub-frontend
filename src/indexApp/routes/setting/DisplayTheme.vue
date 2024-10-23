@@ -9,7 +9,7 @@
             :no-border="state.headerConfig.noBorder">
         </Header>
         <div>
-            <div class="pointer-events-none px-4 py-4">
+            <div class="max-sm:p-3 p-4 pointer-events-none">
                 <RepostCard :post="state.post"></RepostCard>
             </div>
             <BaseCollapse
@@ -17,7 +17,7 @@
                 title="主题颜色"
                 :value="state.setting.themeOptions[state.setting.theme]['zh']">
                 <ThemeSelector
-                    class="p-4 text-[0.85rem]"
+                    class="max-sm:p-3 p-4 text-[0.85rem]"
                     :theme="state.setting.theme"
                     @select="toggleTheme">
                 </ThemeSelector>
@@ -27,7 +27,7 @@
                 title="强调色"
                 :value="state.setting.accentOptions[state.setting.accent]['zh']">
                 <AccentColorSelector
-                    class="p-4 text-[0.85rem]"
+                    class="max-sm:p-3 p-4 text-[0.85rem]"
                     :accent="state.setting.accent"
                     :accent-options="state.setting.accentOptions"
                     @select="toggleAccentColor">
@@ -38,7 +38,7 @@
                 title="表情系列"
                 :value="state.setting.emojiOptions[state.setting.emoji]">
                 <EmojiSelector
-                    class="p-4 text-[0.85rem]"
+                    class="max-sm:p-3 p-4 text-[0.85rem]"
                     :emoji="state.setting.emoji"
                     :emoji-options="state.setting.emojiOptions"
                     @select="toggleEmoji">
@@ -49,7 +49,7 @@
                 title="头像风格"
                 :value="state.setting.avatarOptions[state.setting.avatar]['zh']">
                 <AvatarSelector
-                    class="p-4 text-[0.85rem]"
+                    class="max-sm:p-4 p-4 text-[0.85rem]"
                     :avatar="state.setting.avatar"
                     :avatar-options="state.setting.avatarOptions"
                     @select="toggleAvatar">
@@ -60,7 +60,7 @@
                 title="代码高亮主题"
                 :value="state.setting.highlightOptions[state.setting.highlight]['zh']">
                 <HighlightSelector
-                    class="p-4 text-[0.85rem]"
+                    class="max-sm:p-3 p-4 text-[0.85rem]"
                     :highlight="state.setting.highlight"
                     :highlight-options="state.setting.highlightOptions"
                     @select="toggleHighlight">
@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, computed } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import Header from '@/indexApp/components/Header.vue'
 import BaseCollapse from '@/indexApp/components/setting/BaseCollapse.vue'
@@ -85,7 +85,7 @@ import HighlightSelector from '@/indexApp/components/setting/displayTheme/Highli
 const state = reactive({
     headerConfig: {
         title: '界面个性化设置',
-        goBack: false,
+        goBack: computed(() => store.PAD_MODE || store.MOBILE_MODE),
         showMenu: false,
         menuIcon: null,
         noBorder: false

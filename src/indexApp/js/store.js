@@ -122,8 +122,13 @@ export const store = reactive({
         this.MOBILE_MODE = isMobile
     },
 
+    PAD_MODE: false,
+    setPadMode(isPad) {
+        this.PAD_MODE = isPad
+    },
+
     PWA_MODE: false,
-    setPwaMode(isPwa){
+    setPwaMode(isPwa) {
         this.PWA_MODE = isPwa
     },
 
@@ -133,24 +138,24 @@ export const store = reactive({
     },
 
     NOTIFY_STATISTIC: [],
-    setNotifyStatistic(statistic){
+    setNotifyStatistic(statistic) {
         this.NOTIFY_STATISTIC = statistic
     },
-    incrNotifyUnreadCountByType({type, delta}){
+    incrNotifyUnreadCountByType({ type, delta }) {
         this.NOTIFY_STATISTIC.find(it => it?.type === type).unreadCount += delta
     },
-    setAllNotifyRead(){
+    setAllNotifyRead() {
         this.NOTIFY_STATISTIC.forEach(it => it.unreadCount = 0)
     },
-    setAllNotifyReadByTypes(types = []){
-        if(!types || types.length == 0){
+    setAllNotifyReadByTypes(types = []) {
+        if (!types || types.length == 0) {
             this.setAllNotifyRead()
             return
         }
         this.NOTIFY_STATISTIC.filter(it => types.includes(it.type)).forEach(it => it.unreadCount = 0)
     },
     AVATAR_STYLE: 'rounded',
-    setAvatarStyle(style){
+    setAvatarStyle(style) {
         this.AVATAR_STYLE = style
     }
 })

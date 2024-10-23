@@ -106,7 +106,7 @@ const routes = [
         name: 'setting',
         meta: { key: 'setting' },
         children: [
-            { name: 'accountSafe', path: 'account&safe', component: SettingAccountSafe, alias: ['/setting'], meta: { key: 'setting' } },
+            { name: 'accountSafe', path: 'account&safe', component: SettingAccountSafe, meta: { key: 'setting' } },
             { name: 'accountActivity', path: 'account&safe/activity', component: SettingAccountActivityManage, meta: { key: 'setting', parent: 'accountSafe' } },
             { name: 'notifyMsg', path: 'notify&msg', component: SettingNotifyMsg, meta: { key: 'setting' } },
             { name: 'dataPrivacy', path: 'data&privacy', component: SettingDataPrivacy, meta: { key: 'setting' } },

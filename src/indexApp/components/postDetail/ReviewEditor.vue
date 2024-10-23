@@ -90,24 +90,6 @@
     </div>
 </template>
 
-<style scoped>
-.fade-enter-active {
-    transition: opacity 0.15s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.15s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-</style>
-
 <!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-unused-properties -->
 <script setup>
 import { reactive, computed, inject, defineAsyncComponent, ref, watch } from 'vue'

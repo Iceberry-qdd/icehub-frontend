@@ -30,7 +30,7 @@
                 @keyup.enter.exact="search()"
                 @click.left="state.prompt ? () => { } : showSearchHistory()" />
         </div>
-        <Transition name="fade">
+        <Transition name="action-fade">
             <div
                 v-if="state.suggests.show"
                 id="search-suggest"
@@ -113,19 +113,19 @@
 </template>
 
 <style scoped>
-.fade-enter-active {
+.action-fade-enter-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-leave-active {
+.action-fade-leave-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-enter-from {
+.action-fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to {
+.action-fade-leave-to {
     opacity: 0;
 }
 

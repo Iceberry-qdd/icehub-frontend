@@ -24,7 +24,7 @@ pre[class*="language-"] {
 }
 
 :is(code[class*="language-"],
-pre[class*="language-"]):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+pre[class*="language-"]):where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	color: white;
 }
 
@@ -64,12 +64,12 @@ pre[class*="language-"] {
 }
 
 :is(:not(pre)>code[class*="language-"],
-pre[class*="language-"]):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+pre[class*="language-"]):where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
     background: hsl(30, 20%, 25%);
 }
 
 /* Code blocks */
-pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+pre[class*="language-"]:where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	padding: 1em;
 	margin: .5em 0;
 	overflow: auto;
@@ -86,7 +86,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl
 }
 
 /* Inline code */
-:not(pre)>code[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *){
+:not(pre)>code[class*="language-"]:where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *){
 	padding: .15em .2em .05em;
 	border-radius: .3em;
 	border: .13em solid hsl(30, 20%, 40%);
@@ -103,7 +103,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl
 :is(.token.comment,
 .token.prolog,
 .token.doctype,
-.token.cdata):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+.token.cdata):where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	color: hsl(30, 20%, 50%);
 }
 
@@ -111,7 +111,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl
     color: #999;
 }
 
-.token.punctuation:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+.token.punctuation:where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	opacity: .7;
 }
 
@@ -134,7 +134,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl
 .token.boolean,
 .token.number,
 .token.constant,
-.token.symbol):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+.token.symbol):where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	color: hsl(350, 40%, 70%);
 }
 
@@ -152,7 +152,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl
 .token.string,
 .token.char,
 .token.builtin,
-.token.inserted):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+.token.inserted):where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	color: hsl(75, 70%, 60%);
 }
 
@@ -169,7 +169,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl
 .token.url,
 .language-css .token.string,
 .style .token.string,
-.token.variable):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+.token.variable):where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	color: hsl(40, 90%, 60%);
 }
 
@@ -181,7 +181,7 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl
 
 :is(.token.atrule,
 .token.attr-value,
-.token.keyword):where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+.token.keyword):where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	color: hsl(350, 40%, 70%);
 }
 
@@ -209,6 +209,6 @@ pre[class*="language-"]:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl
     cursor: help;
 }
 
-.token.deleted:where([theme="dark"], [theme="dark"] *, [hl="dark"], [hl="dark"] *) {
+.token.deleted:where([hl="dark"], [hl="dark"] *, [theme='dark']:not([hl]), [theme='dark']:not([hl]) *) {
 	color: red;
 }

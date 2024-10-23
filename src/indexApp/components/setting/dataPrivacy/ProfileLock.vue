@@ -1,6 +1,6 @@
 <template>
     <div
-        class="cursor-default flex flex-row hover:bg-gray-100 items-center justify-between px-4 py-2">
+        class="cursor-default flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 px-4 py-2">
         <div>
             <p>设为私密账号</p>
             <p class="text-[0.85rem] text-neutral-400">

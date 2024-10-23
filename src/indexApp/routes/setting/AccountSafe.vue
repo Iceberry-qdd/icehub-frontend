@@ -24,7 +24,6 @@
                 v-if="showUnImpl"
                 @click="emits('routeTo', 'accountActivity')">
             </AccountActivity>
-            <Logout></Logout>
             <DeleteAccount
                 v-if="showUnImpl"
                 class="text-red-500">
@@ -34,22 +33,22 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import ChangePwd from '@/indexApp/components/setting/accountSafe/ChangePwd.vue'
 import LookupProfile from '@/indexApp/components/setting/accountSafe/LookupProfile.vue'
 import TwoFA from '@/indexApp/components/setting/accountSafe/TwoFA.vue'
 import ChangeEmail from '@/indexApp/components/setting/accountSafe/ChangeEmail.vue'
-import Logout from '@/indexApp/components/setting/accountSafe/Logout.vue'
 import DeleteAccount from '@/indexApp/components/setting/accountSafe/DeleteAccount.vue'
 import AccountActivity from '@/indexApp/components/setting/accountSafe/AccountActivity.vue'
+import { store } from '@/indexApp/js/store.js'
 
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const emits = defineEmits(['routeTo'])
 const state = reactive({
     headerConfig: {
         title: '账号与安全',
-        goBack: false,
+        goBack: computed(() => store.PAD_MODE || store.MOBILE_MODE),
         showMenu: false,
         menuIcon: undefined,
         noBorder: false

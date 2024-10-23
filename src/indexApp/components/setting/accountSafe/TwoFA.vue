@@ -1,5 +1,5 @@
 <template>
-    <div class="cursor-default flex flex-row hover:bg-gray-100 items-center justify-between px-4 py-2">
+    <div class="cursor-default flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 px-4 py-2">
         <div>
             <p>开启两步验证</p>
             <p class="text-[0.85rem] text-neutral-400">
@@ -7,7 +7,7 @@
             </p>
         </div>
         <ToggleButton
-            id="2fa-checkbox"
+            id="two-fa-checkbox"
             :enabled="props.enabled"
             :checked="props.checked"
             :loading="state.loading"

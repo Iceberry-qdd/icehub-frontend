@@ -18,7 +18,7 @@
                 tag="markdown"
                 :extensions="['exts']"
                 :markdown="info"
-                class="mt-[1rem] text-[0.8rem]">
+                class="p-3 text-[0.8rem]">
             </VueShowdown>
         </div>
     </div>
@@ -27,6 +27,7 @@
 <style scoped>
 markdown{
     font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    word-break: break-all;
 }
 </style>
 
@@ -35,12 +36,12 @@ import { computed, reactive, version } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import { VueShowdown } from 'vue-showdown'
 import packageInfo from '../../../../package.json'
-import { store } from '@/indexApp/js/store'
+import { store } from '@/indexApp/js/store.js'
 
 const state = reactive({
     headerConfig: {
         title: '关于',
-        goBack: false,
+        goBack: computed(() => store.PAD_MODE || store.MOBILE_MODE),
         showMenu: true,
         menuIcon: "open_in_new",
         noBorder: false

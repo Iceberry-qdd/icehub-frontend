@@ -1,9 +1,9 @@
 <template>
     <div
-        class="cursor-pointer flex flex-row gap-x-2 hover:bg-gray-100 items-center justify-start px-4 py-2 text-[0.85rem]">
+        class="cursor-pointer flex flex-row gap-x-2 hover:bg-helper items-center justify-start max-sm:px-3 px-4 py-2 text-[0.85rem]">
         <span
             :class="{'active': props.activity.isActive}"
-            class="bg-gray-200 device-icon flex-0 material-symbols-rounded no-hover relative text-[1.25rem]">
+            class="bg-border dark:bg-primaryContainer device-icon flex-0 material-symbols-rounded no-hover relative text-[1.25rem]">
             {{ state.deviceIconMap.get(props.activity.device.type) }}
         </span>
         <div class="flex-1">
@@ -14,7 +14,7 @@
                 <span>{{ props.activity.ip.province }}</span>
             </div>
         </div>
-        <div class="flex-0 text-neutral-400">
+        <div class="flex-0 max-sm:hidden text-neutral-400">
             {{ standardDateTime(props.activity.timestamp) }}
         </div>
     </div>

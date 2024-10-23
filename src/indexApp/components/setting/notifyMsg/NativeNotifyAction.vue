@@ -1,5 +1,5 @@
 <template>
-    <div class="cursor-default flex flex-row hover:bg-gray-100 items-center justify-between px-4 py-2">
+    <div class="cursor-default flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 px-4 py-2">
         <div>
             <p>启用系统通知</p>
             <p class="text-[0.85rem] text-neutral-400">
@@ -19,7 +19,7 @@
 <script setup>
 import ToggleButton from '@/components/ToggleButton.vue'
 import { store } from '@/indexApp/js/store'
-import { computed, nextTick, reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import icon from '@/assets/logo.svg'
 
 const emits = defineEmits(['toggle'])
@@ -45,7 +45,7 @@ const info = computed(() => {
 })
 
 function toggle(){
-    if(state.loading) return
+    if(state.loading || !props.enabled) return
     state.loading = true
     askNotificationPermission()
 }

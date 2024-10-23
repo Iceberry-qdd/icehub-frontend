@@ -97,7 +97,7 @@ const state = reactive({
         { id: 7, name: '活动', routeName: 'activity', routeParams: {}, icon: 'celebration', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
         { id: 8, name: '管理', routeName: 'manage', routeParams: {}, icon: 'memory', badgeCount: 0, visible: showUnImpl && JSON.parse(localStorage.getItem("CUR_USER")).type === 'ADMIN', active: false, mobileShow: false }, // TODO implement it.
         { id: 9, name: getCurUserNickname(), routeName: 'profile', routeParams: { nickname: getCurUserNickname() }, icon: null, badgeCount: 0, visible: true, active: false, mobileShow: true },
-        { id: 10, name: '设置', routeName: 'setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }
+        { id: 10, name: '设置', routeName: 'setting', routeParams: {}, icon: 'settings', badgeCount: 0, visible: true, active: false, mobileShow: false }
     ],
     user: JSON.parse(localStorage.getItem("CUR_USER")),
 })

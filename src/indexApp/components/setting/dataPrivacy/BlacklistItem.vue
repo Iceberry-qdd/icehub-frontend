@@ -1,6 +1,6 @@
 <template>
     <div
-        class="border-b-[1px] dark:border-[#1e1e1e] flex flex-nowrap flex-row gap-x-3 items-start p-2">
+        class="border-b-[1px] dark:border-[#1e1e1e] flex flex-nowrap flex-row gap-x-3 items-start max-sm:px-3 p-2">
         <Avatar
             :user="props.user"
             class="flex-none h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"

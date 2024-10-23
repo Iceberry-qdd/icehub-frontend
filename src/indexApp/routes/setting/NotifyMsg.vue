@@ -20,14 +20,15 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import NativeNotifyAction from '@/indexApp/components/setting/notifyMsg/NativeNotifyAction.vue'
+import { store } from '@/indexApp/js/store.js'
 
 const state = reactive({
     headerConfig: {
         title: '消息通知',
-        goBack: false,
+        goBack: computed(() => store.PAD_MODE || store.MOBILE_MODE),
         showMenu: false,
         menuIcon: undefined,
         noBorder: false

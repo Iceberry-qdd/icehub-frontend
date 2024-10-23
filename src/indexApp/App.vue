@@ -60,7 +60,7 @@
                     </GlobalBanner>
                 </div>
                 <div class="absolute flex items-center justify-end px-4 w-full z-[100]">
-                    <Transition name="fade">
+                    <Transition name="btt-fade">
                         <BackToTop
                             v-if="state.showBackToTop"
                             id="back-to-top"
@@ -94,23 +94,23 @@
 </template>
 
 <style scoped>
-.fade-enter-active {
+.btt-fade-enter-active {
     transition: bottom 0.15s ease-in-out;
 }
 
-.fade-leave-active {
+.btt-fade-leave-active {
     transition: bottom 0.15s ease-in-out;
 }
 
-.fade-enter-from {
+.btt-fade-enter-from {
     bottom: -1rem;
 }
 
-.fade-enter-to {
+.btt-fade-enter-to {
     bottom: 1rem;
 }
 
-.fade-leave-to {
+.btt-fade-leave-to {
     bottom: -1rem;
 }
 
@@ -127,12 +127,13 @@
         bottom: 1rem;
     }
 
-    .fade-enter-to {
+    .btt-fade-enter-to {
         bottom: 5rem;
     }
 }
 </style>
 
+<!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick, provide } from 'vue'
 import Sidebar from '@/indexApp/components/Sidebar.vue'
@@ -165,6 +166,7 @@ const state = reactive({
     showBackToTop: false,
     touchStartClientY: 0,
     mobileMediaQueryList: undefined,
+    padMediaQueryList: undefined,
     themeMediaQueryList: undefined,
     showContextMenu: false,
     click: {x: 20, y: 20}
@@ -278,6 +280,10 @@ function handleMobileMediaChange(mq) {
     store.setMobileMode(mq.matches)
 }
 
+function handlePadMediaChange(mq) {
+    store.setPadMode(mq.matches)
+}
+
 function handleThemeMediaChange(mq) {
     store.setSysThemeMode(mq.matches ? 'dark' : 'light')
     if(!('theme' in localStorage)){
@@ -336,6 +342,11 @@ onMounted(() => {
     handleMobileMediaChange(state.mobileMediaQueryList)
     state.mobileMediaQueryList.addEventListener('change', handleMobileMediaChange)
 
+    // Media query pad mode settings
+    state.padMediaQueryList = window.matchMedia('(640px < width <= 1024px)')
+    handlePadMediaChange(state.padMediaQueryList)
+    state.padMediaQueryList.addEventListener('change', handlePadMediaChange)
+
     // PWA standalone mode settings
     store.setPwaMode(!window.matchMedia('(display-mode: browser)').matches)
     if (store.PWA_MODE) {
@@ -352,6 +363,7 @@ onUnmounted(() => {
     disconnectToWs()
     clearTimeout(state.timeoutId)
     state.mobileMediaQueryList.removeEventListener('change', handleMobileMediaChange)
+    state.padMediaQueryList.removeEventListener('change', handlePadMediaChange)
     state.themeMediaQueryList.removeEventListener('change', handleThemeMediaChange)
     document.body.removeEventListener('contextmenu', handleContextMenu)
 })

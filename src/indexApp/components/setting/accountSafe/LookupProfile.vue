@@ -1,6 +1,6 @@
 <template>
     <div
-        class="cursor-pointer flex flex-row hover:bg-gray-100 items-center justify-between px-4 py-2"
+        class="cursor-pointer flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 px-4 py-2"
         @click="$router.push({name: 'profile', params: {nickname: state.curUser.nickname}})">
         <div>
             <p>查看个人资料</p>

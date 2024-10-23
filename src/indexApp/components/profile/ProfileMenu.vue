@@ -44,6 +44,11 @@
                 :fan-id="props.user.id"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </RemoveFanAction>
+
+            <SettingAction
+                v-if="props.user.id === curUser.id && store.MOBILE_MODE"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </SettingAction>
         </div>
     </div>
 </template>
@@ -107,7 +112,8 @@ import VerifyApplyAction from '@/indexApp/components/menus/userProfileMenus/Veri
 import ProfileBlockAction from '@/indexApp/components/menus/userProfileMenus/ProfileBlockAction.vue'
 import BookmarkAction from '@/indexApp/components/menus/userProfileMenus/BookmarkAction.vue'
 import RemoveFanAction from '@/indexApp/components/menus/userProfileMenus/RemoveFanAction.vue'
-import { store } from '@/indexApp/js/store'
+import SettingAction from '@/indexApp/components/menus/userProfileMenus/SettingAction.vue'
+import { store } from '@/indexApp/js/store.js'
 
 const { dismissProfileMenus } = inject('dismissProfileMenus')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
@@ -129,6 +135,7 @@ const state = reactive({
         [ProfileBlockAction.__name, props.user.id !== curUser.id],
         [BookmarkAction.__name, props.user.id === curUser.id && store.MOBILE_MODE],
         [RemoveFanAction.__name, props.user.id !== curUser.id && props.user.yourFanStatus === 'FAN'],
+        [SettingAction.__name, props.user.id === curUser.id && store.MOBILE_MODE], // TODO BookmarkAction会随着响应式变化，而此处却不变化
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示
     ])
 })

@@ -4,7 +4,7 @@
         <div v-for="(item, name) in props.avatarOptions" :key="name">
             <Avatar
                 :user="state.user"
-                :class="[props.avatar === name ? 'ring-[3px] ring-offset-2' : '', item.class]"
+                :class="[props.avatar === name ? 'ring-[3px] ring-offset-2 ring-primary-inActive dark:ring-onPrimary ring-offset-primaryContainer' : '', item.class]"
                 class="h-[2.5rem] text-[1.7rem] w-[2.5rem]"
                 @click="emits('select', name)">
             </Avatar>

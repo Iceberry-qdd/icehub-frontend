@@ -2,7 +2,7 @@
     <div
         id="h"
         class="backdrop-blur-xl bg-background-inActive flex flex-row h-[56px] items-center justify-between max-sm:h-[48px] max-sm:px-2 max-sm:z-[104] px-3 select-none text-lg top-0 z-[1002]"
-        :class="[!state.noBorder ? 'border-b-[1px] border-border' : '']">
+        :class="[!props.noBorder ? 'border-b-[1px] border-border' : '']">
         <div class="flex flex-none flex-row h-full items-center">
             <div
                 v-if="props.goBack"
@@ -98,8 +98,7 @@ const state = reactive({
     routeUrl: '/',
     editIcon: '',
     url: window.location.href,
-    submit: false,
-    noBorder: props.noBorder != null ? props.noBorder : false
+    submit: false
 })
 
 

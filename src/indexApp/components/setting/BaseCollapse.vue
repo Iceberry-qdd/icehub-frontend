@@ -1,8 +1,8 @@
 <template>
     <details>
-        <summary class="cursor-pointer flex hover:bg-[#f4f4f5] justify-between outline-none px-4 py-2">
-            <span>{{ title }}</span>
-            <div class="flex gap-x-4 items-center text-neutral-500">
+        <summary class="cursor-pointer flex hover:bg-helper justify-between max-sm:px-3 outline-none px-4 py-2">
+            <span class="dark:text-white/50">{{ title }}</span>
+            <div class="dark:text-white/50 flex gap-x-4 items-center">
                 <span class="text-[0.9rem]">{{ value }}</span>
                 <IconDown
                     :size="20"
@@ -20,45 +20,16 @@ details summary::-webkit-details-marker{
     display: none;
 }
 
-/* details[open]>summary+*{
-    animation: slideDown 0.25s linear both;
-} */
-
-/* details:not([open])>summary+*{
-    animation: slideUp 0.25s linear both;
-} */
-
 details[open] svg[class~="m-icon"]{
     rotate: 0.5turn;
 }
 
 details[open]>summary{
-    background-color: #f4f4f5;
+    background-color: rgb(var(--color-helper));
 }
-
-/* @keyframes slideDown{
-    0% {
-        height: 0;
-    }
-
-    100% {
-        height: ;
-    }
-}
-
-@keyframes slideUp{
-    0% {
-        height: fit-content;
-    }
-
-    100% {
-        height: 0;
-    }
-} */
 </style>
 
 <script setup>
-import {reactive} from 'vue'
 import IconDown from '@/components/icons/IconDown.vue'
 
 const props = defineProps({
@@ -72,9 +43,5 @@ const props = defineProps({
         type: String,
         required: true
     }
-})
-
-const state = reactive({
-
 })
 </script>

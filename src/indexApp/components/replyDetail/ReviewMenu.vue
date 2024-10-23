@@ -51,22 +51,6 @@
     background-color: #404040;
 }
 
-.fade-enter-active {
-    transition: opacity 0.15s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.15s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-
 @media not all and (min-width: 640px) {
     .action{
         padding: 0.5rem 0;
@@ -82,22 +66,6 @@
 
     .action:active{
         background-color: transparent;
-    }
-    .fade-enter-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-leave-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-enter-from {
-        translate: 0 100%;
-    }
-
-    .fade-leave-to {
-        translate: 0 100%;
-        opacity: 1;
     }
 }
 </style>

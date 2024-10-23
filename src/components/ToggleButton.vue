@@ -2,7 +2,7 @@
     <label
         :class="labelClass"
         :for="props.id"
-        class="bg-gray-300 h-6 inline-block relative rounded-full transition w-11">
+        class="grow-0 h-6 inline-block relative rounded-full shrink-0 transition w-11">
         <input
             :id="props.id"
             :checked="props.checked"
@@ -53,8 +53,10 @@ const props = defineProps({
 })
 
 const labelClass = computed(() => ({
-    'loading ': props.loading,
-    'cursor-not-allowed has-[:checked]:bg-primary-disable dark:has-[:checked]:bg-onPrimary-disable': !props.enabled || props.loading,
-    'cursor-pointer has-[:checked]:bg-primary dark:has-[:checked]:bg-onPrimary': props.enabled && !props.loading
+    'loading': props.loading,
+    'cursor-not-allowed': props.loading || !props.enabled,
+    'cursor-pointer': !props.loading && props.enabled,
+    'has-[:checked]:bg-primary-disable dark:has-[:checked]:bg-onPrimary-disable bg-gray-200 dark:bg-neutral-800': !props.enabled || props.loading,
+    'has-[:checked]:bg-primary dark:has-[:checked]:bg-onPrimary bg-gray-300 dark:bg-neutral-700': props.enabled && !props.loading,
 }))
 </script>

@@ -79,22 +79,6 @@
     animation: slide-out-top 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
 }
 
-.fade-enter-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-
 @keyframes slide-in-top {
     0% {
         translate: 0 -1000px;
@@ -122,23 +106,6 @@
 @media not all and (min-width: 640px) {
     #main:has(#back-to-top)>#index>#create-post-btn{
         display: none;
-    }
-    
-    .fade-enter-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-    
-    .fade-leave-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-    
-    .fade-enter-from {
-        translate: 0 100%;
-    }
-    
-    .fade-leave-to {
-        translate: 0 100%;
-        opacity: 1;
     }
 }
 </style>

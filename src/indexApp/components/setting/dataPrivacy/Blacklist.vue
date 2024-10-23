@@ -1,5 +1,5 @@
 <template>
-    <div class="cursor-pointer flex flex-row hover:bg-gray-100 items-center justify-between px-4 py-2">
+    <div class="cursor-pointer flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 px-4 py-2">
         <div>
             <p>黑名单管理</p>
             <p class="text-[0.85rem] text-neutral-400">

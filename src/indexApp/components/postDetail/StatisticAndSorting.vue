@@ -43,7 +43,7 @@
                 class="cursor-pointer hover:bg-gray-100 hover:dark:bg-[#262626] px-3 py-1 relative rounded-full"
                 @click="state.showSortingMenu = true">
                 {{ state.orderByOptions[props.sort.by].zh }}
-                <Transition name="fade">
+                <Transition name="action-fade">
                     <SortingMenu
                         v-if="state.showSortingMenu"
                         class="absolute max-w-[12rem] min-w-[9rem] right-0 top-0 z-[100]"
