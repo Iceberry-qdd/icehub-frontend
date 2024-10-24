@@ -776,3 +776,28 @@ export function getLikePostsOfUser(userId, pageIndex, pageSize, lastTimestamp) {
         method: 'GET'
     })
 }
+
+/**
+ * 获取当前登录用户的黑名单列表
+ * @param {string} type 黑名单的类型，支持USER、POST、REVIEW
+ * @param {int} pageIndex 当前页码
+ * @param {int} pageSize 每页大小
+ * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @returns 获取到的黑名单列表
+ */
+export function getBlacklist(type, pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/blacklist/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&type=${type}`, {
+        method: 'GET'
+    })
+}
+
+/**
+ * 将当前登录用户的黑名单列表按类型全部清空
+ * @param {string} type 黑名单的类型，支持USER、POST、REVIEW
+ * @returns 移除的条数
+ */
+export function deleteAllBlacklistByType(type) {
+    return fetch(`${BASE_URL}/blacklist/batch?type=${type}`, {
+        method: 'DELETE'
+    })
+}

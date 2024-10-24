@@ -1,6 +1,6 @@
 <template>
     <div
-        class="border-b-[1px] dark:border-[#1e1e1e] flex flex-nowrap flex-row gap-x-3 items-start max-sm:px-3 p-2">
+        class="border-b-[1px] dark:border-[#1e1e1e] flex flex-nowrap flex-row gap-x-3 items-start p-2">
         <Avatar
             :user="props.user"
             class="flex-none h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
@@ -29,7 +29,7 @@
         </div>
         <div
             class="bg-primary cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-onPrimary w-[6rem]"
-            @click="passFanRequest">
+            @click="state.confirmBDialogUi.show = true">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div v-if="!state.loading">移出</div>
             <IconLoading
@@ -37,6 +37,14 @@
                 class="h-5 w-5">
             </IconLoading>
         </div>
+        <Teleport to="#app">
+            <ConfirmDialogBox
+                v-if="state.confirmBDialogUi.show"
+                class="fixed top-0"
+                :ui="state.confirmBDialogUi"
+                @choice="choose">
+            </ConfirmDialogBox>
+        </Teleport>
     </div>
 </template>
 
@@ -46,8 +54,12 @@ import IconLoading from '@/components/icons/IconLoading.vue'
 import { useRouter } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
+import { deleteOneBlacklist } from '@/indexApp/js/api.js'
+import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+import { store } from '@/indexApp/js/store.js'
 
 const router = useRouter()
+const emits = defineEmits(['deleteOnUi'])
 const props = defineProps({
     /** 用户对象 */
     user: {
@@ -59,6 +71,22 @@ const props = defineProps({
 const state = reactive({
     loading: false,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
+    confirmBDialogUi: {
+        show: false,
+        title: '确定要解除屏蔽吗？',
+        confirmButton: {
+            text: '解除屏蔽',
+            selected: false
+        },
+        cancelButton: {
+            text: '保持屏蔽',
+            selected: false
+        },
+        loading: {
+            show: false,
+            text: '解除屏蔽中......'
+        }
+    }
 })
 
 function routeToUserProfile() {
@@ -70,7 +98,33 @@ function brief(remark) {
     return remark || defaultRemark
 }
 
-function passFanRequest(){
-    state.yourFanStatus = 'FAN'
+function choose(args) {
+    const choice = args.choice
+    if (choice == 'confirm') {
+        unblockUser()
+    } else {
+        state.confirmBDialogUi.show = false
+    }
+}
+
+async function unblockUser() {
+    try {
+        state.confirmBDialogUi.loading.show = true
+        const response = await deleteOneBlacklist('USER', props.user.id, state.curUser.id)
+        if (!response.ok) throw new Error((await response.json()).message)
+
+        const result = await response.json()
+        if (result) {
+            store.setSuccessMsg('已解除屏蔽此用户')
+            emits('deleteOnUi', props.user.id)
+        } else {
+            throw new Error("解除屏蔽失败！")
+        }
+    } catch (e) {
+        store.setErrorMsg(e.message)
+    }finally{
+        state.confirmBDialogUi.loading = false
+        state.confirmBDialogUi.show = false
+    }
 }
 </script>
