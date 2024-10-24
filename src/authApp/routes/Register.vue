@@ -3,15 +3,15 @@
         <button
             name="返回登录"
             type="button"
-            class="3xl:left-8 3xl:text-[2.2rem] 3xl:top-[2rem] absolute cursor-pointer left-4 material-symbols-rounded max-sm:text-[1.25rem] text-[1.1rem] top-4"
+            class="absolute cursor-pointer left-4 material-symbols-rounded max-sm:text-[1.25rem] text-[1.1rem] top-4"
             @click="routeTo('login')">
             arrow_back_ios_new
         </button>
-        <div class="3xl:gap-y-8 flex flex-col gap-y-4 items-center justify-center lg:max-xl:gap-y-3 max-sm:px-0 max-sm:py-0 px-28 py-16">
+        <div class="flex flex-col gap-y-4 items-center justify-center lg:max-xl:gap-y-3 max-sm:px-0 max-sm:py-0 px-28 py-16">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <a href="/index"><img src="/favicon.ico" class="3xl:h-[96px] 3xl:w-[96px] h-[48px] lg:max-xl:h-[36px] lg:max-xl:w-[36px] w-[48px]" /></a>
+            <a href="/index"><img src="/favicon.ico" class="h-[48px] lg:max-xl:h-[36px] lg:max-xl:w-[36px] w-[48px]" /></a>
             <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
-            <div id="brand-name" class="3xl:text-5xl font-bold lg:max-xl:text-xl text-2xl">{{ state.appName }}</div>
+            <div id="brand-name" class="font-bold lg:max-xl:text-xl text-2xl">{{ state.appName }}</div>
             <form
                 id="register-form"
                 autocomplete="on"
@@ -19,19 +19,19 @@
                 <input
                     v-model="state.nickname"
                     :disabled="state.loading"
-                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    class="bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
                     type="text"
                     placeholder="请输入账号名" />
                 <input
                     v-model="state.password"
                     :disabled="state.loading"
-                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    class="bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
                     type="password"
                     placeholder="请输入密码" />
                 <input
                     v-model="state.rePassword"
                     :disabled="state.loading"
-                    class="3xl:px-8 3xl:py-4 3xl:text-[2rem] bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
+                    class="bg-gray-100 dark:bg-[#121212] dark:focus:border-blue-300 focus:border-blue-500 focus:outline-none focus:ring lg:max-xl:text-[0.9rem] max-sm:py-3 px-4 py-2 rounded-full text-[1rem] w-[300px]"
                     type="password"
                     placeholder="请再次输入密码" />
                 <Turnstile
@@ -47,11 +47,11 @@
                     name="login"
                     :class="[state.loading || !state.turnstile.token ? 'dark:shadow-neutral-800/50 bg-neutral-500 dark:bg-neutral-800 dark:text-blue-300/25 cursor-not-allowed pointer-events-none' : 'dark:text-blue-300 dark:shadow-neutral-700/50 bg-black dark:bg-neutral-700']"
                     :disabled="state.loading"
-                    class="3xl:p-4 3xl:text-[2rem] font-bold lg:max-xl:text-[0.9rem] max-sm:py-3 p-2 rounded-full shadow-lg shadow-neutral-300 text-[1rem] text-white w-[300px]"
+                    class="font-bold lg:max-xl:text-[0.9rem] max-sm:py-3 p-2 rounded-full shadow-lg shadow-neutral-300 text-[1rem] text-white w-[300px]"
                     @click="tryRegister">
                     <IconLoading
                         v-if="state.loading"
-                        class="3xl:h-10 3xl:left-[calc(50%-1.25rem)] 3xl:w-10 animate-spin dark:text-white/25 h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
+                        class="animate-spin dark:text-white/25 h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
                     </IconLoading>
                     <span v-else>注册</span>
                 </button>

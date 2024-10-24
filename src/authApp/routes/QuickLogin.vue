@@ -1,19 +1,19 @@
 <template>
     <div
         id="quickLoginPanel">
-        <div class="3xl:gap-x-4 3xl:m-8 flex flex-row gap-x-2 items-center m-4 max-sm:absolute max-sm:top-0">
+        <div class="flex flex-row gap-x-2 items-center m-4 max-sm:absolute max-sm:top-0">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <a href="/index"><img src="/favicon.ico" class="3xl:h-[36px] 3xl:w-[36px] h-[24px] w-[24px]" /></a>
+            <a href="/index"><img src="/favicon.ico" class="h-[24px] w-[24px]" /></a>
             <!-- eslint-disable-next-line vue/max-attributes-per-line vue/singleline-html-element-content-newline -->
-            <div id="brand-name" class="3xl:text-[1.8rem] font-bold text-[0.9rem]">{{ state.appName }}</div>
+            <div id="brand-name" class="font-bold text-[0.9rem]">{{ state.appName }}</div>
         </div>
-        <div class="3xl:gap-y-8 flex flex-col gap-y-4 items-center justify-center max-sm:h-screen max-sm:px-0 max-sm:py-0 max-sm:w-screen px-28 py-16">
+        <div class="flex flex-col gap-y-4 items-center justify-center max-sm:h-screen max-sm:px-0 max-sm:py-0 max-sm:w-screen px-28 py-16">
             <Avatar
-                class="3xl:h-[10rem] 3xl:rounded-[16px] 3xl:text-[10rem] 3xl:w-[10rem] box-content h-[5rem] object-cover rounded-[8px] text-[5rem] w-[5rem]"
+                class="box-content h-[5rem] object-cover rounded-[8px] text-[5rem] w-[5rem]"
                 :user="{nickname: state.nickname}">
             </Avatar>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="3xl:text-[3rem] font-bold text-[1.5rem]">{{ state.nickname }}</div>
+            <div class="font-bold text-[1.5rem]">{{ state.nickname }}</div>
             <Turnstile
                 class="w-fit"
                 action="quick-login"
@@ -26,18 +26,18 @@
                 name="login"
                 :disabled="state.loading"
                 :class="[state.loading || !state.turnstile.token ? 'dark:shadow-neutral-800/50 dark:bg-neutral-800 bg-blue-300 cursor-not-allowed dark:text-blue-300/25 pointer-events-none' : 'dark:text-blue-300 bg-blue-500 dark:bg-neutral-700 dark:shadow-neutral-700/50']"
-                class="3xl:p-4 3xl:text-[2rem] font-bold max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-[300px]"
+                class="font-bold max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-[300px]"
                 @click="tryLogin">
                 <IconLoading
                     v-if="state.loading"
-                    class="3xl:h-10 3xl:left-[calc(50%-1.25rem)] 3xl:w-10 animate-spin dark:text-white/25 h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
+                    class="animate-spin dark:text-white/25 h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
                 </IconLoading>
                 <span v-else>一键登录</span>
             </button>
             <button
                 type="button"
                 name="login"
-                class="3xl:p-4 3xl:text-[2rem] bg-black dark:bg-neutral-700 dark:shadow-none dark:text-white/50 font-bold max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-[300px]"
+                class="bg-black dark:bg-neutral-700 dark:shadow-none dark:text-white/50 font-bold max-sm:py-3 p-2 rounded-full shadow-blue-200/50 shadow-lg text-[1rem] text-white w-[300px]"
                 @click="routeTo('login')">
                 <span>登录其它账号</span>
             </button>
