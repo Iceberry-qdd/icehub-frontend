@@ -48,29 +48,27 @@ const props = defineProps({
     }
 })
 
+const confirmDialogTitle = computed(() => {
+    return `设为${props.locked ? '公开' : '私密'}账户？设为${props.locked ? '公开' : '私密'}后，他人订阅您时，${props.locked ? '不' : ''}需要得到您的批准`
+})
+
 const state = reactive({
     confirmBDialogUi: {
         show: false,
-        title: '',
+        title: confirmDialogTitle,
         confirmButton: {
-            text: '确定',
             selected: false
         },
         cancelButton: {
-            text: '取消',
             selected: false
         },
         loading: {
-            show: false,
-            text: '请稍后...'
+            show: false
         }
     },
     loading: false
 })
 
-const confirmDialogTitle = computed(() => {
-    return `确定要设为${props.locked ? '公开' : '私密'}账户吗？设为${props.locked ? '公开' : '私密'}后，他人订阅您时，${props.locked ? '不' : ''}需要得到您的批准`
-})
 
 function choose(args) {
     const choice = args.choice
@@ -117,7 +115,6 @@ const info = computed(() => {
 function toggle(){
     if(state.loading) return
 
-    state.confirmBDialogUi.title = confirmDialogTitle.value
     state.confirmBDialogUi.show = true
     state.loading = true
 }

@@ -39,16 +39,13 @@ const state = reactive({
         show: false,
         title: `确定要${props.user.blocking ? '解除' : ''}屏蔽此用户吗？`,
         confirmButton: {
-            text: `${props.user.blocking ? '解除' : '确定'}屏蔽`,
             selected: false
         },
         cancelButton: {
-            text: `${props.user.blocking ? '保持屏蔽' : '不屏蔽'}`,
             selected: false
         },
         loading: {
-            show: false,
-            text: `正在${props.user.blocking ? '解除' : ''}屏蔽......`
+            show: false
         }
     }
 })

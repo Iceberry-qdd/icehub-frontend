@@ -35,20 +35,17 @@ const { deleteReplyOnUi } = inject('deleteReplyOnUi')
 const state = reactive({
     confirmDialogBoxUi: {
         show: false,
-        title: '确定要删除此评论吗？',
+        title: '删除此评论？',
         confirmButton: {
-            text: '删除',
             color: 'text-onError',
             bgColor: 'bg-error',
             selected: false
         },
         cancelButton: {
-            text: '不删除',
             selected: false
         },
         loading: {
-            show: false,
-            text: '正在删除中......'
+            show: false
         }
     }
 })

@@ -17,14 +17,14 @@
                     :class="[confirmBtnColor, confirmBtnBgColor]"
                     class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
                     @click="confirm">
-                    {{ props.ui.confirmButton.text }}
+                    {{ confirmBtnText }}
                 </div>
                 <div
                     id="cancelButton"
                     :class="[cancelBtnColor, cancelBtnBgColor]"
                     class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
                     @click="cancel">
-                    {{ props.ui.cancelButton.text }}
+                    {{ cancelBtnText }}
                 </div>
             </div>
         </div>
@@ -66,10 +66,18 @@ const emits = defineEmits(['choice'])
 
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const {
-    loading: { text: loadingText },
+    loading: { text: loadingText = '请稍等......' },
     title: titleText,
-    confirmButton: { color: confirmBtnColor = 'text-primary dark:text-onPrimary', bgColor: confirmBtnBgColor = 'bg-primaryContainer' },
-    cancelButton: { color: cancelBtnColor = 'text-onPrimaryContainer', bgColor: cancelBtnBgColor = 'bg-helper dark:bg-error' }
+    confirmButton: {
+        color: confirmBtnColor = 'text-primary dark:text-onPrimary',
+        bgColor: confirmBtnBgColor = 'bg-primaryContainer',
+        text: confirmBtnText = '确定'
+    },
+    cancelButton: {
+        color: cancelBtnColor = 'text-onPrimaryContainer',
+        bgColor: cancelBtnBgColor = 'bg-helper dark:bg-error',
+        text: cancelBtnText = '取消'
+    }
 } = props.ui
 
 const title = computed(() => {

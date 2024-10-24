@@ -40,13 +40,13 @@ const { deleteAllUsersOfUserOnUi } = inject('deleteAllUsersOfUserOnUi', { 'delet
 const state = reactive({
     confirmBDialogUi: {
         show: false,
-        title: '确定要屏蔽此用户吗？屏蔽后可在黑名单界面查看',
+        title: '屏蔽此用户？',
         confirmButton: {
-            text: '确定屏蔽',
-            selected: false
+            selected: false,
+            color: 'text-onError',
+            bgColor: 'bg-error'
         },
         cancelButton: {
-            text: '不屏蔽',
             selected: false
         },
         loading: {

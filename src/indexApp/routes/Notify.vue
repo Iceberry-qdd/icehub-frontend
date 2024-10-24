@@ -82,18 +82,15 @@ const state = reactive({
     },
     confirmBDialogUi: {
         show: false,
-        title: '确定要已读全部消息吗？(已读后不可撤回)',
+        title: '已读全部消息吗？(已读后不可撤回)',
         confirmButton: {
-            text: '全部已读',
             selected: false
         },
         cancelButton: {
-            text: '取消',
             selected: false
         },
         loading: {
-            show: false,
-            text: '正在将全部消息设为已读...'
+            show: false
         }
     },
     tabs: [
@@ -156,12 +153,12 @@ watch(() => route.name, (newVal, _) => {
     const tab = state.tabs.find(it => it.id === newVal)
 
     if (!tab || tab.id === 'notifyAllTimelinePage') {
-        state.confirmBDialogUi.title = `确定要已读全部消息吗？`
+        state.confirmBDialogUi.title = `已读全部消息？`
         state.headerConfig.showMenu = false
         return
     }
 
     // Change confirmDialogUi title
-    state.confirmBDialogUi.title = `确定要已读全部${tab.name}消息吗？`
+    state.confirmBDialogUi.title = `已读全部${tab.name}消息？`
 }, { immediate: true })
 </script>

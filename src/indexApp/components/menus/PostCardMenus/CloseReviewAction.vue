@@ -38,16 +38,13 @@ const state = reactive({
         show: false,
         title: `确定要${props.post.allowReview ? '关闭' : '打开'}评论功能吗?`,
         confirmButton: {
-            text: `${props.post.allowReview ? '关闭' : '打开'}评论`,
             selected: false
         },
         cancelButton: {
-            text: `保持${props.post.allowReview ? '打开' : '关闭'}`,
             selected: false
         },
         loading: {
-            show: false,
-            text: '正在关闭该帖子的评论功能......'
+            show: false
         }
     }
 })

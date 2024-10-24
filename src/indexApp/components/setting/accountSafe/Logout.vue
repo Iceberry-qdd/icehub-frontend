@@ -26,20 +26,17 @@ import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 const state = reactive({
     confirmBDialogUi: {
         show: false,
-        title: '确定要退出登录吗？',
+        title: '从此设备上退出登录？',
         confirmButton: {
-            text: '确定退出',
             selected: false,
             color: 'text-onError',
             bgColor: 'bg-error'
         },
         cancelButton: {
-            text: '取消',
             selected: false
         },
         loading: {
-            show: false,
-            text: '正在退出登录...'
+            show: false
         }
     },
 })

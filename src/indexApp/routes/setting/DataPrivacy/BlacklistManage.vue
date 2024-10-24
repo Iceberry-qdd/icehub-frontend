@@ -80,16 +80,13 @@ const state = reactive({
         show: false,
         title: '清空黑名单列表？',
         confirmButton: {
-            text: '确定',
             selected: false
         },
         cancelButton: {
-            text: '取消',
             selected: false
         },
         loading: {
-            show: false,
-            text: '清空中......'
+            show: false
         }
     }
 })

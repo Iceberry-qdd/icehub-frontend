@@ -167,18 +167,15 @@ const state = reactive({
     confirmFanBtnLoading: false,
     confirmBDialogUi: {
         show: false,
-        title: '确定要解除屏蔽吗？',
+        title: '解除屏蔽此用户？',
         confirmButton: {
-            text: '解除屏蔽',
             selected: false
         },
         cancelButton: {
-            text: '保持屏蔽',
             selected: false
         },
         loading: {
-            show: false,
-            text: '解除屏蔽中......'
+            show: false
         }
     },
     followTextMap: new Map([
