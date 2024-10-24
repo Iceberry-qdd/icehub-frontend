@@ -200,10 +200,10 @@ onMounted(() => {
     }
 
     // Emoji Setting
-    if (['followSystem', undefined].includes(localStorage.emoji)) {
+    if ('followSystem' === localStorage.emoji) {
         state.setting.emoji = 'default'
     } else {
-        state.setting.emoji = localStorage.emoji
+        state.setting.emoji = localStorage.emoji || 'noto'
     }
 
     // Highlight settings

@@ -47,10 +47,10 @@
         }
 
         // Emoji style settings
-        if (['followSystem', undefined].includes(localStorage.emoji)) {
+        if ('followSystem' === localStorage.emoji) {
             document.body.removeAttribute('emoji')
         } else {
-            document.body.setAttribute('emoji', localStorage.emoji)
+            document.body.setAttribute('emoji', localStorage.emoji || 'noto')
         }
 
         // Highlight settings
@@ -61,11 +61,7 @@
         }
 
         // Accent color settings
-        if (!localStorage.accentColor) {
-            document.body.removeAttribute('accent')
-        } else {
-            document.body.setAttribute('accent', localStorage.accentColor)
-        }
+        document.body.setAttribute('accent', localStorage.accentColor || 'blue')
     </script>
 </body>
 
