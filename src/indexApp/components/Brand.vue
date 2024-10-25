@@ -1,7 +1,7 @@
 <template>
     <div
         id="brand"
-        class="flex flex-row gap-x-4 h-16 items-end justify-center">
+        class="flex flex-row gap-x-4 h-16 items-center justify-center">
         <a>
             <img
                 src="../../../public/favicon.ico"

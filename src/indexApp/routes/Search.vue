@@ -140,7 +140,7 @@ async function routeTo({ url }) {
         state.apiSearch = {}
         router.back()
     } else {
-        await router.push(url)
+        await router.replace(url)
     }
 }
 

@@ -77,7 +77,7 @@ async function doGetHotSearch() {
 }
 
 function routeToSearch(key) {
-    router.push({ name: 'search', query: { key: btoa(encodeURIComponent(key)) } })
+    router.replace({ name: 'search', query: { key: btoa(encodeURIComponent(key)) } })
 }
 
 doGetHotSearch()

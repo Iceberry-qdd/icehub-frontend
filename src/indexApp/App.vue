@@ -75,7 +75,7 @@
                     class="relative sm:max-lg:border-[#EEEEEE] sm:max-lg:border-x-[1px] sm:max-lg:dark:border-[#1e1e1e] sm:max-lg:max-w-[36rem] w-full">
                     <keep-alive
                         :max="8"
-                        :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
+                        :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Profile']">
                         <component
                             :is="Component"
                             :key="routerViewKey">
@@ -311,7 +311,7 @@ const isSetting = computed(() => {
 })
 
 const routerViewKey = computed(() => {
-    const suffix = `/${Object.values(route.params).join('/')}`
+    const suffix = `/${Object.values(route.params).join('/')}${btoa(JSON.stringify(route.query))}`
     if(!!route.meta.key) return `${route.meta.key}${suffix}`
     else return `${route.name}${suffix}`
 })
