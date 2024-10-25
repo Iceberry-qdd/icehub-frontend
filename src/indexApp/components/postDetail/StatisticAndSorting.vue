@@ -4,21 +4,21 @@
             <div
                 class="cursor-pointer hover:dark:text-onPrimary hover:text-primary hover:underline py-2"
                 :class="{'text-primary dark:text-onPrimary': $route.name === 'postLikeListPage'}"
-                @click="$router.replace({name: 'postLikeListPage'})">
+                @click="props.likeCount > 0 ? routeTo('postLikeListPage') : undefined">
                 <span>{{ props.likeCount }}</span>
                 <span>点赞</span>
             </div>
             <div
                 class="cursor-pointer hover:dark:text-onPrimary hover:text-primary hover:underline py-2"
                 :class="{'text-primary dark:text-onPrimary': ['postDetail', 'postReviewListPage'].includes($route.name)}"
-                @click="$router.replace({name: 'postReviewListPage'})">
+                @click="props.reviewCount > 0 ? routeTo('postReviewListPage') : undefined">
                 <span>{{ props.reviewCount }}</span>
                 <span>评论</span>
             </div>
             <div
                 class="cursor-pointer hover:dark:text-onPrimary hover:text-primary hover:underline py-2"
                 :class="{'text-primary dark:text-onPrimary': $route.name === 'postRepostListPage'}"
-                @click="$router.replace({name: 'postRepostListPage'})">
+                @click="props.repostCount > 0 ? routeTo('postRepostListPage') : undefined">
                 <span>{{ props.repostCount }}</span>
                 <span>转发</span>
             </div>
@@ -61,7 +61,9 @@
 <script setup>
 import { reactive } from 'vue'
 import SortingMenu from '@/indexApp/components/postDetail/SortingMenu.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const emits = defineEmits(['selectOrderDirection', 'selectOrderBy'])
 const props = defineProps({
     /** 点赞数 */
@@ -112,5 +114,9 @@ const state = reactive({
 function selectOrderBy(orderBy) {
     emits('selectOrderBy', orderBy)
     state.showSortingMenu = false
+}
+
+function routeTo(name){
+    router.replace({name: name})
 }
 </script>

@@ -158,7 +158,7 @@ const state = reactive({
         { id: 'postTimelinePage', name: '帖子', visibility: 'PUBLIC', count: 0},
         { id: 'reviewTimelinePage', name: '评论', visibility: 'PUBLIC', count: 0},
         { id: 'mediaTimelinePage', name: '媒体', visibility: 'PUBLIC', count: 0},
-        { id: 'likeTimelinePage', name: '喜欢', visibility: 'PRIVATE', count: 0}
+        { id: 'likeTimelinePage', name: '喜欢', visibility: 'PUBLIC', count: 0}
     ]
 })
 
