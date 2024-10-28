@@ -52,7 +52,7 @@ export function uploadImages(files) {
 
         const xhr = new XMLHttpRequest()
         xhr.withCredentials = true
-        xhr.open('POST', `${BASE_URL}/object/upload/image`, true)
+        xhr.open('POST', `${BASE_URL}/object/image/upload`, true)
         xhr.onload = function () {
             if (xhr.status === 201) resolve(xhr.response)
             else reject(Error(xhr.response.error))
@@ -273,7 +273,7 @@ export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
 export function uploadUserBanner(file) {
     let formData = new FormData()
     formData.append('files', file, file.name)
-    return fetch(`${BASE_URL}/object/upload/image`, {
+    return fetch(`${BASE_URL}/object/image/upload`, {
         method: 'POST',
         body: formData
     })
@@ -287,7 +287,7 @@ export function uploadUserBanner(file) {
 export function uploadUserAvatar(file) {
     let formData = new FormData()
     formData.append('files', file, file.name)
-    return fetch(`${BASE_URL}/object/upload/image`, {
+    return fetch(`${BASE_URL}/object/image/upload`, {
         method: 'POST',
         body: formData
     })

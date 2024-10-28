@@ -49,8 +49,6 @@ const routes = [
     { name: 'explore', path: '/explore', component: Explore },
     { name: 'bookmark', path: '/bookmark', component: Bookmark },
     { name: 'search', path: '/search', component: Search },
-    { name: 'postDetail', path: '/post/:id', component: PostDetail },
-    { name: 'profile', path: '/profile/:nickname', component: Profile },
     { name: 'profileEdit', path: '/profile/edit', component: ProfileEditor },
     { name: 'replyDetail', path: '/reply/:id', component: ReplyDetail },
     {

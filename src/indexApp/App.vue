@@ -311,7 +311,7 @@ const isSetting = computed(() => {
 })
 
 const routerViewKey = computed(() => {
-    const suffix = `/${Object.values(route.params).join('/')}${btoa(JSON.stringify(route.query))}`
+    const suffix = `/${Object.values(route.params).join('/')}?${btoa(JSON.stringify(route.query))}`
     if(!!route.meta.key) return `${route.meta.key}${suffix}`
     else return `${route.name}${suffix}`
 })

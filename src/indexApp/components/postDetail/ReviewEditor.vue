@@ -137,7 +137,7 @@ const props = defineProps({
         default: false
     }
 })
-const { newReview } = inject('newReview')
+const { newReviewOnUi } = inject('newReview')
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const imageListInfo = ref([
         { hidden: false, altText: null, contentType: "" },
@@ -220,13 +220,13 @@ async function submitReview() {
         const response = await reviewing(data)
         if (!response.ok) throw new Error((await response.json()).message)
         const result = await response.json()
-        newReview({ review: result })
+        newReviewOnUi({ review: result })
         state.content = ''
         emits('dismiss')
         reset()
 
-        const reviewId = result.id
-        const receiverId = !data.parentId ? props.post.user.id : props.parent.user.id
+        // const reviewId = result.id
+        // const receiverId = !data.parentId ? props.post.user.id : props.parent.user.id
         // ws.sendToOneQueue(new MsgPack(reviewId, state.curUser.id, 'REVIEW', receiverId), 'interact')
     } catch (e) {
         store.setErrorMsg(e.message)

@@ -8,15 +8,15 @@ body {
 }
 
 body:where([emoji="noto"], [emoji="noto"] *){
-    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'San Francisco Pro', 'Microsoft YaHei UI', 'Noto Color Emoji', system-ui, sans-serif, 'Segoe UI' !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'San Francisco Pro', 'Microsoft YaHei UI', sans-serif, 'Noto Color Emoji', system-ui, 'Segoe UI' !important;
 }
 
 body:where([emoji="apple"], [emoji="apple"] *){
-    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'San Francisco Pro', 'Microsoft YaHei UI', 'Apple Color Emoji', system-ui, sans-serif, 'Segoe UI' !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'San Francisco Pro', 'Microsoft YaHei UI', sans-serif, 'Apple Color Emoji', system-ui, 'Segoe UI' !important;
 }
 
 body:where([emoji="fluent"], [emoji="fluent"] *){
-    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'San Francisco Pro', 'Microsoft YaHei UI', 'Fluent Emoji', system-ui, sans-serif, 'Segoe UI' !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'San Francisco Pro', 'Microsoft YaHei UI', sans-serif, 'Fluent Emoji', system-ui, 'Segoe UI' !important;
 }
 
 #pre-loading {
