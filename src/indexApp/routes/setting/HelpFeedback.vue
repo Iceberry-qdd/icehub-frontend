@@ -15,13 +15,14 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
+import { store } from '@/indexApp/js/store.js'
 
 const state = reactive({
     headerConfig: {
         title: '帮助与反馈',
-        goBack: false,
+        goBack: computed(() => store.PAD_MODE || store.MOBILE_MODE),
         showMenu: false,
         menuIcon: null,
         menuAction: { action: 'route', param: '' },

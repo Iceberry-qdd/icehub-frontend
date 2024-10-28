@@ -1,12 +1,12 @@
 <template>
-    <div class="flex flex-col h-64 items-center justify-center w-full">
+    <div class="dark:text-white/25 flex flex-col h-64 items-center justify-center text-gray-300 w-full">
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="font-bold select-none text-[64pt] text-gray-300">404</div>
+        <div class="font-bold select-none text-[6rem]">404</div>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="select-none text-[11pt] text-stone-500">
+        <div class="dark:text-inherit select-none text-[0.9rem] text-neutral-400">
             <span>该页面不存在，</span>
             <span
-                class="active:text-blue-600 cursor-pointer text-blue-500"
+                class="cursor-pointer dark:text-blue-300 text-blue-500"
                 @click="backToIndex">
                 点此返回主页
             </span>

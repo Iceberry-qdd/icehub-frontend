@@ -3,27 +3,28 @@
         id="confirmDialogBox"
         class="bg-[#00000066] fixed-page flex flex-row h-screen items-center justify-center max-sm:z-[1001] sm:backdrop-blur-sm w-screen z-[111]">
         <div
-            class="bg-white fade-in flex flex-col flex-nowrap gap-y-[1rem] items-center justify-between max-h-[75%] min-h-[8rem] overflow-y-auto p-6 rounded-[8px] w-[18rem]">
+            class="bg-white dark:bg-[#1e1e1e] fade-in flex flex-col flex-nowrap gap-y-[1rem] items-center justify-between max-h-[75%] min-h-[8rem] overflow-y-auto p-6 rounded-[8px] w-[18rem]">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="text-[0.95rem] text-justify">{{ title }}</div>
+            <div class="dark:text-white/75 text-[0.95rem] text-justify">{{ title }}</div>
             <IconLoading
                 v-if="props.ui.loading.show"
-                class="h-auto w-5"
-                :style="loadingStyle">
+                class="dark:text-white/50 h-5 text-slate-500 w-5">
             </IconLoading>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-else class="flex flex-nowrap flex-row gap-x-[1rem] text-[0.9rem]">
                 <div
+                    id="confirmButton"
+                    :class="[confirmBtnColor, confirmBtnBgColor]"
                     class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
-                    :style="confirmButtonStyle"
                     @click="confirm">
-                    {{ props.ui.confirmButton.text }}
+                    {{ confirmBtnText }}
                 </div>
                 <div
+                    id="cancelButton"
+                    :class="[cancelBtnColor, cancelBtnBgColor]"
                     class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
-                    :style="cancelButtonStyle"
                     @click="cancel">
-                    {{ props.ui.cancelButton.text }}
+                    {{ cancelBtnText }}
                 </div>
             </div>
         </div>
@@ -51,7 +52,7 @@
 </style>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 
 const props = defineProps({
@@ -63,27 +64,24 @@ const props = defineProps({
 })
 const emits = defineEmits(['choice'])
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+const {
+    loading: { text: loadingText = '请稍等......' },
+    title: titleText,
+    confirmButton: {
+        color: confirmBtnColor = 'text-primary dark:text-onPrimary',
+        bgColor: confirmBtnBgColor = 'bg-primaryContainer',
+        text: confirmBtnText = '确定'
+    },
+    cancelButton: {
+        color: cancelBtnColor = 'text-onPrimaryContainer',
+        bgColor: cancelBtnBgColor = 'bg-helper dark:bg-error',
+        text: cancelBtnText = '取消'
+    }
+} = props.ui
+
 const title = computed(() => {
-    return props.ui.loading.show ? props.ui.loading.text : props.ui.title
-})
-
-const loadingColor = computed(() => props.ui.loading.color)
-const loadingStyle = reactive({
-    color: loadingColor
-})
-
-const confirmBtnColor = computed(() => props.ui.confirmButton.color)
-const confirmBtnBgColor = computed(() => props.ui.confirmButton.bgColor)
-const confirmButtonStyle = reactive({
-    color: confirmBtnColor,
-    backgroundColor: confirmBtnBgColor
-})
-
-const cancelBtnColor = computed(() => props.ui.cancelButton.color)
-const cancelBtnBgColor = computed(() => props.ui.cancelButton.bgColor)
-const cancelButtonStyle = reactive({
-    color: cancelBtnColor,
-    backgroundColor: cancelBtnBgColor
+    return props.ui.loading.show ? loadingText : titleText
 })
 
 function confirm() {

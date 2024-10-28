@@ -63,7 +63,11 @@ export function codeObfuscatorPlugin(isBuild) {
     return obfuscator({
         ...options,
         include: ["**/*.js", "**/*.ts", "**/*.vue"],
-        exclude: ["node_modules/**", "src/assets/emoji-datasource-apple@15.1.2+esm.js"],
+        exclude: [
+            "node_modules/**",
+            "src/assets/emoji-datasource-apple@15.1.2+esm.js",
+            "src/indexApp/App.vue" // 解决项目编译后主路由无法切换的问题：TypeError: d.ctx.deactivate is not a function.
+        ],
         enforce: 'post',
         apply: 'build',
     })

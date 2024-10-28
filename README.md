@@ -30,7 +30,7 @@ Icehub (Iceberry's social hub) is a twitter-like social networking site I create
 |PWA|<span style="background-color:#dafbe1;color:green;padding:0.2rem 0.5rem;border-radius:9999px;">DONE</span>||
 |Timed posting|<span style="background-color:#dafbe1;color:green;padding:0.2rem 0.5rem;border-radius:9999px;">DONE</span>||
 |i18n|<span style="background-color:#ffa50044;color:orange;padding:0.2rem 0.5rem;border-radius:9999px;">PLANNED</span>|- [ ] #57|
-|Dark mode|<span style="background-color:#ffa50044;color:orange;padding:0.2rem 0.5rem;border-radius:9999px;">PLANNED</span>||
+|Dark mode|<span style="background-color:#dafbe1;color:green;padding:0.2rem 0.5rem;border-radius:9999px;">DONE</span>||
 
 
 ## Build

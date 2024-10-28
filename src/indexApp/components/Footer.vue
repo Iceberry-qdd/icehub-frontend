@@ -1,18 +1,24 @@
 <template>
     <div
         ref="footer"
-        class="flex flex-row h-[10vh] justify-center pt-4 text-gray-500 text-sm w-full">
+        class="dark:text-white/25 flex flex-row h-[10vh] items-center justify-center select-none text-gray-500 text-sm w-full">
         <IconLoading
             v-if="props.isLoading"
-            class="h-5 text-slate-500 w-5">
+            class="dark:text-white/50 h-5 text-slate-500 w-5">
         </IconLoading>
         <div
             v-else-if="props.hasMore"
-            class="cursor-pointer h-fit hover:underline text-blue-500"
+            class="cursor-pointer dark:text-onPrimary h-fit hover:underline text-primary"
             @click="fetchMore">
             加载更多
         </div>
-        <span v-else>没有更多了</span>
+        <span
+            v-else
+            class="flex items-center px-12 text-[0.85rem] text-neutral-400 w-full">
+            <span class="bg-gradient-to-l dark:from-neutral-800 flex-1 from-gray-100 h-px" />
+            <span class="px-6 shrink-0">{{ props.placeholder }}</span>
+            <span class="bg-gradient-to-r dark:from-neutral-800 flex-1 from-gray-100 h-px" />
+        </span>
     </div>
 </template>
 
@@ -32,12 +38,18 @@ const props = defineProps({
     hasMore: {
         type: Boolean,
         required: true
+    },
+    /** 加载到最低端时的占位文字 */
+    placeholder: {
+        type: String,
+        required: false,
+        default: '没有更多了'
     }
 })
 const emits = defineEmits(['fetchMore'])
 
 function fetchMore() {
-    if (!props.hasMore){
+    if (!props.hasMore) {
         footerObserver.unobserve(footer.value)
         return
     }

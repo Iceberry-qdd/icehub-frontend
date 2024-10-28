@@ -1,8 +1,9 @@
 <template>
     <div @click="handleClick">
-        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
-        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">{{ `${props.user.blocking ? '解除屏蔽' : '屏蔽该用户'}` }}</div>
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
+        <div class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">
+            {{ `${props.user.blocking ? '解除屏蔽' : '屏蔽该用户'}` }}
+        </div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmBDialogUi.show"
@@ -38,21 +39,13 @@ const state = reactive({
         show: false,
         title: `确定要${props.user.blocking ? '解除' : ''}屏蔽此用户吗？`,
         confirmButton: {
-            text: `${props.user.blocking ? '解除' : '确定'}屏蔽`,
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
             selected: false
         },
         cancelButton: {
-            text: `${props.user.blocking ? '保持屏蔽' : '不屏蔽'}`,
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
-            show: false,
-            text: `正在${props.user.blocking ? '解除' : ''}屏蔽......`,
-            color: 'rgb(239 68 68)'
+            show: false
         }
     }
 })

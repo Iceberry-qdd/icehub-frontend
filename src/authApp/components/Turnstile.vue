@@ -33,7 +33,7 @@ const state = reactive({
     retry: { mode: 'auto', interval: 8000 },
     refresh: { mode: 'auto', timeout: 'auto' },
     appearance: 'always',
-    theme: 'light'
+    theme: store.SYS_THEME_MODE
 })
 
 function onSuccess(token) {

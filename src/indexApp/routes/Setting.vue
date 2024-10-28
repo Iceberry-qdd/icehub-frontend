@@ -1,82 +1,83 @@
 <template>
-    <div class="divide-x flex flex-nowrap flex-row relative">
-        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div id="setting" class="basis-[40%] h-screen">
+    <div class="dark:divide-neutral-700 divide-x flex flex-nowrap flex-row max-sm:h-screen modern-scrollbar-y overflow-y-auto relative">
+        <div
+            id="setting"
+            class="h-screen lg:basis-[30%] max-lg:w-full max-lg:z-[1] sm:max-lg:bg-inherit"
+            :class="{'max-lg:hidden': $route.name !== 'setting'}">
             <Header
                 class="sticky"
-                :width="state.headerConfig.width"
                 :title="state.headerConfig.title"
                 :go-back="state.headerConfig.goBack"
                 :show-menu="state.headerConfig.showMenu"
                 :menu-icon="state.headerConfig.menuIcon"
-                :no-border="state.headerConfig.noBorder"
-                :menu-action="state.headerConfig.menuAction">
+                :no-border="state.headerConfig.noBorder">
             </Header>
-            <div class="text-[#303133]">
+            <div class="cursor-pointer">
                 <div
-                    v-for="menu in state.menus"
+                    v-for="menu in state.menus.filter(it => it.show)"
                     :key="menu.id"
-                    :class="[menu.isActive ? 'bg-[#f4f4f5] border-l-[#3b82f6] border-l-4 pl-[calc(1rem-4px)]' : '']"
-                    class="cursor-pointer flex flex-row hover:bg-[#f4f4f5] items-center justify-between px-4 py-4 text-[12pt]"
-                    @click="routeTo(menu.routeTo)">
-                    <div>{{ menu.name }}</div>
+                    :class="{'bg-[#f4f4f5] dark:bg-primaryContainer border-l-primary dark:border-l-onPrimary border-l-4 pl-[calc(1rem-4px)]': [$route.name, $route.meta?.parent].includes(menu.id)}"
+                    class="flex flex-row hover:bg-helper items-center justify-between max-sm:p-3 p-4 text-[12pt]"
+                    @click="routeTo(menu.id)">
+                    <div class="flex flex-row gap-x-2 items-center">
+                        <span class="material-symbols-rounded no-hover p-0">{{ menu.icon }}</span>
+                        <span>{{ menu.name }}</span>
+                    </div>
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                    <div class="cursor-pointer material-symbols-rounded mr-[0.5rem] text-[12pt]">arrow_forward_ios</div>
+                    <div class="material-symbols-rounded no-hover p-0 text-[1rem]">arrow_forward_ios</div>
                 </div>
+                <Logout class="max-sm:p-3 p-4 text-onError"></Logout>
             </div>
         </div>
-        <div class="basis-[70%] h-screen">
-            <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
-            <router-view></router-view>
+        <div
+            :class="{'lg:basis-[50%] max-lg:absolute max-lg:bg-inherit max-lg:w-full': $route.name !== 'setting', 'max-lg:hidden': $route.name === 'setting'}"
+            class="h-screen no-scrollbar overflow-y-auto">
+            <!-- eslint-disable-next-line vue/no-undef-components, vue/component-name-in-template-casing -->
+            <router-view v-slot="{ Component }">
+                <keep-alive>
+                    <component
+                        :is="Component"
+                        :key="$route.name"
+                        @route-to="(name) => routeTo(name)">
+                    </component>
+                </keep-alive>
+            </router-view>
         </div>
-        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div id="placeholder" class="basis-[15%] h-screen" />
+        <div
+            id="placeholder"
+            class="basis-[20%] h-screen max-lg:hidden"
+            :class="{'hidden': $route.name === 'setting'}" />
     </div>
 </template>
 
-<style scoped>
-.material-symbols-rounded {
-    font-size: 12pt;
-    padding: 0;
-    margin: 0;
-    color: #303133;
-}
-
-.material-symbols-rounded:hover {
-    background-color: transparent;
-    padding: 0;
-}
-</style>
-
 <script setup>
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { store } from '@/indexApp/js/store.js'
+import Logout from '@/indexApp/components/setting/accountSafe/Logout.vue'
+const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 
 const router = useRouter()
-const route = useRoute()
 const state = reactive({
     headerConfig: {
         title: '设置',
-        goBack: false,
+        goBack: computed(() => store.MOBILE_MODE),
         showMenu: false,
-        menuIcon: null,
-        menuAction: { action: 'route', param: '' },
-        noBorder: true
+        menuIcon: undefined,
+        noBorder: computed(() => !store.PAD_MODE && !store.MOBILE_MODE)
     },
     menus: [
-        { id: 1, name: '账号与安全', routeTo: 'account&safe', isActive: route.params == 'accountSafe' },
-        { id: 2, name: '消息通知', routeTo: 'notify&msg', isActive: route.params == 'notifyMsg' },
-        { id: 3, name: '数据与隐私', routeTo: 'data&privacy', isActive: route.params == 'dataPrivacy' },
-        { id: 4, name: '界面个性化设置', routeTo: 'display&theme', isActive: route.params == 'displayTheme' },
-        { id: 5, name: '帮助与反馈', routeTo: 'help&feedback', isActive: route.params == 'helpFeedback' },
-        { id: 6, name: '关于', routeTo: 'about', isActive: route.params == 'about' }
+        { id: "accountSafe", name: '账号与安全', icon:"shield_person", show: true },
+        { id: "notifyMsg", name: '消息通知', icon:"notifications", show: true },
+        { id: "dataPrivacy", name: '数据与隐私', icon:"encrypted", show:true },
+        { id: "displayTheme", name: '界面个性化设置', icon:"palette", show:true },
+        { id: "helpFeedback", name: '帮助与反馈', icon:"help", show: showUnImpl },
+        { id: "about", name: '关于', icon:"info", show: true }
     ]
 })
 
-function routeTo(url) {
-    state.menus.forEach(menu => menu.isActive = false)
-    state.menus.filter(menu => menu.routeTo == url)[0].isActive = true
-    router.push(`/setting/${url}`)
+function routeTo(name) {
+    router.push({ name: name })
 }
 </script>

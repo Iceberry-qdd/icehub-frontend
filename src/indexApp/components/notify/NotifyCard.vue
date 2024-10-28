@@ -1,11 +1,11 @@
 <template>
     <div
-        class="border-[#EEEEEE] border-b-[1px] cursor-pointer flex flex-row gap-4 max-sm:gap-3 max-sm:p-3 notify-card p-4"
+        class="border-[#EEEEEE] border-b-[1px] cursor-pointer dark:border-[#1e1e1e] flex flex-row gap-4 max-sm:gap-3 max-sm:p-3 notify-card p-4"
         :class="postStatus">
         <div>
             <div
                 v-if="props.message.type == 'POST_LIKE' || props.message.type == 'REVIEW_LIKE'"
-                class="bg-red-200 hover:bg-red-200 p-[0.4rem] rounded-full">
+                class="bg-red-200 dark:bg-neutral-800 p-[0.4rem] rounded-full">
                 <IconLike
                     fill="#FF0000"
                     :size="20"
@@ -15,34 +15,34 @@
             </div>
             <div
                 v-else-if="props.message.type == 'REVIEW' || props.message.type == 'REVIEW_REPLY'"
-                class="bg-[#fed7aa] hover:bg-[#fed7aa] p-[0.4rem] rounded-full">
+                class="bg-[#fed7aa] dark:bg-neutral-800 p-[0.4rem] rounded-full">
                 <IconMessage
+                    class="dark:text-inherit text-[#f97316]"
                     :size="19"
-                    stroke-color="#f97316"
                     :stroke-width="3">
                 </IconMessage>
             </div>
             <div
                 v-else-if="props.message.type == 'REPOST'"
-                class="bg-[#d1e7dd] hover:bg-[#d3d3d5] p-[0.4rem] rounded-full">
+                class="bg-[#d1e7dd] dark:bg-neutral-800 p-[0.4rem] rounded-full">
                 <IconShare
-                    stroke-color="#198754"
+                    class="dark:text-inherit text-[#198754]"
                     :stroke-width="3">
                 </IconShare>
             </div>
             <span
                 v-else-if="props.message.type == 'SYS_NOTIFY'"
-                class="bg-[#bfdbfe] icon material-symbols-rounded p-[0.2rem] text-[#3b82f6] text-[19px]">
+                class="bg-[#bfdbfe] dark:bg-neutral-800 dark:text-inherit icon material-symbols-rounded p-[0.2rem] text-[#3b82f6] text-[19px]">
                 notifications
             </span>
             <span
                 v-else-if="props.message.type == 'USER_FOLLOW'"
-                class="bg-[#ddd6fe] icon material-symbols-rounded text-[#8b5cf6] text-[19px]">
+                class="bg-[#ddd6fe] dark:bg-neutral-800 dark:text-inherit icon material-symbols-rounded text-[#8b5cf6] text-[19px]">
                 person_add
             </span>
             <span
                 v-else-if="props.message.type == 'AT_SIGN'"
-                class="bg-[#fecdd3] icon material-symbols-rounded text-[#ec4899] text-[19px]">
+                class="bg-[#fecdd3] dark:bg-neutral-800 dark:text-inherit icon material-symbols-rounded text-[#ec4899] text-[19px]">
                 alternate_email
             </span>
         </div>
@@ -61,11 +61,10 @@
                         @click="routeToUserProfile">
                         {{ props.message.from.nickname }}
                     </span>
-                    &nbsp;
-                    {{ brief }}
+                    <span class="dark:text-white-50 pl-1">{{ brief }}</span>
                 </div>
                 <div 
-                    class="text-[#9ca3af] text-[0.8rem] time z-[97]"
+                    class="dark:text-white/50 text-[0.8rem] text-neutral-400 time z-[97]"
                     :title="standardDateTime(props.message.timestamps)">
                     {{ humanizedTime(props.message.timestamps) }}
                 </div>
@@ -73,7 +72,7 @@
 
             <div
                 v-if="props.message.type === 'REVIEW'"
-                class="bg-white border-[1px] border-gray-200 content overflow-hidden relative rounded-[8px]">
+                class="bg-white border-[1px] border-gray-200 content dark:bg-[#121212] dark:border-neutral-700 overflow-hidden relative rounded-[8px]">
                 <ReviewCard
                     class="clientHeight review-card"
                     :class="{'shrink-content': state.shrinkContent.review}"
@@ -85,7 +84,7 @@
             <div
                 v-if="props.message.type === 'REPOST'"
                 ref="repost"
-                class="bg-white border-[1px] border-gray-300 mb-2 p-2 rounded-[8px]">
+                class="bg-white border-[1px] border-gray-300 dark:bg-[#121212] dark:border-neutral-700 mb-2 p-2 rounded-[8px]">
                 <div class="mb-2 relative">
                     <VueShowdown
                         repost
@@ -106,7 +105,7 @@
 
             <div
                 v-if="props.message.type === 'REVIEW_LIKE'"
-                class="border-[1px] border-gray-300 content overflow-hidden relative rounded-[8px]">
+                class="border-[1px] border-gray-300 content dark:border-neutral-700 overflow-hidden relative rounded-[8px]">
                 <ReviewCard
                     :review="props.message.content"
                     tire-direction="bottom"
@@ -140,6 +139,10 @@
 
 .UNREAD {
     background-color: #eff6ff;
+}
+
+.UNREAD:where([theme="dark"], [theme="dark"] *){
+    background-color: #1e1e1e;
 }
 
 .material-symbols-rounded:hover {

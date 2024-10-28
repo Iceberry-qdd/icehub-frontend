@@ -1,29 +1,32 @@
 <template>
     <div>
-        <div class="absolute p-4 top-0 w-full z-[109]">
+        <div class="absolute p-4 sm:z-[1002] top-0 w-full z-[109]">
             <div
                 v-if="state.yourFanStatus === 'WAIT_PASS' && state.showConfirmFollowBanner"
-                class="bg-white flex flex-row items-center justify-between px-2 py-2 relative rounded-[8px] text-zinc-500 w-full">
+                class="bg-white dark:bg-neutral-800 flex flex-row items-center justify-between px-2 py-2 relative rounded-[8px] w-full">
                 <div class="flex flex-row items-center justify-center">
                     <div
                         class="material-symbols-rounded no-hover text-[1rem]"
                         @click="state.showConfirmFollowBanner = false">
                         close
                     </div>
-                    <div><span class="font-bold text-black">{{ `${props.user.nickname} ` }}</span>想要订阅你</div>
+                    <div>
+                        <span class="font-bold">{{ `${props.user.nickname} ` }}</span>
+                        <span class="text-neutral-400">想要订阅你</span>
+                    </div>
                 </div>
                 <div
-                    class="bg-blue-500 cursor-pointer h-fit px-4 py-1 rounded-full text-[0.9rem] text-white"
+                    class="bg-primary cursor-pointer h-fit px-4 py-1 rounded-full text-[0.9rem] text-onPrimary"
                     @click="passFanRequest">
                     <div v-if="!state.confirmFanBtnLoading">批准</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
+                    <IconLoading v-else class="dark:text-white/50 h-5 text-onPrimary w-5"></IconLoading>
                 </div>
             </div>
         </div>
         <Avatar
             :user="props.user"
-            class="border-[4px] border-white h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]"
+            class="border-[4px] border-white dark:border-[#121212] h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]"
             @click="props.user?.avatar?.url ? showSlide([props.user.avatar], 0) : ''">
         </Avatar>
         <div class="flex flex-col gap-y-1 px-[1rem]">
@@ -33,38 +36,38 @@
                     <div class="font-bold max-w-[20rem] text-[18pt] w-fit webkit-box-1">{{ props.user.nickname }}</div>
                     <div
                         v-if="props.user.confirmFollow"
-                        class="material-symbols-rounded no-hover p-0 text-[1.25rem]">
+                        class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1.25rem]">
                         lock
                     </div>
                     <div
                         v-if="props.user.yourFanStatus === 'FAN' && props.user.yourFollowStatus !== 'FOLLOW'"
-                        class="bg-blue-100 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                        class="bg-primaryContainer dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-primary">
                         订阅了你
                     </div>
                     <div
                         v-if="props.user.yourFanStatus === 'WAIT_PASS'"
-                        class="bg-blue-100 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                        class="bg-primaryContainer dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-primary">
                         请求订阅你
                     </div>
                 </div>
                 <div
                     v-if="!isMyself && !props.user.blocking && !props.user.blocked"
-                    class="bg-blue-500 cursor-pointer font-bold px-5 py-[0.325rem] rounded-full text-white"
+                    class="cursor-pointer font-bold px-5 py-[0.325rem] rounded-full"
                     :class="followButtonClass"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div v-if="!state.followBtnLoading">{{ followButtonText }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
+                    <IconLoading v-else class="dark:text-white/50 h-5 text-white w-5"></IconLoading>
                 </div>
                 <div
                     v-else-if="props.user.blocking && !isMyself"
-                    class="bg-red-200 cursor-pointer font-bold px-5 py-[0.325rem] rounded-full text-white"
+                    class="bg-red-200 cursor-pointer dark:bg-neutral-800 font-bold px-5 py-[0.325rem] rounded-full"
                     @click="state.confirmBDialogUi.show = true">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
-                    <div v-if="!state.followBtnLoading" class="text-red-500"> 解除屏蔽 </div>
+                    <div v-if="!state.followBtnLoading" class="dark:text-red-300 text-red-500"> 解除屏蔽 </div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <IconLoading v-else class="'h-5 text-white' w-5"></IconLoading>
+                    <IconLoading v-else class="dark:text-white/50 h-5 text-white w-5"></IconLoading>
                     <Teleport to="#app">
                         <ConfirmDialogBox
                             v-if="state.confirmBDialogUi.show"
@@ -75,51 +78,43 @@
                     </Teleport>
                 </div>
             </div>
-            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="">{{ props.user.remark }}</div>
-            <div class="flex flex-row gap-x-2 items-center">
-                <IconCalendar class="text-[14pt]"></IconCalendar>
-                <div>{{ formattedDate }}</div>
-            </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.user.verified == true" class="flex flex-row gap-x-2 items-center">
-                <IconVerify class="h-[1rem] text-blue-500 w-[1rem]"></IconVerify>
-                <div>{{ props.user.verifiedInfo }}</div>
-            </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.user.city" class="flex flex-row gap-x-2 items-center">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <IconLocation class="text-[14pt]" title="所在城市"></IconLocation>
-                <div>{{ props.user.city }}</div>
-            </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.user.email" class="flex flex-row gap-x-2 items-center">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <IconEmail class="text-[12pt]" title="电子邮箱"></IconEmail>
-                <div>{{ props.user.email }}</div>
-            </div>
-            <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-if="props.user.website" class="flex flex-row gap-x-2 items-center">
-                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <IconWebsite class="text-[12pt]" title="个人网站"></IconWebsite>
-                <a
-                    :href="props.user.website"
-                    class="hover:decoration-blue-500 hover:text-blue-500 hover:underline">
-                    {{ props.user.website }}
-                </a>
-            </div>
-            <div
-                v-if="!isPrivateAccountAndNotFollowed || isMyself"
-                class="flex flex-row gap-x-6">
-                <div
-                    class="cursor-pointer hover:underline"
-                    @click="routeTo('followList', props.user.nickname)">
-                    <span>{{ followCountText }}</span>
+            <div class="dark:text-white/50 flex flex-col gap-y-1 text-[0.85rem] text-neutral-600">
+                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                <div>{{ props.user.remark }}</div>
+                <div class="gap-x-2 gap-y-1 grid grid-cols-[1rem_auto] w-fit">
+                    <span class="cursor-default material-symbols-rounded no-hover">calendar_month</span>
+                    <div>{{ formattedDate }}</div>
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <IconVerify v-if="props.user.verified" class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]"></IconVerify>
+                    <div v-if="props.user.verified">{{ props.user.verifiedInfo }}</div>
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <span v-if="props.user.city" class="cursor-default material-symbols-rounded no-hover">location_on</span>
+                    <div v-if="props.user.city">{{ props.user.city }}</div>
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <span v-if="props.user.email" class="cursor-default material-symbols-rounded no-hover">mail</span>
+                    <div v-if="props.user.email">{{ props.user.email }}</div>
+                    <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                    <span v-if="props.user.website" class="cursor-default material-symbols-rounded no-hover">link</span>
+                    <a
+                        v-if="props.user.website"
+                        :href="props.user.website"
+                        class="dark:hover:decoration-primaryContainer dark:hover:text-onPrimary hover:decoration-primary hover:text-primary hover:underline">
+                        {{ props.user.website }}
+                    </a>
                 </div>
                 <div
-                    class="cursor-pointer hover:underline"
-                    @click="routeTo('fanList', props.user.nickname)">
-                    <span>{{ fanCountText }}</span>
+                    v-if="!isPrivateAccountAndNotFollowed || isMyself"
+                    class="flex flex-row gap-x-6">
+                    <div
+                        class="cursor-pointer hover:underline"
+                        @click="routeTo('followList', props.user.nickname)">
+                        <span>{{ followCountText }}</span>
+                    </div>
+                    <div
+                        class="cursor-pointer hover:underline"
+                        @click="routeTo('fanList', props.user.nickname)">
+                        <span>{{ fanCountText }}</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,23 +122,18 @@
 </template>
 
 <style scoped>
-.icon {
-    width: 1.2rem;
-    text-align: center;
-    text-align: -webkit-center;
+.grid>*:nth-child(odd){
+    font-size: 1.125rem;
+    padding: 0;
+    place-self: center;
 }
 
-.i-icon {
-    padding: 0;
-    background-color: transparent;
-    border-radius: 99rem;
+.grid>.material-symbols-rounded{
+    color: #525252;
 }
 
-.i-icon:hover {
-    cursor: auto;
-    padding: 0;
-    background-color: transparent;
-    border-radius: 99rem;
+.grid>.material-symbols-rounded:where([theme="dark"], [theme="dark"] *){
+    color: rgba(255, 255, 255, 0.5);
 }
 </style>
 
@@ -153,11 +143,7 @@ import { followUser, unFollowUser, deleteOneBlacklist, confirmFanRequest } from 
 import { store } from '@/indexApp/js/store.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import IconCalendar from '@/components/icons/IconCalendar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
-import IconLocation from '@/components/icons/IconLocation.vue'
-import IconWebsite from '@/components/icons/IconWebsite.vue'
-import IconEmail from '@/components/icons/IconEmail.vue'
 import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 import Avatar from '@/components/Avatar.vue'
 import { standardDate } from '@/indexApp/utils/formatUtils.js'
@@ -181,23 +167,15 @@ const state = reactive({
     confirmFanBtnLoading: false,
     confirmBDialogUi: {
         show: false,
-        title: '确定要解除屏蔽吗？',
+        title: '解除屏蔽此用户？',
         confirmButton: {
-            text: '解除屏蔽',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
             selected: false
         },
         cancelButton: {
-            text: '保持屏蔽',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
-            show: false,
-            text: '解除屏蔽中......',
-            color: 'rgb(239 68 68)'
+            show: false
         }
     },
     followTextMap: new Map([
@@ -245,10 +223,10 @@ const followButtonText = computed(() => {
 })
 
 const followButtonClass = computed(() => ({
-    'bg-blue-500': state.yourFollowStatus === 'NOT_FOLLOW',
-    'bg-gray-200': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-zinc-500': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-white': state.yourFollowStatus === 'NOT_FOLLOW'
+    'bg-primary': state.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-gray-200 dark:bg-neutral-800': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-zinc-500 dark:text-white/25': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-onPrimary': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 function routeTo(routeName, routeParam) {

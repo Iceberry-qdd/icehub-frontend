@@ -41,9 +41,9 @@
             @wheel="handleScroll">
             <div
                 id="sidebar-l"
-                :class="{'main-route': isShowSidebarL}"
-                class="border-[#EEEEEE] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
-                <Brand class="bg-white lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-16 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
+                :class="{'main-route': isShowSidebarL, 'lg:flex-[0.7]': !isSetting, 'lg:flex-[0.7]': isSetting}"
+                class="border-[#EEEEEE] dark:border-[#1e1e1e] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
+                <Brand class="lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-16 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:dark:border-b-[#1e1e1e] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
                 <Sidebar
                     id="menu"
                     class="h-fit lg:-translate-x-0 lg:mr-12 lg:w-[14rem] max-sm:fixed max-sm:w-screen max-sm:z-[999] sm:max-lg:mt-16">
@@ -51,7 +51,8 @@
             </div>
             <div
                 id="main"
-                class="lg:flex-[1.05] max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] max-w-[64rem] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] sm:z-[1]">
+                :class="{'lg:flex-1 max-w-[64rem]': !isSetting, 'lg:flex-[1.8266]': isSetting}"
+                class="max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] sm:z-[1]">
                 <div class="absolute flex items-start justify-center top-2 w-full z-[1999]">
                     <GlobalBanner
                         v-if="store.GLOBAL_MSG.length > 0"
@@ -59,7 +60,7 @@
                     </GlobalBanner>
                 </div>
                 <div class="absolute flex items-center justify-end px-4 w-full z-[100]">
-                    <Transition name="fade">
+                    <Transition name="btt-fade">
                         <BackToTop
                             v-if="state.showBackToTop"
                             id="back-to-top"
@@ -71,20 +72,21 @@
                 <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
                 <router-view
                     v-slot="{ Component }"
-                    class="relative sm:max-lg:border-[#EEEEEE] sm:max-lg:border-x-[1px] sm:max-lg:max-w-[36rem] w-full">
+                    class="relative sm:max-lg:border-[#EEEEEE] sm:max-lg:border-x-[1px] sm:max-lg:dark:border-[#1e1e1e] sm:max-lg:max-w-[36rem] w-full">
                     <keep-alive
                         :max="8"
-                        :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
+                        :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Profile']">
                         <component
                             :is="Component"
-                            :key="route.fullPath">
+                            :key="routerViewKey">
                         </component>
                     </keep-alive>
                 </router-view>
             </div>
             <div
+                v-show="!isSetting"
                 id="sidebar-r"
-                class="border-[#EEEEEE] border-l-[1px] flex-1 h-screen max-lg:hidden no-scrollbar overflow-y-scroll sticky top-0 z-0">
+                class="border-[#EEEEEE] border-l-[1px] dark:border-[#1e1e1e] flex-[0.95] h-screen max-lg:hidden no-scrollbar overflow-y-scroll sticky top-0 z-0">
                 <Recommend class="max-w-[25rem] p-4"></Recommend>
             </div>
         </div>
@@ -92,23 +94,23 @@
 </template>
 
 <style scoped>
-.fade-enter-active {
+.btt-fade-enter-active {
     transition: bottom 0.15s ease-in-out;
 }
 
-.fade-leave-active {
+.btt-fade-leave-active {
     transition: bottom 0.15s ease-in-out;
 }
 
-.fade-enter-from {
+.btt-fade-enter-from {
     bottom: -1rem;
 }
 
-.fade-enter-to {
+.btt-fade-enter-to {
     bottom: 1rem;
 }
 
-.fade-leave-to {
+.btt-fade-leave-to {
     bottom: -1rem;
 }
 
@@ -125,12 +127,13 @@
         bottom: 1rem;
     }
 
-    .fade-enter-to {
+    .btt-fade-enter-to {
         bottom: 5rem;
     }
 }
 </style>
 
+<!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick, provide } from 'vue'
 import Sidebar from '@/indexApp/components/Sidebar.vue'
@@ -160,31 +163,27 @@ const state = reactive({
     startRoute: false,
     showProgressIndicator: false,
     timeoutId: 0,
-    token: localStorage.getItem('TOKEN'),
     showBackToTop: false,
     touchStartClientY: 0,
-    mediaQueryList: undefined,
+    mobileMediaQueryList: undefined,
+    padMediaQueryList: undefined,
+    themeMediaQueryList: undefined,
     showContextMenu: false,
     click: {x: 20, y: 20}
 })
 
 async function curUser() {
     try {
-        if (!state.token || state.token.trim() == "") throw new Error('Not Login!')
-
         const response = await getCurUserInfo()
         if (response.status === 401) throw new Error('Not Login!')
-        if(!response.ok) throw new Error(await response.text())
+        if(!response.ok) throw new Error(await response.json())
 
         state.user = await response.json()
-        // if (state.user == null) throw new Error('Not Login!')
-
         const user = JSON.stringify(state.user)
         localStorage.setItem('CUR_USER', user)
     } catch (e) {
         store.setErrorMsg(e.message)
         if(e.message === 'Not Login!'){
-            localStorage.removeItem('TOKEN')
             localStorage.removeItem('CUR_USER')
             location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
         }
@@ -192,7 +191,7 @@ async function curUser() {
 }
 
 const showGlobalNotifyBannerMsg = computed(() => {
-    return store.GLOBAL_NOTIFY_BANNER_MSG
+    return !!store.GLOBAL_NOTIFY_BANNER_MSG
 })
 
 function closeGlobalNotifyBannerMsg() {
@@ -247,7 +246,7 @@ const mainRouteSet = new Set(['index', 'explore', 'notify', 'profile'])
 const isShowSidebarL = computed(() => {
     // XXX 特判，待改进
     if(route.name === 'profile' && route.params?.nickname !== state.user.nickname) return false
-    return mainRouteSet.has(route.name)
+    return mainRouteSet.has(route.name) || mainRouteSet.has(route.meta.key)
 })
 
 function closeProgressIndicator() {
@@ -277,8 +276,19 @@ function touchStart(e) {
     state.touchStartClientY = e.touches.item(0).clientY
 }
 
-function handleMediaChange(mq) {
-    store.MOBILE_MODE = mq.matches
+function handleMobileMediaChange(mq) {
+    store.setMobileMode(mq.matches)
+}
+
+function handlePadMediaChange(mq) {
+    store.setPadMode(mq.matches)
+}
+
+function handleThemeMediaChange(mq) {
+    store.setSysThemeMode(mq.matches ? 'dark' : 'light')
+    if(!('theme' in localStorage)){
+        document.body.setAttribute('theme', store.SYS_THEME_MODE)
+    }
 }
 
 function handleContextMenu(e){
@@ -292,9 +302,19 @@ function dismissContextMenu(){
     state.showContextMenu = false
 }
 
-watch(() => route.query?.url, (url, oldVal) => {
+watch(() => route.query?.url, (url, _) => {
     window.location = `${window.location.origin}${decodeURIComponent(atob(url))}`
 }, {once: true})
+
+const isSetting = computed(() => {
+    return route.meta.key === 'setting'
+})
+
+const routerViewKey = computed(() => {
+    const suffix = `/${Object.values(route.params).join('/')}?${btoa(JSON.stringify(route.query))}`
+    if(!!route.meta.key) return `${route.meta.key}${suffix}`
+    else return `${route.name}${suffix}`
+})
 
 onMounted(() => {
     const url = window.document.location.search
@@ -318,21 +338,33 @@ onMounted(() => {
     })
 
     // Media query mobile mode settings
-    state.mediaQueryList = window.matchMedia('not all and (min-width: 640px)')
-    handleMediaChange(state.mediaQueryList)
-    state.mediaQueryList.addEventListener('change', handleMediaChange)
+    state.mobileMediaQueryList = window.matchMedia('not all and (min-width: 640px)')
+    handleMobileMediaChange(state.mobileMediaQueryList)
+    state.mobileMediaQueryList.addEventListener('change', handleMobileMediaChange)
+
+    // Media query pad mode settings
+    state.padMediaQueryList = window.matchMedia('(640px < width <= 1024px)')
+    handlePadMediaChange(state.padMediaQueryList)
+    state.padMediaQueryList.addEventListener('change', handlePadMediaChange)
 
     // PWA standalone mode settings
     store.setPwaMode(!window.matchMedia('(display-mode: browser)').matches)
     if (store.PWA_MODE) {
         document.body.addEventListener('contextmenu', handleContextMenu)
     }
+
+    // Media query theme mode settings
+    state.themeMediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
+    handleThemeMediaChange(state.themeMediaQueryList)
+    state.themeMediaQueryList.addEventListener('change', handleThemeMediaChange)
 })
 
 onUnmounted(() => {
     disconnectToWs()
     clearTimeout(state.timeoutId)
-    state.mediaQueryList.removeEventListener('change', handleMediaChange)
+    state.mobileMediaQueryList.removeEventListener('change', handleMobileMediaChange)
+    state.padMediaQueryList.removeEventListener('change', handlePadMediaChange)
+    state.themeMediaQueryList.removeEventListener('change', handleThemeMediaChange)
     document.body.removeEventListener('contextmenu', handleContextMenu)
 })
 

@@ -1,8 +1,8 @@
 <template>
     <div
         @click="toggleMark()">
-        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ bookmarkIcon }}</span>
-        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">{{ bookmarkIcon }}</span>
+        <div class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">
             {{ bookMarkText }}
         </div>
     </div>
@@ -23,23 +23,17 @@ const props = defineProps({
     }
 })
 
-// eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const state = reactive({
-    user: props.post.user,
-    post: props.post
-})
-
 const bookMarkText = computed(() => {
-    const { marked } = state.post
+    const { marked } = props.post
     return marked ? "从书签中移除" : "加入书签"
 })
 
 const bookmarkIcon = computed(() => {
-    return state.post.marked ? 'bookmark_remove' : 'bookmark_add'
+    return props.post.marked ? 'bookmark_remove' : 'bookmark_add'
 })
 
 function toggleMark() {
-    const { marked, id } = state.post
+    const { marked, id } = props.post
     marked == true ? unMarkIt(id) : markIt(id)
 }
 
@@ -50,7 +44,9 @@ async function markIt(postId) {
 
         const result = await response.text()
         if (result == false) throw new Error("加入书签失败！")
-        state.post.marked = true
+        // XXX 此处为方便，直接修改props对象的属性值
+        // eslint-disable-next-line vue/no-mutating-props
+        props.post.marked = true
         store.setSuccessMsg("已加入书签！")
     } catch (e) {
         store.setErrorMsg(e.message)
@@ -66,9 +62,11 @@ async function unMarkIt(postId) {
 
         const result = await response.text()
         if (result == false) throw new Error("移除失败！")
-        state.post.marked = false
+        // XXX 此处为方便，直接修改props对象的属性值
+        // eslint-disable-next-line vue/no-mutating-props
+        props.post.marked = false
         store.setSuccessMsg("已移出书签！")
-        deleteBookmarkOnUi(state.post.id)
+        deleteBookmarkOnUi(props.post.id)
     } catch (e) {
         store.setErrorMsg(e.message)
     } finally {

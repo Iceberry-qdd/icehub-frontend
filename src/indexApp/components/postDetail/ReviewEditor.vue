@@ -3,16 +3,16 @@
         <div
             v-if="!state.loading"
             class="flex flex-row gap-x-4 max-sm:gap-x-3 max-sm:p-3 max-sm:pb-0 p-4 relative"
-            :class="[props.fromReviewPanel ? '' : 'border-gray-100 border-b-[1px]']">
+            :class="[props.fromReviewPanel ? '' : 'border-gray-100 dark:border-b-[#1e1e1e] border-b-[1px]']">
             <div
                 v-if="props.tieLocation == 'mid'"
-                class="absolute bg-gray-200 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 dark:bg-neutral-800 h-full left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-mid top-0 w-[0.15rem] z-0" />
             <div
                 v-if="props.tieLocation == 'top'"
-                class="absolute bg-gray-200 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
+                class="absolute bg-gray-200 dark:bg-neutral-800 left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-top top-[2.5rem] w-[0.15rem] z-0" />
             <div
                 v-if="props.tieLocation == 'bottom'"
-                class="-z-0 absolute bg-gray-200 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem]" />
+                class="-z-0 absolute bg-gray-200 dark:bg-neutral-800 h-[2.5rem] left-[calc(2.5rem/2+1rem)] max-sm:left-[calc(2.5rem/2+0.75rem)] timeline-bottom top-0 w-[0.15rem]" />
 
             <div class="h-fit z-10">
                 <Avatar
@@ -25,9 +25,9 @@
                 class="w-full">
                 <div
                     v-if="state.content.length > 0"
-                    class="text-[11pt]">
+                    class="dark:text-white/50 text-[0.85rem] text-gray-400">
                     回复
-                    <span class="cursor-pointer  font-bold">@{{ replyTo }}</span>
+                    <span class="cursor-pointer font-bold">@{{ replyTo }}</span>
                 </div>
                 <VueShowdown
                     v-if="state.showMarkdownPanel == true"
@@ -81,32 +81,14 @@
         </div>
         <div
             v-else
-            class="bg-white flex flex-col gap-y-2 h-[8rem] items-center justify-center max-sm:fixed max-sm:h-screen max-sm:w-screen top-0 z-10"
+            class="bg-white dark:bg-[#1e1e1e] dark:text-white/50 flex flex-col gap-y-2 h-[8rem] items-center justify-center max-sm:fixed max-sm:h-screen max-sm:w-screen top-0 z-10"
             :class="[props.fromReviewPanel ? '' : 'border-gray-100 border-b-[1px]']">
-            <IconLoading class="'h-5 text-white' w-5"></IconLoading>
+            <IconLoading class="h-5 w-5"></IconLoading>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="text-[11pt]">评论发布中...</div>
+            <div class="text-[0.9rem]">评论发布中...</div>
         </div>
     </div>
 </template>
-
-<style scoped>
-.fade-enter-active {
-    transition: opacity 0.15s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.15s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-</style>
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-unused-properties -->
 <script setup>
@@ -155,7 +137,7 @@ const props = defineProps({
         default: false
     }
 })
-const { newReview } = inject('newReview')
+const { newReviewOnUi } = inject('newReview')
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const imageListInfo = ref([
         { hidden: false, altText: null, contentType: "" },
@@ -238,13 +220,13 @@ async function submitReview() {
         const response = await reviewing(data)
         if (!response.ok) throw new Error((await response.json()).message)
         const result = await response.json()
-        newReview({ review: result })
+        newReviewOnUi({ review: result })
         state.content = ''
         emits('dismiss')
         reset()
 
-        const reviewId = result.id
-        const receiverId = !data.parentId ? props.post.user.id : props.parent.user.id
+        // const reviewId = result.id
+        // const receiverId = !data.parentId ? props.post.user.id : props.parent.user.id
         // ws.sendToOneQueue(new MsgPack(reviewId, state.curUser.id, 'REVIEW', receiverId), 'interact')
     } catch (e) {
         store.setErrorMsg(e.message)

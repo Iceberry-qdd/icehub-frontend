@@ -1,7 +1,7 @@
 <template>
     <div @click="showConfirmDialogBox">
-        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
-        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_off</span>
+        <div class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">
             不喜欢此用户
         </div>
         <Teleport to="#app">
@@ -40,23 +40,18 @@ const { deleteAllUsersOfUserOnUi } = inject('deleteAllUsersOfUserOnUi', { 'delet
 const state = reactive({
     confirmBDialogUi: {
         show: false,
-        title: '确定要屏蔽此用户吗？屏蔽后可在黑名单界面查看',
+        title: '屏蔽此用户？',
         confirmButton: {
-            text: '确定屏蔽',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
-            selected: false
+            selected: false,
+            color: 'text-onError',
+            bgColor: 'bg-error'
         },
         cancelButton: {
-            text: '不屏蔽',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
             show: false,
-            text: '屏蔽后可在黑名单界面查看',
-            color: 'rgb(239 68 68)'
+            text: '屏蔽后可在黑名单界面查看'
         }
     },
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),

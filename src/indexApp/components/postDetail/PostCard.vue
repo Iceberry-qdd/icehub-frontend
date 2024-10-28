@@ -1,13 +1,13 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <template>
     <div
-        class="border-b-[1px] max-sm:pt-3 max-sm:px-3 pb-0 pt-4 px-4 relative rounded-none"
+        class="border-b-[1px] dark:border-b-[#1e1e1e] max-sm:pt-3 max-sm:px-3 pb-0 pt-4 px-4 relative rounded-none"
         :class="cardContainerClass">
         <div
             v-if="showPinTop"
-            class="-translate-y-2 flex flex-row gap-x-1 items-center justify-start">
+            class="-translate-y-2 dark:text-white/25 flex flex-row gap-x-1 items-center justify-start">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="material-symbols-rounded p-0 text-[1rem]">push_pin</div>
+            <div class="dark:text-inherit material-symbols-rounded p-0 text-[1rem]">push_pin</div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div class="text-[0.825rem] text-zinc-500">已置顶</div>
         </div>
@@ -23,12 +23,11 @@
             type="button"
             class="absolute border-0 btn-no-select content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center outline-none py-[0.5rem] right-[3%] top-[0.5rem] z-[97]">
             <span
-                class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full z-[96]"
+                class="p-[0.4rem] rounded-full z-[96]"
                 @click="state.isShowMenu = true">
                 <IconDown
                     :size="24"
-                    :stroke-width="2"
-                    stroke-color="#333">
+                    :stroke-width="2">
                 </IconDown>
             </span>
         </button>
@@ -81,15 +80,15 @@
                     </div>
                     <IconVerify
                         v-if="state.post.user.verified"
-                        class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                        class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                     </IconVerify>
                     <div
                         v-if="state.post.user.confirmFollow"
-                        class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                        class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
                         lock
                     </div>
                 </div>
-                <div class="flex flex-row gap-x-[0.5rem] text-[9pt] text-gray-400">
+                <div class="dark:text-white/50 flex flex-row gap-x-[0.5rem] text-[9pt] text-gray-400">
                     <div :title="standardDateTime(state.post.createdTime)">
                         {{ state.post.plan ? `将于${formattedTime}发布` : formattedTime }}
                     </div>
@@ -108,7 +107,7 @@
             <div class="relative">
                 <div
                     v-if="state.shrinkContent"
-                    class="-translate-x-1/2 absolute bg-[#cfe2ffaa] bottom-2 cursor-pointer left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
+                    class="-translate-x-1/2 absolute bg-primaryContainer-inActive bottom-2 cursor-pointer dark:bg-neutral-800 dark:text-onPrimary left-1/2 px-[1rem] py-[0.25rem] rounded-full text-[0.9rem] z-[96]"
                     @click="state.shrinkContent = false">
                     展开
                 </div>
@@ -131,7 +130,7 @@
                 :id="`img-${state.post.id}`"
                 :images="state.post.images"
                 type="post"
-                class="bottom-[0.5rem]  mt-[0.5rem]"
+                class="bottom-[0.5rem] mt-[0.5rem]"
                 @real-image="handleRealImage">
             </ImageGrid>
         </div>
@@ -157,10 +156,9 @@
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-start py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="repostIt">
                 <span
-                    class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
-                    :class="{ 'bg-[#d1e7dd] hover:bg-[#d1e7dd] p-[0.4rem]': isReposted }">
+                    class="-ml-2 icon-share p-[0.4rem] rounded-full"
+                    :class="{ 'reposted': isReposted }">
                     <IconShare
-                        :stroke-color="isReposted ? '#198754' : '#333'"
                         :stroke-width="3">
                     </IconShare>
                 </span>
@@ -169,14 +167,14 @@
             <button
                 type="button"
                 :title="`${state.post.reviewCount} 评论`"
-                :class="{'cursor-not-allowed text-[#C1C1C1]': !state.post.allowReview}"
+                :class="{'cursor-not-allowed text-[#C1C1C1] dark:text-white/25': !state.post.allowReview}"
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-center py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="handleClickReviewBtn">
                 <span
-                    :class="{'hover:bg-transparent cursor-not-allowed': !state.post.allowReview}">
+                    class="icon-message p-[0.4rem] rounded-full"
+                    :class="{'not-allowed': !state.post.allowReview}">
                     <IconMessage
                         :size="19"
-                        :stroke-color="state.post.allowReview ? '#333' : '#C1C1C1'"
                         :stroke-width="3">
                     </IconMessage>
                 </span>
@@ -188,12 +186,11 @@
                 class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-end py-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="toggleLike">
                 <span
-                    class="hover:bg-[#d3d3d5] p-[0.4rem] rounded-full"
-                    :class="{'text-red-500 bg-red-200 hover:bg-red-200' : isLiked}">
+                    class="icon-like p-[0.4rem] rounded-full"
+                    :class="{'liked' : isLiked}">
                     <IconLike
                         :fill="likedIconFillColor"
                         :size="20"
-                        :stroke-color="likedIconStrokeColor"
                         :stroke-width="3">>
                     </IconLike>
                 </span>
@@ -202,6 +199,40 @@
         </div>
     </div>
 </template>
+
+<style scoped>
+.icon-share.reposted{
+    background-color: #d1e7dd;
+    color: #198754;
+}
+
+.icon-share.reposted:where([theme="dark"], [theme="dark"] *){
+    background-color: #404040;
+    color: rgb(255 255 255 / 0.5);
+}
+
+.icon-message.not-allowed{
+    background-color: transparent;
+    cursor: not-allowed;
+}
+
+.icon-message.not-allowed>.m-icon:where([theme="dark"], [theme="dark"] *){
+    color: rgb(255 255 255 / 0.25);
+}
+
+.icon-like.liked{
+    background-color: #fecaca;
+    color: #ef4444;
+}
+
+.icon-like.liked>.m-icon{
+    color: #ef4444;
+}
+
+.icon-like.liked:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
+}
+</style>
 
 <!-- eslint-disable vue/no-ref-object-reactivity-loss -->
 <script setup>
@@ -249,13 +280,11 @@ const state = reactive({
 })
 
 const isIndentBody = computed(() => {
-    const isPostDetailRoute = route.name === 'postDetail'
-    const isMarkdown = state.post.type === 'MARKDOWN'
-    return !isPostDetailRoute && !isMarkdown
+    return route.meta.key !== 'postDetail'
 })
 
 const cardContainerClass = computed(() => ({
-    'hover:bg-[#F5F5F5]': isIndentBody.value,
+    'hover:bg-gray-50 dark:hover:bg-neutral-900': isIndentBody.value,
     'cursor-default': isIndentBody.value
 }))
 
@@ -338,28 +367,24 @@ const hasTags = computed(() => {
     return state.post.tags != undefined && state.post.tags.length != 0
 })
 const showPinTop = computed(() => {
-    return state.post.top && route.name === 'profile'
+    return state.post.top && route.meta.key === 'profile'
 })
 
 const isLiked = computed(() => { return state.post.liked })
 
 const isReposted = computed(() => { return state.post.reposted })
 
-const likedIconStrokeColor = computed(() => {
-    return isLiked.value ? '#FF0000' : '#333'
-})
-
 const likedIconFillColor = computed(() => {
     return isLiked.value ? '#FF0000' : 'none'
 })
 
 const formattedTime = computed(() => {
-    return route.name === 'postDetail' ? standardDateTime(state.post.createdTime) : humanizedTime(state.post.createdTime)
+    return route.meta.key === 'postDetail' ? standardDateTime(state.post.createdTime) : humanizedTime(state.post.createdTime)
 })
 
 const cardMaskClass = computed(() => ({
     'z-[98]': state.post.plan,
-    'bg-[#e5e7eb88]': state.post.plan,
+    'bg-[#e5e7eb88] dark:bg-neutral-800/75': state.post.plan,
     'pointer-events-none': state.post.plan
 }))
 
@@ -410,7 +435,7 @@ function handleClickReviewBtn() {
 provide('dismissPostMenus', { dismissPostMenus })
 
 onMounted(() => {
-    if (route.name !== 'postDetail') {
+    if (route.meta.key !== 'postDetail') {
         setSuitableHeight()
     } else {
         state.shrinkContent = false

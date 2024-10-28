@@ -1,7 +1,7 @@
 <template>
     <div
         :class="itemClass"
-        class="border-b-[1px] flex flex-nowrap flex-row gap-x-3 items-start p-2">
+        class="border-b-[1px] dark:border-[#1e1e1e] flex flex-nowrap flex-row gap-x-3 items-start p-2">
         <Avatar
             :user="props.user"
             class="flex-none h-[3rem] object-cover rounded-[8px] text-[3rem] w-[3rem]"
@@ -16,31 +16,31 @@
                 </div>
                 <IconVerify
                     v-if="props.user.verified"
-                    class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                 </IconVerify>
                 <div
                     v-if="props.user.confirmFollow"
-                    class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                    class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
                     lock
                 </div>
                 <div
                     v-if="state.yourFanStatus === 'FAN' && state.yourFollowStatus !== 'FOLLOW'"
-                    class="bg-blue-100 cursor-default px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    class="bg-primaryContainer cursor-default dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-primary">
                     订阅了你
                 </div>
                 <div
                     v-if="state.yourFanStatus === 'WAIT_PASS'"
-                    class="bg-blue-100 cursor-default px-2 rounded-[4px] shrink-0 text-[0.85rem] text-blue-500">
+                    class="bg-primaryContainer cursor-default dark:text-white/50 px-2 rounded-[4px] shrink-0 text-[0.85rem] text-primary">
                     请求订阅你
                 </div>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="font-light text-[0.9rem] webkit-box-2">{{ brief(props.user.remark) }}</div>
+            <div class="dark:text-white/50 font-light text-[0.9rem] text-neutral-500 webkit-box-2">{{ brief(props.user.remark) }}</div>
         </div>
         <div
             v-if="!isSelf && state.yourFanStatus === 'WAIT_PASS' && !store.MOBILE_MODE"
             :class="yourFanButtonClass"
-            class="cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
+            class="cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[1rem] w-[6rem]"
             @click="passFanRequest">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div v-if="!state.loading"> {{ yourFanButtonText }} </div>
@@ -53,7 +53,7 @@
         <div
             v-if="!isSelf"
             :class="yourFollowButtonClass"
-            class="cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-white w-[6rem]"
+            class="cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[1rem] w-[6rem]"
             @click="toggleFollowState">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div v-if="!state.loading"> {{ yourFollowButtonText }} </div>
@@ -102,12 +102,11 @@ const state = reactive({
 })
 
 const yourFollowButtonClass = computed(() => ({
-    'bg-blue-500': state.yourFollowStatus === 'NOT_FOLLOW',
-    'bg-gray-200': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-zinc-500': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-white': state.yourFollowStatus === 'NOT_FOLLOW'
+    'bg-primary': state.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-gray-200 dark:bg-neutral-800': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-zinc-500 dark:text-white/25': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-onPrimary': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
-
 
 const yourFollowButtonText = computed(() => {
     if (state.yourFollowStatus === 'FOLLOW' && state.yourFanStatus === 'FAN') return '相互订阅'
@@ -116,15 +115,15 @@ const yourFollowButtonText = computed(() => {
 })
 
 const yourFollowLoadingIconClass = computed(() => ({
-    'text-zinc-500': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-white': state.yourFollowStatus === 'NOT_FOLLOW'
+    'text-zinc-500 dark:text-white-50': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-white dark:text-white-50': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 const yourFanButtonClass = computed(() => ({
-    'bg-blue-500': state.yourFanStatus === 'WAIT_PASS',
-    'bg-gray-200': state.yourFanStatus !== 'WAIT_PASS',
-    'text-zinc-500': state.yourFanStatus !== 'WAIT_PASS',
-    'text-white': state.yourFanStatus === 'WAIT_PASS'
+    'bg-primary': state.yourFanStatus === 'WAIT_PASS',
+    'bg-gray-200 dark:bg-neutral-800': state.yourFanStatus !== 'WAIT_PASS',
+    'text-zinc-500 dark:text-white/25': state.yourFanStatus !== 'WAIT_PASS',
+    'text-onPrimary': state.yourFanStatus === 'WAIT_PASS'
 }))
 
 
@@ -133,8 +132,8 @@ const yourFanButtonText = computed(() => {
 })
 
 const yourFanLoadingIconClass = computed(() => ({
-    'text-zinc-500': state.yourFollowStatus === 'WAIT_PASS',
-    'text-white': state.yourFollowStatus !== 'WAIT_PASS'
+    'text-zinc-500 dark:text-white-50': state.yourFollowStatus === 'WAIT_PASS',
+    'text-white dark:text-white-50': state.yourFollowStatus !== 'WAIT_PASS'
 }))
 
 const itemClass = computed(() => ({

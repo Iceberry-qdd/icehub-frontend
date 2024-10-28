@@ -1,7 +1,8 @@
 <template>
     <div
         ref="repostCard"
-        class="bg-white border-[1px] border-gray-300 cursor-pointer flex flex-col gap-y-1 rounded-[8px]"
+        :class="{'border-[1px] border-gray-300': !!state.post}"
+        class="bg-white cursor-pointer dark:bg-[#121212] dark:border-neutral-700 flex flex-col gap-y-1 rounded-[8px]"
         @click="routeToUserProfile">
         <!-- eslint-disable-next-line vue/max-attributes-per-line -->
         <div v-if="state.post" class="pt-2">
@@ -14,15 +15,15 @@
                 <div class="font-bold">{{ state.post.user.nickname }}</div>
                 <IconVerify
                     v-if="state.post.user.verified"
-                    class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                 </IconVerify>
                 <div
                     v-if="state.post.user.confirmFollow"
-                    class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                    class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
                     lock
                 </div>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="text-gray-400 top-[1px]">发布于 {{ humanizedTime(state.post.createdTime) }}</div>
+                <div class="dark:text-white/50 text-gray-400 top-[1px]">发布于 {{ humanizedTime(state.post.createdTime) }}</div>
             </div>
 
             <div class="break-all px-2 relative text-[11pt]">
@@ -46,7 +47,7 @@
         </div>
         <div v-else>
             <div
-                class="bg-gray-100 px-2 py-3 rounded-[8px] text-[10pt] text-center">
+                class="bg-gray-100 dark:bg-neutral-800 dark:text-white/25 px-2 py-3 rounded-[8px] text-[10pt] text-center text-neutral-400">
                 {{ state.fetchFailedText }}
             </div>
         </div>
@@ -105,7 +106,7 @@ const hasPics = computed(() => {
 
 function setSuitableHeight() {
     const markdown = repostCard.value.querySelector('markdown')
-    state.shrinkContent = markdown.clientHeight < markdown.scrollHeight
+    state.shrinkContent = !markdown || markdown.clientHeight < markdown.scrollHeight
 }
 
 async function fetchPost() {

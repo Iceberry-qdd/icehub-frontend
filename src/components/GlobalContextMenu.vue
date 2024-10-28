@@ -3,7 +3,7 @@
         id="context-menu"
         ref="contextMenu"
         :style="translateStyle"
-        class="cursor-pointer flex flex-col min-w-[12rem] ring-1 ring-slate-900/10 rounded-[8px] shadow-lg">
+        class="bg-white cursor-pointer dark:bg-[#1e1e1e] flex flex-col min-w-[12rem] ring-1 ring-slate-900/10 rounded-[8px] shadow-lg">
         <RefreshAction
             v-if="state.actionVisMap.get('RefreshAction')"
             class="action first:rounded-t-[8px] last:rounded-b-[8px]">

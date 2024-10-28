@@ -4,7 +4,7 @@
         width="1em"
         height="1em"
         viewBox="0 0 24 24"
-        class="btn-no-select">
+        class="btn-no-select m-icon">
         <path
             fill="currentColor"
             d="M5 6h14v2H5z"

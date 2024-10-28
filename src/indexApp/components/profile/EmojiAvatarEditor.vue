@@ -1,7 +1,7 @@
 <template>
     <div class="bg-[#00000066] fixed-page sm:backdrop-blur-sm">
         <div
-            class="absolute bg-white divide-y-[1px] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:top-1/2 w-[min(25rem,100vw)]">
+            class="absolute bg-white dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-y-[1px] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:top-1/2 w-[min(25rem,100vw)]">
             <div
                 class="absolute bg-gray-500/25 cursor-pointer material-symbols-rounded max-sm:hidden max-sm:left-3 p-1 sm:right-3 top-3 z-[100]"
                 @click="dismiss">
@@ -13,22 +13,20 @@
                 keyboard_arrow_down
             </div>
             <div
-                :style="{'background-image': `linear-gradient(to top right, ${state.selectColor}55, ${state.selectColor}25)`}"
-                class="aspect-video flex flex-col items-center justify-center max-sm:rounded-t-none rounded-t-[7px] sticky top-0 z-[99]">
+                class="aspect-video banner flex flex-col items-center justify-center max-sm:rounded-t-none rounded-t-[7px] sticky top-0 z-[99]">
                 <Avatar
                     :user="state.user"
-                    class="h-[5rem] rounded-[10px] text-[5rem] w-[5rem]">
+                    class="h-[5rem] preview rounded-[10px] text-[5rem] w-[5rem]">
                 </Avatar>
                 <div
-                    :style="{'background-color': `${state.selectColor}44`}"
-                    class="absolute bottom-6 cursor-pointer max-sm:bottom-3 max-sm:px-4 max-sm:py-2 px-3 py-1 rounded-full text-[0.9rem]"
+                    class="absolute bottom-6 confirmBtn cursor-pointer max-sm:bottom-3 max-sm:px-4 max-sm:py-2 px-3 py-1 rounded-full text-[0.9rem]"
                     @click="setAvatar">
                     设为头像
                 </div>
             </div>
             <div
                 :class="tabBorderClass"
-                class="after:bg-blue-500 bg-white cursor-pointer flex flex-row h-[2.5rem] max-sm:h-[3rem] sticky tab text-[1rem] text-zinc-500 z-[99]">
+                class="after:bg-primary bg-inherit cursor-pointer dark:after:bg-onPrimary dark:text-white/50 flex flex-row h-[2.5rem] max-sm:h-[3rem] sticky tab text-[1rem] text-zinc-500 z-[99]">
                 <div
                     :class="emojiPanelTabClass"
                     class="basis-1/2 flex items-center justify-center"
@@ -42,7 +40,7 @@
                     背景颜色
                 </div>
             </div>
-            <div class="h-[min(24rem,calc(100vh-25rem*9/16-2.5rem))] max-sm:h-[calc(100vh-100vw*9/16-3rem)] max-sm:pb-4 modern-scrollbar-y overflow-x-hidden overflow-y-auto rounded-b-[8px]">
+            <div class="h-[min(24rem,calc(100vh-25rem*9/16-2.5rem))] max-sm:h-[calc(100vh-100vw*9/16-3rem)] max-sm:pb-4 modern-scrollbar-y overflow-x-hidden overflow-y-auto sm:rounded-b-[8px]">
                 <EmojiPanel
                     v-if="state.showEmojiPanel"
                     :show-history="false"
@@ -51,6 +49,9 @@
                     @insert-emoji-code="insertEmojiCode">
                 </EmojiPanel>
                 <div v-else-if="state.showBgColorPanel">
+                    <div class="bg-[#1e1e1e] footnote sticky text-[0.85rem] text-center text-white/50 top-0">
+                        暗色模式下，将统一显示为深灰色。
+                    </div>
                     <div
                         v-for="(colors, color) in palette"
                         :key="color"
@@ -83,38 +84,34 @@ details>summary>.material-symbols-rounded {
     transition: transform 100ms ease-in-out;
 }
 
-.fade-enter-active {
-    transition: opacity 0.15s ease-in-out;
+.banner{
+    background-image: v-bind(bannerBg);
 }
 
-.fade-leave-active {
-    transition: opacity 0.15s ease-in-out;
+.banner:where([theme="dark"], [theme="dark"] *){
+    background-image: none;
+    background-color: #1e1e1e;
 }
 
-.fade-enter-from {
-    opacity: 0;
+.confirmBtn{
+    background-color: v-bind(confirmBtnBg);
 }
 
-.fade-leave-to {
-    opacity: 0;
+.confirmBtn:where([theme="dark"], [theme="dark"] *){
+    background-color: #404040;
 }
 
-@media not all and (min-width: 640px) {
-    .fade-enter-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+.footnote:not(:where([theme="dark"], [theme="dark"] *)){
+    display: none;
+}
+
+@keyframes slide {
+    0%{
+        translate: 100% 0;
     }
 
-    .fade-leave-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-enter-from {
-        translate: 0 100%;
-    }
-
-    .fade-leave-to {
-        translate: 0 100%;
-        opacity: 1;
+    100%{
+        translate: -100% 0;
     }
 }
 </style>
@@ -129,7 +126,7 @@ import palette from '@/assets/tailwind-palette.json'
 const props = defineProps({
     /** 用户旧头像 */
     avatar: {
-        type:Object,
+        type: [Object, undefined],
         required: true
     }
 })
@@ -139,13 +136,13 @@ const state = reactive({
         avatar: {
             emoji: {
                 emoji: props?.avatar?.emoji?.emoji || '😀',
-                bgColor: props?.avatar?.emoji?.bgColor || '#3b82f6'
+                bgColor: props?.avatar?.emoji?.bgColor || 'rgb(var(--color-primary))'
             }
         }
     },
     showEmojiPanel: true,
     showBgColorPanel: false,
-    selectColor: props?.avatar?.emoji?.bgColor || '#3b82f6'
+    selectColor: props?.avatar?.emoji?.bgColor
 })
 
 function insertEmojiCode(unified){
@@ -163,17 +160,30 @@ function dismiss(){
 }
 
 const emojiPanelTabClass = computed(() => ({
-    'text-blue-500': state.showEmojiPanel,
+    'text-primary dark:text-onPrimary': state.showEmojiPanel,
 }))
 
 const bgColorPanelTabClass = computed(() => ({
-    'text-blue-500': state.showBgColorPanel,
+    'text-primary dark:text-onPrimary': state.showBgColorPanel,
 }))
 
 const tabBorderClass = computed(() => ({
     'after:translate-x-0': state.showEmojiPanel,
     'after:translate-x-full': state.showBgColorPanel
 }))
+
+const bannerBg = computed(() => {
+    if(!!state.selectColor){
+        return `linear-gradient(to top right, ${state.selectColor}55, ${state.selectColor}25)`
+    } else {
+        return `linear-gradient(to top right, rgb(var(--color-primary) / 0.3), rgb(var(--color-primary) / 0.2))`
+    }
+    
+})
+
+const confirmBtnBg = computed(() => {
+    return `${state.selectColor}44`
+})
 
 function handleEmojiTabClick(){
     state.showEmojiPanel = true

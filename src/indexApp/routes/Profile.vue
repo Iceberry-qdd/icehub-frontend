@@ -25,7 +25,7 @@
                     <ProfileMenu
                         v-if="state.showProfileMenus"
                         :user="state.user"
-                        class="fixed h-fit max-sm:bottom-0 max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] rounded-[8px] sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] z-[104]">
+                        class="fixed h-fit max-sm:bottom-0 max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] z-[1002]">
                     </ProfileMenu>
                 </Transition>
             </Teleport>
@@ -36,61 +36,74 @@
             @click="state.user && state.user.banner ? showSlide([state.user.banner], 0) : ''">
         </Banner>
 
-        <ProfileInfo :user="state.user"></ProfileInfo>
+        <ProfileInfo
+            class="mb-2"
+            :user="state.user">
+        </ProfileInfo>
         <div
             v-if="state.user.blocking"
-            class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
-            <span class="material-symbols-rounded">disabled_visible</span>
+            class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+            <span class="cursor-default material-symbols-rounded no-hover text-inherit">disabled_visible</span>
             <div>你已屏蔽对方</div>
         </div>
         <div
             v-else-if="state.user.blocked"
-            class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
-            <span class="material-symbols-rounded">disabled_visible</span>
+            class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+            <span class="cursor-default material-symbols-rounded no-hover text-inherit">disabled_visible</span>
             <div>对方屏蔽了你</div>
         </div>
         <div
             v-else-if="isPrivateAccountAndNotFollowed"
-            class="flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center w-full">
-            <span class="material-symbols-rounded">lock</span>
-            <div class="text-[0.9rem] text-zinc-500">这是私密账号，请求订阅通过后才可查看</div>
+            class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+            <span class="cursor-default material-symbols-rounded no-hover text-inherit">lock</span>
+            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+            <div class="text-[0.9rem]">这是私密账号，请求订阅通过后才可查看</div>
         </div>
         <div v-else>
-            <PostsTimeline
-                :posts="state.posts">
-            </PostsTimeline>
-            <Footer
-                :is-loading="state.isPostLoading"
-                :has-more="hasMore"
-                @fetch-more="fetchNewPost">
-            </Footer>
+            <div
+                class="after:bg-primary backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-onPrimary dark:bg-[#121212dd] dark:border-[#1e1e1e] dark:text-white/50 flex flex-row max-sm:top-[48px] sticky tab text-[0.9rem] text-zinc-500 top-[56px] z-[104]">
+                <div
+                    v-for="tab in state.tabs"
+                    :key="tab.id"
+                    :class="{'text-primary dark:text-onPrimary': [tab.id].includes($route.name === 'profile' ? 'postTimelinePage' : $route.name)}"
+                    class="flex flex-1 hover:dark:text-onPrimary hover:text-primary items-center justify-center py-2"
+                    @click="$router.replace({name: tab.id})">
+                    {{ `${tab.name} ${tab.count || ''}` }}
+                    <span
+                        v-if="tab.visibility !== 'PUBLIC'"
+                        class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
+                        lock
+                    </span>
+                </div>
+            </div>
+            <!-- eslint-disable-next-line vue/no-undef-components, vue/component-name-in-template-casing -->
+            <router-view v-slot="{ Component }">
+                <keep-alive>
+                    <component
+                        :is="Component"
+                        :user="state.user"
+                        :tab="state.tabs.find(it => it.id === $route.name) || state.tabs.find(it => it.id === 'postTimelinePage')"
+                        @update-tab-count="({id, count}) => state.tabs.find(it => it.id === id).count = count">
+                    </component>
+                </keep-alive>
+            </router-view>
         </div>
     </div>
 </template>
 
 <style scoped>
-.fade-enter-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
+.tab::after{
+    content: '';
+    width: v-bind(tabAccentWidth);
+    translate: v-bind(tabTranslateX);
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    transition: translate 100ms ease-in-out;
 }
 
 .material-symbols-rounded:hover {
     background-color: transparent;
-}
-
-.material-symbols-rounded {
-    font-size: 24pt;
 }
 
 @supports (animation-timeline: scroll()){
@@ -109,39 +122,18 @@
         }
     }
 }
-
-@media not all and (min-width: 640px) {
-    .fade-enter-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-leave-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-enter-from {
-        translate: 0 100%;
-    }
-
-    .fade-leave-to {
-        translate: 0 100%;
-        opacity: 1;
-    }
-}
 </style>
 
 <!-- eslint-disable vue/no-ref-object-reactivity-loss -->
 <script setup>
-import { reactive, onMounted, computed, provide, onUnmounted, onActivated, onDeactivated } from 'vue'
+import { reactive, onMounted, computed, provide, onUnmounted, watch } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import ProfileInfo from '@/indexApp/components/profile/ProfileInfo.vue'
-import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
-import { getUserPosts, getUserInfoByNickname } from '@/indexApp/js/api.js'
+import { getUserInfoByNickname } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRoute } from 'vue-router'
 import Banner from '@/indexApp/components/Banner.vue'
 import ProfileMenu from '@/indexApp/components/profile/ProfileMenu.vue'
-import Footer from '@/indexApp/components/Footer.vue'
 
 const route = useRoute()
 const user = JSON.parse(localStorage.getItem("CUR_USER"))
@@ -151,12 +143,6 @@ const isCurUser = computed(() => {
 
 const state = reactive({
     user: undefined,
-    posts: [],
-    pinnedIdTop: new Set(),
-    pageIndex: 1,
-    pageSize: 10,
-    lastTimestamp: Date.now(),
-    totalPages: 0,
     headerConfig: {
         title: route.params.nickname,
         goBack: !isCurUser.value,
@@ -164,48 +150,28 @@ const state = reactive({
         menuIcon: 'more_horiz',
         iconTooltip: '更多选项'
     },
-    isPostLoading: true,
     lastWheelDirection: 0,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     showProfileMenus: false,
-    recoverFromOnDeactivated: false
+    recoverFromOnDeactivated: false,
+    tabs: [
+        { id: 'postTimelinePage', name: '帖子', visibility: 'PUBLIC', count: 0},
+        { id: 'reviewTimelinePage', name: '评论', visibility: 'PUBLIC', count: 0},
+        { id: 'mediaTimelinePage', name: '媒体', visibility: 'PUBLIC', count: 0},
+        { id: 'likeTimelinePage', name: '喜欢', visibility: 'PUBLIC', count: 0}
+    ]
 })
 
-const hasMore = computed(() => {
-    return state.pageIndex < state.totalPages
+const tabAccentWidth = computed(() => `${1 / state.tabs.length * 100}%`)
+
+const tabTranslateX = computed(() => {
+    const activeIndex = Math.max(state.tabs.findIndex(it => it.id === route.name), 0)
+    return `${activeIndex * 100}% 0`
 })
 
 const isPrivateAccountAndNotFollowed = computed(() => {
     return state.user.confirmFollow && state.user.yourFollowStatus !== 'FOLLOW' && state.curUser.id !== state.user.id
 })
-
-async function getPosts() {
-    state.isPostLoading = true
-    try {
-        const response = await getUserPosts(state.user.id, state.pageIndex, state.pageSize, state.lastTimestamp)
-        if (!response.ok) throw new Error((await response.json()).message)
-
-        const { content, totalPages } = await response.json()
-
-        for(let i = content.length - 1; i >= 0; i--){
-            if(state.pinnedIdTop.has(content[i].id)){
-                // 如果之前已经查询出该置顶帖子，则再次查询到时，不再显示
-                content.splice(i, 1)
-            }else if(content[i].top){
-                state.pinnedIdTop.add(content[i].id)
-            }
-        }
-        state.posts.push(...content)
-        state.totalPages = totalPages
-        if (content.length > 1) {
-            state.lastTimestamp = content.slice(-1)[0].createdTime
-        }
-    } catch (e) {
-        store.setErrorMsg(e.message)
-    } finally {
-        state.isPostLoading = false
-    }
-}
 
 async function getUser(nickname) {
     try {
@@ -219,21 +185,10 @@ async function getUser(nickname) {
     }
 }
 
-function fetchNewPost() {
-    getPosts()
-}
-
-function postingNew(post) {
-    state.posts.unshift(post)
-}
-
 async function refreshProfileOnUi(){
     try{
         await getUser(state.user.id)
         state.lastTimestamp = state.user?.lastPostAt || Date.now()
-        if (!state.user.blocked && !state.user.blocking) {
-            await getPosts()
-        }
     }catch (e) {
         store.setErrorMsg(e.message)
     }
@@ -251,21 +206,6 @@ function dismissProfileMenus() {
     state.showProfileMenus = false
 }
 
-function pinPostOnUi(postId, newTop){
-    const preDelIndex = state.posts.findIndex(it => it.id === postId)
-    if(preDelIndex< 0 || preDelIndex >= state.posts.length) return
-
-    if(!newTop){
-        state.posts[preDelIndex].top = newTop
-        return
-    }
-
-    const removedPostArr = state.posts.splice(preDelIndex, 1)
-    if(removedPostArr.length != 1) return
-    removedPostArr[0].top = newTop
-    state.posts.unshift(removedPostArr[0])
-}
-
 function handleScroll(){
     document.querySelector('#profile>#h').setAttribute('style', `opacity:${Math.min(100, this.scrollY)}%`)
 }
@@ -279,27 +219,15 @@ function newCurUser({ user }){
     localStorage.setItem('CUR_USER', JSON.stringify(user))
 }
 
-onActivated(async () => {
-    if(!state.recoverFromOnDeactivated) return
-    await getUser(route.params.nickname)
-    state.posts.forEach(post => {
-        post.user.avatar = state.user.avatar
-        post.user.banner = state.user.banner
-    })
-})
-
-onDeactivated(() => {
-    state.recoverFromOnDeactivated = true
+watch(() => route.name, (_, oldVal) => {
+    if(oldVal === 'profileEdit' && route.meta.key === 'profile'){
+        getUser(route.params.nickname)
+    }
 })
 
 onMounted(async () => {
-    const nickname = route.params.nickname
-
-    await getUser(nickname)
+    await getUser(route.params.nickname)
     state.lastTimestamp = state.user?.lastPostAt || Date.now()
-    if (!state.user.blocked && !state.user.blocking && !isPrivateAccountAndNotFollowed.value) {
-        await getPosts()
-    }
 
     if(!CSS.supports('animation-timeline: scroll()')){
         window.addEventListener('scroll', handleScroll)
@@ -311,9 +239,7 @@ onUnmounted(() => {
 })
 
 provide('dismissProfileMenus', { dismissProfileMenus: dismissProfileMenus })
-provide('postingNew', { postingNew })
 provide('refreshProfileOnUi', { refreshProfileOnUi: refreshProfileOnUi })
-provide('pinPostOnUi', { pinPostOnUi: pinPostOnUi })
 provide('removeFanOnUi', { removeFanOnUi: removeFanOnUi })
 provide('newCurUser', { newCurUser })
 </script>

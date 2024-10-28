@@ -1,15 +1,13 @@
 <template>
     <div
-        class="bg-[#00000066] fixed-page h-screen max-sm:bg-white max-sm:z-[1001] sm:backdrop-blur-sm w-screen z-[111]"
+        class="bg-[#00000066] dark:max-sm:bg-[#121212] fixed-page h-screen max-sm:bg-white max-sm:z-[1001] sm:backdrop-blur-sm w-screen z-[111]"
         @click.self="dismiss">
         <div
             v-if="state.loading"
-            class="-translate-x-1/2 absolute bg-white h-full left-1/2 max-sm:fixed top-0 w-full z-[102]">
-            <div class="flex flex-col gap-2 h-full items-center justify-center">
-                <IconLoading class="-ml-1 h-6 mr-3 text-[#6b7280] w-6"></IconLoading>
-                <div class="text-[#6b7280] text-[11pt]">
-                    帖子发布中...
-                </div>
+            class="absolute dark:text-white/50 flex flex-col gap-y-2 h-full items-center justify-center max-sm:fixed text-[#6b7280] top-0 w-full z-[102]">
+            <IconLoading class="-ml-1 h-6 mr-3 w-6"></IconLoading>
+            <div class="text-[11pt]">
+                帖子发布中...
             </div>
         </div>
         <Header
@@ -27,9 +25,13 @@
                 <div>{{ state.showMarkdownPanel ? '预览' : '转发帖子' }}</div>
             </div>
         </Header>
-        <div class="bg-white flex flex-col flex-nowrap justify-between left-1/2 max-sm:h-[calc(100vh-2.5rem-48px)] max-sm:p-3 max-sm:rounded-none max-sm:w-screen overflow-y-auto p-4 rounded-[8px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:max-h-[80%] sm:min-h-[30%] top-1/2 w-[36rem]">
-            <div class="flex flex-row items-center justify-between">
-                <div class="flex flex-row gap-x-2 items-center">
+        <div
+            :class="{'max-sm:h-full': state.loading}"
+            class="bg-white dark:bg-[#121212] flex flex-col flex-nowrap justify-between left-1/2 max-sm:h-[calc(100vh-2.5rem-48px)] max-sm:p-3 max-sm:rounded-none max-sm:w-screen modern-scrollbar-y overflow-y-auto p-4 rounded-[8px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:max-h-[80%] sm:min-h-[30%] top-1/2 w-[36rem]">
+            <div
+                v-if="!state.loading"
+                class="flex flex-row items-center justify-between">
+                <div class="flex flex-row gap-x-2 items-center shrink-0">
                     <Avatar
                         v-if="!store.MOBILE_MODE"
                         :user="state.curUser"
@@ -41,11 +43,11 @@
                         <span class="cursor-default font-bold text-[13pt]">{{ state.curUser.nickname }}</span>
                         <IconVerify
                             v-if="state.curUser.verified"
-                            class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                            class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                         </IconVerify>
                         <div
                             v-if="state.curUser.confirmFollow"
-                            class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                            class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
                             lock
                         </div>
                     </div>
@@ -53,7 +55,7 @@
                 <EditorMenu
                     v-if="state.data.content.length > 0 || store.MOBILE_MODE"
                     id="repostEditorMenu"
-                    class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full z-10"
+                    class="bottom-0 left-0 max-sm:fixed max-sm:h-10 max-sm:pr-4 px-2 w-full z-[99]"
                     switch-from="repost-panel"
                     :menu-set="state.menuSet"
                     :visibility="state.data.status"
@@ -67,7 +69,9 @@
                     @preview="({isShow}) => {state.showMarkdownPanel = isShow}">
                 </EditorMenu>
             </div>
-            <div class="grow max-sm:ml-0 max-sm:pt-0 ml-[3rem] pt-1">
+            <div
+                v-if="!state.loading"
+                class="grow max-sm:ml-0 max-sm:pt-0 ml-[3rem] pt-1">
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <VueShowdown
                     v-if="state.showMarkdownPanel == true"
@@ -109,41 +113,6 @@
 .material-symbols-rounded:hover {
     /* background-color: transparent; */
     font-size: 14pt;
-}
-
-.fade-enter-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.1s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-
-@media not all and (min-width: 640px) {
-    .fade-enter-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-leave-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-enter-from {
-        translate: 0 100%;
-    }
-
-    .fade-leave-to {
-        translate: 0 100%;
-        opacity: 1;
-    }
 }
 </style>
 

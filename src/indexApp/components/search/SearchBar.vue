@@ -7,12 +7,12 @@
         :menu-icon="state.headerConfig.menuIcon"
         :icon-tooltip="state.headerConfig.iconTooltip"
         class="header px-2 py-2 sticky">
-        <div class="flex flex-1 flex-row h-full text-sm">
+        <div class="dark:bg-neutral-800 flex flex-1 flex-row h-full rounded-full text-sm">
             <select
                 id="type-select"
                 v-model.trim="state.type"
                 name="search-type"
-                class="border-[1px] border-r-0 cursor-pointer focus:outline-none h-full pl-2 rounded-l-full">
+                class="bg-inherit border-[1px] border-r-0 cursor-pointer dark:border-neutral-700 focus:outline-none h-full pl-2 rounded-l-full">
                 <option
                     v-for="([k, { zh, show }]) in state.suggests.typeMap"
                     v-show="show"
@@ -26,33 +26,33 @@
                 type="text"
                 placeholder="搜你想搜的"
                 maxlength="20"
-                class="border-[1px] border-l-0 focus:outline-none h-full px-2 rounded-r-full w-full"
+                class="bg-inherit border-[1px] border-l-0 dark:border-neutral-700 focus:outline-none h-full px-2 rounded-r-full w-full"
                 @keyup.enter.exact="search()"
                 @click.left="state.prompt ? () => { } : showSearchHistory()" />
         </div>
-        <Transition name="fade">
+        <Transition name="action-fade">
             <div
                 v-if="state.suggests.show"
                 id="search-suggest"
-                class="bg-white border-[1px] divide-y fixed flex flex-col max-h-[min(24rem,75vh)] modern-scrollbar-y overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-1rem)] z-[105]">
+                class="bg-white border-[1px] dark:bg-neutral-900 dark:border-neutral-800 divide-y fixed flex flex-col left-0 max-h-[min(24rem,75vh)] modern-scrollbar-y mx-2 overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-0.5rem)] z-[105]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <div v-if="state.suggests.hintSuggests" class="suggests">
+                <div v-if="state.suggests.hintSuggests && !state.suggests.showLoading" class="suggests">
                     <div
                         v-for="(suggests, index) in state.suggests.hintSuggests"
                         :key="index"
                         :index="index">
                         <div
                             :class="[index === 'HISTORY' ? 'flex' : 'hidden']"
-                            class="backdrop-blur-sm bg-gray-100/75 flex-row font-bold gap-x-2 h-[3rem] items-center justify-start px-4 sticky text-black top-0">
+                            class="backdrop-blur-sm bg-gray-100/75 dark:bg-neutral-800/75 dark:text-white/50 flex-row font-bold gap-x-2 h-[3rem] items-center justify-start px-4 sticky text-black top-0">
                             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                            <div class="material-symbols-rounded no-hover">{{ state.suggests.typeMap.get(index).icon }}</div>
+                            <div class="material-symbols-rounded no-hover text-inherit">{{ state.suggests.typeMap.get(index).icon }}</div>
                             <div>{{ state.suggests.typeMap.get(index).zh }}</div>
                         </div>
                         <div
                             v-for="suggest in suggests"
                             :key="suggest.content.id"
                             :class="[index === 'USER' ? 'h-[calc(2.8rem+1.4rem)]' : 'h-[3rem]']"
-                            class="active:bg-gray-100 bg-white cursor-pointer flex hover:bg-gray-50 items-center justify-start px-4"
+                            class="active:bg-gray-100 bg-inherit cursor-pointer dark:active:bg-neutral-700 dark:hover:bg-neutral-800 flex hover:bg-gray-50 items-center justify-start px-4"
                             :index="suggest.content.id"
                             @click="index === 'USER' ? routeTo(index, suggest.content.nickname) : search(contentText(suggest.content.content, index))">
                             <div
@@ -69,15 +69,15 @@
                                             v-html="suggest.content.nickname" />
                                         <IconVerify
                                             v-if="suggest.content.verified"
-                                            class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                                            class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                                         </IconVerify>
                                         <div
                                             v-if="suggest.content.confirmFollow"
-                                            class="material-symbols-rounded no-hover p-0 text-[1rem]">
+                                            class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1rem]">
                                             lock
                                         </div>
                                     </div>
-                                    <div class="font-light text-[0.8rem] text-gray-500 webkit-box-1">
+                                    <div class="dark:text-white/50 font-light text-[0.8rem] text-gray-500 webkit-box-1">
                                         {{ suggest.content.verifiedInfo || suggest.content.remark || '这个人什么也没写' }}
                                     </div>
                                 </div>
@@ -99,8 +99,8 @@
                 </div>
                 <div
                     v-else-if="state.suggests.showLoading"
-                    class="flex flex-col gap-y-2 h-[8rem] items-center justify-center">
-                    <IconLoading class="h-5 text-slate-500 w-5"></IconLoading>
+                    class="dark:text-white/50 flex flex-col gap-y-2 h-[8rem] items-center justify-center text-slate-500">
+                    <IconLoading class="dark:text-inherit h-5 w-5"></IconLoading>
                     <span class="text-base">{{ state.suggests.loadingText }}</span>
                 </div>
                 <div class="flex-col gap-y-1 h-[8rem] hidden items-center justify-center">
@@ -113,19 +113,19 @@
 </template>
 
 <style scoped>
-.fade-enter-active {
+.action-fade-enter-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-leave-active {
+.action-fade-leave-active {
     transition: opacity 0.1s ease-in-out;
 }
 
-.fade-enter-from {
+.action-fade-enter-from {
     opacity: 0;
 }
 
-.fade-leave-to {
+.action-fade-leave-to {
     opacity: 0;
 }
 

@@ -4,7 +4,7 @@
         width="1rem"
         height="1rem"
         viewBox="0 0 24 24"
-        class="btn-no-select">
+        class="btn-no-select m-icon">
         <g id="evaEmailOutline0">
             <g id="evaEmailOutline1">
                 <path

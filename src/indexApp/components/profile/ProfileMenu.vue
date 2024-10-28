@@ -1,9 +1,9 @@
 <template>
     <div
         id="profile-menu"
-        class="bg-white cursor-pointer flex flex-col ring-1 ring-slate-900/5 shadow-lg">
-        <div class="bg-white flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
-            <div class="bg-gray-200 h-[0.35rem] rounded-full w-12" />
+        class="bg-white cursor-pointer dark:bg-[#1e1e1e] flex flex-col">
+        <div class="flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
+            <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
         </div>
         <div class="flex flex-col max-sm:grid max-sm:grid-cols-4 max-sm:place-items-center">
             <ProfileChangeAction
@@ -33,12 +33,6 @@
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </BookmarkAction>
     
-            <ProfileLockAction
-                v-if="state.actionVisMap.get('ProfileLockAction')"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px]"
-                :is-locked="props.user.confirmFollow">
-            </ProfileLockAction>
-    
             <ProfileBlockAction
                 v-if="state.actionVisMap.get('ProfileBlockAction')"
                 :user="props.user"
@@ -50,11 +44,11 @@
                 :fan-id="props.user.id"
                 class="action first:rounded-t-[8px] last:rounded-b-[8px]">
             </RemoveFanAction>
-    
-            <LogoutAction
-                v-if="state.actionVisMap.get('LogoutAction')"
-                class="action first:rounded-t-[8px] last:rounded-b-[8px] text-red-500">
-            </LogoutAction>
+
+            <SettingAction
+                v-if="props.user.id === curUser.id && store.MOBILE_MODE"
+                class="action first:rounded-t-[8px] last:rounded-b-[8px]">
+            </SettingAction>
         </div>
     </div>
 </template>
@@ -74,11 +68,19 @@
 }
 
 .action:hover{
-    background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+    background-color: #f3f4f6;
+}
+
+.action:hover:where([theme="dark"], [theme="dark"] *){
+    background-color: #262626;
 }
 
 .action:active{
     background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.action:active:where([theme="dark"], [theme="dark"] *){
+    background-color: #404040;
 }
 
 @media not all and (min-width: 640px) {
@@ -107,12 +109,11 @@ import ProfileChangeAction from '@/indexApp/components/menus/userProfileMenus/Pr
 import CalendarSearchAction from '@/indexApp/components/menus/userProfileMenus/CalendarSearchAction.vue'
 import ShareAction from '@/indexApp/components/menus/common/ShareAction.vue'
 import VerifyApplyAction from '@/indexApp/components/menus/userProfileMenus/VerifyApplyAction.vue'
-import ProfileLockAction from '@/indexApp/components/menus/userProfileMenus/ProfileLockAction.vue'
-import LogoutAction from '@/indexApp/components/menus/userProfileMenus/LogoutAction.vue'
 import ProfileBlockAction from '@/indexApp/components/menus/userProfileMenus/ProfileBlockAction.vue'
 import BookmarkAction from '@/indexApp/components/menus/userProfileMenus/BookmarkAction.vue'
 import RemoveFanAction from '@/indexApp/components/menus/userProfileMenus/RemoveFanAction.vue'
-import { store } from '@/indexApp/js/store'
+import SettingAction from '@/indexApp/components/menus/userProfileMenus/SettingAction.vue'
+import { store } from '@/indexApp/js/store.js'
 
 const { dismissProfileMenus } = inject('dismissProfileMenus')
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
@@ -131,11 +132,10 @@ const state = reactive({
         [CalendarSearchAction.__name, !props.user.blocking && !props.user.blocked && showUnImpl],
         [ShareAction.__name, !props.user.blocking && !props.user.blocked],
         [VerifyApplyAction.__name, props.user.id === curUser.id && showUnImpl],
-        [ProfileLockAction.__name, props.user.id === curUser.id],
         [ProfileBlockAction.__name, props.user.id !== curUser.id],
-        [LogoutAction.__name, props.user.id === curUser.id],
         [BookmarkAction.__name, props.user.id === curUser.id && store.MOBILE_MODE],
         [RemoveFanAction.__name, props.user.id !== curUser.id && props.user.yourFanStatus === 'FAN'],
+        [SettingAction.__name, props.user.id === curUser.id && store.MOBILE_MODE], // TODO BookmarkAction会随着响应式变化，而此处却不变化
         [undefined, false] // 最后设置一个{undefined: false} 保证名字匹配不上时默认不显示
     ])
 })

@@ -2,33 +2,43 @@
     <div id="follow">
         <Header
             class="sticky"
-            :width="state.headerConfig.width"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
             :show-menu="state.headerConfig.showMenu"
-            :menu-icon="state.headerConfig.menuIcon"
-            :menu-action="state.headerConfig.menuAction">
+            :menu-icon="state.headerConfig.menuIcon">
         </Header>
-        <div class="flex flex-row h-[3rem] items-center text-center">
+        <div class="max-sm:top-[48px] no-scrollbar overflow-x-auto sticky top-[56px] w-full z-[104]">
             <div
-                v-for="(menu, index) in state.menus"
-                :key="menu.id"
-                :index="index"
-                :class="{ active: menu.isActive }"
-                class="basis-full cursor-pointer flex h-full items-center justify-center w-full"
-                @click="routeTo(menu.routeTo, menu.id)">
-                {{ menu.name }}
+                class="after:bg-primary backdrop-blur-xl bg-white/80 cursor-pointer dark:after:bg-onPrimary dark:bg-[#121212dd] dark:text-white/50 flex flex-row min-w-full tab text-[0.9rem] text-zinc-500 w-fit">
+                <div
+                    v-for="(menu, index) in state.menus"
+                    :key="menu.id"
+                    :index="index"
+                    :class="{ 'text-primary': $route.name === menu.id }"
+                    class="flex flex-1 hover:dark:text-onPrimary hover:text-primary items-center justify-center min-w-fit py-2 w-[4.5rem]"
+                    @click="routeTo(menu.id)">
+                    {{ menu.name }}
+                </div>
             </div>
         </div>
         <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
-        <router-view></router-view>
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+                <component :is="Component"></component>
+            </keep-alive>
+        </router-view>
     </div>
 </template>
 
 <style scoped>
-.active {
-    box-sizing: content-box;
-    border-bottom: 2px solid #3b82f6;
+.tab::after {
+    content: '';
+    width: v-bind(tabAccentWidth);
+    translate: v-bind(tabTranslateX);
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    transition: translate 100ms ease-in-out;
 }
 </style>
 
@@ -43,19 +53,16 @@ import { store } from '@/indexApp/js/store.js'
 const route = useRoute()
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
-    user: null,
+    user: undefined,
     menus: [
-        { id: 1, name: '我的订阅', isActive: route.name == 'followList', routeTo: `/follow/${route.params.nickname}` },
-        { id: 2, name: '订阅我的', isActive: route.name == 'fanList', routeTo: `/fan/${route.params.nickname}` },
-        { id: 3, name: '共同订阅', isActive: route.name == 'coFollowingList', routeTo: `/coFollow/${route.params.nickname}` }
+        { id: 'followList', name: '我的订阅' },
+        { id: 'fanList', name: '订阅我的' },
     ],
     headerConfig: {
         title: route.params.nickname,
         goBack: true,
         showMenu: false,
-        menuIcon: null,
-        menuAction: { action: 'route', param: '' },
-        width: 0
+        menuIcon: undefined
     }
 })
 
@@ -68,11 +75,16 @@ const menuText = computed(() => {
 
 const isMyself = computed(() => { return state.curUser.id == state.user.id })
 
-function routeTo(url, id) {
-    state.menus.forEach(menu => { menu.isActive = false })
-    state.menus[id - 1].isActive = true
-    router.push(url)
+function routeTo(name) {
+    router.replace({ name: name, params: route.params })
 }
+
+const tabAccentWidth = computed(() => `${1 / state.menus.length * 100}%`)
+
+const tabTranslateX = computed(() => {
+    const activeIndex = Math.max(state.menus.findIndex(it => it.id === route.name), 0)
+    return `${activeIndex * 100}% 0`
+})
 
 async function getUserInfo(nickname) {
     try {

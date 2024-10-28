@@ -1,13 +1,13 @@
 <template>
-    <div class="bg-white max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] modern-scrollbar-y overflow-x-hidden overflow-y-auto rounded-[6px]">
+    <div class="bg-white dark:bg-[#1e1e1e] modern-scrollbar-y overflow-x-hidden overflow-y-auto">
         <div
             v-if="props.showHistory && state.historyEmojis.length > 0"
-            class="bg-white border-b-[1px] category gap-1 grid grid-cols-7 px-2 py-2 sticky top-0 z-[99]">
+            class="bg-inherit border-b-[1px] category dark:border-neutral-700 gap-1 grid grid-cols-7 px-2 py-2 sticky top-0 z-[99]">
             <button
                 v-for="(unified, index) in state.historyEmojis"
                 :key="index"
                 type="button"
-                class="aria-selected border border-transparent cursor-pointer flex focus:bg-[#cfe2ff] h-[2rem] hover:bg-[#f1f3f4] items-center justify-center p-1 rounded-[8px] w-[2rem]"
+                class="aria-selected border border-transparent cursor-pointer flex focus:bg-primaryContainer h-[2rem] hover:bg-helper hover:dark:bg-primaryContainer items-center justify-center p-1 rounded-[8px] w-[2rem]"
                 @click="chooseEmoji(unified)">
                 <span>{{ emojiCode({ unified: unified }) }}</span>
             </button>
@@ -21,7 +21,7 @@
                 <div
                     :id="catalogue"
                     :class="[showHistory ? 'top-[2.8rem]' : 'top-0']"
-                    class="backdrop-blur-sm bg-[#FFFFFFDD] px-2 py-1 sticky text-[11pt] z-[98]">
+                    class="backdrop-blur-sm bg-[#FFFFFFDD] dark:bg-[#1e1e1edd] dark:text-white/75 px-2 py-1 sticky text-[0.9rem] z-[98]">
                     {{ categoryZh[catalogue] }}
                 </div>
                 <div
@@ -34,7 +34,7 @@
                         :key="emoji.unified"
                         type="button"
                         :title="emoji.short_name"
-                        class="border border-transparent cursor-pointer flex flex-col focus:bg-[#cfe2ff] h-[2.5rem] hover:bg-[#f1f3f4] items-center justify-center p-1 relative rounded-[8px] text-[16pt] w-[2.5rem]"
+                        class="border border-transparent cursor-pointer flex flex-col focus:bg-primaryContainer h-[2.5rem] hover:bg-helper hover:dark:bg-primaryContainer items-center justify-center p-1 relative rounded-[8px] text-[16pt] w-[2.5rem]"
                         @mouseenter.self="toggleSkinPanel(emoji, true)"
                         @mouseleave.self="toggleSkinPanel(emoji, false)">
                         <span @click="chooseEmoji(emoji.unified)">{{ emojiCode(emoji) }}</span>
@@ -43,11 +43,11 @@
                                 v-if="emoji.skin_variations && state.showSkinPanel[emoji.unified]"
                                 id="skinPanel"
                                 :style="skinPanelStyle(emoji.unified)"
-                                class="absolute bg-white bottom-full flex flex-row flex-wrap gap-1 px-1 py-1 ring-1 ring-gray-100 rounded-[8px] shadow-md w-[calc(2rem*5+0.25rem*4+0.5rem)] z-[98]">
+                                class="absolute bg-white bottom-full dark:bg-[#1e1e1e] dark:ring-neutral-700 flex flex-row flex-wrap gap-1 px-1 py-1 ring-1 ring-gray-100 rounded-[8px] shadow-md w-[calc(2rem*5+0.25rem*4+0.5rem)] z-[98]">
                                 <div
                                     v-for="(skinVariation, skinCode) in emoji.skin_variations"
                                     :key="skinVariation.unified"
-                                    class="box-border flex focus:bg-[#cfe2ff] h-[2rem] hover:bg-[#f1f3f4] items-center justify-center p-2 rounded-[8px] w-[2rem]"
+                                    class="box-border flex focus:bg-primaryContainer h-[2rem] hover:bg-helper hover:dark:bg-primaryContainer items-center justify-center p-2 rounded-[8px] w-[2rem]"
                                     @click.self="chooseEmoji(skinVariation.unified)">
                                     {{ emojiCode(emoji, skinCode) }}
                                 </div>

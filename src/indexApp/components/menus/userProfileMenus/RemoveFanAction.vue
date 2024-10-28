@@ -1,8 +1,8 @@
 <template>
     <div @click="handleClick">
-        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_remove</span>
+        <span class="material-symbols-rounded max-sm:bg-gray-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem]">person_remove</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-        <div class="max-sm:text-[0.8rem] max-sm:text-zinc-500">移除订阅者</div>
+        <div class="max-sm:dark:text-white/50 max-sm:text-[0.8rem] max-sm:text-zinc-500">移除粉丝</div>
         <Teleport to="#app">
             <ConfirmDialogBox
                 v-if="state.confirmBDialogUi.show"
@@ -32,23 +32,15 @@ const props = defineProps({
 const state = reactive({
     confirmBDialogUi: {
         show: false,
-        title: '确定要移除该订阅者吗？',
+        title: '移除该粉丝？',
         confirmButton: {
-            text: '确定移除',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
             selected: false
         },
         cancelButton: {
-            text: '取消',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
-            show: false,
-            text: '正在移除粉丝...',
-            color: 'rgb(239 68 68)'
+            show: false
         }
     },
 })

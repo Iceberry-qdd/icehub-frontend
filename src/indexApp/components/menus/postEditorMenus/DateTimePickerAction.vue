@@ -1,22 +1,22 @@
 <template>
-    <div class="card-container no-scrollbar ring-1 ring-slate-900/5 shadow-lg">
+    <div class="bg-white dark:bg-[#1e1e1e] dark:text-white/50 flex flex-col gap-2 items-center justify-start no-scrollbar p-4 text-[#606266] text-[0.9rem]">
         <div
             v-if="props.noteMsg"
-            class="bg-[#f1f3f4] cursor-default flex gap-2 h-[2.5rem] items-center justify-left p-3 rounded-lg w-full">
-            <IconInfo class="bg-[#cfe2ff] box-content p-[0.1rem] rounded-full"></IconInfo>
+            class="bg-primaryContainer-inActive cursor-default dark:bg-neutral-700 flex gap-2 h-[2.5rem] items-center justify-left p-3 rounded-lg w-full">
+            <IconInfo class="bg-primary box-content dark:bg-onPrimaryContainer-disable dark:text-onPrimaryContainer p-[0.1rem] rounded-full text-onPrimary"></IconInfo>
             {{ props.noteMsg }}
         </div>
         <div id="date-picker">
             <div class="flex flex-nowrap flex-row items-center justify-between w-full">
                 <div
-                    class="btn-no-select cursor-pointer text-[#409EFF] text-[11pt]"
+                    class="btn-no-select cursor-pointer dark:text-onPrimaryContainer text-primary"
                     @click="closeAndClear">
                     清除
                 </div>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="text-[11pt]">{{ formattedPickedDateTime }}</div>
+                <div>{{ formattedPickedDateTime }}</div>
                 <div
-                    class="btn-no-select cursor-pointer text-[#409EFF] text-[11pt]"
+                    class="btn-no-select cursor-pointer dark:text-onPrimaryContainer text-primary"
                     @click="closeAndOk">
                     确定
                 </div>
@@ -51,7 +51,7 @@
                     keyboard_double_arrow_right
                 </div>
             </div>
-            <div class="cursor-default  divide-y">
+            <div class="cursor-default  dark:divide-neutral-700  divide-y">
                 <div class="gap-1 grid grid-cols-7">
                     <div
                         v-for="(week, index) in state.weekNames"
@@ -69,7 +69,7 @@
                     <div
                         v-for="i in daysCountOfPickedMonth"
                         :key="i"
-                        :class="[state.pickedDay == i ? 'text-white bg-blue-500' : 'hover:bg-[#EBEEF5]', canPickThisDay(i) ? '' : 'm-disabled']"
+                        :class="[state.pickedDay === i ? 'text-white bg-primary' : 'hover:bg-helper', canPickThisDay(i) ? 'text-initial dark:text-white' : 'm-disabled']"
                         class="btn-no-select flex h-[2.5rem] items-center justify-center rounded-full w-[2.5rem]"
                         @click="canPickThisDay(i) ? state.pickedDay = i : ''">
                         {{ i }}
@@ -82,13 +82,13 @@
             <select
                 id="hour-picker"
                 v-model="state.pickedHour"
-                class="border-[1px] focus-visible:outline-none focus:ring-2 px-4 py-[0.25rem] ring-blue-500 ring-offset-2 rounded-[6px]"
+                class="border-[1px] dark:bg-neutral-700 dark:border-neutral-700 dark:focus:ring-0 focus-visible:outline-none focus:ring-2 px-4 py-1 ring-offset-2 ring-primary rounded-[6px]"
                 required
                 name="hour-picker">
                 <option
-                    v-for="(hour, index) in 24"
+                    v-for="(_, index) in 24"
                     :key="index"
-                    class="font-normal text-[11pt]"
+                    class="font-normal text-[1rem] text-[initial]"
                     :value="index">
                     {{ index < 10 ? '0' + index : index }}
                 </option>
@@ -100,13 +100,13 @@
             <select
                 id="minute-picker"
                 v-model="state.pickedMinute"
-                class="border-[1px] focus-visible:outline-none focus:ring-2 px-4 py-[0.25rem] ring-blue-500 ring-offset-2 rounded-[6px]"
+                class="border-[1px] dark:bg-neutral-700 dark:border-neutral-700 dark:focus:ring-0 focus-visible:outline-none focus:ring-2 px-4 py-1 ring-offset-2 ring-primary rounded-[6px]"
                 required
                 name="minute-picker">
                 <option
                     v-for="(minute, index) in 60"
                     :key="index"
-                    class="font-normal text-[11pt]"
+                    class="font-normal text-[1rem] text-[initial]"
                     :value="index">
                     {{ index < 10 ? '0' + index : index }}
                 </option>
@@ -155,6 +155,10 @@
 .m-disabled {
     color: #C0C4CC;
     cursor: not-allowed;
+}
+
+.m-disabled:where([theme="dark"], [theme="dark"] *){
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .m-disabled:hover {

@@ -1,21 +1,21 @@
 <template>
-    <div class="bg-white flex flex-row gap-x-2 items-center max-w-[min(36rem,96vw)] min-w-[8rem] pointer-events-auto px-3 py-[0.6rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-sm">
-        <div>
+    <div class="bg-white dark:bg-[#1e1e1e] flex flex-row gap-x-2 items-center max-w-[min(36rem,96vw)] min-w-[8rem] pointer-events-auto px-3 py-[0.6rem] ring-1 ring-slate-900/5 rounded-[8px] shadow-sm">
+        <div class="text-[1rem]">
             <IconDone
                 v-if="props.message.type == 'success'"
-                class="bg-green-500 box-border p-[0.15rem] rounded-full text-[13pt] text-white">
+                class="bg-green-500 box-border dark:text-neutral-700 p-[0.15rem] rounded-full text-white">
             </IconDone>
             <IconWarning
                 v-else-if="props.message.type == 'warning'"
-                class="bg-white box-border rounded-full text-[16pt] text-yellow-500">
+                class="bg-inherit box-border rounded-full text-[1.25rem] text-yellow-500">
             </IconWarning>
             <IconError
                 v-else-if="props.message.type == 'error'"
-                class="bg-red-500 box-border p-[0.20rem] rounded-full text-[13pt] text-white">
+                class="bg-red-500 box-border dark:text-neutral-700 p-[0.20rem] rounded-full text-white">
             </IconError>
             <IconInfo
                 v-else
-                class="bg-gray-500 box-border p-[0.15rem] rounded-full text-[13pt] text-white">
+                class="bg-gray-500 box-border dark:text-neutral-700 p-[0.15rem] rounded-full text-white">
             </IconInfo>
         </div>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->

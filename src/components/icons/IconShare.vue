@@ -3,7 +3,8 @@
         :width="props.size"
         :height="props.size"
         viewBox="0 0 48 48"
-        fill="none">
+        fill="none"
+        class="btn-no-select m-icon">
         <path
             d="M28 6H42V20"
             :stroke="props.strokeColor"
@@ -37,7 +38,7 @@ const props = defineProps({
     strokeColor: {
         type: String,
         required: false,
-        default: '#000000'
+        default: 'currentColor'
     },
     /** 大小 */
     size: {

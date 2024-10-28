@@ -1,7 +1,8 @@
 <template>
     <div
+        class="text-onError"
         @click="showConfirmDialogBox">
-        <span class="material-symbols-rounded max-sm:bg-red-100 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-red-500">delete</span>
+        <span class="material-symbols-rounded max-sm:bg-red-100 max-sm:dark:bg-neutral-700 max-sm:p-3 p-0 sm:no-hover sm:text-[1.25rem] text-[1.5rem] text-inherit">delete</span>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <div class="max-sm:text-[0.8rem]">删除此内容</div>
         <Teleport to="#app">
@@ -33,23 +34,17 @@ const { deletePostOnUi } = inject('deletePostOnUi')
 const state = reactive({
     confirmDialogBoxUi: {
         show: false,
-        title: '确定要删除此帖子吗？',
+        title: '删除此帖子？',
         confirmButton: {
-            text: '删除',
-            color: 'rgb(239 68 68)',
-            bgColor: 'rgb(254 226 226)',
+            color: 'text-onError',
+            bgColor: 'bg-error',
             selected: false
         },
         cancelButton: {
-            text: '不删除',
-            color: '#000000',
-            bgColor: 'rgb(243 244 246)',
             selected: false
         },
         loading: {
-            show: false,
-            text: '正在删除中......',
-            color: 'rgb(239 68 68)'
+            show: false
         }
     }
 })

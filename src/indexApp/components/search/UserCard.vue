@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white border-[1px] rounded-[8px]">
+    <div class="bg-white border-[1px] dark:bg-[#1e1e1e] dark:border-0 rounded-[8px]">
         <Banner
             :user="props.user"
             class="-mb-[calc(3.5rem+0.2rem)/2] h-[6rem] object-cover rounded-t-[8px] w-full">
@@ -8,32 +8,32 @@
             <div class="flex flex-row items-end justify-between w-full">
                 <Avatar
                     :user="props.user"
-                    class="border-[0.2rem] border-white box-content h-[3.5rem] object-cover rounded-[8px] text-[3.5rem] w-[3.5rem]">
+                    class="border-[0.2rem] border-white box-content dark:border-[#1e1e1e] h-[3.5rem] object-cover rounded-[8px] text-[3.5rem] w-[3.5rem]">
                 </Avatar>
                 <div
                     v-if="!isSelf"
                     :class="followBtnClass"
                     class="btn-no-select flex flex-row items-center justify-center min-w-[4.5rem] px-3 py-1 rounded-full text-[0.85rem]"
-                    @click.stop="state.yourFollowStatus !== 'UN_FOLLOW' ? doUnFollowUser() : doFollowUser()">
+                    @click.stop="state.yourFollowStatus !== 'NOT_FOLLOW' ? doUnFollowUser() : doFollowUser()">
                     {{ followButtonText }}
                 </div>
             </div>
             <div class="cursor-pointer flex flex-row gap-x-1 items-center justify-start">
-                <div class="font-bold hover:underline hover:underline-offset-4 text-[12pt]">
+                <div class="font-bold hover:underline hover:underline-offset-4 text-[1rem]">
                     {{ state.user.nickname }}
                 </div>
                 <IconVerify
                     v-if="state.user.verified"
-                    class="h-[0.9rem] text-blue-500 w-[0.9rem]">
+                    class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]">
                 </IconVerify>
                 <div
                     v-if="state.user.confirmFollow"
-                    class="material-symbols-rounded no-hover p-0 text-[1.25rem]">
+                    class="dark:text-white/50 material-symbols-rounded no-hover p-0 text-[1.25rem]">
                     lock
                 </div>
             </div>
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="break-all text-[0.85rem] webkit-box-1">{{ brief }}</div>
+            <div class="break-all dark:text-white/50 text-[0.85rem] text-neutral-500 webkit-box-1">{{ brief }}</div>
         </div>
     </div>
 </template>
@@ -71,10 +71,10 @@ const state = reactive({
 const isSelf = computed(() => state.curUser.id === props.user.id)
 
 const followBtnClass = computed(() => ({
-    'bg-blue-500': state.yourFollowStatus === 'NOT_FOLLOW',
-    'bg-gray-200': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-zinc-500': state.yourFollowStatus !== 'NOT_FOLLOW',
-    'text-white': state.yourFollowStatus === 'NOT_FOLLOW'
+    'bg-primary': state.yourFollowStatus === 'NOT_FOLLOW',
+    'bg-gray-200 dark:bg-neutral-800': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-zinc-500 dark:text-white/25': state.yourFollowStatus !== 'NOT_FOLLOW',
+    'text-onPrimary': state.yourFollowStatus === 'NOT_FOLLOW'
 }))
 
 const followButtonText = computed(() => {

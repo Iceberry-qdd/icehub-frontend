@@ -1,8 +1,8 @@
 <template>
     <div
-        class="bg-[#00000066] fixed-page flex-row h-full items-center justify-center modern-scrollbar-y sm:backdrop-blur-sm sm:flex w-full z-[111]"
+        class="bg-[#00000066] dark:max-sm:bg-[#121212] fixed-page flex-row h-full items-center justify-center max-sm:bg-white modern-scrollbar-y sm:backdrop-blur-sm sm:flex w-full z-[111]"
         @click.self="dismiss">
-        <div class="bg-white max-sm:h-[calc(100vh-2.5rem)] max-sm:rounded-none modern-scrollbar-y overflow-y-auto rounded-[8px] sm:max-h-[80%] sm:min-h-[20%] sm:w-[36rem]">
+        <div class="bg-white dark:bg-[#121212] max-sm:h-[calc(100vh-2.5rem)] max-sm:rounded-none modern-scrollbar-y overflow-y-auto rounded-[8px] sm:max-h-[80%] sm:min-h-[20%] sm:w-[36rem]">
             <Header
                 v-show="!state.isLoading"
                 class="sm:hidden sticky"
@@ -20,6 +20,7 @@
             </Header>
             <ReviewCard
                 tire-direction="top"
+                class="border-b-[1px] border-gray-100 dark:border-b-neutral-800"
                 :review="props.parentReview ?? props.post">
             </ReviewCard>
             <ReviewEditor
@@ -36,43 +37,6 @@
         </div>
     </div>
 </template>
-
-<style scoped>
-.fade-enter-active {
-    transition: opacity 0.15s ease-in-out;
-}
-
-.fade-leave-active {
-    transition: opacity 0.15s ease-in-out;
-}
-
-.fade-enter-from {
-    opacity: 0;
-}
-
-.fade-leave-to {
-    opacity: 0;
-}
-
-@media not all and (min-width: 640px) {
-    .fade-enter-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-leave-active {
-        transition: translate 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-    }
-
-    .fade-enter-from {
-        translate: 0 100%;
-    }
-
-    .fade-leave-to {
-        translate: 0 100%;
-        opacity: 1;
-    }
-}
-</style>
 
 <!-- eslint-disable vue/no-unused-properties -->
 <script setup>

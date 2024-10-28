@@ -1,7 +1,7 @@
 <template>
     <div class="h-fit w-full">
         <div
-            class="bg-blue-500 duration-1000 h-[2px] max-lg:h-[3px] transition-all w-0"
+            class="bg-primary dark:bg-gray-200 duration-1000 h-[2px] max-lg:h-[3px] transition-all w-0"
             :style="{width: `${props.routing ? state.progress: 100}%` }" />
     </div>
 </template>
