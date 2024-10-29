@@ -357,6 +357,9 @@ onMounted(() => {
     state.themeMediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
     handleThemeMediaChange(state.themeMediaQueryList)
     state.themeMediaQueryList.addEventListener('change', handleThemeMediaChange)
+
+    // Avatar style settings
+    store.setAvatarStyle(localStorage.getItem('avatar') || 'rounded')
 })
 
 onUnmounted(() => {
