@@ -13,9 +13,9 @@ window.fetch = async (...args) => {
 
 /**
  * 拉取公共时间线上的帖子
- * @param {int} pageIndex 页数
- * @param {int} pageSize 每页条数
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 页数
+ * @param {number} pageSize 每页条数
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns Promise<any>
  */
 export function getTimeline(pageIndex, pageSize, lastTimestamp) {
@@ -26,9 +26,9 @@ export function getTimeline(pageIndex, pageSize, lastTimestamp) {
 
 /**
  * 拉取用户时间线上的帖子
- * @param {int} pageIndex 页数
- * @param {int} pageSize 每页条数
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 页数
+ * @param {number} pageSize 每页条数
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns Promise<any>
  */
 export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
@@ -130,7 +130,7 @@ export function dislikeAPost(postId) {
  * @returns 用户信息
  */
 export function getUserInfoById(id) {
-    return fetch(`${BASE_URL}/user/${id}`, {
+    return fetch(`${BASE_URL}/user?i=${id}`, {
         method: 'GET'
     })
 }
@@ -141,7 +141,7 @@ export function getUserInfoById(id) {
  * @returns 用户信息
  */
 export function getUserInfoByNickname(nickname) {
-    return fetch(`${BASE_URL}/user/${nickname}`, {
+    return fetch(`${BASE_URL}/user?i=${nickname}`, {
         method: 'GET'
     })
 }
@@ -161,7 +161,7 @@ export function getPostById(id) {
  * 根据帖子id获取评论信息
  * @param {string} postId 帖子id
  * @param {string} pageIndex 评论页数
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @param {string} pageSize 评论每页条数
  * @param {string} sortBy 排序依据字段
  * @param {string} direction 排序方向
@@ -177,7 +177,7 @@ export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp, sortB
  * 根据用户id获取评论信息
  * @param {string} userId 用户id
  * @param {string} pageIndex 评论页数
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @param {string} pageSize 评论每页条数
  * @param {string} sortBy 排序依据字段
  * @param {string} direction 排序方向
@@ -220,7 +220,7 @@ export function getReviewById(id) {
  * @param {string} id 评论id
  * @param {string} pageIndex 评论页数
  * @param {string} pageSize 评论每页条数
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 该帖子的子评论
  */
 export function getSubReviewById(id, pageIndex, pageSize, lastTimestamp) {
@@ -256,7 +256,7 @@ export function dislikeAReview(reviewId) {
  * @param {string} uid 用户id
  * @param {string} pageIndex 当前页码
  * @param {string} pageSize 每页数量
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 用户的帖子信息
  */
 export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
@@ -315,7 +315,7 @@ export function updateUserProfile(user) {
  */
 export function isUserExists(nickname) {
     return fetch(`${BASE_URL}/user?n=${nickname}`, {
-        method: 'GET'
+        method: 'HEAD'
     })
 }
 
@@ -344,9 +344,9 @@ export function unFollowUser(userId) {
 /**
  * 查询用户的关注列表
  * @param {string} userId 待查询用户id
- * @param {int} pageIndex 分页页码
- * @param {int} pageSize 分页页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 分页页码
+ * @param {number} pageSize 分页页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注者列表
  */
 export function getFollowList(userId, pageIndex, pageSize, lastTimestamp) {
@@ -358,9 +358,9 @@ export function getFollowList(userId, pageIndex, pageSize, lastTimestamp) {
 /**
  * 查询用户的粉丝列表
  * @param {string} userId 待查询用户id
- * @param {int} pageIndex 分页页码
- * @param {int} pageSize 分页页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 分页页码
+ * @param {number} pageSize 分页页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 关注用户列表
  */
 export function getFanList(userId, pageIndex, pageSize, lastTimestamp) {
@@ -393,9 +393,9 @@ export function unMarkAPost(postId) {
 
 /**
  * 查询用户mark帖子列表
- * @param {int} pageIndex 当前页码
- * @param {int} pageSize 每页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 当前页码
+ * @param {number} pageSize 每页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 返回用户mark帖子列表
  */
 export function getMarkPostList(pageIndex, pageSize, lastTimestamp) {
@@ -422,7 +422,7 @@ export function updatePost(post) {
 /**
  * 查询给定图片的原图链接，忽略hidden警告
  * @param {string} id type的id
- * @param {int} imageId 图片id，即该图片所在的数组的下标
+ * @param {number} imageId 图片id，即该图片所在的数组的下标
  * @param {String} type 何种类型的id, post | review
  * @returns 该图片的原始链接
  */
@@ -436,7 +436,7 @@ export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
  * 分页查询给定用户的消息列表
  * @param {number} pageIndex 分页页码
  * @param {number} pageSize 分页页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @param {Array<String>} types 要获取的消息类型，可包含多个，以数组形式提供，不传即代表获取所有类型的消息
  * @returns 该用户的消息列表
  */
@@ -723,9 +723,9 @@ export function confirmFanRequest(fanId) {
 /**
  * 根据帖子id，分页获取点赞此帖子的用户列表
  * @param {string} postId 帖子id
- * @param {int} pageIndex 当前页码
- * @param {int} pageSize 每页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 当前页码
+ * @param {number} pageSize 每页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 用户分页对象
  */
 export function getLikeListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
@@ -737,9 +737,9 @@ export function getLikeListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
 /**
  * 根据帖子id，分页获取转发此帖子的用户列表
  * @param {string} postId 帖子id
- * @param {int} pageIndex 当前页码
- * @param {int} pageSize 每页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 当前页码
+ * @param {number} pageSize 每页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 用户分页对象
  */
 export function getRepostListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
@@ -751,9 +751,9 @@ export function getRepostListOfPost(postId, pageIndex, pageSize, lastTimestamp) 
 /**
  * 根据用户id，分页获取该用户在帖子中包含的媒体文件
  * @param {string} userId 用户id
- * @param {int} pageIndex 当前页码
- * @param {int} pageSize 每页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 当前页码
+ * @param {number} pageSize 每页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @param {String} from 媒体来源，POST | REVIEW
  * @returns 媒体分页对象
  */
@@ -766,9 +766,9 @@ export function getMediasOfUser(userId, pageIndex, pageSize, lastTimestamp, from
 /**
  * 根据用户id，分页获取该用户点赞过的帖子
  * @param {string} postId 用户id
- * @param {int} pageIndex 当前页码
- * @param {int} pageSize 每页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 当前页码
+ * @param {number} pageSize 每页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 帖子分页对象
  */
 export function getLikePostsOfUser(userId, pageIndex, pageSize, lastTimestamp) {
@@ -780,9 +780,9 @@ export function getLikePostsOfUser(userId, pageIndex, pageSize, lastTimestamp) {
 /**
  * 获取当前登录用户的黑名单列表
  * @param {string} type 黑名单的类型，支持USER、POST、REVIEW
- * @param {int} pageIndex 当前页码
- * @param {int} pageSize 每页大小
- * @param {long} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {number} pageIndex 当前页码
+ * @param {number} pageSize 每页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
  * @returns 获取到的黑名单列表
  */
 export function getBlacklist(type, pageIndex, pageSize, lastTimestamp) {
@@ -799,5 +799,18 @@ export function getBlacklist(type, pageIndex, pageSize, lastTimestamp) {
 export function deleteAllBlacklistByType(type) {
     return fetch(`${BASE_URL}/blacklist/batch?type=${type}`, {
         method: 'DELETE'
+    })
+}
+
+/**
+ * 分页获取当前用户的活动记录
+ * @param {number} pageIndex 当前页码
+ * @param {number} pageSize 每页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
+ * @returns 
+ */
+export function getActivities(pageIndex, pageSize, lastTimestamp) {
+    return fetch(`${BASE_URL}/user/activity?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET'
     })
 }

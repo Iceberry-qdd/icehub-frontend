@@ -69,15 +69,6 @@
             </div>
             <div class="form-floating mb-3">
                 <input
-                    id="cityInput"
-                    v-model="state.newUser.city"
-                    type="text"
-                    class="form-control"
-                    placeholder="所在城市" />
-                <label for="cityInput">所在城市</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input
                     id="ageInput"
                     v-model="state.newUser.age"
                     type="number"
@@ -343,7 +334,7 @@ async function checkUsernameValid() {
     try {
         const username = state.newUser.nickname
         const response = await isUserExists(username)
-        if (!response.ok) throw new Error((await response.json()).message)
+        if(response.status !== 404) throw new Error('该用户名已存在！')
 
         const result = await response.text()
         state.isUsernameExisted = result == 'true' ? true : false

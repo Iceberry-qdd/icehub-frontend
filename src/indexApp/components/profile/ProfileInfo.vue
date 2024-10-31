@@ -88,8 +88,8 @@
                     <IconVerify v-if="props.user.verified" class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]"></IconVerify>
                     <div v-if="props.user.verified">{{ props.user.verifiedInfo }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                    <span v-if="props.user.city" class="cursor-default material-symbols-rounded no-hover">location_on</span>
-                    <div v-if="props.user.city">{{ props.user.city }}</div>
+                    <span v-if="props.user.address" class="cursor-default material-symbols-rounded no-hover">location_on</span>
+                    <div v-if="props.user.address">{{ props.user.address }}</div>
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <span v-if="props.user.email" class="cursor-default material-symbols-rounded no-hover">mail</span>
                     <div v-if="props.user.email">{{ props.user.email }}</div>
