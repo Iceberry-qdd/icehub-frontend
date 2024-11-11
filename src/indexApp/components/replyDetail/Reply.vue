@@ -168,9 +168,9 @@
             <div
                 v-if="showMoreReplyButton"
                 class="dark:text-onPrimary hover:underline max-sm:ml-[3rem] ml-[3.5rem] text-[11pt] text-primary z-[19]"
-                :class="[state.isLoading ? 'pointer-events-none' : 'cursor-pointer']">
+                :class="[props.isLoading ? 'pointer-events-none' : 'cursor-pointer']">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <IconLoading v-if="state.isLoading == true" class="dark:text-white/50 h-5 text-slate-500 w-5"></IconLoading>
+                <IconLoading v-if="props.isLoading == true" class="dark:text-white/50 h-5 text-primary w-5"></IconLoading>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <span v-else @click="fetchMoreReply">加载更多回复</span>
             </div>
@@ -264,6 +264,12 @@ const props = defineProps({
         type:Boolean,
         required: false,
         default: true
+    },
+    /** 是否显示"加载更多回复"组件的加载旋钮 */
+    isLoading: {
+        type:Boolean,
+        required: false,
+        default: false
     }
 })
 const emits = defineEmits(['fetchMoreReply'])
@@ -274,7 +280,6 @@ const state = reactive({
     reply: props.reply,
     tieSub: props.tieSub,
     showUserInfoPop: false,
-    isLoading: false,
     showReplyPanel: false,
     showReplyMenu: false,
     shrinkContent: true
@@ -285,7 +290,6 @@ const replyTo = computed(() => {
 })
 
 function fetchMoreReply() {
-    state.isLoading = true
     emits('fetchMoreReply')
 }
 

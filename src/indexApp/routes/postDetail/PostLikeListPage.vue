@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="divide-gray-100 divide-y-[1px]">
+        <div class="dark:divide-neutral-700 divide-gray-100 divide-y-[1px]">
             <SimpleUserListItem
                 v-for="user in state.users"
                 :key="user.id"

@@ -4,7 +4,7 @@
         class="dark:text-white/25 flex flex-row h-[10vh] items-center justify-center select-none text-gray-500 text-sm w-full">
         <IconLoading
             v-if="props.isLoading"
-            class="dark:text-white/50 h-5 text-slate-500 w-5">
+            class="dark:text-white/50 h-5 text-primary w-5">
         </IconLoading>
         <div
             v-else-if="props.hasMore"

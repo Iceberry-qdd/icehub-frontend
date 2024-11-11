@@ -22,7 +22,7 @@
         <FollowSystemAction
             :icon="props.iconMap.get('followSystem')"
             text="跟随系统"
-            :class="['followSystem' === props.activeMode ? 'bg-primaryContainer hover:bg-primaryContainer text-primary dark:text-onPrimary' : 'hover:bg-helper active:bg-border text-onSurface-inActive']"
+            :class="['followSystem' === props.activeMode ? 'bg-primaryContainer hover:bg-primaryContainer text-primary dark:text-onPrimaryContainer' : 'hover:bg-helper active:bg-border text-onSurface-inActive']"
             class="cursor-pointer flex flex-row gap-x-3 item items-center justify-left max-sm:gap-x-4 max-sm:mx-4 max-sm:p-4 max-sm:rounded-xl px-4 py-[0.6rem] sm:[&:nth-child(2)]:rounded-t-[inherit] sm:last:rounded-b-[inherit]"
             @click="toggleMode('followSystem')">
         </FollowSystemAction>

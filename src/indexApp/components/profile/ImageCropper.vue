@@ -29,12 +29,12 @@
         <div class="bg-white dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-x-[1px] flex flex-nowrap flex-row h-[30rem] max-sm:bg-zinc-900 max-sm:divide-x-0 max-sm:flex-col max-sm:h-[calc(100vh-4rem-48px)] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none w-[min(50rem,100vw)]">
             <div
                 v-if="!state.originImgFile"
-                class="-translate-x-1/2 -translate-y-1/2 absolute active:bg-gray-100/50 border-[1px] cursor-pointer dark:active:bg-neutral-700 dark:border-neutral-700 dark:hover:bg-[#1e1e1e] flex flex-col flex-nowrap gap-2 h-[min(50%,15rem)] hover:bg-gray-100 items-center justify-center left-1/2 rounded-[8px] top-1/2 w-[min(50%,25rem)]"
+                class="-translate-x-1/2 -translate-y-1/2 absolute active:bg-gray-100/50 border-[1px] cursor-pointer dark:active:bg-neutral-700 dark:border-neutral-700 dark:hover:bg-neutral-800 flex flex-col flex-nowrap gap-2 h-[min(50%,15rem)] hover:bg-gray-100 items-center justify-center left-1/2 rounded-[8px] top-1/2 w-[min(50%,25rem)]"
                 @click="fileInput.click()">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="dark:text-white/25 material-symbols-rounded no-hover p-0">upload</div>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-                <div class="dark:text-white/25 text-[0.9rem] text-zinc-500">点击上传图片</div>
+                <div class="dark:text-white/25 text-[0.9rem] text-zinc-500">选择图片</div>
             </div>
             <div
                 v-if="state.originImgFile"
@@ -248,7 +248,7 @@
 import { reactive, computed, onMounted, ref } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import { isType } from '@/indexApp/utils/formatUtils.js'
-import { store } from '@/indexApp/js/store';
+import { store } from '@/indexApp/js/store.js'
 
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const props = defineProps({

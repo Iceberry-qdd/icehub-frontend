@@ -8,7 +8,7 @@
             <div class="dark:text-white/75 text-[0.95rem] text-justify">{{ title }}</div>
             <IconLoading
                 v-if="props.ui.loading.show"
-                class="dark:text-white/50 h-5 text-slate-500 w-5">
+                class="dark:text-white/50 h-5 text-primary w-5">
             </IconLoading>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <div v-else class="flex flex-nowrap flex-row gap-x-[1rem] text-[0.9rem]">

@@ -28,9 +28,12 @@
                 v-if="state.isLoading"
                 class="-translate-x-1/2 absolute bg-white dark:bg-[#121212] h-full left-1/2 max-sm:fixed top-0 w-full z-[102]">
                 <div class="dark:text-white/50 flex flex-col gap-2 h-full items-center justify-center text-[#6b7280]">
-                    <IconLoading class="-ml-1 h-6 mr-3 w-6"></IconLoading>
+                    <IconLoading
+                        class="-ml-1 h-6 mr-3 text-primary w-6"
+                        :percent="state.uploadPercent">
+                    </IconLoading>
                     <div class="text-[11pt]">
-                        帖子发布中...
+                        {{ state.commitText }}
                     </div>
                 </div>
             </div>
@@ -125,6 +128,8 @@ const state = reactive({
         { hidden: false, altText: null, contentType: "" }
     ],
     isLoading: false,
+    uploadPercent: -1,
+    commitText: undefined,
     result: "",
     data: {
         allowReview: true,
@@ -156,10 +161,17 @@ async function submitPost() {
         state.data.content = state.content
 
         if (state.imgList.length > 0) {
-            const response = await uploadImages(state.imgList)
-            //if (!response.ok) throw new Error(response)
-            state.data.images = JSON.parse(response)
+            state.commitText = '图片上传中...'
+            const response = await uploadImages(state.imgList, (e) => {
+                if (e.lengthComputable) {
+                    state.uploadPercent = e.loaded / e.total * 100
+                }
+            })
+            if (!response.ok) throw new Error((await response.json()).message)
+            state.data.images = await response.json()
 
+            state.uploadPercent = -1
+            state.commitText = '帖子发布中...'
             for (let i = 0; i < state.data.images.length; i++) {
                 state.data.images[i].hidden = state.imageListInfo[i].hidden
                 state.data.images[i].altText = state.imageListInfo[i].altText
@@ -176,6 +188,8 @@ async function submitPost() {
         store.setErrorMsg(err.message)
     } finally {
         state.isLoading = false
+        state.uploadPercent = -1
+        state.commitText = undefined
     }
 }
 

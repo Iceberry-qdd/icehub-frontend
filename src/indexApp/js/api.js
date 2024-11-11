@@ -39,37 +39,57 @@ export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
 
 /**
  * 上传图片
- * @param {object[]} files 待上传图片数组
+ * @param {object[] | object} files 待上传图片数组
  * @param {array} filesInfo 图片数组描述信息
+ * @param {((this: XMLHttpRequest, ev: ProgressEvent<EventTarget>) => any) | null} onprogress 进度回调函数
  * @returns Promise<any>
  */
-export function uploadImages(files) {
+export function uploadImages(files, onprogress) {
+    let formData = new FormData()
+    const _files = new Array(...[[], files]).flat()
+    _files.forEach(file => formData.append('files', file, file.name))
+
+    const xhr = new XMLHttpRequest()
     return new Promise((resolve, reject) => {
-        let formData = new FormData()
-        for (let i = 0; i < files.length; i++) {
-            formData.append('files', files[i], files[i].name)
-        }
-
-        const xhr = new XMLHttpRequest()
         xhr.withCredentials = true
+        xhr.upload.onprogress = onprogress
         xhr.open('POST', `${BASE_URL}/object/image/upload`, true)
-        xhr.onload = function () {
-            if (xhr.status === 201) resolve(xhr.response)
-            else reject(Error(xhr.response.error))
+        xhr.onload = function (e) {
+            resolve(
+                new Response(xhr.response, {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    headers: headerToJson(xhr.getAllResponseHeaders())
+                })
+            )
         }
-        xhr.onerror = function () {
-            reject(Error(xhr.response.error))
+        xhr.onerror = function (e) {
+            reject(
+                new Response(xhr.response, {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    headers: headerToJson(xhr.getAllResponseHeaders())
+                })
+            )
         }
-        xhr.onprogress = function (e) {
-            if (e.lengthComputable) {
-                var percent = Math.ceil((e.loaded / e.total) * 100)
-                // progress(percent)
-                console.log(percent)
-            }
-        }
-
         xhr.send(formData)
     })
+}
+
+/**
+ * 将原始headers字符串转换成json字符串
+ * @param {string} headers 原始headers字符串
+ * @returns header数组[[key1, value1], [key2, value2]...]
+ */
+function headerToJson(headers) {
+    const pattern = /(?<key>[^:]+): (?<value>[^:]+)/
+    return headers.split("\r\n")
+        .filter(it => it.trim().length > 0 && pattern.test(it))
+        .map(it => {
+            const { key, value } = pattern.exec(it).groups
+            return [key, value]
+        }
+    )
 }
 
 /**
@@ -262,34 +282,6 @@ export function dislikeAReview(reviewId) {
 export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/post?uid=${uid}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
-    })
-}
-
-/**
- * 上传用户banner图
- * @param {string} file 图片文件
- * @returns 用户的新banner图信息
- */
-export function uploadUserBanner(file) {
-    let formData = new FormData()
-    formData.append('files', file, file.name)
-    return fetch(`${BASE_URL}/object/image/upload`, {
-        method: 'POST',
-        body: formData
-    })
-}
-
-/**
- * 上传用户avatar图
- * @param {string} file 图片文件
- * @returns 用户的新avatar图信息
- */
-export function uploadUserAvatar(file) {
-    let formData = new FormData()
-    formData.append('files', file, file.name)
-    return fetch(`${BASE_URL}/object/image/upload`, {
-        method: 'POST',
-        body: formData
     })
 }
 

@@ -5,7 +5,7 @@
         <div
             v-if="state.loading"
             class="absolute dark:text-white/50 flex flex-col gap-y-2 h-full items-center justify-center max-sm:fixed text-[#6b7280] top-0 w-full z-[102]">
-            <IconLoading class="-ml-1 h-6 mr-3 w-6"></IconLoading>
+            <IconLoading class="-ml-1 h-6 mr-3 text-primary w-6"></IconLoading>
             <div class="text-[11pt]">
                 帖子发布中...
             </div>

@@ -100,7 +100,7 @@
                 <div
                     v-else-if="state.suggests.showLoading"
                     class="dark:text-white/50 flex flex-col gap-y-2 h-[8rem] items-center justify-center text-slate-500">
-                    <IconLoading class="dark:text-inherit h-5 w-5"></IconLoading>
+                    <IconLoading class="dark:text-inherit h-5 text-primary w-5"></IconLoading>
                     <span class="text-base">{{ state.suggests.loadingText }}</span>
                 </div>
                 <div class="flex-col gap-y-1 h-[8rem] hidden items-center justify-center">

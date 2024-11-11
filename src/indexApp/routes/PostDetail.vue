@@ -129,7 +129,7 @@ function postingNew(post) {
     // Ignore this method body, nothing todo.
 }
 
-function newReview(review){
+function newReviewOnUi(review){
     state.newReview = review
 }
 
@@ -144,5 +144,5 @@ provide('dismissPostMenus', { dismissPostMenus })
 provide('deletePostOnUi', { deletePostOnUi })
 provide('postingNew', { postingNew })
 provide('deleteAllPostsOfUserOnUi', { deleteAllPostsOfUserOnUi })
-provide('newReview', { newReview })
+provide('newReviewOnUi', { newReviewOnUi })
 </script>
