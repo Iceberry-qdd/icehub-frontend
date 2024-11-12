@@ -34,7 +34,7 @@
         <div
             id="container"
             ref="container"
-            class="flex-nowrap flex-row justify-center min-h-screen sm:flex"
+            class="dark:divide-[#1e1e1e] divide-[#EEEEEE] divide-x-[1px] flex-nowrap flex-row justify-center min-h-screen sm:flex"
             :class="{ 'mt-10': showGlobalNotifyBannerMsg }"
             @touchmove="handleScroll"
             @touchstart="touchStart"
@@ -42,7 +42,7 @@
             <div
                 id="sidebar-l"
                 :class="{'main-route': isShowSidebarL, 'lg:flex-[0.7]': !isSetting, 'lg:flex-[0.7]': isSetting}"
-                class="border-[#EEEEEE] dark:border-[#1e1e1e] flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:border-[1px] sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
+                class="flex flex-nowrap flex-row justify-start lg:flex-[0.75] lg:flex-col lg:gap-y-4 lg:items-end no-scrollbar sm:h-screen sm:max-lg:justify-center sm:max-lg:w-[5rem] sm:overflow-y-scroll sm:sticky sm:top-0">
                 <Brand class="lg:-translate-x-0 lg:max-w-[14rem] lg:min-w-[10rem] lg:mr-16 lg:mt-6 max-lg:border-b-[#EEEEEE] max-lg:border-b-[1px] max-lg:dark:border-b-[#1e1e1e] max-lg:fixed max-lg:w-[4rem] max-sm:hidden z-[99]"></Brand>
                 <Sidebar
                     id="menu"
@@ -86,7 +86,7 @@
             <div
                 v-show="!isSetting"
                 id="sidebar-r"
-                class="border-[#EEEEEE] border-l-[1px] dark:border-[#1e1e1e] flex-[0.95] h-screen max-lg:hidden no-scrollbar overflow-y-scroll sticky top-0 z-0">
+                class="flex-[0.95] h-screen max-lg:hidden no-scrollbar overflow-y-scroll sticky top-0 z-0">
                 <Recommend class="max-w-[25rem] p-4"></Recommend>
             </div>
         </div>
@@ -357,6 +357,9 @@ onMounted(() => {
     state.themeMediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
     handleThemeMediaChange(state.themeMediaQueryList)
     state.themeMediaQueryList.addEventListener('change', handleThemeMediaChange)
+
+    // Avatar style settings
+    store.setAvatarStyle(localStorage.getItem('avatar') || 'rounded')
 })
 
 onUnmounted(() => {

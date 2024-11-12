@@ -83,9 +83,13 @@
             v-else
             class="bg-white dark:bg-[#1e1e1e] dark:text-white/50 flex flex-col gap-y-2 h-[8rem] items-center justify-center max-sm:fixed max-sm:h-screen max-sm:w-screen top-0 z-10"
             :class="[props.fromReviewPanel ? '' : 'border-gray-100 border-b-[1px]']">
-            <IconLoading class="h-5 w-5"></IconLoading>
-            <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
-            <div class="text-[0.9rem]">评论发布中...</div>
+            <IconLoading
+                class="h-5 text-primary w-5"
+                :percent="state.uploadPercent">
+            </IconLoading>
+            <div class="text-[0.9rem]">
+                {{ state.commitText }}
+            </div>
         </div>
     </div>
 </template>
@@ -137,7 +141,7 @@ const props = defineProps({
         default: false
     }
 })
-const { newReviewOnUi } = inject('newReview')
+const { newReviewOnUi } = inject('newReviewOnUi')
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const imageListInfo = ref([
         { hidden: false, altText: null, contentType: "" },
@@ -153,6 +157,8 @@ const imageListInfo = ref([
 const state = reactive({
     content: '',
     loading: false,
+    uploadPercent: -1,
+    commitText: undefined,
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     showEmojiPanel: false,
     showMarkdownPanel: false,
@@ -206,10 +212,17 @@ async function submitReview() {
         }
 
         if (state.imgList.length > 0) {
-            const response = await uploadImages(state.imgList)
-            //if (!response.ok) throw new Error(response)
-            state.images = JSON.parse(response)
+            state.commitText = '图片上传中...'
+            const response = await uploadImages(state.imgList, (e) => {
+                if (e.lengthComputable) {
+                    state.uploadPercent = e.loaded / e.total * 100
+                }
+            })
+            if (!response.ok) throw new Error((await response.json()).message)
+            state.images = await response.json()
 
+            state.uploadPercent = -1
+            state.commitText = '帖子发布中...'
             for (let i = 0; i < state.images.length; i++) {
                 state.images[i].hidden = state.imageListInfo[i].hidden
                 state.images[i].altText = state.imageListInfo[i].altText
@@ -221,7 +234,6 @@ async function submitReview() {
         if (!response.ok) throw new Error((await response.json()).message)
         const result = await response.json()
         newReviewOnUi({ review: result })
-        state.content = ''
         emits('dismiss')
         reset()
 
@@ -232,6 +244,8 @@ async function submitReview() {
         store.setErrorMsg(e.message)
     } finally {
         state.loading = false
+        state.uploadPercent = -1
+        state.commitText = undefined
         emits('submit', {submitting: false})
     }
 }

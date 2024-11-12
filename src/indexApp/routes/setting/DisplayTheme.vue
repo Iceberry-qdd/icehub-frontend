@@ -193,11 +193,7 @@ function toggleAccentColor(accent){
 
 onMounted(() => {
     // Theme setting
-    if(!('theme' in localStorage)){
-        state.setting.theme = 'followSystem'
-    } else{
-        state.setting.theme = localStorage.theme
-    }
+    state.setting.theme = localStorage.getItem('theme') || 'followSystem'
 
     // Emoji Setting
     if ('followSystem' === localStorage.emoji) {
@@ -214,10 +210,9 @@ onMounted(() => {
     }
 
     // Accent color settings
-    if (!localStorage.accentColor) {
-        state.setting.accentColor = 'blue'
-    } else {
-        state.setting.accent = localStorage.accentColor
-    }
+    state.setting.accent = localStorage.getItem('accentColor') || 'blue'
+
+    // Avatar border settings
+    state.setting.avatar = localStorage.getItem('avatar') || 'rounded'
 })
 </script>

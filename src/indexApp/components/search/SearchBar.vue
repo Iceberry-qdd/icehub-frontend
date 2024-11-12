@@ -34,7 +34,7 @@
             <div
                 v-if="state.suggests.show"
                 id="search-suggest"
-                class="bg-white border-[1px] dark:bg-neutral-900 dark:border-neutral-800 divide-y fixed flex flex-col left-0 max-h-[min(24rem,75vh)] modern-scrollbar-y mx-2 overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-0.5rem)] z-[105]">
+                class="bg-white border-[1px] dark:bg-neutral-900 dark:border-neutral-800 divide-y fixed flex flex-col left-0 max-h-[min(24rem,75vh)] ml-1 modern-scrollbar-y overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-0.5rem)] z-[105]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <div v-if="state.suggests.hintSuggests && !state.suggests.showLoading" class="suggests">
                     <div
@@ -100,7 +100,7 @@
                 <div
                     v-else-if="state.suggests.showLoading"
                     class="dark:text-white/50 flex flex-col gap-y-2 h-[8rem] items-center justify-center text-slate-500">
-                    <IconLoading class="dark:text-inherit h-5 w-5"></IconLoading>
+                    <IconLoading class="dark:text-inherit h-5 text-primary w-5"></IconLoading>
                     <span class="text-base">{{ state.suggests.loadingText }}</span>
                 </div>
                 <div class="flex-col gap-y-1 h-[8rem] hidden items-center justify-center">

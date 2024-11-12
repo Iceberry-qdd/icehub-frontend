@@ -1,23 +1,44 @@
 <template>
-    <div
-        class="cursor-pointer flex flex-row gap-x-2 hover:bg-helper items-center justify-start max-sm:px-3 px-4 py-2 text-[0.85rem]">
-        <span
-            :class="{'active': props.activity.isActive}"
-            class="bg-border dark:bg-primaryContainer device-icon flex-0 material-symbols-rounded no-hover relative text-[1.25rem]">
-            {{ state.deviceIconMap.get(props.activity.device.type) }}
-        </span>
-        <div class="flex-1">
-            <div class="font-bold text-[0.9rem]">{{ props.activity.device.name }}</div>
-            <div class="text-neutral-400">
-                <span>{{ props.activity.ip.country }}</span>
-                ·
-                <span>{{ props.activity.ip.province }}</span>
+    <details>
+        <summary class="cursor-pointer flex gap-x-2 hover:bg-helper items-center justify-start max-sm:top-[48px] outline-none p-2 sticky text-[0.85rem] top-[56px]">
+            <span
+                :class="{'active': props.active}"
+                class="bg-border dark:bg-primaryContainer device-icon flex-0 material-symbols-rounded no-hover relative text-[1.25rem]">
+                {{ state.deviceIconMap.get(osName?.toLocaleUpperCase()) }}
+            </span>
+            <div class="flex-1">
+                <div class="font-bold text-[0.9rem]">{{ `${osName} ${osVersion}/${browserName} ${browserVersion}` }}</div>
+                <div class="text-neutral-400">
+                    {{ location || '未知' }}
+                </div>
+            </div>
+            <div class="flex-0 max-sm:hidden text-neutral-400">
+                {{ standardDateTime(timestamp) }}
+            </div>
+            <IconDown
+                :size="20"
+                :stroke-width="2">
+            </IconDown>
+        </summary>
+        <div class="gap-2 grid grid-cols-2 max-sm:grid-cols-1">
+            <div
+                v-for="(item, idx) in state.details"
+                :key="idx"
+                class="flex gap-x-2 items-start max-sm:active:bg-helper p-2">
+                <span class="cursor-default material-symbols-rounded no-hover text-[1.25rem]">
+                    {{ item.icon || state.deviceIconMap.get(osName?.toLocaleUpperCase()) }}
+                </span>
+                <div>
+                    <div class="cursor-default text-[0.85rem] text-neutral-400">
+                        {{ item.title }}
+                    </div>
+                    <div class="text-[0.9rem]">
+                        {{ item.value }}
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="flex-0 max-sm:hidden text-neutral-400">
-            {{ standardDateTime(props.activity.timestamp) }}
-        </div>
-    </div>
+    </details>
 </template>
 
 <style scoped>
@@ -33,31 +54,80 @@
     box-sizing: content-box;
     background-color: #22c55e;
 }
+
+details summary::-webkit-details-marker{
+    display: none;
+}
+
+details[open] svg[class~="m-icon"]{
+    rotate: 0.5turn;
+}
+
+details[open]>summary{
+    background-color: rgb(var(--color-helper));
+}
 </style>
 
 <script setup>
 import { reactive } from 'vue'
 import { standardDateTime } from '@/indexApp/utils/formatUtils.js'
+import IconDown from '@/components/icons/IconDown.vue'
 
 const props = defineProps({
-    /** 传入的activity对象 */
+    /** 活动实体 */
     activity: {
         type: Object,
         required: true
+    },
+    /** 是否为正在活动条目 */
+    active: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+const {
+    ua: {
+        device: { type: deviceType = '未知', vendor: deviceVendor = '', model: deviceModel = '' },
+        browser: { name: browserName = '其它浏览器', version: browserVersion = '' },
+        os: { name: osName = '未知操作系统', version: osVersion = '' },
+        cpu: { architecture: cpu = '未知' },
+        engine: { name: engineName = '未知', version: engineVersion = '' }
+    },
+    location: location = '未知',
+    createdTime: timestamp,
+    userAgent: ua = '未知'
+} = props.activity
+
 const state = reactive({
+    details: [
+        { icon: 'language', title: '浏览器', value: `${browserName} ${browserVersion}` },
+        { icon: 'developer_board', title: '渲染引擎', value: `${engineName} ${engineVersion}` },
+        { icon: undefined, title: '操作系统', value: `${osName} ${osVersion}` },
+        { icon: 'location_on', title: '位置', value: location || '未知' },
+        { icon: 'schedule', title: '时间', value: standardDateTime(timestamp) },
+        { icon: 'memory', title: '架构', value: cpu },
+        { icon: undefined, title: '设备', value: `${deviceType} ${deviceVendor} ${deviceModel}` },
+        { icon: 'tv_signin', title: '完整UA', value: ua }
+    ],
     deviceIconMap: new Map([
         ['DESKTOP_WINDOWS', 'desktop_windows'],
+        ['WINDOWS', 'desktop_windows'],
         ['DESKTOP_MAC', 'desktop_mac'],
+        ['MAC', 'desktop_mac'],
+        ['MACOS', 'desktop_mac'],
         ['DESKTOP', 'jamboard_kiosk'],
         ['LAPTOP_MAC', 'laptop_mac'],
         ['LAPTOP_CHROMEBOOK', 'laptop_chromebook'],
         ['LAPTOP_WINDOWS', 'laptop_windows'],
         ['LAPTOP', 'computer'],
         ['MOBILE_IPHONE', 'phone_iphone'],
+        ['IOS', 'phone_iphone'],
+        ['IPHONE', 'phone_iphone'],
         ['MOBILE_ANDROID', 'phone_android'],
+        ['ANDROID', 'phone_android'],
         ['MOBILE', 'smartphone'],
         ['TABLET_MAC', 'tablet_mac'],
         ['TABLET_ANDROID', 'tablet_android'],

@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-[#00000066] dark:max-sm:bg-[#121212] fixed-page flex-row h-full items-center justify-center max-sm:bg-white modern-scrollbar-y sm:backdrop-blur-sm sm:flex w-full z-[111]"
+        class="bg-[#00000066] dark:max-sm:bg-[#121212] fixed-page flex-row h-full items-center justify-center max-sm:bg-white max-sm:z-[999] modern-scrollbar-y sm:backdrop-blur-sm sm:flex w-full z-[111]"
         @click.self="dismiss">
         <div class="bg-white dark:bg-[#121212] max-sm:h-[calc(100vh-2.5rem)] max-sm:rounded-none modern-scrollbar-y overflow-y-auto rounded-[8px] sm:max-h-[80%] sm:min-h-[20%] sm:w-[36rem]">
             <Header

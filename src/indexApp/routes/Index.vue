@@ -111,7 +111,7 @@
 </style>
 
 <script setup>
-import { computed, onMounted, reactive, provide, defineAsyncComponent } from 'vue'
+import { computed, onMounted, reactive, provide, defineAsyncComponent, onActivated } from 'vue'
 import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
 import Header from '@/indexApp/components/Header.vue'
 import { getUserTimeline } from '@/indexApp/js/api.js'
@@ -197,6 +197,10 @@ function toggleTheme(mode){
     }
     state.theme.showMenu = false
 }
+
+onActivated(() => {
+    state.theme.mode = localStorage.getItem('theme') || 'followSystem'
+})
 
 onMounted(() => {
     // PostEditor display settings

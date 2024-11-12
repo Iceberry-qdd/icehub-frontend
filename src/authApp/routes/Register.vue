@@ -51,7 +51,7 @@
                     @click="tryRegister">
                     <IconLoading
                         v-if="state.loading"
-                        class="animate-spin dark:text-white/25 h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
+                        class="dark:text-white/25 h-5 left-[calc(50%-0.625rem)] relative text-white w-5">
                     </IconLoading>
                     <span v-else>注册</span>
                 </button>

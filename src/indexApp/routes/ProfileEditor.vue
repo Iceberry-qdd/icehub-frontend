@@ -10,11 +10,6 @@
             :icon-tooltip="state.headerConfig.iconTooltip"
             @handle-action="handleSubmit">
         </Header>
-        <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-        <div v-if="state.isLoading" class="loading">
-            <IconLoading class="-ml-1 h-5 mr-3 text-white w-5"></IconLoading>
-            <div>正在提交...</div>
-        </div>
 
         <div class="banner-cover">
             <span
@@ -66,15 +61,6 @@
                     placeholder="个人简介">
                     </textarea>
                 <label for="floatingTextarea">个人简介</label>
-            </div>
-            <div class="form-floating mb-3">
-                <input
-                    id="cityInput"
-                    v-model="state.newUser.city"
-                    type="text"
-                    class="form-control"
-                    placeholder="所在城市" />
-                <label for="cityInput">所在城市</label>
             </div>
             <div class="form-floating mb-3">
                 <input
@@ -171,6 +157,18 @@
                 @dismiss="state.imageChangeProper.select = undefined">
             </ImageCropper>
         </Teleport>
+
+        <div
+            v-if="state.isLoading"
+            class="fixed-page loading-container">
+            <div class="loading">
+                <IconLoading
+                    class="h-5 w-5"
+                    :percent="state.uploadPercent">
+                </IconLoading>
+                <div>{{ state.commitText }}</div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -264,24 +262,38 @@
     padding: 1rem 1rem 0 1rem;
 }
 
-.loading {
+.loading-container {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: transparent;
+    z-index: 1002;
+    user-select: none;
+}
+
+.loading{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 1rem;
     align-items: center;
+    background-color: #000000BB;
     position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: #00000066;
-    z-index: 107;
+    width: min(20rem, 75%);
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
     color: white;
+    font-size: 0.95rem;
 }
 
 .loading:where([theme="dark"], [theme="dark"] *){
-    background-color: #000000AA;
+    border: 1px solid rgb(var(--color-helper) / 1);
 }
 
 :is(.form-control, .form-select):focus{
@@ -295,7 +307,7 @@
 import Header from '@/indexApp/components/Header.vue'
 import { reactive, computed, ref, onUnmounted, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
-import { uploadUserAvatar, uploadUserBanner, isUserExists, updateUserProfile } from '@/indexApp/js/api.js'
+import { isUserExists, updateUserProfile, uploadImages } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/Avatar.vue'
@@ -312,6 +324,8 @@ const state = reactive({
     /** 校验对比信息用 新数据*/
     newUser: JSON.parse(localStorage.getItem("CUR_USER")),
     isLoading: false,
+    uploadPercent: -1,
+    commitText: undefined,
     isUsernameExisted: false,
     headerConfig: {
         title: '编辑资料',
@@ -343,7 +357,7 @@ async function checkUsernameValid() {
     try {
         const username = state.newUser.nickname
         const response = await isUserExists(username)
-        if (!response.ok) throw new Error((await response.json()).message)
+        if(response.status !== 404) throw new Error('该用户名已存在！')
 
         const result = await response.text()
         state.isUsernameExisted = result == 'true' ? true : false
@@ -368,6 +382,8 @@ async function submitProfile() {
             await uploadBanner()
         }
 
+        state.uploadPercent = -1
+        state.commitText = '正在提交个人资料...'
         const response = await updateUserProfile(state.newUser)
         if (!response.ok) throw new Error((await response.json()).message)
 
@@ -379,18 +395,32 @@ async function submitProfile() {
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false
+        state.uploadPercent = -1
+        state.commitText = undefined
     }
 }
 
 async function uploadAvatar() {
-        const response = await uploadUserAvatar(state.newUser.avatar)
+        state.uploadPercent = -1
+        state.commitText = '头像上传中...'
+        const response = await uploadImages(state.newUser.avatar, (e) => {
+            if (e.lengthComputable) {
+                state.uploadPercent = e.loaded / e.total * 100
+            }
+        })
         if (!response.ok) throw new Error((await response.json()).message)
 
         state.newUser.avatar = (await response.json())[0]
 }
 
 async function uploadBanner() {
-        const response = await uploadUserBanner(state.newUser.banner)
+        state.uploadPercent = -1
+        state.commitText = '背景图片上传中...'
+        const response = await uploadImages(state.newUser.banner, (e) => {
+            if (e.lengthComputable) {
+                state.uploadPercent = e.loaded / e.total * 100
+            }
+        })
         if (!response.ok) throw new Error((await response.json()).message)
 
         state.newUser.banner = (await response.json())[0]

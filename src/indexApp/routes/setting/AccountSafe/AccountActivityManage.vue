@@ -11,7 +11,8 @@
         <AccountActivityItem
             v-for="activity in activeActivities"
             :key="activity.id"
-            :activity="activity">
+            :activity="activity"
+            active>
         </AccountActivityItem>
         <div>
             <div class="cursor-default px-4 py-2 text-[0.9rem] text-neutral-500">历史活动</div>
@@ -26,15 +27,17 @@
         :is-loading="state.isLoading"
         :has-more="hasMore"
         placeholder="仅显示最近30天的记录"
-        @fetch-more="fetchMoreItems">
+        @fetch-more="fetchActivities">
     </Footer>
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import AccountActivityItem from '@/indexApp/components/setting/accountSafe/AccountActivityItem.vue'
 import Footer from '@/indexApp/components/Footer.vue'
+import { getActivities } from '@/indexApp/js/api.js'
+import { UAParser } from 'ua-parser-js'
 
 // XXX 仅为消除控制台警告，无实际意义
 // eslint-disable-next-line vue/no-unused-emit-declarations
@@ -71,27 +74,47 @@ const state = reactive({
         menuIcon: undefined,
         noBorder: false
     },
-    activities: [
-        {id: 1, timestamp: Date.now(), device: {type: 'DESKTOP_WINDOWS', name: 'LAPTOP-3AEH3R0D(Chrome128.0.10.2)'}, ip: {country: '中国', province: '北京市'}, isActive: true, isLocal: true},
-        {id: 1, timestamp: Date.now(), device: {type: 'MOBILE_IPHONE', name: 'qdd的iPhone(Safari-9.5.16)'}, ip: {country: '中国', province: '四川省'}, isActive: true, isLocal: true},
-        {id: 1, timestamp: Date.now(), device: {type: 'DESKTOP', name: 'LAPTOP-3AEH3R0D(APP-1.0.9.1)'}, ip: {country: '美国', province: '纽约州'}, isActive: false, isLocal: true}
-    ],
+    pageIndex: 1,
+    pageSize: 10,
+    totalPages: 0,
+    lastTimestamp: new Date().getTime(),
+    activities: [],
     isLoading: false
 })
 
 const activeActivities = computed(() => {
-    return state.activities.filter(it => it.isActive === true)
+    return state.activities.slice(0,1)
 })
 
 const inactiveActivities = computed(() => {
-    return state.activities.filter(it => it.isActive === false)
+    return state.activities.slice(1)
 })
 
 const hasMore = computed(() => {
-    return false
+    return state.pageIndex < state.totalPages
 })
 
-function fetchMoreItems(){
-    //TODO
+async function fetchActivities() {
+    try {
+        state.isLoading = true
+        const response = await getActivities(state.pageIndex, state.pageSize, state.lastTimestamp)
+        if (!response.ok) throw new Error((await response.json()).message)
+
+        const { content, totalPages } = await response.json()
+        content.map(it => it['ua'] = UAParser(it.userAgent))
+        state.activities.push(...content)
+        state.totalPages = totalPages
+        if (content.length > 1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
+    } catch (e) {
+        store.setErrorMsg(e.message)
+    } finally {
+        state.isLoading = false
+    }
 }
+
+onMounted(() => {
+    fetchActivities()
+})
 </script>

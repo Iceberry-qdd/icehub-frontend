@@ -182,6 +182,7 @@
                     :total-reply-count="state.totalReplyCount"
                     :fetched-reply-count="state.replies.length"
                     :allow-reply="state.post?.allowReview"
+                    :is-loading="state.isLoading"
                     @fetch-more-reply="fetchMoreReply">
                 </Reply>
             </TransitionGroup>
@@ -278,7 +279,8 @@ const state = reactive({
     showReplyPanel: false,
     showReviewMenu: false,
     post: props.post,
-    shrinkContent: true
+    shrinkContent: true,
+    isLoading: false // reply组件是否处于加载状态
 })
 
 const replyTo = computed(() => {
@@ -292,6 +294,7 @@ const tieSub = computed(() => {
 
 async function getReply() {
     try {
+        state.isLoading = true
         const response = await getSubReviewById(state.review.id, state.pageIndex, state.pageSize, state.lastTimestamp)
         if (!response.ok) throw new Error((await response.json()).message)
 
@@ -303,6 +306,8 @@ async function getReply() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
+    } finally{
+        state.isLoading = false
     }
 }
 
@@ -363,7 +368,7 @@ function routeToUser(nickname) {
     router.push({ name: 'profile', params: { nickname: nickname } })
 }
 
-function newReview({ review }) {
+function newReviewOnUi({ review }) {
     state.totalReplyCount++;
     emits('incrReviewCount')
     state.replies.unshift(review)
@@ -438,7 +443,7 @@ onMounted(async () => {
 })
 
 provide('dismissReviewMenus', { dismissReviewMenus: dismissReviewMenus })
-provide('newReview', { newReview })
+provide('newReviewOnUi', { newReviewOnUi })
 provide('deleteReplyOnUi', { deleteReplyOnUi: deleteReplyOnUi })
 provide('postCreatorId', { userId: computed(() => state.post?.user?.id) })
 </script>

@@ -154,5 +154,5 @@ onMounted(async () => {
 })
 
 provide('deleteReviewOnUi', { deleteReviewOnUi })
-provide('newReview', { newReviewOnUi })
+provide('newReviewOnUi', { newReviewOnUi })
 </script>

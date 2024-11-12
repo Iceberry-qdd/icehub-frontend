@@ -147,5 +147,5 @@ provide('postingNew', { postingNew })
 provide('deleteReviewOnUi', { deleteReviewOnUi })
 provide('deleteReplyOnUi', { deleteReplyOnUi: deleteReviewOnUi })
 provide('postCreatorId', { userId: '' })
-provide('newReview', { newReview: ({ review }) => postingNew(review) })
+provide('newReviewOnUi', { newReviewOnUi: ({ review }) => postingNew(review) })
 </script>

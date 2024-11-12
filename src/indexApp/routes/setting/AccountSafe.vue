@@ -21,7 +21,6 @@
                 @toggle="state.setting.twoFA.checked = !state.setting.twoFA.checked">
             </TwoFA>
             <AccountActivity
-                v-if="showUnImpl"
                 @click="emits('routeTo', 'accountActivity')">
             </AccountActivity>
             <DeleteAccount
