@@ -49,6 +49,23 @@ svg>circle[class~="infinite"] {
         stroke-dash-rotate 1s linear 0s infinite;
 }
 
+@keyframes stroke-dash-expand {
+    0% {
+        stroke-dasharray: 0 1000;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 64 1000;
+        stroke-dashoffset: -10;
+    }
+
+    100% {
+        stroke-dasharray: 0 1000;
+        stroke-dashoffset: -62;
+    }
+}
+
 @keyframes stroke-dash-rotate {
     to {
         rotate: 360deg;
@@ -57,7 +74,7 @@ svg>circle[class~="infinite"] {
 </style>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps({
     /* 百分比，若传入的不是数字或数字不在[0, +∞)范围，则表示处于无限加载模式 */
@@ -93,53 +110,5 @@ const strokeWidth = computed(() => {
 
 const size = computed(() => {
     return `${props.size}px`
-})
-
-const strokeDashExpandKeyFrames = computed(() => {
-    const arcLen = 2 * pi.value * (props.size / 2 - props.strokeWidth / 2)
-    return `
-        @keyframes stroke-dash-expand {
-            0% {
-                stroke-dasharray: 0 1000;
-                stroke-dashoffset: 0;
-            }
-
-            50% {
-                stroke-dasharray: ${arcLen} 1000;
-                stroke-dashoffset: -${arcLen * 0.25};
-            }
-            100% {
-                stroke-dasharray: 0 1000;
-                stroke-dashoffset: -${Math.floor(arcLen)};
-            }
-        }
-    `
-})
-
-onMounted(() => {
-    // 动态添加@Keyframes stroke-dash-expand
-    for (const styleSheet of document.styleSheets) {
-        let myStyleSheet
-        try {
-            myStyleSheet = styleSheet
-            styleSheet.cssRules
-        } catch (error) {
-            myStyleSheet = undefined
-        }
-
-        if(!!myStyleSheet){
-            let isExist = false
-            for(const cssRule of myStyleSheet.cssRules){
-                if(cssRule.constructor.name === 'CSSKeyframesRule' && cssRule.name === 'stroke-dash-expand'){
-                    isExist = true
-                    break
-                }
-            }
-            if(!isExist){
-                myStyleSheet.insertRule(strokeDashExpandKeyFrames.value, myStyleSheet.cssRules.length)
-            }
-            break
-        }
-    }
 })
 </script>
