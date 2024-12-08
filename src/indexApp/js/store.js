@@ -157,5 +157,12 @@ export const store = reactive({
     AVATAR_STYLE: 'rounded',
     setAvatarStyle(style) {
         this.AVATAR_STYLE = style
+    },
+    VIDEO_PLAY_STATUS_MAP: new Map(),
+    setVideoPlayStatus(videoId, currentTime, playing, mute) {
+        this.VIDEO_PLAY_STATUS_MAP.set(videoId, {currentTime: currentTime, playing: playing, mute: mute})
+    },
+    getVideoPlayStatus(videoId) {
+        return this.VIDEO_PLAY_STATUS_MAP.get(videoId) || {currentTime: 0, playing: false, mute: true}
     }
 })

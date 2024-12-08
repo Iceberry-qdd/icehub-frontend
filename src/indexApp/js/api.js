@@ -40,7 +40,6 @@ export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
 /**
  * 上传图片
  * @param {object[] | object} files 待上传图片数组
- * @param {array} filesInfo 图片数组描述信息
  * @param {((this: XMLHttpRequest, ev: ProgressEvent<EventTarget>) => any) | null} onprogress 进度回调函数
  * @returns Promise<any>
  */
@@ -750,7 +749,7 @@ export function getRepostListOfPost(postId, pageIndex, pageSize, lastTimestamp) 
  * @returns 媒体分页对象
  */
 export function getMediasOfUser(userId, pageIndex, pageSize, lastTimestamp, from) {
-    return fetch(`${BASE_URL}/object/image/user/${userId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&from=${from}`, {
+    return fetch(`${BASE_URL}/object/user/${userId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -804,5 +803,56 @@ export function deleteAllBlacklistByType(type) {
 export function getActivities(pageIndex, pageSize, lastTimestamp) {
     return fetch(`${BASE_URL}/user/activity?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
+    })
+}
+
+/**
+ * 上传视频
+ * @param {File} file 待上传视频
+ * @param {string} url 上传到哪个链接指示的地方
+ * @param {((this: XMLHttpRequest, ev: ProgressEvent<EventTarget>) => any) | null} onprogress 进度回调函数
+ * @returns Promise<any>
+ */
+export function uploadVideo(file, url, onprogress) {
+    const xhr = new XMLHttpRequest()
+    const contentType = file.type
+    const requestBody = new Blob([file], {type: contentType})
+    return new Promise((resolve, reject) => {
+        xhr.withCredentials = true
+        xhr.upload.onprogress = onprogress
+        xhr.open('PUT', url, true)
+        xhr.onload = function (e) {
+            resolve(
+                new Response(xhr.response, {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    headers: headerToJson(xhr.getAllResponseHeaders())
+                })
+            )
+        }
+        xhr.onerror = function (e) {
+            reject(
+                new Response(xhr.response, {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    headers: headerToJson(xhr.getAllResponseHeaders())
+                })
+            )
+        }
+        xhr.send(requestBody)
+    })
+}
+
+/**
+ * 获取视频上传链接
+ * @param {string} contentType 视频类型
+ * @returns 预先签过名的上传链接
+ */
+export function getUploadPresignedUrl(contentType){
+    return fetch(`${BASE_URL}/object/video/upload`, {
+        method:'GET',
+        headers: {
+            'X-Content-Type': contentType
+        }
     })
 }

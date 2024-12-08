@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/max-lines-per-block -->
 <template>
     <div class="bg-inherit flex flex-row justify-between">
         <div class="content-center flex flex-row gap-x-1 items-center justify-start text-base">
@@ -16,12 +17,37 @@
                 class="flex-col relative">
                 <div
                     class="flex"
-                    @click="preChoosePics">
+                    @click="canAddImage ? preChoosePics() : undefined">
                     <span
                         title="添加图片"
                         class="material-symbols-rounded"
-                        :class="[hasImage ? 'active' : '']">
+                        :class="{'active': hasImage && canAddImage, 'inactive no-hover': hasVideo || !canAddImage}">
                         add_photo_alternate
+                    </span>
+                </div>
+            </div>
+
+            <input
+                v-show="false"
+                id="videoFile"
+                ref="videoFile"
+                type="file"
+                name="videoFile"
+                multiple="false"
+                accept="video/*"
+                @change="handleVideoFileChange" />
+            <div
+                v-if="props.menuSet.has('VideoPicker')"
+                id="video-picker-action"
+                class="flex-col relative">
+                <div
+                    class="flex"
+                    @click="canAddVideo ? preChooseVideos() : undefined">
+                    <span
+                        :title="`${state.verifiedUser ? '添加视频' : '仅认证用户可添加视频'}`"
+                        class="material-symbols-rounded"
+                        :class="{'active': hasVideo && canAddVideo, 'inactive no-hover': hasImage || !canAddVideo}">
+                        smart_display
                     </span>
                 </div>
             </div>
@@ -198,6 +224,11 @@
     padding: 0.4rem;
 }
 
+.material-symbols-rounded.inactive {
+    color: rgb(var(--color-border) / 1);
+    cursor: not-allowed;
+}
+
 .material-symbols-rounded.active {
     color: rgb(var(--color-primary));
 }
@@ -207,17 +238,17 @@
     background-color: rgb(var(--color-primary-container));
 }
 
-.material-symbols-rounded:hover {
+.material-symbols-rounded:not(.inactive):hover {
     background-color: rgb(var(--color-primary-container)) !important;
     color: rgb(var(--color-primary));
 }
 
-.material-symbols-rounded:where([theme="dark"], [theme="dark"] *):hover{
+.material-symbols-rounded:not(.inactive):where([theme="dark"], [theme="dark"] *):hover{
     color: inherit;
 }
 </style>
 
-<!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-unused-properties -->
+<!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-unused-properties, vue/max-lines-per-block -->
 <script setup>
 import { reactive, defineAsyncComponent, ref, computed, nextTick } from 'vue'
 import { getDateTimeRange, toDatePickerFormat } from '@/indexApp/utils/formatUtils.js'
@@ -227,6 +258,7 @@ const VisibilityAction = defineAsyncComponent(() => import('@/indexApp/component
 const DateTimePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/DateTimePickerAction.vue'))
 
 const imgFile = ref()
+const videoFile = ref()
 const dateInput = ref()
 const timeInput = ref()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
@@ -262,6 +294,12 @@ const props = defineProps({
         required: false,
         default: new Array(0)
     },
+    /** 传入的视频文件列表 */
+    videoList: {
+        type: Array,
+        required: false,
+        default: new Array(0)
+    },
     /** 是否为markdown预览模式 */
     showMarkdownPanel: {
         type: Boolean,
@@ -279,7 +317,7 @@ const props = defineProps({
         required: true
     }
 })
-const emits = defineEmits(['insertEmoji', 'changeVisibility', 'changeCreatedTime', 'submit', 'pushImage', 'popImage', 'resize', 'preview'])
+const emits = defineEmits(['insertEmoji', 'changeVisibility', 'changeCreatedTime', 'submit', 'pushImage', 'popImage', 'resize', 'preview', 'pushVideo', 'popVideo'])
 const state = reactive({
     showVisibilityPanel: false,
     showEmojiPanel: false,
@@ -291,7 +329,8 @@ const state = reactive({
         { id: 3, name: '订阅者可见', code: 'ONLY_FOLLOWER', icon: 'person' },
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people' },
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock' },
-    ]
+    ],
+    verifiedUser: JSON.parse(localStorage.getItem("CUR_USER")).verified
 })
 
 function handleImgFileChange() {
@@ -305,6 +344,17 @@ function handleImgFileChange() {
     while (props.imgList.length > 9) { emits('popImage') }
 }
 
+function handleVideoFileChange() {
+    const videos = Array.of(...videoFile.value.files)
+
+    if (videos.length == 0) return
+    emits('pushVideo', { videos: videos })
+
+    if (props.videoList.length > 1) { store.setWarningMsg('最多仅支持上传1条视频！') }
+
+    while (props.videoList.length > 1) { emits('popVideo') }
+}
+
 function preChoosePics() {
     if (props.imgList.length > 0 || state.showImagePanel == true) {
         const lastState = state.showImagePanel
@@ -314,8 +364,29 @@ function preChoosePics() {
     imgFile.value.showPicker()
 }
 
+function preChooseVideos() {
+    if (props.videoList.length > 0 || state.showVideoPanel == true) {
+        const lastState = state.showVideoPanel
+        state.showVideoPanel = !lastState
+        return
+    }
+    videoFile.value.showPicker()
+}
+
 const hasImage = computed(() => {
     return props.imgList.length > 0
+})
+
+const hasVideo = computed(() => {
+    return props.videoList.length > 0
+})
+
+const canAddImage = computed(() => {
+    return props.imgList.length < 9 && !hasVideo.value
+})
+
+const canAddVideo = computed(() => {
+    return props.videoList.length < 1 && !hasImage.value && state.verifiedUser
 })
 
 const curVisibility = computed(() => {
@@ -340,7 +411,6 @@ function pickVisibility(action) {
     emits('changeVisibility', { visibility: action.code })
     state.showVisibilityPanel = false
 }
-
 
 // XXX 分两步分别选择日期和时间，容易引起歧义
 function handleTimeSelect() {

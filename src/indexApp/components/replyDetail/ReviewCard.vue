@@ -55,6 +55,18 @@
                         class="bottom-[0.5rem] pt-[0.5rem] relative z-[20]"
                         @real-image="handleRealImage">
                     </ImageGrid>
+                    <div
+                        v-for="(video, index) in props.review?.videos || []"
+                        :key="index">
+                        <VideoPreviewItem
+                            class="overflow-hidden rounded-b-[8px]"
+                            :type-id="props.review.id"
+                            :video="video"
+                            type="post"
+                            :aspect-ratio="16/9"
+                            big-play-button>
+                        </VideoPreviewItem>
+                    </div>
                     <div class="absolute bg-transparent h-full top-0 w-full z-[21]" />
                 </div>
             </div>
@@ -75,12 +87,13 @@
 
 <script setup>
 // 只包括评论和一层回复
+import { onMounted, reactive, ref, defineAsyncComponent } from 'vue'
 import { humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
 import ImageGrid from '@/indexApp/components/ImageGrid.vue'
-import { onMounted, reactive, ref } from 'vue'
+const VideoPreviewItem = defineAsyncComponent(() => import('@/indexApp/components/profile/VideoPreviewItem.vue'))
 
 const reviewBody = ref()
 const props = defineProps({

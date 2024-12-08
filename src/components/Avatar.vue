@@ -44,6 +44,7 @@ defineOptions({
   inheritAttrs: false
 })
 
+const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const props = defineProps({
     /** 传入的用户对象 */
     user: {
@@ -67,7 +68,7 @@ const avatar = computed(() => {
         let imgUrl = URL.createObjectURL(props.user.avatar)
         return {thumb: imgUrl, url: imgUrl}
     }else if(!!props.user.avatar){
-        return {thumb: props.user.avatar.thumb, url:`${import.meta.env.VITE_OBJECT_BASE_URL}${props.user.avatar.url}?width=600`}
+        return {thumb: props.user.avatar.thumb, url:`${BASE_URL}${props.user.avatar.url}?width=600`}
     } else {
         return undefined
     }

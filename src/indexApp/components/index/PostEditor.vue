@@ -60,10 +60,21 @@
                 <ImagePickerAction
                     v-if="hasImage"
                     editor-menu-id="postEditorMenu"
-                    class="mb-2 ml-2"
+                    class="mb-2 mx-2"
                     :img-list="state.imgList"
-                    :images-info="state.imageListInfo">
+                    :images-info="state.imageListInfo"
+                    @delete="handleDeleteImage"
+                    @update="handleUpdateImage">
                 </ImagePickerAction>
+            </Transition>
+            <Transition name="fade">
+                <VideoPickerAction
+                    v-if="hasVideo"
+                    editor-menu-id="postEditorMenu"
+                    class="mb-2 mx-2"
+                    :video-list="state.videoList"
+                    @delete="(index) => state.videoList.splice(index, 1)">
+                </VideoPickerAction>
             </Transition>
             <EditorMenu
                 id="postEditorMenu"
@@ -75,6 +86,7 @@
                 :max-content-word-count="state.maxContentWordCount"
                 :content-length="state.content.length"
                 :img-list="state.imgList"
+                :video-list="state.videoList"
                 :show-markdown-panel="state.showMarkdownPanel"
                 @insert-emoji="insertEmoji"
                 @change-visibility="({visibility}) => {state.data.status = visibility}"
@@ -82,6 +94,8 @@
                 @submit="submitPost"
                 @push-image="({images}) => {state.imgList.push(...images)}"
                 @pop-image="() => {state.imgList.pop()}"
+                @push-video="({videos}) => {state.videoList.push(...videos)}"
+                @pop-video="() => {state.videoList.pop()}"
                 @resize="resize"
                 @preview="({isShow}) => {state.showMarkdownPanel = isShow}">
             </EditorMenu>
@@ -92,7 +106,7 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
 import { computed, reactive, inject, defineAsyncComponent, ref } from 'vue'
-import { uploadImages, posting, postingPlan } from '@/indexApp/js/api.js'
+import { uploadImages, posting, postingPlan, getUploadPresignedUrl, uploadVideo } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { VueShowdown } from 'vue-showdown'
@@ -100,6 +114,7 @@ import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import Header from '@/indexApp/components/Header.vue'
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
+const VideoPickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/VideoPickerAction.vue'))
 
 const { postingNew } = inject('postingNew')
 const postInput = ref()
@@ -112,10 +127,11 @@ const state = reactive({
         menuIcon: 'done',
         iconTooltip: '提交'
     },
-    menuSet: new Set(['ImagePicker','DatetimePicker','PollAction','LongArticle', 'VisibilityAction', 'EmojiPanel', 'MarkdownPreview']),
+    menuSet: new Set(['ImagePicker','VideoPicker', 'DatetimePicker','PollAction','LongArticle', 'VisibilityAction', 'EmojiPanel', 'MarkdownPreview']),
     maxContentWordCount: 1000,
     content: "",
     imgList: new Array(),
+    videoList: new Array(),
     imageListInfo: [
         { hidden: false, altText: null, contentType: "" },
         { hidden: false, altText: null, contentType: "" },
@@ -136,6 +152,7 @@ const state = reactive({
         content: "",
         isTop: false,
         images: undefined,
+        videos: new Array(),
         type: "NORMAL",
         status: 'PUBLIC',
         createdTime: undefined,
@@ -171,13 +188,32 @@ async function submitPost() {
             state.data.images = await response.json()
 
             state.uploadPercent = -1
-            state.commitText = '帖子发布中...'
             for (let i = 0; i < state.data.images.length; i++) {
                 state.data.images[i].hidden = state.imageListInfo[i].hidden
                 state.data.images[i].altText = state.imageListInfo[i].altText
             }
         }
 
+        if(state.videoList.length > 0){
+            state.commitText = '视频上传中...'
+            const file = state.videoList.at(0)
+            const {name, type} = file
+            let response = await getUploadPresignedUrl(type)
+            if (!response.ok) throw new Error('视频上传失败！')
+            const uploadUrl = await response.text()
+            const videoId = RegExp(/.*&x-amz-meta-Id=(?<videoId>[0-9a-f\-]+)&/).exec(uploadUrl).groups['videoId']
+            state.data.videos.push(videoId)
+
+            response = await uploadVideo(file, uploadUrl, (e) => {
+                if (e.lengthComputable) {
+                    state.uploadPercent = e.loaded / e.total * 100
+                } 
+            })
+            if (!response.ok) throw new Error((await response.json()).message)
+            state.uploadPercent = -1
+        }
+
+        state.commitText = '帖子发布中...'
         const response = state.data.createdTime ? await postingPlan(state.data) : await posting(state.data)
         if (!response.ok) throw new Error((await response.json()).message)
         state.result = await response.json()
@@ -204,10 +240,16 @@ function reset() {
     state.data.images = undefined
     state.data.createdTime = undefined
     state.data.status = 'PUBLIC'
+    state.videoList = new Array()
+    state.data.videos = new Array()
 }
 
 const hasImage = computed(() => {
     return state.imgList.length > 0
+})
+
+const hasVideo = computed(() => {
+    return state.videoList.length > 0
 })
 
 const leftWordCount = computed(() => {
@@ -221,5 +263,17 @@ function handleClose() {
 function insertEmoji({emoji}){
     const start = postInput.value.selectionStart
     state.content = state.content.slice(0, start).concat(emoji).concat(state.content.slice(start))
+}
+
+function handleDeleteImage(index){
+    state.imgList.splice(index, 1)
+    state.imageListInfo.at(index).altText = null
+    state.imageListInfo.at(index).hidden = false
+    state.imageListInfo.at(index).contentType = ''
+}
+
+function handleUpdateImage({ image, imageInfo, index }){
+    state.imgList[index] = image.file
+    state.imageListInfo[index] = imageInfo
 }
 </script>

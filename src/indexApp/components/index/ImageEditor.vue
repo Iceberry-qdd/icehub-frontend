@@ -114,21 +114,21 @@
 <style scoped>
 @media not all and (min-width: 640px) {
     button {
-       padding: 0.25rem 0; 
-       width: 3rem;
-       display: flex;
-       flex-direction: column;
-       flex-wrap: nowrap;
-       justify-content: center;
-       align-items: center;
+        padding: 0.25rem 0;
+        width: 3rem;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
     }
-    
-    button:active{
+
+    button:active {
         background-color: rgba(255, 255, 255, 0.25);
     }
 }
 
-#h{
+#h {
     background-color: #000000dd;
 }
 </style>
@@ -203,7 +203,7 @@ function dismiss() {
     emits('closeImageEditor')
 }
 
-function submit(){
+function submit() {
     emits('submit', {
         showAltEditor: state.showAltEditor,
         imageInfo: state.imageInfo,
@@ -211,7 +211,7 @@ function submit(){
     })
 }
 
-function resize(){
+function resize() {
     // Do nothing
 }
 

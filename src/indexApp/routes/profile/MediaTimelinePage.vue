@@ -3,17 +3,28 @@
         <div
             ref="imageGrid"
             class="3xl:grid-cols-4 gap-x-1 gap-y-1 grid grid-cols-3">
-            <ImageItem
-                v-for="image in state.medias"
-                :id="image.id"
-                :key="image.id"
-                :type-id="image.fromId"
-                :image="image.media"
-                :index="image.fromIndex"
-                :type="image.from.toLowerCase()"
-                :aspect-ratio="1"
-                @real-image="({ id, image: media }) => state.medias.find(it => it.id === id).media = media">
-            </ImageItem>
+            <div
+                v-for="media in state.medias"
+                :key="media.id">
+                <ImageItem
+                    v-if="media.type === 'IMAGE'"
+                    :id="media.id"
+                    :type-id="media.fromId"
+                    :image="media.media"
+                    :index="media.fromIndex"
+                    :type="media.from.toLowerCase()"
+                    :aspect-ratio="1"
+                    @real-image="({ id, image: media }) => state.medias.find(it => it.id === id).media = media">
+                </ImageItem>
+                <VideoPreviewItem
+                    v-else-if="media.type === 'VIDEO'"
+                    :type-id="media.fromId"
+                    :video="media.media"
+                    :type="media.from.toLowerCase()"
+                    :aspect-ratio="1"
+                    :width="200">
+                </VideoPreviewItem>
+            </div>
         </div>
         <Footer
             :is-loading="state.isLoading"
@@ -24,11 +35,12 @@
 </template>
 
 <script setup>
-import { reactive, computed, watch, ref } from 'vue'
+import { reactive, computed, watch, ref, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import Footer from '@/indexApp/components/Footer.vue'
 import { getMediasOfUser } from '@/indexApp/js/api'
 import ImageItem from '@/indexApp/components/profile/ImageItem.vue'
+const VideoPreviewItem = defineAsyncComponent(() => import('@/indexApp/components/profile/VideoPreviewItem.vue'))
 
 const emits = defineEmits(['updateTabCount'])
 const imageGrid = ref()

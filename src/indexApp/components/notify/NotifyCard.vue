@@ -55,7 +55,7 @@
                 @click="routeToUserProfile">
             </Avatar>
             <div class="brief flex flex-row h-fit items-center justify-between pb-2 w-full">
-                <div class="event-text z-[100]">
+                <div class="event-text text-[0.9rem] z-[100]">
                     <span
                         class="hover:underline"
                         @click="routeToUserProfile">

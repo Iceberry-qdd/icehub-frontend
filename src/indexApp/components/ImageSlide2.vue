@@ -27,7 +27,7 @@
             @click.self="close">
             <picture>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <source :srcset="`${state.imageBaseUrl}${img.url}${state.editData[index].showOrigin ? '' : `?max_width=${innerWidth}&max_height=${innerHeight}`}`" type="image/webp" />
+                <source :srcset="`${BASE_URL}${img.url}${state.editData[index].showOrigin ? '' : `?max_width=${innerWidth}&max_height=${innerHeight}`}`" type="image/webp" />
                 <img
                     :id="`img-${index}`"
                     :style="imgClass(index, img.thumb)"
@@ -129,11 +129,11 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
 
+const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const container = ref()
 const state = reactive({
     imgs: store.SLIDE_DATA.urls,
     activeImgIndex: store.SLIDE_DATA.curIdx,
-    imageBaseUrl: import.meta.env.VITE_OBJECT_BASE_URL,
     scrollSmooth: false,
     editData: store.SLIDE_DATA.urls.map((_) => {return {rotateAngle: 0, zoomRatio: 1, flip: false, mode: 'fit-content', showOrigin: false, showAlt: false}}),
 })
