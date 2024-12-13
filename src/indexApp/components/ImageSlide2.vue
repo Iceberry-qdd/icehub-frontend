@@ -27,7 +27,7 @@
             @click.self="close">
             <picture>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <source :srcset="`${BASE_URL}${img.url}${state.editData[index].showOrigin ? '' : `?max_width=${innerWidth}&max_height=${innerHeight}`}`" type="image/webp" />
+                <source :srcset="getRealUrl(index)" type="image/webp" />
                 <img
                     :id="`img-${index}`"
                     :style="imgClass(index, img.thumb)"
@@ -216,6 +216,11 @@ function handleIntersection(e){
           .map(it => parseInt(it.target.id.split('-').at(-1)))
           .at(0)
     state.activeImgIndex = activeImgIndex || store.SLIDE_DATA.curIdx
+}
+
+function getRealUrl(index){
+    const suffix = state.editData.at(index).showOrigin ? '' : `?max_width=${innerWidth.value}&max_height=${innerHeight.value}`
+    return `${BASE_URL}${state.imgs.at(index).url}${suffix}`
 }
 
 onMounted(() => {

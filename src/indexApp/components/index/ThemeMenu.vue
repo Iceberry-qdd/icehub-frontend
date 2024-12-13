@@ -46,7 +46,7 @@ import {onMounted, onUnmounted} from 'vue'
 import DarkAction from '@/indexApp/components/menus/themeMenus/DarkAction.vue'
 import LightAction from '@/indexApp/components/menus/themeMenus/LightAction.vue'
 import FollowSystemAction from '@/indexApp/components/menus/themeMenus/FollowSystemAction.vue'
-import { store } from '@/indexApp/js/store';
+import { store } from '@/indexApp/js/store'
 
 const props = defineProps({
     /** 主题-图标名称键值对 */

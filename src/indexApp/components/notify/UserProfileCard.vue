@@ -60,11 +60,11 @@
 </style>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
-import IconVerify from '@/components/icons/IconVerify.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 
 const props = defineProps({
     /** 传入的用户对象 */

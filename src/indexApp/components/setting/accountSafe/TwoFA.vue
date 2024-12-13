@@ -17,9 +17,9 @@
 </template>
 
 <script setup>
+import { computed, nextTick, reactive } from 'vue'
 import ToggleButton from '@/components/ToggleButton.vue'
 import { store } from '@/indexApp/js/store'
-import { computed, nextTick, reactive } from 'vue'
 
 const emits = defineEmits(['toggle'])
 const props = defineProps({

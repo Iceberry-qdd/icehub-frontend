@@ -176,7 +176,7 @@ import { VueShowdown } from 'vue-showdown'
 import IconLike from '@/components/icons/IconLike.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
 import IconShare from '@/components/icons/IconShare.vue'
-import ReviewCard from '@/indexApp/components/replyDetail/ReviewCard.vue'
+import ReviewCard from '@/indexApp/components/replyDetail/ReviewCard.vue' // 此组件异步加载会导致248行报错
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const UserProfileCard = defineAsyncComponent(() => import('@/indexApp/components/notify/UserProfileCard.vue'))
 

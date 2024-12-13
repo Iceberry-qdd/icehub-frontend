@@ -30,9 +30,9 @@
 </style>
 
 <script setup>
-import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
 import { reactive, provide } from 'vue'
 import { store } from '@/indexApp/js/store.js'
+import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
 
 const emits = defineEmits(['deleteCount'])
 const props = defineProps({

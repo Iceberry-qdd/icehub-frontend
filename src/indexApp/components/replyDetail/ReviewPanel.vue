@@ -40,10 +40,10 @@
 
 <!-- eslint-disable vue/no-unused-properties -->
 <script setup>
+import { reactive, computed, defineAsyncComponent } from 'vue'
 import ReviewEditor from '@/indexApp/components/postDetail/ReviewEditor.vue'
-import { reactive, computed } from 'vue'
 import ReviewCard from '@/indexApp/components/replyDetail/ReviewCard.vue'
-import Header from '@/indexApp/components/Header.vue'
+const Header = defineAsyncComponent(() => import('@/indexApp/components/Header.vue'))
 
 const emits = defineEmits(['dismiss'])
 const props = defineProps({

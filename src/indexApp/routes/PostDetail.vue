@@ -72,14 +72,14 @@
 </style>
 
 <script setup>
-import { onMounted, reactive, computed, provide } from 'vue'
-import Header from '@/indexApp/components/Header.vue'
-import { getPostById } from '@/indexApp/js/api.js'
-import { store } from '@/indexApp/js/store.js'
-import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
+import { onMounted, reactive, computed, provide, defineAsyncComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import ReviewPanel from '@/indexApp/components/replyDetail/ReviewPanel.vue'
-import StatisticAndSorting from '@/indexApp/components/postDetail/StatisticAndSorting.vue'
+import { store } from '@/indexApp/js/store.js'
+import { getPostById } from '@/indexApp/js/api.js'
+import Header from '@/indexApp/components/Header.vue'
+import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
+const StatisticAndSorting = defineAsyncComponent(() => import('@/indexApp/components/postDetail/StatisticAndSorting.vue'))
+const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 
 const router = useRouter()
 const route = useRoute()

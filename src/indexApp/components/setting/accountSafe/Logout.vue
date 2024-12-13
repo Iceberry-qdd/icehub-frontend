@@ -18,10 +18,10 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import { logout } from '@/indexApp/js/api'
 import { store } from '@/indexApp/js/store.js'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const state = reactive({
     confirmBDialogUi: {

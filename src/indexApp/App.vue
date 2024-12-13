@@ -34,7 +34,7 @@
         <div
             id="container"
             ref="container"
-            class="dark:divide-[#1e1e1e] divide-[#EEEEEE] divide-x-[1px] flex-nowrap flex-row justify-center min-h-screen sm:flex"
+            class="dark:divide-[#1e1e1e] divide-[#EEEEEE] flex-nowrap flex-row justify-center min-h-screen sm:divide-x-[1px] sm:flex"
             :class="{ 'mt-10': showGlobalNotifyBannerMsg }"
             @touchmove="handleScroll"
             @touchstart="touchStart"
@@ -136,17 +136,17 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick, provide } from 'vue'
-import Sidebar from '@/indexApp/components/Sidebar.vue'
-import Recommend from '@/indexApp/components/Recommend.vue'
-import Brand from '@/indexApp/components/Brand.vue'
+import { NavigationFailureType, isNavigationFailure } from 'vue-router'
 import { getCurUserInfo } from '@/authApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { ws } from '@/indexApp/js/websocket.js'
 import { useRoute, useRouter } from 'vue-router'
-import { NavigationFailureType, isNavigationFailure } from 'vue-router'
+import { isType } from '@/indexApp/utils/formatUtils.js'
+import Sidebar from '@/indexApp/components/Sidebar.vue'
+import Recommend from '@/indexApp/components/Recommend.vue'
+import Brand from '@/indexApp/components/Brand.vue'
 import GlobalProgressIndicator from '@/components/GlobalProgressIndicator.vue'
 import BackToTop from '@/indexApp/components/BackToTop.vue'
-import { isType } from '@/indexApp/utils/formatUtils.js'
 const GlobalNotifyBanner = defineAsyncComponent(() => import('@/components/GlobalNotifyBanner.vue'))
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 const GlobalNetworkOffPage = defineAsyncComponent(() => import('@/components//GlobalNetworkOffPage.vue')) /*Don't delete this due to package included*/

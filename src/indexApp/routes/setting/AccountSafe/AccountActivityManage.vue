@@ -32,12 +32,12 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
-import Header from '@/indexApp/components/Header.vue'
-import AccountActivityItem from '@/indexApp/components/setting/accountSafe/AccountActivityItem.vue'
-import Footer from '@/indexApp/components/Footer.vue'
-import { getActivities } from '@/indexApp/js/api.js'
+import { computed, onMounted, reactive, defineAsyncComponent } from 'vue'
 import { UAParser } from 'ua-parser-js'
+import { getActivities } from '@/indexApp/js/api.js'
+import Header from '@/indexApp/components/Header.vue'
+import Footer from '@/indexApp/components/Footer.vue'
+const AccountActivityItem = defineAsyncComponent(() => import('@/indexApp/components/setting/accountSafe/AccountActivityItem.vue'))
 
 // XXX 仅为消除控制台警告，无实际意义
 // eslint-disable-next-line vue/no-unused-emit-declarations

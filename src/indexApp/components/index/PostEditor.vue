@@ -116,6 +116,7 @@ import Header from '@/indexApp/components/Header.vue'
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 const VideoPickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/VideoPickerAction.vue'))
 
+const BASE_URL = import.meta.env.VITE_VIDEO_BASE_URL
 const { postingNew } = inject('postingNew')
 const postInput = ref()
 const emits = defineEmits(['close'])
@@ -200,7 +201,7 @@ async function submitPost() {
             const {name, type} = file
             let response = await getUploadPresignedUrl(type)
             if (!response.ok) throw new Error('视频上传失败！')
-            const uploadUrl = await response.text()
+            const uploadUrl = `${BASE_URL}${await response.text()}`
             const videoId = RegExp(/.*&x-amz-meta-Id=(?<videoId>[0-9a-f\-]+)&/).exec(uploadUrl).groups['videoId']
             state.data.videos.push(videoId)
 

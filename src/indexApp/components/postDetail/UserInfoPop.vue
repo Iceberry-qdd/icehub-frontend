@@ -85,7 +85,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive } from 'vue'
+import { computed, onMounted, reactive, defineAsyncComponent } from 'vue'
 import { followUser, unFollowUser } from '@/indexApp/js/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { store } from '@/indexApp/js/store.js'
@@ -93,7 +93,7 @@ import { useRouter } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
-import IconVerify from '@/components/icons/IconVerify.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 
 const props = defineProps({
     /** 传入的用户对象 */

@@ -39,7 +39,7 @@ import { reactive, computed, watch, ref, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import Footer from '@/indexApp/components/Footer.vue'
 import { getMediasOfUser } from '@/indexApp/js/api'
-import ImageItem from '@/indexApp/components/profile/ImageItem.vue'
+const ImageItem = defineAsyncComponent(() => import('@/indexApp/components/profile/ImageItem.vue'))
 const VideoPreviewItem = defineAsyncComponent(() => import('@/indexApp/components/profile/VideoPreviewItem.vue'))
 
 const emits = defineEmits(['updateTabCount'])

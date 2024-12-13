@@ -49,14 +49,14 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { useRouter } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import { deleteOneBlacklist } from '@/indexApp/js/api.js'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 import { store } from '@/indexApp/js/store.js'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const router = useRouter()
 const emits = defineEmits(['deleteOnUi'])

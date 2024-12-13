@@ -44,11 +44,11 @@
 
 <script setup>
 import { reactive, computed, onMounted } from 'vue'
-import Header from '@/indexApp/components/Header.vue'
+import { store } from '@/indexApp/js/store.js'
 import { useRoute } from 'vue-router'
 import router from '@/indexApp/js/route.js'
+import Header from '@/indexApp/components/Header.vue'
 import { getUserInfoByNickname } from '@/indexApp/js/api.js'
-import { store } from '@/indexApp/js/store.js'
 
 const route = useRoute()
 const state = reactive({

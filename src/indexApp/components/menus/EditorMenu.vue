@@ -42,7 +42,7 @@
                 class="flex-col relative">
                 <div
                     class="flex"
-                    @click="canAddVideo ? preChooseVideos() : undefined">
+                    @click="preChooseVideos()">
                     <span
                         :title="`${state.verifiedUser ? '添加视频' : '仅认证用户可添加视频'}`"
                         class="material-symbols-rounded"
@@ -214,6 +214,14 @@
                 <span>发布</span>
             </div>
         </div>
+        <Teleport to="#app">
+            <ConfirmDialogBox
+                v-if="state.confirmBDialogUi.show"
+                class="fixed top-0"
+                :ui="state.confirmBDialogUi"
+                @choice="resetDialog">
+            </ConfirmDialogBox>
+        </Teleport>
     </div>
 </template>
 
@@ -253,6 +261,7 @@
 import { reactive, defineAsyncComponent, ref, computed, nextTick } from 'vue'
 import { getDateTimeRange, toDatePickerFormat } from '@/indexApp/utils/formatUtils.js'
 import { store } from '@/indexApp/js/store.js'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 const VisibilityAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/VisibilityAction.vue'))
 const DateTimePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/DateTimePickerAction.vue'))
@@ -330,7 +339,25 @@ const state = reactive({
         { id: 4, name: '互相订阅者可见', code: 'ONLY_CO_FOLLOWER', icon: 'people' },
         { id: 6, name: '仅自己可见', code: 'ONLY_SELF', icon: 'lock' },
     ],
-    verifiedUser: JSON.parse(localStorage.getItem("CUR_USER")).verified
+    verifiedUser: JSON.parse(localStorage.getItem("CUR_USER")).verified,
+    confirmBDialogUi: {
+        show: false,
+        title: '',
+        confirmButton: {
+            selected: false,
+            color: 'text-onError',
+            bgColor: 'bg-error',
+            text: '我已了解'
+        },
+        cancelButton: {
+            show: false,
+            selected: false
+        },
+        loading: {
+            show: false,
+            text: ''
+        }
+    },
 })
 
 function handleImgFileChange() {
@@ -365,12 +392,25 @@ function preChoosePics() {
 }
 
 function preChooseVideos() {
+    if(props.videoList.length >= 1) return // 仅能添加一个视频
+    if(hasImage.value) return // 添加了图片就不能添加视频
+    if(!state.verifiedUser){ // 仅认证用户才能添加视频
+        state.confirmBDialogUi.title = '仅认证用户可添加视频'
+        state.confirmBDialogUi.show = true
+        return
+    }
+
     if (props.videoList.length > 0 || state.showVideoPanel == true) {
         const lastState = state.showVideoPanel
         state.showVideoPanel = !lastState
         return
     }
     videoFile.value.showPicker()
+}
+
+function resetDialog(){
+    state.confirmBDialogUi.title = ''
+    state.confirmBDialogUi.show = false
 }
 
 const hasImage = computed(() => {

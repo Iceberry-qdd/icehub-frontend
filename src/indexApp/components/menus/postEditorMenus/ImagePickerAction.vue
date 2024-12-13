@@ -53,11 +53,11 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { reactive } from 'vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconError from '@/components/icons/IconError.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
-import ImageEditor from '@/indexApp/components/index/ImageEditor.vue'
+const ImageEditor = defineAsyncComponent(() => import('@/indexApp/components/index/ImageEditor.vue'))
 
 const emits = defineEmits(['delete', 'update'])
 const props = defineProps({

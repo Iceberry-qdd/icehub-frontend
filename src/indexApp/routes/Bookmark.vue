@@ -45,12 +45,12 @@
 </style>
 
 <script setup>
-import Header from '@/indexApp/components/Header.vue'
-import { reactive, computed, onMounted, provide, watch } from 'vue'
-import PostCard from '@/indexApp/components/postDetail/PostCard.vue'
+import { reactive, computed, onMounted, provide, watch, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getMarkPostList } from '@/indexApp/js/api.js'
+import Header from '@/indexApp/components/Header.vue'
 import Footer from '@/indexApp/components/Footer.vue'
+const PostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/PostCard.vue'))
 
 const state = reactive({
     headerConfig: {

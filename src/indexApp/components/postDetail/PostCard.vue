@@ -140,9 +140,7 @@
                 <Video
                     v-if="video.status === 'OK'"
                     class="z-[97]"
-                    :manifest-url="video.url"
-                    :poster="video.poster.url"
-                    :video-id="video.id"
+                    :video="video"
                     :show-controls="isShowVideoControls">
                 </Video>
                 <div

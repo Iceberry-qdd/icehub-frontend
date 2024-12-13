@@ -304,15 +304,15 @@
 
 <!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
-import Header from '@/indexApp/components/Header.vue'
 import { reactive, computed, ref, onUnmounted, defineAsyncComponent } from 'vue'
+import 'bootstrap'
 import { store } from '@/indexApp/js/store.js'
-import { isUserExists, updateUserProfile, uploadImages } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'
+import { isUserExists, updateUserProfile, uploadImages } from '@/indexApp/js/api.js'
+import Header from '@/indexApp/components/Header.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
-import 'bootstrap'
 const ImageChangeProper = defineAsyncComponent(() => import('@/indexApp/components/profile/ImageChangeProper.vue'))
 const EmojiAvatarEditor = defineAsyncComponent(() => import('@/indexApp/components/profile/EmojiAvatarEditor.vue'))
 const ImageCropper = defineAsyncComponent(() => import('@/indexApp/components/profile/ImageCropper.vue'))

@@ -26,13 +26,13 @@
 </template>
 
 <script setup>
-import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
-import Header from '@/indexApp/components/Header.vue'
-import { getTimeline } from '@/indexApp/js/api.js'
+import { onMounted, computed, reactive, provide, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
-import { onMounted, computed, reactive, provide } from 'vue'
+import { getTimeline } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'
+import Header from '@/indexApp/components/Header.vue'
 import Footer from '@/indexApp/components/Footer.vue'
+const PostsTimeline = defineAsyncComponent(() => import('@/indexApp/components/PostsTimeline.vue'))
 
 const router = useRouter()
 const state = reactive({

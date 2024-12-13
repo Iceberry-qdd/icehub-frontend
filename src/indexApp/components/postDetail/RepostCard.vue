@@ -79,7 +79,7 @@ import { useRouter } from 'vue-router'
 import { VueShowdown } from 'vue-showdown'
 import { getPostById } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
-import IconVerify from '@/components/icons/IconVerify.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 const ImageGrid = defineAsyncComponent(() => import('@/indexApp/components/ImageGrid.vue'))
 const VideoPreviewItem = defineAsyncComponent(() => import('@/indexApp/components/profile/VideoPreviewItem.vue'))
 

@@ -80,11 +80,11 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-ref-object-reactivity-loss -->
 <script setup>
-import IconGif from '@/components/icons/IconGif.vue'
-import IconAltOn from '@/components/icons/IconAltOn.vue'
-import { reactive, computed, ref } from 'vue'
+import { reactive, computed, ref, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
+const IconGif = defineAsyncComponent(() => import('@/components/icons/IconGif.vue'))
+const IconAltOn = defineAsyncComponent(() => import('@/components/icons/IconAltOn.vue'))
 
 const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const altTextBg = ref()

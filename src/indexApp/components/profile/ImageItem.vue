@@ -50,11 +50,11 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-ref-object-reactivity-loss -->
 <script setup>
-import IconGif from '@/components/icons/IconGif.vue'
-import { reactive } from 'vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'
+const IconGif = defineAsyncComponent(() => import('@/components/icons/IconGif.vue'))
 
 const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const router = useRouter()

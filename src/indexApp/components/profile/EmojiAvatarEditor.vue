@@ -41,6 +41,11 @@
                 </div>
             </div>
             <div class="h-[min(24rem,calc(100vh-25rem*9/16-2.5rem))] max-sm:h-[calc(100vh-100vw*9/16-3rem)] max-sm:pb-4 modern-scrollbar-y overflow-x-hidden overflow-y-auto sm:rounded-b-[8px]">
+                <Footer
+                    class="absolute z-[-1]"
+                    is-loading
+                    has-more>
+                </Footer>
                 <EmojiPanel
                     v-if="state.showEmojiPanel"
                     :show-history="false"
@@ -118,10 +123,11 @@ details>summary>.material-symbols-rounded {
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, defineAsyncComponent } from 'vue'
 import Avatar from '@/components/Avatar.vue'
-import EmojiPanel from '@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'
 import palette from '@/assets/tailwind-palette.json'
+import Footer from '@/indexApp/components/Footer.vue'
+const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 
 const props = defineProps({
     /** 用户旧头像 */

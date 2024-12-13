@@ -52,9 +52,9 @@
 
 <script setup>
 import { computed, reactive } from 'vue'
-import Header from '@/indexApp/components/Header.vue'
 import { useRouter } from 'vue-router'
 import { store } from '@/indexApp/js/store.js'
+import Header from '@/indexApp/components/Header.vue'
 import Logout from '@/indexApp/components/setting/accountSafe/Logout.vue'
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 

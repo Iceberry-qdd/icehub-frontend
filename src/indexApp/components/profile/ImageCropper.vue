@@ -245,10 +245,10 @@
 
 <!-- eslint-disable vue/max-lines-per-block vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { reactive, computed, onMounted, ref } from 'vue'
-import Header from '@/indexApp/components/Header.vue'
+import { reactive, computed, onMounted, ref, defineAsyncComponent } from 'vue'
 import { isType } from '@/indexApp/utils/formatUtils.js'
 import { store } from '@/indexApp/js/store.js'
+const Header = defineAsyncComponent(() => import('@/indexApp/components/Header.vue'))
 
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const props = defineProps({

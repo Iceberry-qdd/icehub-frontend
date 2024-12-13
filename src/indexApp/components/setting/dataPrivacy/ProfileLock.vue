@@ -26,12 +26,12 @@
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, reactive, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getCurUserInfo } from '@/authApp/js/api.js'
 import ToggleButton from '@/components/ToggleButton.vue'
 import { updateUserProfile } from '@/indexApp/js/api.js'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const emits = defineEmits(['toggle'])
 const props = defineProps({

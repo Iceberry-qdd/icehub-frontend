@@ -17,10 +17,10 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import {inject, reactive } from 'vue'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+import {inject, reactive, defineAsyncComponent } from 'vue'
 import { createOneBlacklist, deleteOneBlacklist } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const { refreshProfileOnUi } = inject('refreshProfileOnUi')
 const { dismissProfileMenus } = inject('dismissProfileMenus')

@@ -5,16 +5,24 @@
         <!-- eslint-disable-next-line vue/html-self-closing -->
         <video
             ref="videoRef"
+            :class="{'aspect-square': height > width}"
+            class="object-cover"
             data-shaka-player
             :poster="posterUrl">
         </video>
     </div>
 </template>
 
+<style scoped>
+.shaka-video-container:fullscreen>video{
+    aspect-ratio: unset;
+}
+</style>
+
 <script setup>
 import { computed, onMounted, reactive, ref, onBeforeUnmount, onActivated, onDeactivated } from 'vue'
 import 'shaka-player/dist/controls.css'
-import * as shaka from 'shaka-player/dist/shaka-player.ui.debug'
+import * as shaka from 'shaka-player/dist/shaka-player.ui'
 import { store } from '@/indexApp/js/store.js'
 
 const BASE_API_URL = import.meta.env.VITE_API_BASE_URL
@@ -24,20 +32,9 @@ const containerRef = ref()
 const videoRef = ref()
 
 const props = defineProps({
-    /** 媒体描述文件链接 */
-    manifestUrl: {
-        type: String,
-        required: true
-    },
-    /** 视频预览图链接 */
-    poster: {
-        type: String,
-        required: false,
-        default: ''
-    },
-    /** 视频id */
-    videoId:{
-        type: String,
+    /** 视频 */
+    video:{
+        type: Object,
         required: true
     },
     /** 是否显示视频控制选项 */
@@ -67,12 +64,25 @@ const state = reactive({
     }
 })
 
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
+const {
+    id,
+    url: videoUrl,
+    aspectRatio,
+    width,
+    height,
+    poster: {
+        url: _posterUrl,
+        thumb
+    }
+} = props.video
+
 const manifestUrl = computed(() => {
-    return `${BASE_VIDEO_URL}${props.manifestUrl}`
+    return `${BASE_VIDEO_URL}${videoUrl}`
 })
 
 const posterUrl = computed(() => {
-    return `${BASE_IMAGE_URL}${props.poster}`
+    return `${BASE_IMAGE_URL}${_posterUrl}`
 })
 
 const controlPanelElements = computed(() => {
@@ -107,11 +117,11 @@ function onPlayerError(error) {
 
 function storeVideoStatus(){
     const {currentTime, paused, muted} = videoRef.value
-    store.setVideoPlayStatus(props.videoId, currentTime, !paused, muted)
+    store.setVideoPlayStatus(id, currentTime, !paused, muted)
 }
 
 function loadVideoStatus(){
-    const {currentTime, playing, mute} = store.getVideoPlayStatus(props.videoId)
+    const {currentTime, playing, mute} = store.getVideoPlayStatus(id)
     videoRef.value.currentTime = currentTime
     playing ? videoRef.value.play() : videoRef.value.pause()
     videoRef.value.muted = mute
@@ -151,7 +161,7 @@ onMounted(async () => {
     player.getNetworkingEngine().registerRequestFilter((type, request) => {
         if (type === shaka.net.NetworkingEngine.RequestType.KEY) {
             request.headers['X-Content-Type'] = 'video/*'
-            request.uris = request.uris.map(it => `${BASE_API_URL}/object/video/key/${props.videoId}`)
+            request.uris = request.uris.map(it => `${BASE_API_URL}/object/video/key/${id}`)
         }
     })
 
@@ -177,5 +187,6 @@ onDeactivated(() => {
 onBeforeUnmount(() => {
     videoObserver.unobserve(containerRef.value)
     storeVideoStatus()
+    state.player.destroy()
 })
 </script>

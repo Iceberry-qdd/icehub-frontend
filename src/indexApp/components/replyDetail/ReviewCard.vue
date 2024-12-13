@@ -90,9 +90,9 @@
 import { onMounted, reactive, ref, defineAsyncComponent } from 'vue'
 import { humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import Avatar from '@/components/Avatar.vue'
-import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
-import ImageGrid from '@/indexApp/components/ImageGrid.vue'
+const ImageGrid = defineAsyncComponent(() => import('@/indexApp/components/ImageGrid.vue'))
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 const VideoPreviewItem = defineAsyncComponent(() => import('@/indexApp/components/profile/VideoPreviewItem.vue'))
 
 const reviewBody = ref()

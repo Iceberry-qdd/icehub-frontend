@@ -11,8 +11,9 @@
                 class="dark:text-white/50 h-5 text-primary w-5">
             </IconLoading>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-            <div v-else class="flex flex-nowrap flex-row gap-x-[1rem] text-[0.9rem]">
+            <div v-else class="flex flex-nowrap flex-row gap-x-[1rem] max-sm:flex-col max-sm:gap-y-[0.5rem] max-sm:w-full text-[0.9rem]">
                 <div
+                    v-if="showConfirmBtn"
                     id="confirmButton"
                     :class="[confirmBtnColor, confirmBtnBgColor]"
                     class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
@@ -20,6 +21,7 @@
                     {{ confirmBtnText }}
                 </div>
                 <div
+                    v-if="showCancelBtn"
                     id="cancelButton"
                     :class="[cancelBtnColor, cancelBtnBgColor]"
                     class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
@@ -69,11 +71,13 @@ const {
     loading: { text: loadingText = '请稍等......' },
     title: titleText,
     confirmButton: {
+        show: showConfirmBtn = true,
         color: confirmBtnColor = 'text-primary dark:text-onPrimary',
         bgColor: confirmBtnBgColor = 'bg-primaryContainer',
         text: confirmBtnText = '确定'
     },
     cancelButton: {
+        show: showCancelBtn = true,
         color: cancelBtnColor = 'text-onPrimaryContainer',
         bgColor: cancelBtnBgColor = 'bg-helper dark:bg-error',
         text: cancelBtnText = '取消'
