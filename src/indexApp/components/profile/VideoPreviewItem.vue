@@ -13,7 +13,7 @@
             icon="play"
             aria-label="播放">
         </button>
-        <picture>
+        <picture v-if="!!props.video?.poster">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <source :srcset="getImageUrl(props.video.poster)" type="image/webp" />
             <img
@@ -25,6 +25,11 @@
                 :alt="altText"
                 @click="routeTo" />
         </picture>
+        <SnowScreen
+            v-else
+            class="aspect-video w-full"
+            :text="store.getVideoErrorMsg(props.video.status)">
+        </SnowScreen>
     </div>
 </template>
 
@@ -71,8 +76,10 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-ref-object-reactivity-loss -->
 <script setup>
-import { reactive } from 'vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
+import { store } from '@/indexApp/js/store.js'
+const SnowScreen = defineAsyncComponent(() => import('@/indexApp/components/SnowScreen.vue'))
 
 const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const router = useRouter()
@@ -115,7 +122,7 @@ const props = defineProps({
     }
 })
 
-const {thumb, altText} = props.video.poster
+const {thumb, altText} = props.video?.poster || {thumb: undefined, altText: undefined}
 
 const mPicClass = reactive({
     'aspect-square': true,

@@ -113,7 +113,7 @@ const info = computed(() => {
 })
 
 function toggle(){
-    if(state.loading) return
+    if(state.loading || !state.enabled) return
 
     state.confirmBDialogUi.show = true
     state.loading = true

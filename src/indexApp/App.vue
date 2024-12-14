@@ -165,9 +165,14 @@ const state = reactive({
     timeoutId: 0,
     showBackToTop: false,
     touchStartClientY: 0,
+    /** @type {MediaQueryList} */
     mobileMediaQueryList: undefined,
+    /** @type {MediaQueryList} */
     padMediaQueryList: undefined,
+    /** @type {MediaQueryList} */
     themeMediaQueryList: undefined,
+    /** @type {MediaQueryList} */
+    reduceAnimMediaQueryList: undefined,
     showContextMenu: false,
     click: {x: 20, y: 20}
 })
@@ -291,6 +296,10 @@ function handleThemeMediaChange(mq) {
     }
 }
 
+function handleReduceAnimMediaChange(mq){
+    store.setSysReduceAnimation(mq.matches)
+}
+
 function handleContextMenu(e){
     e.preventDefault()
     state.showContextMenu = true
@@ -360,6 +369,11 @@ onMounted(() => {
 
     // Avatar style settings
     store.setAvatarStyle(localStorage.getItem('avatar') || 'rounded')
+
+    // Media query reduce animation settings
+    state.reduceAnimMediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)')
+    handleReduceAnimMediaChange(state.reduceAnimMediaQueryList)
+    state.reduceAnimMediaQueryList.addEventListener('change', handleReduceAnimMediaChange)
 })
 
 onUnmounted(() => {
@@ -368,6 +382,7 @@ onUnmounted(() => {
     state.mobileMediaQueryList.removeEventListener('change', handleMobileMediaChange)
     state.padMediaQueryList.removeEventListener('change', handlePadMediaChange)
     state.themeMediaQueryList.removeEventListener('change', handleThemeMediaChange)
+    state.reduceAnimMediaQueryList.removeEventListener('change', handleReduceAnimMediaChange)
     document.body.removeEventListener('contextmenu', handleContextMenu)
 })
 

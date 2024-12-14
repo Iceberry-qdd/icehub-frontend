@@ -66,6 +66,11 @@
                     @select="toggleHighlight">
                 </HighlightSelector>
             </BaseCollapse>
+            <AnimationSelector
+                :enabled="state.setting.reduceAnimation.enabled"
+                :checked="state.setting.reduceAnimation.checked"
+                @toggle="toggleAnimation">
+            </AnimationSelector>
         </div>
     </div>
 </template>
@@ -81,6 +86,7 @@ import AccentColorSelector from '@/indexApp/components/setting/displayTheme/Acce
 import EmojiSelector from '@/indexApp/components/setting/displayTheme/EmojiSelector.vue'
 import AvatarSelector from '@/indexApp/components/setting/displayTheme/AvatarSelector.vue'
 import HighlightSelector from '@/indexApp/components/setting/displayTheme/HighlightSelector.vue'
+import AnimationSelector from '@/indexApp/components/setting/displayTheme/AnimationSelector.vue'
 
 const state = reactive({
     headerConfig: {
@@ -142,6 +148,11 @@ print('The product is:', product)
             'light': {preview: '/highlight_prism_light.webp', zh: '浅色模式'},
             'dark': {preview: '/highlight_prism_dark.webp', zh: '深色模式'},
             'followTheme': {preview: '/highlight_prism_all.webp', zh: '跟随主题'}
+        },
+        /** 动画效果模式，正常(NORMAL)或减少(REDUCE) */
+        reduceAnimation:{
+            checked: false,
+            enabled: true
         }
     }
 })
@@ -191,6 +202,12 @@ function toggleAccentColor(accent){
     document.body.setAttribute('accent', accent)
 }
 
+function toggleAnimation(){
+    const lastState = state.setting.reduceAnimation.checked
+    state.setting.reduceAnimation.checked = !lastState
+    localStorage.setItem('reduceAnimation', !lastState)
+}
+
 onMounted(() => {
     // Theme setting
     state.setting.theme = localStorage.getItem('theme') || 'followSystem'
@@ -214,5 +231,9 @@ onMounted(() => {
 
     // Avatar border settings
     state.setting.avatar = localStorage.getItem('avatar') || 'rounded'
+
+    // Animation mode settings
+    state.setting.reduceAnimation.checked = store.SYS_REDUCE_ANIMATION ? true : (JSON.parse(localStorage.getItem('reduceAnimation')) || false)
+    state.setting.reduceAnimation.enabled = !store.SYS_REDUCE_ANIMATION
 })
 </script>

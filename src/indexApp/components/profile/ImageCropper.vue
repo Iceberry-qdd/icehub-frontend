@@ -300,7 +300,10 @@ const state = reactive({
     /** 若是在zoom模式下，声明操作的哪个部分，点(nwp, nep, swp, sep)或线(nl, wl, sl, el) */
     zoomType: undefined,
     canvas: {
-        /** canvas上下文对象 */
+        /**
+         * canvas上下文对象
+         * @type {CanvasRenderingContext2D}
+         **/
         context: undefined,
         /** 传递给canvas的image对象 */
         shadowImg: undefined,

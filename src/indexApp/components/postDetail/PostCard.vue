@@ -116,7 +116,7 @@
                     tag="markdown"
                     :extensions="['exts']"
                     :markdown="state.post.content"
-                    class="break-all overflow-y-hidden relative text-[11pt] text-justify"
+                    class="break-all overflow-y-hidden relative text-[0.9rem] text-justify"
                     :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}">
                 </VueShowdown>
             </div>
@@ -126,29 +126,19 @@
                 class="mt-[0.5rem] relative z-[96]">
             </RepostCard>
             <ImageGrid
-                v-if="hasPics"
+                v-if="hasPic"
                 :id="`img-${state.post.id}`"
                 :images="state.post.images"
                 type="post"
                 class="my-2"
                 @real-image="handleRealImage">
             </ImageGrid>
-            <div
-                v-for="video in props.post.videos"
-                :key="video.id"
-                class="mt-2 overflow-hidden rounded-[8px]">
-                <Video
-                    v-if="video.status === 'OK'"
-                    class="z-[97]"
-                    :video="video"
-                    :show-controls="isShowVideoControls">
-                </Video>
-                <div
-                    v-else
-                    class="bg-gray-100 py-2 text-[0.85rem] text-center text-neutral-500">
-                    {{ state.videoErrorMsgMap.get(video.status) }}
-                </div>
-            </div>
+            <VideoGrid
+                v-if="hasVideo"
+                class="mt-2 overflow-hidden rounded-[8px]"
+                :videos="state.post.videos"
+                :show-controls="isShowVideoControls">
+            </VideoGrid>
         </div>
 
         <div
@@ -271,7 +261,7 @@ const PostMenus = defineAsyncComponent(() => import('@/indexApp/components/postD
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const RepostPanel = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostPanel.vue'))
-const Video = defineAsyncComponent(() => import('@/indexApp/components/Video.vue'))
+const VideoGrid = defineAsyncComponent(() => import('@/indexApp/components/VideoGrid.vue'))
 
 const emits = defineEmits(['showReviewPanel'])
 const props = defineProps({
@@ -296,11 +286,7 @@ const state = reactive({
     user: JSON.parse(localStorage.getItem("CUR_USER")),
     shrinkContent: true,
     showRepostPanel: false,
-    videoInfo: props.post.videos,
-    videoErrorMsgMap: new Map([
-        ['ENCODING', '视频转码中...'],
-        [undefined, '视频暂不可用']
-    ])
+    videoInfo: props.post.videos
 })
 
 const isIndentBody = computed(() => {
@@ -317,7 +303,7 @@ const cardContainerClass = computed(() => ({
 }))
 
 const cardBodyClass = computed(() => ({
-    'py-[0.5rem]': isIndentBody.value,
+    'py-[0.5rem]': true,
     'pr-[0.8rem]': isIndentBody.value,
     'p-0': !isIndentBody.value,
     'ml-[3.5rem]': isIndentBody.value && !store.MOBILE_MODE,
@@ -387,8 +373,12 @@ const toggleLike = debounce(async function () {
 
 function repostIt() { state.showRepostPanel = true }
 
-const hasPics = computed(() => {
+const hasPic = computed(() => {
     return !!state.post.images?.length
+})
+
+const hasVideo = computed(() => {
+    return !!state.post?.videos?.length
 })
 
 const hasTags = computed(() => {
