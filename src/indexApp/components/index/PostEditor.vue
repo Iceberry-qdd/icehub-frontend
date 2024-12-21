@@ -2,7 +2,7 @@
 <template>
     <div class="bg-background">
         <Header
-            v-show="!state.isLoading"
+            v-show="!state.isLoading && !state.videoUploadFailed"
             class="sm:hidden sticky"
             :title="state.headerConfig.title"
             :go-back="state.headerConfig.goBack"
@@ -37,6 +37,27 @@
                     </div>
                 </div>
             </div>
+            <div
+                v-if="state.videoUploadFailed"
+                class="-translate-x-1/2 absolute bg-white dark:bg-[#121212] gap-4 grid h-full justify-items-center left-1/2 max-sm:fixed place-content-center top-0 w-full z-[102]">
+                <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                <div class="text-[0.9rem]">视频上传中断！</div>
+                <div class="flex flex-nowrap flex-row gap-x-[1rem] max-sm:gap-y-[0.5rem] max-sm:w-full text-[0.9rem]">
+                    <div
+                        id="confirmButton"
+                        class="bg-primaryContainer btn-no-select cursor-pointer dark:text-onPrimary font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center text-primary"
+                        @click="submitPost">
+                        继续
+                    </div>
+                    <div
+                        id="cancelButton"
+                        class="bg-helper btn-no-select cursor-pointer dark:bg-error font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center text-onPrimaryContainer"
+                        @click="cancelUploadVideo">
+                        返回
+                    </div>
+                </div>
+            </div>
+
             <VueShowdown
                 v-if="state.showMarkdownPanel == true"
                 tag="markdown"
@@ -106,7 +127,7 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
 import { computed, reactive, inject, defineAsyncComponent, ref } from 'vue'
-import { uploadImages, posting, postingPlan, getUploadPresignedUrl, uploadVideo } from '@/indexApp/js/api.js'
+import { uploadImages, posting, postingPlan, splitAndUploadVideo } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { VueShowdown } from 'vue-showdown'
@@ -128,10 +149,11 @@ const state = reactive({
         menuIcon: 'done',
         iconTooltip: '提交'
     },
-    menuSet: new Set(['ImagePicker','VideoPicker', 'DatetimePicker','PollAction','LongArticle', 'VisibilityAction', 'EmojiPanel', 'MarkdownPreview']),
+    menuSet: new Set(['ImagePicker', 'VideoPicker', 'DatetimePicker', 'PollAction', 'LongArticle', 'VisibilityAction', 'EmojiPanel', 'MarkdownPreview']),
     maxContentWordCount: 1000,
     content: "",
     imgList: new Array(),
+    /** 是数组，但暂时仅支持传入一个视频文件 */
     videoList: new Array(),
     imageListInfo: [
         { hidden: false, altText: null, contentType: "" },
@@ -159,14 +181,67 @@ const state = reactive({
         createdTime: undefined,
         userId: JSON.parse(localStorage.getItem("CUR_USER")).id
     },
-    showMarkdownPanel: false
+    showMarkdownPanel: false,
+    /** 视频分片信息 */
+    videoChunkInfo: new Array(),
+    videoUploadFailed: false
 })
 
 function resize() {
-    if(!CSS.supports('field-sizing: content')){
+    if (!CSS.supports('field-sizing: content')) {
         postInput.value.style.height = 'auto'
         postInput.value.style.height = `${postInput.value.scrollHeight}px`
     }
+}
+
+async function doUploadImages() {
+    state.isLoading = true
+    if (state.imgList.length > 0) {
+        state.commitText = '图片上传中...'
+        const response = await uploadImages(state.imgList, (e) => {
+            if (e.lengthComputable) {
+                state.uploadPercent = e.loaded / e.total * 100
+            }
+        })
+        if (!response.ok) throw new Error((await response.json()).message)
+        state.data.images = await response.json()
+
+        for (let i = 0; i < state.data.images.length; i++) {
+            state.data.images[i].hidden = state.imageListInfo[i].hidden
+            state.data.images[i].altText = state.imageListInfo[i].altText
+        }
+        state.uploadPercent = -1
+    }
+}
+
+async function doUploadVideos() {
+    state.isLoading = true
+    if (state.videoList.length > 0) {
+        state.commitText = '视频上传中...'
+        const file = state.videoList.at(0)
+
+        const response = await splitAndUploadVideo(file, state.videoChunkInfo, (loaded, total) => {
+            state.uploadPercent = loaded / total * 100
+            console.log({loaded: loaded, total: total})
+        })
+        if (!response.ok) {
+            // 保存分片，用于重试
+            if (response.status === 408) {
+                state.videoChunkInfo = await response.json()
+                state.videoUploadFailed = true
+            }
+            throw new Error('视频上传失败！')
+        }
+
+        const videoId = await response.text()
+        state.data.videos.push(videoId)
+        state.uploadPercent = -1
+    }
+}
+
+function cancelUploadVideo(){
+    state.videoUploadFailed = false
+    state.videoChunkInfo = new Array()
 }
 
 async function submitPost() {
@@ -175,49 +250,21 @@ async function submitPost() {
         if (state.data.createdTime && Date.now() >= state.data.createdTime) throw new Error('您安排的预发布时间早于现在！')
         if (leftWordCount.value < 0) throw new Error('您发布的帖子内容超出长度限制！')
 
+        if(!state.videoUploadFailed){
+            state.data.content = state.content
+            await doUploadImages()
+        }
+
+        state.videoUploadFailed = false
+        await doUploadVideos()
+        
         state.isLoading = true
-        state.data.content = state.content
-
-        if (state.imgList.length > 0) {
-            state.commitText = '图片上传中...'
-            const response = await uploadImages(state.imgList, (e) => {
-                if (e.lengthComputable) {
-                    state.uploadPercent = e.loaded / e.total * 100
-                }
-            })
-            if (!response.ok) throw new Error((await response.json()).message)
-            state.data.images = await response.json()
-
-            state.uploadPercent = -1
-            for (let i = 0; i < state.data.images.length; i++) {
-                state.data.images[i].hidden = state.imageListInfo[i].hidden
-                state.data.images[i].altText = state.imageListInfo[i].altText
-            }
-        }
-
-        if(state.videoList.length > 0){
-            state.commitText = '视频上传中...'
-            const file = state.videoList.at(0)
-            const {name, type} = file
-            let response = await getUploadPresignedUrl(type)
-            if (!response.ok) throw new Error('视频上传失败！')
-            const uploadUrl = `${BASE_URL}${await response.text()}`
-            const videoId = RegExp(/.*&x-amz-meta-Id=(?<videoId>[0-9a-f\-]+)&/).exec(uploadUrl).groups['videoId']
-            state.data.videos.push(videoId)
-
-            response = await uploadVideo(file, uploadUrl, (e) => {
-                if (e.lengthComputable) {
-                    state.uploadPercent = e.loaded / e.total * 100
-                } 
-            })
-            if (!response.ok) throw new Error((await response.json()).message)
-            state.uploadPercent = -1
-        }
-
         state.commitText = '帖子发布中...'
+
         const response = state.data.createdTime ? await postingPlan(state.data) : await posting(state.data)
         if (!response.ok) throw new Error((await response.json()).message)
         state.result = await response.json()
+        
         reset()
         postingNew(state.result)
         handleClose()
@@ -243,6 +290,7 @@ function reset() {
     state.data.status = 'PUBLIC'
     state.videoList = new Array()
     state.data.videos = new Array()
+    state.videoChunkInfo = new Array()
 }
 
 const hasImage = computed(() => {
@@ -261,19 +309,19 @@ function handleClose() {
     emits('close')
 }
 
-function insertEmoji({emoji}){
+function insertEmoji({ emoji }) {
     const start = postInput.value.selectionStart
     state.content = state.content.slice(0, start).concat(emoji).concat(state.content.slice(start))
 }
 
-function handleDeleteImage(index){
+function handleDeleteImage(index) {
     state.imgList.splice(index, 1)
     state.imageListInfo.at(index).altText = null
     state.imageListInfo.at(index).hidden = false
     state.imageListInfo.at(index).contentType = ''
 }
 
-function handleUpdateImage({ image, imageInfo, index }){
+function handleUpdateImage({ image, imageInfo, index }) {
     state.imgList[index] = image.file
     state.imageListInfo[index] = imageInfo
 }

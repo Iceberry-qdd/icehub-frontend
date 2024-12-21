@@ -1,6 +1,6 @@
 {
   "name": "icehub",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "scripts": {
     "dev": " vite --host",
     "build": "vite build",
@@ -11,6 +11,7 @@
     "bootstrap-icons": "^1.11.3",
     "dompurify": "^3.1.7",
     "katex": "^0.16.11",
+    "p-limit": "^6.1.0",
     "prismjs": "^1.29.0",
     "shaka-player": "^4.12.3",
     "sockjs-client": "^1.6.1",

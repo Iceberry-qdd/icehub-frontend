@@ -30,6 +30,8 @@
 		"src/**/*.js",
 		"src/**/*.ts",
 		"src/**/*.d.ts",
-		"src/**/*.vue"
+		"src/**/*.vue",
+		"public/sw.js",
+		"public/hash.js"
 	]
 }

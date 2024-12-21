@@ -34,13 +34,13 @@ import { store } from '@/indexApp/js/store.js'
 const canvas = ref()
 const props = defineProps({
     /** 提示信息 */
-    text:{
+    text: {
         type: String,
         required: false,
         default: 'NO SIGNAL'
     },
     /** 显示模式，静态(STATIC)或动态(DYNAMIC) */
-    mode:{
+    mode: {
         type: String,
         required: false,
         default: store.SYS_REDUCE_ANIMATION ? 'STATIC' : 'DYNAMIC',
@@ -78,7 +78,7 @@ const containerFontSize = computed(() => {
 })
 
 const containerColor = computed(() => {
-    return reduceAnimation.value ? 'rgb(255 255 255 /0.35)' : 'rgb(0 0 0 /0.75)'
+    return reduceAnimation.value ? 'rgb(255 255 255 /0.35)' : 'rgb(255 255 255 /1.00)'
 })
 
 const reduceAnimation = computed(() => {
@@ -90,18 +90,18 @@ function initCanvas() {
     reset()
 }
 
-function initColorData(){
+function initColorData() {
     state.canvas.ctx.fillStyle = 'black'
     state.canvas.ctx.fillRect(0, 0, state.canvas.width, state.canvas.height)
     state.canvas.ctx.fill()
-    state.canvas.colorData = state.canvas.ctx.getImageData(0,0,state.canvas.width, state.canvas.height)
+    state.canvas.colorData = state.canvas.ctx.getImageData(0, 0, state.canvas.width, state.canvas.height)
 }
 
-function drawBg(){
+function drawBg() {
     // [red, green, blue, alpha, red, green,...,alpha]
     const data = state.canvas.colorData.data
-    for(let i = 0; i < data.length; i++){
-        const color = Math.floor(Math.random() * 255) + 50
+    for (let i = 0; i < data.length; i++) {
+        const color = Math.floor(Math.random() * 255) - 64
         data[i++] = color
         data[i++] = color
         data[i++] = color
@@ -109,13 +109,13 @@ function drawBg(){
     state.canvas.ctx.putImageData(state.canvas.colorData, 0, 0)
 }
 
-function step(){
+function step() {
     self.requestAnimationFrame(step)
-    state.canvas.ctx.clearRect(0,0,state.canvas.width, state.canvas.height)
+    state.canvas.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height)
     drawBg()
 }
 
-function reset(){
+function reset() {
     state.canvas.width = canvas.value.width = canvas.value.clientWidth
     state.canvas.height = canvas.value.height = canvas.value.clientHeight
 }
@@ -124,7 +124,7 @@ onMounted(() => {
     document.addEventListener('resize', reset)
     initCanvas()
     initColorData()
-    if(!reduceAnimation.value){
+    if (!reduceAnimation.value) {
         drawBg()
         step()
     }
