@@ -3,7 +3,7 @@
         id="theme-menu"
         class="bg-surface min-h-max min-w-[12rem]">
         <div class="flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
-            <div class="bg-border h-[0.35rem] rounded-full w-12" />
+            <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
         </div>
         <LightAction
             :icon="props.iconMap.get('light')"
@@ -46,7 +46,7 @@ import {onMounted, onUnmounted} from 'vue'
 import DarkAction from '@/indexApp/components/menus/themeMenus/DarkAction.vue'
 import LightAction from '@/indexApp/components/menus/themeMenus/LightAction.vue'
 import FollowSystemAction from '@/indexApp/components/menus/themeMenus/FollowSystemAction.vue'
-import { store } from '@/indexApp/js/store';
+import { store } from '@/indexApp/js/store'
 
 const props = defineProps({
     /** 主题-图标名称键值对 */

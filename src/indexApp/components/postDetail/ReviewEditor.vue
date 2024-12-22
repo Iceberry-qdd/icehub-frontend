@@ -100,10 +100,10 @@ import { reactive, computed, inject, defineAsyncComponent, ref, watch } from 'vu
 import { reviewing, uploadImages } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
+const EditorMenu = defineAsyncComponent(() => import('@/indexApp/components/menus/EditorMenu.vue'))
 const ImagePickerAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/ImagePickerAction.vue'))
 
 const panel = ref()

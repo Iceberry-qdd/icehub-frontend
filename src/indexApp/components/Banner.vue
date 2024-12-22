@@ -23,6 +23,7 @@ defineOptions({
     inheritAttrs: false
 })
 
+const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const props = defineProps({
     /** 传入的用户对象 */
     user: {
@@ -39,7 +40,7 @@ const banner = computed(() => {
     } else if (!props.user.banner) {
         return undefined
     } else {
-        return { thumb: props.user.banner.thumb, url: `${import.meta.env.VITE_OBJECT_BASE_URL}${props.user.banner.url}?width=600` }
+        return { thumb: props.user.banner.thumb, url: `${BASE_URL}${props.user.banner.url}?width=600` }
     }
 })
 </script>

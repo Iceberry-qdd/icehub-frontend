@@ -17,10 +17,10 @@
 </template>
 
 <script setup>
-import { reactive, inject, computed } from 'vue'
+import { reactive, inject, computed, defineAsyncComponent } from 'vue'
 import { deleteOneReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const props = defineProps({
     /** 传入的评论对象 */

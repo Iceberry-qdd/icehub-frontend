@@ -53,13 +53,13 @@
 </style>
 
 <script setup>
-import { reactive, computed, onMounted } from 'vue'
-import Header from '@/indexApp/components/Header.vue'
-import UserBlacklistItem from '@/indexApp/components/setting/dataPrivacy/UserBlacklistItem.vue'
-import Footer from '@/indexApp/components/Footer.vue'
-import { deleteAllBlacklistByType, getBlacklist } from '@/indexApp/js/api.js'
+import { reactive, computed, onMounted, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+import { deleteAllBlacklistByType, getBlacklist } from '@/indexApp/js/api.js'
+import Header from '@/indexApp/components/Header.vue'
+import Footer from '@/indexApp/components/Footer.vue'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
+const UserBlacklistItem = defineAsyncComponent(() => import('@/indexApp/components/setting/dataPrivacy/UserBlacklistItem.vue'))
 
 const state = reactive({
     headerConfig: {

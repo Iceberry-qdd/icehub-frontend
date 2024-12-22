@@ -19,11 +19,11 @@
 </template>
 
 <script setup>
-import { computed, reactive, onMounted, watch } from 'vue'
+import { computed, reactive, onMounted, watch, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getRepostListOfPost } from '@/indexApp/js/api.js'
 import Footer from '@/indexApp/components/Footer.vue'
-import SimpleUserListItem from '@/indexApp/components/postDetail/SimpleUserListItem.vue'
+const SimpleUserListItem = defineAsyncComponent(() => import('@/indexApp/components/postDetail/SimpleUserListItem.vue'))
 
 const props = defineProps({
     /** 传入的帖子对象 */

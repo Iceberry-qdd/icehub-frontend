@@ -44,28 +44,36 @@
                 </li>
             </ol>
         </div>
+        <Footer
+            v-if="state.loading"
+            :is-loading="state.loading"
+            has-more>
+        </Footer>
     </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { onMounted, reactive, defineAsyncComponent } from 'vue'
 import Avatar from '@/components/Avatar.vue'
 import { getHotSearch } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { humanizedNumber } from '@/indexApp/utils/formatUtils.js'
 import { useRouter } from 'vue-router'
-import IconVerify from '@/components/icons/IconVerify.vue'
+import Footer from '@/indexApp/components/Footer.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 
 const router = useRouter()
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const state = reactive({
     users: [],
     threading: [],
-    hotSearchCount: 10
+    hotSearchCount: 10,
+    loading: false
 })
 
 async function doGetHotSearch() {
     try {
+        state.loading = true
         const response = await getHotSearch(state.hotSearchCount)
         if (!response.ok) throw new Error((await response.json()).message)
 
@@ -73,6 +81,8 @@ async function doGetHotSearch() {
         state.threading = result
     } catch (e) {
         store.setErrorMsg(e.message)
+    } finally{
+        state.loading = false
     }
 }
 
@@ -80,5 +90,8 @@ function routeToSearch(key) {
     router.replace({ name: 'search', query: { key: btoa(encodeURIComponent(key)) } })
 }
 
+
+onMounted(() => {
 doGetHotSearch()
+})
 </script>

@@ -33,7 +33,8 @@ export default defineConfig(({ command, mode, isSsrBuild = false, isPreview = fa
         input: {
           main: resolve(__dirname, 'index.html'),
           auth: resolve(__dirname, 'auth.html'),
-          sw: resolve(__dirname, 'public/sw.js') // 作为混淆sw的入口文件
+          sw: resolve(__dirname, 'public/sw.js'), // 作为混淆sw的入口文件
+          hash: resolve(__dirname, 'public/hash.js') // 作为混淆worker的入口文件
         },
       }
     }

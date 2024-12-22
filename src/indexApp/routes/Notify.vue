@@ -60,12 +60,12 @@
 </style>
 
 <script setup>
-import Header from '@/indexApp/components/Header.vue'
-import { computed, reactive, watch } from 'vue'
-import { markAllNotifyReadByTypes } from '@/indexApp/js/api.js'
+import { computed, reactive, watch, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { useRoute } from 'vue-router'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+import Header from '@/indexApp/components/Header.vue'
+import { markAllNotifyReadByTypes } from '@/indexApp/js/api.js'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const route = useRoute()
 const unreadNotifyCount = computed(() => {

@@ -83,12 +83,11 @@
 </style>
 
 <script setup>
-import { defineAsyncComponent } from 'vue'
-import SearchBar from '@/indexApp/components/search/SearchBar.vue'
+import { reactive, computed, onMounted, provide, defineAsyncComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { reactive, computed, onMounted, provide } from 'vue'
-import { globalSearch } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
+import { globalSearch } from '@/indexApp/js/api.js'
+import SearchBar from '@/indexApp/components/search/SearchBar.vue'
 import Footer from '@/indexApp/components/Footer.vue'
 import Recommend from '@/indexApp/components/Recommend.vue'
 const UserCardSlide = defineAsyncComponent(() => import('@/indexApp/components/search/UserCardSlide.vue'))

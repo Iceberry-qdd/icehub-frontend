@@ -1,13 +1,14 @@
 <template>
-    <div class="cursor-default flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 px-4 py-2">
+    <div
+        class="cursor-default flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 px-4 py-2">
         <div>
-            <p>开启两步验证</p>
+            <p>减少动画效果</p>
             <p class="text-[0.85rem] text-neutral-400">
                 {{ info }}
             </p>
         </div>
         <ToggleButton
-            id="two-fa-checkbox"
+            id="profile-lock-checkbox"
             :enabled="props.enabled"
             :checked="props.checked"
             :loading="state.loading"
@@ -17,9 +18,8 @@
 </template>
 
 <script setup>
-import { computed, nextTick, reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import ToggleButton from '@/components/ToggleButton.vue'
-import { store } from '@/indexApp/js/store'
 
 const emits = defineEmits(['toggle'])
 const props = defineProps({
@@ -35,24 +35,22 @@ const props = defineProps({
         required: true
     }
 })
+
 const state = reactive({
     loading: false
 })
 
-const info = computed(() => {
-    return '启用后，当您进行登录、修改密码等敏感操作时，需要输入两步验证密码。'
-})
-
 function toggle(){
-    if(state.loading) return
+    if(state.loading || !props.enabled) return
 
     state.loading = true
     setTimeout(() => {
         emits('toggle')
-        nextTick(() => {
-            store.setInfoMsg(`切换成功：切换至${props.checked}`)
-            state.loading = false
-        })
-    }, 3000)
+        state.loading = false
+    }, 500)
 }
+
+const info = computed(() => {
+    return '减少动画效果，防止这些动画效果导致的庭神经紊乱、光敏性癫痫、偏头痛和暗点敏感性。'
+})
 </script>

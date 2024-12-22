@@ -50,12 +50,13 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-ref-object-reactivity-loss -->
 <script setup>
-import IconGif from '@/components/icons/IconGif.vue'
-import { reactive, computed, ref } from 'vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'
+const IconGif = defineAsyncComponent(() => import('@/components/icons/IconGif.vue'))
 
+const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const router = useRouter()
 const props = defineProps({
     /**
@@ -126,7 +127,7 @@ async function getImageUrlIgnoreNSFW(index) {
 
 function getImageUrl(image) {
     const { url, hidden } = image
-    return hidden ? url : `${import.meta.env.VITE_OBJECT_BASE_URL}${url}?width=200`
+    return hidden ? url : `${BASE_URL}${url}?width=200`
 }
 
 function playAnimateImage() {

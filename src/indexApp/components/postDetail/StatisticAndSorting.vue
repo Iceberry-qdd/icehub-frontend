@@ -59,9 +59,9 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-import SortingMenu from '@/indexApp/components/postDetail/SortingMenu.vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
+const SortingMenu = defineAsyncComponent(() => import('@/indexApp/components/postDetail/SortingMenu.vue'))
 
 const router = useRouter()
 const emits = defineEmits(['selectOrderDirection', 'selectOrderBy'])

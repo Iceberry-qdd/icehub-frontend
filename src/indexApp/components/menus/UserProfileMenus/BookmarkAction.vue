@@ -7,14 +7,11 @@
 </template>
 
 <script setup>
-import { inject, reactive } from 'vue'
+import { inject } from 'vue'
 import { useRouter } from 'vue-router'
 
 const { dismissProfileMenus } = inject('dismissProfileMenus')
 const router = useRouter()
-const state = reactive({
-    curUser: JSON.parse(localStorage.getItem("CUR_USER"))
-})
 
 function handleClick(){
     router.push({name: 'bookmark'})

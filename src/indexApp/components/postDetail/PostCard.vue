@@ -116,7 +116,7 @@
                     tag="markdown"
                     :extensions="['exts']"
                     :markdown="state.post.content"
-                    class="break-all overflow-y-hidden relative text-[11pt] text-justify"
+                    class="break-all overflow-y-hidden relative text-[0.9rem] text-justify"
                     :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}">
                 </VueShowdown>
             </div>
@@ -126,13 +126,19 @@
                 class="mt-[0.5rem] relative z-[96]">
             </RepostCard>
             <ImageGrid
-                v-if="hasPics"
+                v-if="hasPic"
                 :id="`img-${state.post.id}`"
                 :images="state.post.images"
                 type="post"
-                class="bottom-[0.5rem] mt-[0.5rem]"
+                class="my-2"
                 @real-image="handleRealImage">
             </ImageGrid>
+            <VideoGrid
+                v-if="hasVideo"
+                class="mt-2 overflow-hidden rounded-[8px]"
+                :videos="state.post.videos"
+                :show-controls="isShowVideoControls">
+            </VideoGrid>
         </div>
 
         <div
@@ -153,7 +159,7 @@
             <button
                 type="button"
                 :title="`${state.post.repostCount} 转发`"
-                class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-start py-[0.5rem] rounded-none text-[12pt] z-[97]"
+                class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-start mb-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="repostIt">
                 <span
                     class="-ml-2 icon-share p-[0.4rem] rounded-full"
@@ -168,7 +174,7 @@
                 type="button"
                 :title="`${state.post.reviewCount} 评论`"
                 :class="{'cursor-not-allowed text-[#C1C1C1] dark:text-white/25': !state.post.allowReview}"
-                class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-center py-[0.5rem] rounded-none text-[12pt] z-[97]"
+                class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-center mb-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="handleClickReviewBtn">
                 <span
                     class="icon-message p-[0.4rem] rounded-full"
@@ -183,7 +189,7 @@
             <button
                 type="button"
                 :title="`${state.post.likeCount} 点赞`"
-                class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-end py-[0.5rem] rounded-none text-[12pt] z-[97]"
+                class="active:border-0 active:outline-none basis-1/3 border-0 content-center flex flex-nowrap flex-row gap-x-[0.2rem] items-center justify-end mb-[0.5rem] rounded-none text-[12pt] z-[97]"
                 @click="toggleLike">
                 <span
                     class="icon-like p-[0.4rem] rounded-full"
@@ -234,7 +240,7 @@
 }
 </style>
 
-<!-- eslint-disable vue/no-ref-object-reactivity-loss -->
+<!-- eslint-disable vue/no-ref-object-reactivity-loss, vue/max-lines-per-block -->
 <script setup>
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import { computed, onMounted, reactive, ref, provide, defineAsyncComponent } from 'vue'
@@ -255,9 +261,9 @@ const PostMenus = defineAsyncComponent(() => import('@/indexApp/components/postD
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const RepostCard = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostCard.vue'))
 const RepostPanel = defineAsyncComponent(() => import('@/indexApp/components/postDetail/RepostPanel.vue'))
+const VideoGrid = defineAsyncComponent(() => import('@/indexApp/components/VideoGrid.vue'))
 
-const router = useRouter()
-const route = useRoute()
+const emits = defineEmits(['showReviewPanel'])
 const props = defineProps({
     /** 传入的帖子对象 */
     post: {
@@ -267,7 +273,10 @@ const props = defineProps({
 })
 const cardMask = ref()
 const cardBody = ref()
-const emits = defineEmits(['showReviewPanel'])
+
+const router = useRouter()
+const route = useRoute()
+
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const state = reactive({
     post: props.post,
@@ -276,11 +285,16 @@ const state = reactive({
     isShowMenu: false,
     user: JSON.parse(localStorage.getItem("CUR_USER")),
     shrinkContent: true,
-    showRepostPanel: false
+    showRepostPanel: false,
+    videoInfo: props.post.videos
 })
 
 const isIndentBody = computed(() => {
     return route.meta.key !== 'postDetail'
+})
+
+const isShowVideoControls = computed(() => {
+    return route.meta.key === 'postDetail'
 })
 
 const cardContainerClass = computed(() => ({
@@ -289,7 +303,7 @@ const cardContainerClass = computed(() => ({
 }))
 
 const cardBodyClass = computed(() => ({
-    'py-[0.5rem]': isIndentBody.value,
+    'py-[0.5rem]': true,
     'pr-[0.8rem]': isIndentBody.value,
     'p-0': !isIndentBody.value,
     'ml-[3.5rem]': isIndentBody.value && !store.MOBILE_MODE,
@@ -359,8 +373,12 @@ const toggleLike = debounce(async function () {
 
 function repostIt() { state.showRepostPanel = true }
 
-const hasPics = computed(() => {
+const hasPic = computed(() => {
     return !!state.post.images?.length
+})
+
+const hasVideo = computed(() => {
+    return !!state.post?.videos?.length
 })
 
 const hasTags = computed(() => {

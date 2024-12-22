@@ -5,9 +5,9 @@
                 v-if="state.showImageEditPanel == true"
                 id="imageEditPanel"
                 class="fixed top-0"
-                :image="loadImage(state.imgList[state.imageEditIndex])"
-                :image-info="state.imagesInfo[state.imageEditIndex]"
-                :show-alt-editor="!!state.imagesInfo[state.imageEditIndex].altText"
+                :image="loadImage(props.imgList[state.imageEditIndex])"
+                :image-info="props.imagesInfo[state.imageEditIndex]"
+                :show-alt-editor="!!props.imagesInfo[state.imageEditIndex].altText"
                 @close-image-editor="closeImageEditor"
                 @submit="submit">
             </ImageEditor>
@@ -15,11 +15,11 @@
         <div id="image-panel">
             <div class="gap-2 grid grid-cols-3 grid-rows-1">
                 <div
-                    v-for="(item, key) in state.imgList"
+                    v-for="(item, key) in props.imgList"
                     :key="key"
                     class="relative">
                     <div
-                        v-if="state.imagesInfo[key].hidden"
+                        v-if="props.imagesInfo[key].hidden"
                         class="absolute backdrop-blur-xl bg-white/5 h-full rounded-[8px] w-full" />
                     <img
                         class="cursor-default h-[5rem] image-picker object-cover rounded-[8px] w-[5rem]"
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <div
-                    v-if="state.imgList.length < 9"
+                    v-if="props.imgList.length < 9"
                     class="active:bg-zinc-300 cursor-pointer dark:active:bg-neutral-700 dark:hover:bg-[#1e1e1e] flex h-[5rem] hover:bg-zinc-200 items-center justify-center max-w-[5rem] min-w-[5rem] rounded-[8px]"
                     @click="choosePics">
                     <IconAdd class="dark:text-white/25 text-gray-500"></IconAdd>
@@ -53,11 +53,13 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { reactive } from 'vue'
+import { reactive, defineAsyncComponent } from 'vue'
 import IconAdd from '@/components/icons/IconAdd.vue'
 import IconError from '@/components/icons/IconError.vue'
 import IconMagic from '@/components/icons/IconMagic.vue'
-import ImageEditor from '@/indexApp/components/index/ImageEditor.vue'
+const ImageEditor = defineAsyncComponent(() => import('@/indexApp/components/index/ImageEditor.vue'))
+
+const emits = defineEmits(['delete', 'update'])
 const props = defineProps({
     /** 用于定位菜单使用的imgFile */
     editorMenuId: {
@@ -92,9 +94,8 @@ function loadImage(file) {
 }
 
 function deleteImg(item, key) {
-    state.imgList.splice(state.imgList.indexOf(item), 1)
-    state.imagesInfo[key].hidden = false
-    state.imagesInfo[key].altText = ''
+    emits('delete', key)
+    state.imageEditIndex = 0
 }
 
 function editImage(imageIndex) {
@@ -107,8 +108,12 @@ function choosePics() {
 }
 
 function submit({ image, imageInfo }) {
-    state.imgList[state.imageEditIndex] = image.file
-    state.imagesInfo[state.imageEditIndex] = imageInfo
+    emits('update', {
+        image: image,
+        imageInfo: imageInfo,
+        index: state.imageEditIndex
+    })
+    state.imageEditIndex = 0
     closeImageEditor()
 }
 

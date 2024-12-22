@@ -239,12 +239,12 @@ import { store } from '@/indexApp/js/store.js'
 import { useRouter, useRoute } from 'vue-router'
 import { VueShowdown } from 'vue-showdown'
 import Avatar from '@/components/Avatar.vue'
-import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import { humanizedNumber, standardDateTime, humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import IconVerify from '@/components/icons/IconVerify.vue'
 import IconLike from '@/components/icons/IconLike.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
 import { debounce } from '@/indexApp/utils/jsHelper'
+const ImageGrid = defineAsyncComponent(() => import('@/indexApp/components/ImageGrid.vue'))
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))
 const Reply = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/Reply.vue'))

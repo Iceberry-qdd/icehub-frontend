@@ -138,15 +138,15 @@
 </style>
 
 <script setup>
-import { reactive, computed, inject } from 'vue'
+import { reactive, computed, inject, defineAsyncComponent } from 'vue'
 import { followUser, unFollowUser, deleteOneBlacklist, confirmFanRequest } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import IconVerify from '@/components/icons/IconVerify.vue'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 import Avatar from '@/components/Avatar.vue'
 import { standardDate } from '@/indexApp/utils/formatUtils.js'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const { refreshProfileOnUi } = inject('refreshProfileOnUi')
 const router = useRouter()

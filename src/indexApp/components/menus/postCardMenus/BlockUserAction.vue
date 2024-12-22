@@ -16,10 +16,10 @@
 </template>
 
 <script setup>
-import { reactive, inject } from 'vue'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+import { reactive, inject, defineAsyncComponent } from 'vue'
 import { createOneBlacklist } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const props = defineProps({
     /** 传入的帖子对象 */

@@ -17,10 +17,10 @@
 </template>
 
 <script setup>
-import { reactive, computed, inject } from 'vue'
+import { reactive, computed, inject, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
 import { toggleCloseReviewApi } from '@/indexApp/js/api.js'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const { dismissPostMenus } = inject('dismissPostMenus')
 const props = defineProps({

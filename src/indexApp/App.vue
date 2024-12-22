@@ -34,7 +34,7 @@
         <div
             id="container"
             ref="container"
-            class="dark:divide-[#1e1e1e] divide-[#EEEEEE] divide-x-[1px] flex-nowrap flex-row justify-center min-h-screen sm:flex"
+            class="dark:divide-[#1e1e1e] divide-[#EEEEEE] flex-nowrap flex-row justify-center min-h-screen sm:divide-x-[1px] sm:flex"
             :class="{ 'mt-10': showGlobalNotifyBannerMsg }"
             @touchmove="handleScroll"
             @touchstart="touchStart"
@@ -136,17 +136,17 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
 import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick, provide } from 'vue'
-import Sidebar from '@/indexApp/components/Sidebar.vue'
-import Recommend from '@/indexApp/components/Recommend.vue'
-import Brand from '@/indexApp/components/Brand.vue'
+import { NavigationFailureType, isNavigationFailure } from 'vue-router'
 import { getCurUserInfo } from '@/authApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { ws } from '@/indexApp/js/websocket.js'
 import { useRoute, useRouter } from 'vue-router'
-import { NavigationFailureType, isNavigationFailure } from 'vue-router'
+import { isType } from '@/indexApp/utils/formatUtils.js'
+import Sidebar from '@/indexApp/components/Sidebar.vue'
+import Recommend from '@/indexApp/components/Recommend.vue'
+import Brand from '@/indexApp/components/Brand.vue'
 import GlobalProgressIndicator from '@/components/GlobalProgressIndicator.vue'
 import BackToTop from '@/indexApp/components/BackToTop.vue'
-import { isType } from '@/indexApp/utils/formatUtils.js'
 const GlobalNotifyBanner = defineAsyncComponent(() => import('@/components/GlobalNotifyBanner.vue'))
 const GlobalBanner = defineAsyncComponent(() => import('@/components/GlobalBanner.vue'))
 const GlobalNetworkOffPage = defineAsyncComponent(() => import('@/components//GlobalNetworkOffPage.vue')) /*Don't delete this due to package included*/
@@ -165,9 +165,14 @@ const state = reactive({
     timeoutId: 0,
     showBackToTop: false,
     touchStartClientY: 0,
+    /** @type {MediaQueryList} */
     mobileMediaQueryList: undefined,
+    /** @type {MediaQueryList} */
     padMediaQueryList: undefined,
+    /** @type {MediaQueryList} */
     themeMediaQueryList: undefined,
+    /** @type {MediaQueryList} */
+    reduceAnimMediaQueryList: undefined,
     showContextMenu: false,
     click: {x: 20, y: 20}
 })
@@ -291,6 +296,10 @@ function handleThemeMediaChange(mq) {
     }
 }
 
+function handleReduceAnimMediaChange(mq){
+    store.setSysReduceAnimation(mq.matches)
+}
+
 function handleContextMenu(e){
     e.preventDefault()
     state.showContextMenu = true
@@ -360,6 +369,11 @@ onMounted(() => {
 
     // Avatar style settings
     store.setAvatarStyle(localStorage.getItem('avatar') || 'rounded')
+
+    // Media query reduce animation settings
+    state.reduceAnimMediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)')
+    handleReduceAnimMediaChange(state.reduceAnimMediaQueryList)
+    state.reduceAnimMediaQueryList.addEventListener('change', handleReduceAnimMediaChange)
 })
 
 onUnmounted(() => {
@@ -368,6 +382,7 @@ onUnmounted(() => {
     state.mobileMediaQueryList.removeEventListener('change', handleMobileMediaChange)
     state.padMediaQueryList.removeEventListener('change', handlePadMediaChange)
     state.themeMediaQueryList.removeEventListener('change', handleThemeMediaChange)
+    state.reduceAnimMediaQueryList.removeEventListener('change', handleReduceAnimMediaChange)
     document.body.removeEventListener('contextmenu', handleContextMenu)
 })
 

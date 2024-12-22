@@ -4,7 +4,7 @@
             v-for="(pic, idx) in props.images"
             :key="idx"
             :style="wrapperWidth"
-            class="overflow-hidden relative rounded-[4px] z-[97]">
+            class="overflow-hidden relative rounded-[8px] z-[97]">
             <IconAltOn
                 v-if="pic.altText && state.showAltText[idx] == false"
                 class="absolute bg-black/75 bottom-[0.3rem] box-content cursor-pointer h-[1.2rem] p-[0.25rem] right-[0.3rem] rounded-full text-white w-[1.2rem] z-[100]"
@@ -80,12 +80,13 @@
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss, vue/no-ref-object-reactivity-loss -->
 <script setup>
-import IconGif from '@/components/icons/IconGif.vue'
-import IconAltOn from '@/components/icons/IconAltOn.vue'
-import { reactive, computed, ref } from 'vue'
+import { reactive, computed, ref, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
+const IconGif = defineAsyncComponent(() => import('@/components/icons/IconGif.vue'))
+const IconAltOn = defineAsyncComponent(() => import('@/components/icons/IconAltOn.vue'))
 
+const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const altTextBg = ref()
 const props = defineProps({
     /** 要展示的图片列表 */
@@ -173,7 +174,7 @@ function showSlide(idx) {
 function getImageUrl(image) {
     const { url, hidden } = image
     const size = state.gridImageWidth[gridColCount.value]
-    return hidden ? url : `${import.meta.env.VITE_OBJECT_BASE_URL}${url}?width=${size}`
+    return hidden ? url : `${BASE_URL}${url}?width=${size}`
 }
 
 /**

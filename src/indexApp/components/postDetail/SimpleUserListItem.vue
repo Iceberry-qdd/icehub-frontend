@@ -23,8 +23,9 @@
 </template>
 
 <script setup>
+import { defineAsyncComponent } from 'vue'
 import Avatar from '@/components/Avatar.vue'
-import IconVerify from '@/components/icons/IconVerify.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 
 const props = defineProps({
     /** 用户对象 */

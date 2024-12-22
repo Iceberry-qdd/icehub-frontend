@@ -245,10 +245,10 @@
 
 <!-- eslint-disable vue/max-lines-per-block vue/no-setup-props-reactivity-loss -->
 <script setup>
-import { reactive, computed, onMounted, ref } from 'vue'
-import Header from '@/indexApp/components/Header.vue'
+import { reactive, computed, onMounted, ref, defineAsyncComponent } from 'vue'
 import { isType } from '@/indexApp/utils/formatUtils.js'
 import { store } from '@/indexApp/js/store.js'
+const Header = defineAsyncComponent(() => import('@/indexApp/components/Header.vue'))
 
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)
 const props = defineProps({
@@ -300,7 +300,10 @@ const state = reactive({
     /** 若是在zoom模式下，声明操作的哪个部分，点(nwp, nep, swp, sep)或线(nl, wl, sl, el) */
     zoomType: undefined,
     canvas: {
-        /** canvas上下文对象 */
+        /**
+         * canvas上下文对象
+         * @type {CanvasRenderingContext2D}
+         **/
         context: undefined,
         /** 传递给canvas的image对象 */
         shadowImg: undefined,

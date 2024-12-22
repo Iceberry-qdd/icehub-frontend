@@ -137,6 +137,11 @@ export const store = reactive({
         this.SYS_THEME_MODE = mode
     },
 
+    SYS_REDUCE_ANIMATION: false,
+    setSysReduceAnimation(isReduce) {
+        this.SYS_REDUCE_ANIMATION = isReduce
+    },
+
     NOTIFY_STATISTIC: [],
     setNotifyStatistic(statistic) {
         this.NOTIFY_STATISTIC = statistic
@@ -157,5 +162,19 @@ export const store = reactive({
     AVATAR_STYLE: 'rounded',
     setAvatarStyle(style) {
         this.AVATAR_STYLE = style
+    },
+    VIDEO_PLAY_STATUS_MAP: new Map(),
+    setVideoPlayStatus(videoId, currentTime, playing, mute) {
+        this.VIDEO_PLAY_STATUS_MAP.set(videoId, {currentTime: currentTime, playing: playing, mute: mute})
+    },
+    getVideoPlayStatus(videoId) {
+        return this.VIDEO_PLAY_STATUS_MAP.get(videoId) || {currentTime: 0, playing: false, mute: true}
+    },
+    VIDEO_ERROR_MSG_MAP: new Map([
+        ['ENCODING', '视频转码中...'],
+        [undefined, '视频暂不可用']
+    ]),
+    getVideoErrorMsg(status){
+        return this.VIDEO_ERROR_MSG_MAP.get(status)
     }
 })

@@ -44,7 +44,7 @@ import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { store } from '@/indexApp/js/store.js'
 import { followUser, unFollowUser } from '@/indexApp/js/api.js'
-import IconVerify from '@/components/icons/IconVerify.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 
 const props = defineProps({
     /** 传入的用户对象 */

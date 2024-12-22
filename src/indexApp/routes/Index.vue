@@ -112,14 +112,14 @@
 
 <script setup>
 import { computed, onMounted, reactive, provide, defineAsyncComponent, onActivated } from 'vue'
-import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
-import Header from '@/indexApp/components/Header.vue'
-import { getUserTimeline } from '@/indexApp/js/api.js'
-import { store } from '@/indexApp/js/store.js'
-import PostEditor from '@/indexApp/components/index/PostEditor.vue'
-import GlobalRefresh from '@/components/GlobalRefresh.vue'
-import Footer from '@/indexApp/components/Footer.vue'
 import { useRoute } from 'vue-router'
+import { store } from '@/indexApp/js/store.js'
+import { getUserTimeline } from '@/indexApp/js/api.js'
+import Header from '@/indexApp/components/Header.vue'
+import GlobalRefresh from '@/components/GlobalRefresh.vue'
+import PostsTimeline from '@/indexApp/components/PostsTimeline.vue'
+import PostEditor from '@/indexApp/components/index/PostEditor.vue'
+import Footer from '@/indexApp/components/Footer.vue'
 const ThemeMenu = defineAsyncComponent(() => import('@/indexApp/components/index/ThemeMenu.vue'))
 
 const route = useRoute()

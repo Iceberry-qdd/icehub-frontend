@@ -67,13 +67,13 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, defineAsyncComponent } from 'vue'
 import { followUser, unFollowUser } from '@/indexApp/js/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import { useRouter } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import { store } from '@/indexApp/js/store.js'
-import IconVerify from '@/components/icons/IconVerify.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 
 const props = defineProps({
     /** 用户对象 */

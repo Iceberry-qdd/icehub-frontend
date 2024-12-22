@@ -117,18 +117,18 @@
 </style>
 
 <script setup>
-import { reactive, computed, inject, ref } from 'vue'
+import { reactive, computed, inject, ref, defineAsyncComponent } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import RepostCard from '@/indexApp/components/postDetail/RepostCard.vue'
 import { posting } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import EditorMenu from '@/indexApp/components/menus/EditorMenu.vue'
 import { ws, MsgPack } from '@/indexApp/js/websocket.js'
 import { useRoute } from 'vue-router'
 import Avatar from '@/components/Avatar.vue'
 import { VueShowdown } from 'vue-showdown'
-import IconVerify from '@/components/icons/IconVerify.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
+const EditorMenu = defineAsyncComponent(() => import('@/indexApp/components/menus/EditorMenu.vue'))
 
 const route = useRoute()
 const reviewInput = ref()

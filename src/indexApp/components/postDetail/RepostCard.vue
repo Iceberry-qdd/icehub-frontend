@@ -36,7 +36,7 @@
                 </VueShowdown>
             </div>
             <ImageGrid
-                v-if="hasPics"
+                v-if="hasImages"
                 :id="`img-${state.post.id}`"
                 :images="[state.post.images ? state.post.images[0] : undefined]"
                 :aspect-ratio="16/9"
@@ -44,6 +44,18 @@
                 class="bottom-[0.5rem] mt-[0.5rem]"
                 @real-image="undefined">
             </ImageGrid>
+            <div
+                v-for="(video, index) in state.post?.videos || []"
+                :key="index">
+                <VideoPreviewItem
+                    class="overflow-hidden rounded-b-[8px]"
+                    :type-id="state.post.id"
+                    :video="video"
+                    type="post"
+                    :aspect-ratio="16/9"
+                    big-play-button>
+                </VideoPreviewItem>
+            </div>
         </div>
         <div v-else>
             <div
@@ -61,14 +73,15 @@ markdown.shrink-content::before {
 </style>
 
 <script setup>
-import { computed, reactive, onMounted, ref } from 'vue'
+import { computed, reactive, onMounted, ref, defineAsyncComponent } from 'vue'
 import { humanizedTime } from '@/indexApp/utils/formatUtils.js'
 import { useRouter } from 'vue-router'
 import { VueShowdown } from 'vue-showdown'
 import { getPostById } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
-import IconVerify from '@/components/icons/IconVerify.vue'
-import ImageGrid from '@/indexApp/components/ImageGrid.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
+const ImageGrid = defineAsyncComponent(() => import('@/indexApp/components/ImageGrid.vue'))
+const VideoPreviewItem = defineAsyncComponent(() => import('@/indexApp/components/profile/VideoPreviewItem.vue'))
 
 const repostCard = ref()
 const router = useRouter()
@@ -100,7 +113,7 @@ function routeToUserProfile() {
     router.push({ name: 'postDetail', params: { id: state.post.id } })
 }
 
-const hasPics = computed(() => {
+const hasImages = computed(() => {
     return !!state.post.images?.length
 })
 

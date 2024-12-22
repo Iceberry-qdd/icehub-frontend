@@ -66,7 +66,8 @@ export function codeObfuscatorPlugin(isBuild) {
         exclude: [
             "node_modules/**",
             "src/assets/emoji-datasource-apple@15.1.2+esm.js",
-            "src/indexApp/App.vue" // 解决项目编译后主路由无法切换的问题：TypeError: d.ctx.deactivate is not a function.
+            "src/indexApp/App.vue", // 解决项目编译后主路由无法切换的问题：TypeError: d.ctx.deactivate is not a function.
+            "src/indexApp/components/SnowScreen.vue" // TODO 临时解决项目编译后雪花屏动画耗时太长，导致页面卡死的问题
         ],
         enforce: 'post',
         apply: 'build',

@@ -15,10 +15,10 @@
 </template>
 
 <script setup>
-import { inject, reactive } from 'vue'
+import { inject, reactive, defineAsyncComponent } from 'vue'
 import { removeFan } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
-import ConfirmDialogBox from '@/components/ConfirmDialogBox.vue'
+const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 const { dismissProfileMenus } = inject('dismissProfileMenus')
 const { removeFanOnUi } = inject('removeFanOnUi')

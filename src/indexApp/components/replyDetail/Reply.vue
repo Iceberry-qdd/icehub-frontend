@@ -209,14 +209,14 @@ import { humanizedTime, humanizedNumber, standardDateTime } from '@/indexApp/uti
 import { dislikeAReview, likeAReview } from '@/indexApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { useRouter } from 'vue-router'
-import ImageGrid from '@/indexApp/components/ImageGrid.vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/Avatar.vue'
-import IconVerify from '@/components/icons/IconVerify.vue'
 import { VueShowdown } from 'vue-showdown'
 import IconLike from '@/components/icons/IconLike.vue'
 import IconMessage from '@/components/icons/IconMessage.vue'
 import { debounce } from '@/indexApp/utils/jsHelper'
+const ImageGrid = defineAsyncComponent(() => import('@/indexApp/components/ImageGrid.vue'))
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 const ReviewMenu = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewMenu.vue'))
 const UserInfoPop = defineAsyncComponent(() => import('@/indexApp/components/postDetail/UserInfoPop.vue'))
 const ReviewPanel = defineAsyncComponent(() => import('@/indexApp/components/replyDetail/ReviewPanel.vue'))

@@ -1,4 +1,7 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL
+import pLimit from "p-limit"
+
+const BASE_API_URL = import.meta.env.VITE_API_BASE_URL
+const BASE_VIDEO_URL = import.meta.env.VITE_VIDEO_BASE_URL
 const { fetch: _fetch } = window
 
 window.fetch = async (...args) => {
@@ -19,7 +22,7 @@ window.fetch = async (...args) => {
  * @returns Promise<any>
  */
 export function getTimeline(pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/timeline/public?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/timeline/public?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -32,7 +35,7 @@ export function getTimeline(pageIndex, pageSize, lastTimestamp) {
  * @returns Promise<any>
  */
 export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/timeline?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -40,7 +43,6 @@ export function getUserTimeline(pageIndex, pageSize, lastTimestamp) {
 /**
  * 上传图片
  * @param {object[] | object} files 待上传图片数组
- * @param {array} filesInfo 图片数组描述信息
  * @param {((this: XMLHttpRequest, ev: ProgressEvent<EventTarget>) => any) | null} onprogress 进度回调函数
  * @returns Promise<any>
  */
@@ -53,7 +55,7 @@ export function uploadImages(files, onprogress) {
     return new Promise((resolve, reject) => {
         xhr.withCredentials = true
         xhr.upload.onprogress = onprogress
-        xhr.open('POST', `${BASE_URL}/object/image/upload`, true)
+        xhr.open('POST', `${BASE_API_URL}/object/image/upload`, true)
         xhr.onload = function (e) {
             resolve(
                 new Response(xhr.response, {
@@ -89,7 +91,7 @@ function headerToJson(headers) {
             const { key, value } = pattern.exec(it).groups
             return [key, value]
         }
-    )
+        )
 }
 
 /**
@@ -98,7 +100,7 @@ function headerToJson(headers) {
  * @returns Promise<any>
  */
 export function posting(data) {
-    return fetch(`${BASE_URL}/post`, {
+    return fetch(`${BASE_API_URL}/post`, {
         method: 'POST',
         headers: {
             'Content-Type': "application/json"
@@ -113,7 +115,7 @@ export function posting(data) {
  * @returns Promise<any>
  */
 export function postingPlan(data) {
-    return fetch(`${BASE_URL}/post/plan`, {
+    return fetch(`${BASE_API_URL}/post/plan`, {
         method: 'POST',
         headers: {
             'Content-Type': "application/json"
@@ -128,7 +130,7 @@ export function postingPlan(data) {
  * @returns 点赞结果
  */
 export function likeAPost(postId) {
-    return fetch(`${BASE_URL}/post/like/${postId}`, {
+    return fetch(`${BASE_API_URL}/post/like/${postId}`, {
         method: 'POST',
     })
 }
@@ -139,7 +141,7 @@ export function likeAPost(postId) {
  * @returns 取消点赞结果
  */
 export function dislikeAPost(postId) {
-    return fetch(`${BASE_URL}/post/like/${postId}`, {
+    return fetch(`${BASE_API_URL}/post/like/${postId}`, {
         method: 'DELETE'
     })
 }
@@ -150,7 +152,7 @@ export function dislikeAPost(postId) {
  * @returns 用户信息
  */
 export function getUserInfoById(id) {
-    return fetch(`${BASE_URL}/user?i=${id}`, {
+    return fetch(`${BASE_API_URL}/user?i=${id}`, {
         method: 'GET'
     })
 }
@@ -161,7 +163,7 @@ export function getUserInfoById(id) {
  * @returns 用户信息
  */
 export function getUserInfoByNickname(nickname) {
-    return fetch(`${BASE_URL}/user?i=${nickname}`, {
+    return fetch(`${BASE_API_URL}/user?i=${nickname}`, {
         method: 'GET'
     })
 }
@@ -172,7 +174,7 @@ export function getUserInfoByNickname(nickname) {
  * @returns 帖子信息
  */
 export function getPostById(id) {
-    return fetch(`${BASE_URL}/post/${id}`, {
+    return fetch(`${BASE_API_URL}/post/${id}`, {
         method: 'GET'
     })
 }
@@ -188,7 +190,7 @@ export function getPostById(id) {
  * @returns 该帖子的评论信息
  */
 export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp, sortBy, direction) {
-    return fetch(`${BASE_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&sortBy=${sortBy}&direction=${direction}`, {
+    return fetch(`${BASE_API_URL}/review?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&sortBy=${sortBy}&direction=${direction}`, {
         method: 'GET'
     })
 }
@@ -204,7 +206,7 @@ export function getPostReviews(postId, pageIndex, pageSize, lastTimestamp, sortB
  * @returns 该用户的评论信息
  */
 export function getUserReviews(userId, pageIndex, pageSize, lastTimestamp, sortBy, direction) {
-    return fetch(`${BASE_URL}/review?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&sortBy=${sortBy}&direction=${direction}`, {
+    return fetch(`${BASE_API_URL}/review?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&sortBy=${sortBy}&direction=${direction}`, {
         method: 'GET'
     })
 }
@@ -215,7 +217,7 @@ export function getUserReviews(userId, pageIndex, pageSize, lastTimestamp, sortB
  * @returns 发布结果
  */
 export function reviewing(data) {
-    return fetch(`${BASE_URL}/review`, {
+    return fetch(`${BASE_API_URL}/review`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -230,7 +232,7 @@ export function reviewing(data) {
  * @returns 查询到的评论详情
  */
 export function getReviewById(id) {
-    return fetch(`${BASE_URL}/review/${id}`, {
+    return fetch(`${BASE_API_URL}/review/${id}`, {
         method: 'GET'
     })
 }
@@ -244,7 +246,7 @@ export function getReviewById(id) {
  * @returns 该帖子的子评论
  */
 export function getSubReviewById(id, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/review?rid=${id}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -255,7 +257,7 @@ export function getSubReviewById(id, pageIndex, pageSize, lastTimestamp) {
  * @returns 点赞结果
  */
 export function likeAReview(reviewId) {
-    return fetch(`${BASE_URL}/review/like/${reviewId}`, {
+    return fetch(`${BASE_API_URL}/review/like/${reviewId}`, {
         method: 'PUT'
     })
 }
@@ -266,7 +268,7 @@ export function likeAReview(reviewId) {
  * @returns 取消点赞结果
  */
 export function dislikeAReview(reviewId) {
-    return fetch(`${BASE_URL}/review/like/${reviewId}`, {
+    return fetch(`${BASE_API_URL}/review/like/${reviewId}`, {
         method: 'DELETE'
     })
 }
@@ -280,7 +282,7 @@ export function dislikeAReview(reviewId) {
  * @returns 用户的帖子信息
  */
 export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/post?uid=${uid}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/post?uid=${uid}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -291,7 +293,7 @@ export function getUserPosts(uid, pageIndex, pageSize, lastTimestamp) {
  * @returns 修改后的user信息
  */
 export function updateUserProfile(user) {
-    return fetch(`${BASE_URL}/user`, {
+    return fetch(`${BASE_API_URL}/user`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -306,7 +308,7 @@ export function updateUserProfile(user) {
  * @returns 用户是否存在
  */
 export function isUserExists(nickname) {
-    return fetch(`${BASE_URL}/user?n=${nickname}`, {
+    return fetch(`${BASE_API_URL}/user?n=${nickname}`, {
         method: 'HEAD'
     })
 }
@@ -317,7 +319,7 @@ export function isUserExists(nickname) {
  * @returns 关注结果，成功或失败
  */
 export function followUser(userId) {
-    return fetch(`${BASE_URL}/user/following/${userId}`, {
+    return fetch(`${BASE_API_URL}/user/following/${userId}`, {
         method: 'PUT'
     })
 }
@@ -328,7 +330,7 @@ export function followUser(userId) {
  * @returns 取消关注结果，成功或失败
  */
 export function unFollowUser(userId) {
-    return fetch(`${BASE_URL}/user/following/${userId}`, {
+    return fetch(`${BASE_API_URL}/user/following/${userId}`, {
         method: 'DELETE'
     })
 }
@@ -342,7 +344,7 @@ export function unFollowUser(userId) {
  * @returns 关注者列表
  */
 export function getFollowList(userId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/user/following/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/user/following/list?fid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -356,7 +358,7 @@ export function getFollowList(userId, pageIndex, pageSize, lastTimestamp) {
  * @returns 关注用户列表
  */
 export function getFanList(userId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/user/follower/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/user/follower/list?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -367,7 +369,7 @@ export function getFanList(userId, pageIndex, pageSize, lastTimestamp) {
  * @returns mark结果
  */
 export function markAPost(postId) {
-    return fetch(`${BASE_URL}/post/mark/${postId}`, {
+    return fetch(`${BASE_API_URL}/post/mark/${postId}`, {
         method: 'POST'
     })
 }
@@ -378,7 +380,7 @@ export function markAPost(postId) {
  * @returns unMark结果
  */
 export function unMarkAPost(postId) {
-    return fetch(`${BASE_URL}/post/mark/${postId}`, {
+    return fetch(`${BASE_API_URL}/post/mark/${postId}`, {
         method: 'DELETE'
     })
 }
@@ -391,7 +393,7 @@ export function unMarkAPost(postId) {
  * @returns 返回用户mark帖子列表
  */
 export function getMarkPostList(pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/post/mark/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -402,7 +404,7 @@ export function getMarkPostList(pageIndex, pageSize, lastTimestamp) {
  * @return 返回新的帖子对象
  */
 export function updatePost(post) {
-    return fetch(`${BASE_URL}/post/`, {
+    return fetch(`${BASE_API_URL}/post/`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -419,7 +421,7 @@ export function updatePost(post) {
  * @returns 该图片的原始链接
  */
 export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
-    return fetch(`${BASE_URL}/${type}/image?id=${id}&attrId=${imageId}&ih=true`, {
+    return fetch(`${BASE_API_URL}/${type}/image?id=${id}&attrId=${imageId}&ih=true`, {
         method: 'GET'
     })
 }
@@ -434,7 +436,7 @@ export function getImageUrlIgnoreHidden(id, imageId, type = 'post') {
  */
 export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp, types = []) {
     const type = !types || types.length === 0 ? '' : `&${types.map(it => `type=${it}`).join('&')}`
-    return fetch(`${BASE_URL}/notify?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}${type}`, {
+    return fetch(`${BASE_API_URL}/notify?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}${type}`, {
         method: 'GET'
     })
 }
@@ -445,7 +447,7 @@ export function getUsersNotifyList(pageIndex, pageSize, lastTimestamp, types = [
  * @returns 设置为已读的结果
  */
 export function markNotifiesRead(notifyIds) {
-    return fetch(`${BASE_URL}/notify/read/multiple`, {
+    return fetch(`${BASE_API_URL}/notify/read/multiple`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -460,7 +462,7 @@ export function markNotifiesRead(notifyIds) {
  * @returns 设置为已读的结果
  */
 export function markNotifyRead(notifyId) {
-    return fetch(`${BASE_URL}/notify/read/${notifyId}`, {
+    return fetch(`${BASE_API_URL}/notify/read/${notifyId}`, {
         method: 'POST'
     })
 }
@@ -470,7 +472,7 @@ export function markNotifyRead(notifyId) {
  * @returns 用户帖子统计值
  */
 export function queryCurUserNotifyStatistic() {
-    return fetch(`${BASE_URL}/notify/stat`, {
+    return fetch(`${BASE_API_URL}/notify/stat`, {
         method: 'GET'
     })
 }
@@ -480,7 +482,7 @@ export function queryCurUserNotifyStatistic() {
  * @param {PostVO} postVO 待删除帖子
  */
 export function deleteOnePost(postVO) {
-    return fetch(`${BASE_URL}/post/${postVO.id}`, {
+    return fetch(`${BASE_API_URL}/post/${postVO.id}`, {
         method: 'DELETE'
     })
 }
@@ -497,7 +499,7 @@ export function createOneBlacklist(type, contentId, curUserId) {
         contentId: contentId,
         userId: curUserId
     }
-    return fetch(`${BASE_URL}/blacklist`, {
+    return fetch(`${BASE_API_URL}/blacklist`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -519,7 +521,7 @@ export function modifyPostVisibility(post, oldVisibility) {
         newVisibility: post.status
     }
 
-    return fetch(`${BASE_URL}/post/visibility`, {
+    return fetch(`${BASE_API_URL}/post/visibility`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -540,7 +542,7 @@ export function deleteOneBlacklist(type, contentId, curUserId) {
         contentId: contentId,
         userId: curUserId
     }
-    return fetch(`${BASE_URL}/blacklist`, {
+    return fetch(`${BASE_API_URL}/blacklist`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
@@ -555,7 +557,7 @@ export function deleteOneBlacklist(type, contentId, curUserId) {
  * @returns 标记的数量
  */
 export function markAllNotifyReadByTypes(types = undefined) {
-    return fetch(`${BASE_URL}/notify/read/all`, {
+    return fetch(`${BASE_API_URL}/notify/read/all`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -575,7 +577,7 @@ export function toggleCloseReviewApi({ id, allowReview }) {
         oldAllowReview: allowReview,
         newAllowReview: !allowReview
     }
-    return fetch(`${BASE_URL}/post/allowReview`, {
+    return fetch(`${BASE_API_URL}/post/allowReview`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -601,7 +603,7 @@ export function globalSearchSuggest(word, type = ['USER', 'POST', 'REVIEW'], tim
         pageSize: 10,
         pageIndex: 0
     }
-    return fetch(`${BASE_URL}/search/suggest`, {
+    return fetch(`${BASE_API_URL}/search/suggest`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -629,7 +631,7 @@ export function globalSearch(word, pageSize, pageIndex, type = ['USER', 'POST', 
         pageSize: pageSize,
         pageIndex: pageIndex
     }
-    return fetch(`${BASE_URL}/search`, {
+    return fetch(`${BASE_API_URL}/search`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -644,7 +646,7 @@ export function globalSearch(word, pageSize, pageIndex, type = ['USER', 'POST', 
  * @returns 获取到的热搜榜条数
  */
 export function getHotSearch(count) {
-    return fetch(`${BASE_URL}/search/hot?n=${count}`, {
+    return fetch(`${BASE_API_URL}/search/hot?n=${count}`, {
         method: 'GET'
     })
 }
@@ -653,7 +655,7 @@ export function getHotSearch(count) {
  * 退出登录
  */
 export function logout() {
-    return fetch(`${BASE_URL}/auth/logout`, {
+    return fetch(`${BASE_API_URL}/auth/logout`, {
         method: 'POST'
     })
 }
@@ -664,7 +666,7 @@ export function logout() {
  * @returns 删除结果，true | false
  */
 export function deleteOneReview(id) {
-    return fetch(`${BASE_URL}/review/${id}`, {
+    return fetch(`${BASE_API_URL}/review/${id}`, {
         method: 'DELETE'
     })
 }
@@ -682,7 +684,7 @@ export function togglePin(id, oldPin, newPin) {
         oldPin: oldPin,
         newPin: newPin
     }
-    return fetch(`${BASE_URL}/post/pin`, {
+    return fetch(`${BASE_API_URL}/post/pin`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -697,7 +699,7 @@ export function togglePin(id, oldPin, newPin) {
  * @returns 移除结果， true-移除成功
  */
 export function removeFan(fanId) {
-    return fetch(`${BASE_URL}/user/follower/${fanId}`, {
+    return fetch(`${BASE_API_URL}/user/follower/${fanId}`, {
         method: 'DELETE'
     })
 }
@@ -707,7 +709,7 @@ export function removeFan(fanId) {
  * @param {String} fanId 粉丝id
  */
 export function confirmFanRequest(fanId) {
-    return fetch(`${BASE_URL}/user/follower/confirm/${fanId}`, {
+    return fetch(`${BASE_API_URL}/user/follower/confirm/${fanId}`, {
         method: 'POST'
     })
 }
@@ -721,7 +723,7 @@ export function confirmFanRequest(fanId) {
  * @returns 用户分页对象
  */
 export function getLikeListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/user/like?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/user/like?pid=${postId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -735,7 +737,7 @@ export function getLikeListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
  * @returns 用户分页对象
  */
 export function getRepostListOfPost(postId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/repost/${postId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/repost/${postId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -750,7 +752,7 @@ export function getRepostListOfPost(postId, pageIndex, pageSize, lastTimestamp) 
  * @returns 媒体分页对象
  */
 export function getMediasOfUser(userId, pageIndex, pageSize, lastTimestamp, from) {
-    return fetch(`${BASE_URL}/object/image/user/${userId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&from=${from}`, {
+    return fetch(`${BASE_API_URL}/object/user/${userId}?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -764,7 +766,7 @@ export function getMediasOfUser(userId, pageIndex, pageSize, lastTimestamp, from
  * @returns 帖子分页对象
  */
 export function getLikePostsOfUser(userId, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/post/like?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/post/like?uid=${userId}&pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
     })
 }
@@ -778,7 +780,7 @@ export function getLikePostsOfUser(userId, pageIndex, pageSize, lastTimestamp) {
  * @returns 获取到的黑名单列表
  */
 export function getBlacklist(type, pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/blacklist/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&type=${type}`, {
+    return fetch(`${BASE_API_URL}/blacklist/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}&type=${type}`, {
         method: 'GET'
     })
 }
@@ -789,7 +791,7 @@ export function getBlacklist(type, pageIndex, pageSize, lastTimestamp) {
  * @returns 移除的条数
  */
 export function deleteAllBlacklistByType(type) {
-    return fetch(`${BASE_URL}/blacklist/batch?type=${type}`, {
+    return fetch(`${BASE_API_URL}/blacklist/batch?type=${type}`, {
         method: 'DELETE'
     })
 }
@@ -802,7 +804,247 @@ export function deleteAllBlacklistByType(type) {
  * @returns 
  */
 export function getActivities(pageIndex, pageSize, lastTimestamp) {
-    return fetch(`${BASE_URL}/user/activity?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+    return fetch(`${BASE_API_URL}/user/activity?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
         method: 'GET'
+    })
+}
+
+/**
+ * 上传视频
+ * @param {File} file 待上传视频
+ * @param {string} hash 文件hash值，请求头中携带
+ * @param {number} startLoc 若是分片文件，则表示分片文件在原始文件中的起始偏移
+ * @param {number} endLoc 若是分片文件，则表示分片文件在原始文件中的最终偏移
+ * @param {((this: XMLHttpRequest, ev: ProgressEvent<EventTarget>) => any) | null} onprogress 进度回调函数
+ * @returns {Promise<void>}
+ */
+async function uploadVideo(file, hash, startLoc = 0, endLoc = 0, onprogress) {
+    // 获取文件上传链接
+    const contentType = 'video/*'
+    let response = await getUploadPresignedUrl(contentType)
+    if (!response.ok) return response
+
+    const result = await response.text()
+    const url = URL.parse(`${BASE_VIDEO_URL}${result}`)
+    const id = url.searchParams.get('x-amz-meta-Id')
+
+    // 上传文件
+    const xhr = new XMLHttpRequest()
+    const requestBody = new Blob([file], { type: contentType })
+    return new Promise((resolve, reject) => {
+        xhr.withCredentials = true
+        xhr.upload.onprogress = onprogress
+        xhr.open('PUT', url, true)
+        xhr.onload = function (e) {
+            resolve(
+                new Response(JSON.stringify({ id: id, hash: hash }), {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    headers: headerToJson(xhr.getAllResponseHeaders())
+                })
+            )
+        }
+        xhr.onerror = function (e) {
+            reject(
+                new Response(JSON.stringify({ id: id, hash: hash, startLoc: startLoc, endLoc: endLoc }), {
+                    status: 408, // 返回请求超时表示上传失败
+                    statusText: 'Request Timeout',
+                    headers: headerToJson(xhr.getAllResponseHeaders())
+                })
+            )
+        }
+        xhr.send(requestBody)
+    })
+}
+
+
+const CHUNK_SIZE = 1024 * 1024 * 10
+const MAX_RETRY_COUNT = 3
+
+/**
+ * 分片上传视频文件后合并
+ * @param {File} file 待上传完整文件
+ * @param {Array<{id: string, hash: string, startLoc: number, endLoc: number, uploaded: boolean}>} chunkInfoList 所有分片的列表。其中有一属性uploaded，标识该分片是否已上传成功，用于用户手动重试时过滤
+ * @param {(loaded: number, total: number) => void} onprogress 进度回调函数
+ * @returns {Promise<Response>} 上传后完整文件的id
+ */
+export async function splitAndUploadVideo(file, chunkInfoList = [], onprogress) {
+    // 将需要上传的文件分片放入任务队列
+    const taskList = new Array()
+
+    // 传入空数组时，表示为首次上传状态，先初始化
+    if (chunkInfoList.length === 0) {
+        for (let startByte = 0; startByte < file.size; startByte += CHUNK_SIZE) {
+            chunkInfoList.push({
+                id: undefined,
+                hash: undefined,
+                startLoc: startByte,
+                endLoc: Math.min(startByte + CHUNK_SIZE, file.size),
+                uploaded: false
+            })
+        }
+    }
+
+    // 根据chunkInfoList初始化taskList
+    for (const it of chunkInfoList) {
+        if (it.uploaded) continue // 跳过已上传成功的分片
+
+        const chunk = file.slice(it.startLoc, it.startLoc + CHUNK_SIZE)
+        const hash = await calcHash(chunk)
+        if (!it.hash) it.hash = hash // hash为空表示未初始化，此时更新hash
+
+        if (it.hash !== hash) { // 重试时，可能会不一致
+            return new Promise((_, reject) => {
+                reject(
+                    new Response(JSON.stringify({ message: `文件hash值不一致！[${it.startLoc, it.endLoc}]` }), {
+                        status: 400,
+                        statusText: 'Bad Request'
+                    })
+                )
+            })
+        }
+
+        taskList.push({
+            chunk: chunk, // 分片文件
+            hash: hash, // 分片文件hash
+            id: undefined, // 当前分片的id(文件名)，上传完成后赋值
+            startLoc: it.startLoc, // 分片在源文件的起始位置
+            endLoc: it.endLoc // 分片在源文件的结束位置
+        })
+    }
+
+    // 并发分片上传
+    const limit = pLimit(3) // 并发数为3
+    let loaded = chunkInfoList.filter(it => it.uploaded)
+        .map(it => it.endLoc - it.startLoc + 1)
+        .reduce((pre, cur) => pre + cur, 0) // 已上传字节数
+    let curTotal = loaded // 应上传总字节数
+
+    const promiseQueue = taskList.map(it => {
+        return limit(() => reTry(uploadVideo(it.chunk, it.hash, it.startLoc, it.endLoc, (e) => {
+            if (e.lengthComputable) {
+                curTotal += it.chunk.size
+                loaded += loaded < curTotal ? e.loaded : 0 // 超过文件总字节数就不再加，网络传输和文件实际大小不相同
+                onprogress(loaded, Math.max(file.size, curTotal))
+            }
+        })), MAX_RETRY_COUNT)
+    })
+
+    let hasFailedChunk = false // 是否有上传失败的分片
+    const resList = await Promise.allSettled(promiseQueue)
+
+    for (const res of resList) {
+        if (res.status === 'fulfilled') {
+            const response = await res.value
+            if(!response.ok) return new Promise(reject => {
+                reject(
+                    new Response(JSON.stringify(chunkInfoList), {
+                        status: 408, // 返回请求超时表示上传失败
+                        statusText: 'Request Timeout'
+                    })
+                )
+            })
+
+            const { id, hash } = await response.json()
+            const chunkInfo = chunkInfoList.filter(it => it.hash === hash).at(0)
+            chunkInfo.uploaded = true
+            chunkInfo.id = id
+        } else {
+            hasFailedChunk = true
+        }
+    }
+
+    if (hasFailedChunk) {
+        return new Promise(reject => {
+            reject(
+                new Response(JSON.stringify(chunkInfoList), {
+                    status: 408, // 返回请求超时表示上传失败
+                    statusText: 'Request Timeout'
+                })
+            )
+        })
+    }
+
+    // 合并文件，返回文件id
+    return composeChunks(
+        chunkInfoList.map(it => { return { objectName: it.id, Etag: it.hash } }),
+        file.type
+    )
+}
+
+/**
+ * 获取视频上传链接
+ * @param {string} contentType 视频类型
+ * @returns 预先签过名的上传链接
+ */
+function getUploadPresignedUrl(contentType) {
+    return fetch(`${BASE_API_URL}/object/video/upload`, {
+        method: 'GET',
+        headers: {
+            'X-Content-Type': contentType
+        }
+    })
+}
+
+/**
+ * 合并分片文件
+ * @param {Array} chunkList 分片信息列表
+ * @param {string} contentType 文件mimeType
+ * @returns {Promise<Response>} 合并完成后的文件id
+ */
+function composeChunks(chunkList, contentType) {
+    return fetch(`${BASE_API_URL}/object/video/compose`, {
+        method: 'POST',
+        headers: {
+            'X-Content-Type': contentType,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(chunkList)
+    })
+}
+
+/**
+ * 计算文件md5值
+ * @param {Blob} fileChunk 待计算md5值的文件
+ * @returns {Promise<string>}
+ */
+function calcHash(fileChunk) {
+    return new Promise(resolve => {
+        const worker = new Worker('/hash.js')
+        worker.postMessage({ fileChunk })
+        worker.onmessage = function (e) {
+            const { hash, progress } = e.data
+            if (hash) {
+                resolve(hash)
+            }
+        }
+    })
+        .catch((reason) => {
+            console.error(reason)
+        })
+}
+
+/**
+ * 支持Promise重试
+ * @param {Promise<any>} func 重试作用的异步函数
+ * @param {number} retryCount 重试次数
+ * @returns {Promise<any}
+ */
+function reTry(func, retryCount) {
+    return new Promise((resolve, reject) => {
+        function reTryFunc(retryCount) {
+            func.then((res) => {
+                resolve(res)
+            }).catch((err) => {
+                if (retryCount > 0) {
+                    setTimeout(() => {
+                        reTryFunc(retryCount - 1)
+                    }, 3000)
+                } else {
+                    reject(err)
+                }
+            })
+        }
+        reTryFunc(retryCount)
     })
 }

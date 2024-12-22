@@ -147,14 +147,14 @@
 </style>
 
 <script setup>
+import { reactive, watch, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 import IconLoading from '@/components/icons/IconLoading.vue'
-import { reactive, watch, onMounted, onUnmounted } from 'vue'
 import { globalSearchSuggest } from '@/indexApp/js/api.js'
 import Avatar from '@/components/Avatar.vue'
-import IconVerify from '@/components/icons/IconVerify.vue'
 import { substringBySegmenter } from '@/indexApp/utils/formatUtils.js'
 import { debounce } from '@/indexApp/utils/jsHelper.js'
 import Header from '@/indexApp/components/Header.vue'
+const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 
 const emits = defineEmits(['routeTo', 'search'])
 const props = defineProps({
