@@ -141,7 +141,7 @@ import { getCurUserInfo } from '@/authApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { ws } from '@/indexApp/js/websocket.js'
 import { useRoute, useRouter } from 'vue-router'
-import { isType } from '@/indexApp/utils/formatUtils.js'
+import { isType, LunarDate } from '@/indexApp/utils/formatUtils.js'
 import Sidebar from '@/indexApp/components/Sidebar.vue'
 import Recommend from '@/indexApp/components/Recommend.vue'
 import Brand from '@/indexApp/components/Brand.vue'
@@ -374,6 +374,22 @@ onMounted(() => {
     state.reduceAnimMediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)')
     handleReduceAnimMediaChange(state.reduceAnimMediaQueryList)
     state.reduceAnimMediaQueryList.addEventListener('change', handleReduceAnimMediaChange)
+
+    // Lunar festival accent color settings
+    const isInLunarFestival = new LunarDate(Date.now()).isInLunarFestival()
+    if(isInLunarFestival){
+        let enable = JSON.parse(localStorage.getItem('enableFestivalAccent'))
+
+        if(enable === null){
+            enable = true
+            localStorage.setItem('enableFestivalAccent', enable)
+            localStorage.setItem('accentColor', 'rose')
+        }
+        
+        if(enable === true){
+            document.body.setAttribute('accent','rose')
+        }
+    }
 })
 
 onUnmounted(() => {

@@ -199,6 +199,7 @@ function toggleHighlight(highlight){
 function toggleAccentColor(accent){
     state.setting.accent = accent
     localStorage.setItem('accentColor', accent)
+    localStorage.setItem('enableFestivalAccent', false)
     document.body.setAttribute('accent', accent)
 }
 

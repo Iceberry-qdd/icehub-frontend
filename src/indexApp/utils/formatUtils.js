@@ -179,3 +179,31 @@ export function toTimePickerFormat(timestamp) {
     const date = new Date(timestamp)
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getDate()).padStart(2, '0')}`
 }
+
+/**
+ * 农历时间类，转换为农历时间、判断给定时间是否在农历春节范围内
+ */
+export class LunarDate {
+    static #ONE_DAY = 1000 * 60 * 60 * 24
+    static #format = new Intl.DateTimeFormat("en", { localeMather: "best fit", calendar: "chinese", timezone: "+08:00", day: "2-digit", year: "numeric", month: "2-digit" })
+
+    constructor(timestamp = Date.now()) {
+        this.timestamp = timestamp
+    }
+
+    toLunar() {
+        return new Date(LunarDate.#format.format(new Date(this.timestamp)))
+    }
+
+    #toLunar(timestamp) {
+        return new Date(LunarDate.#format.format(new Date(timestamp)))
+    }
+
+    isInLunarFestival(includeEve = true) {
+        const lunarDate = includeEve ? this.#toLunar(this.timestamp + LunarDate.#ONE_DAY) : this.toLunar()
+        const month = lunarDate.getMonth() + 1
+        const day = lunarDate.getDate()
+
+        return month === 1 && day >= 1 && day <= 15
+    }
+}
