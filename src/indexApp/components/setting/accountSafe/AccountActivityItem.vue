@@ -2,7 +2,7 @@
     <details>
         <summary class="cursor-pointer flex gap-x-2 hover:bg-helper items-center justify-start max-sm:top-[48px] outline-none p-2 sticky text-[0.85rem] top-[56px]">
             <span
-                :class="{'active': props.active}"
+                :class="{'active': props.active && status, 'failed': !props.active && !status}"
                 class="bg-border dark:bg-primaryContainer device-icon flex-0 material-symbols-rounded no-hover relative text-[1.25rem]">
                 {{ state.deviceIconMap.get(osName?.toLocaleUpperCase()) }}
             </span>
@@ -12,8 +12,9 @@
                     {{ location || '未知' }}
                 </div>
             </div>
-            <div class="flex-0 max-sm:hidden text-neutral-400">
-                {{ standardDateTime(timestamp) }}
+            <div class="flex-0 justify-items-end max-sm:hidden text-neutral-400">
+                <div>{{ standardDateTime(timestamp) }}</div>
+                <div>{{ activityStatusText }}</div>
             </div>
             <IconDown
                 :size="20"
@@ -55,6 +56,16 @@
     background-color: #22c55e;
 }
 
+.device-icon.failed::after{
+    content: '\00d7';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 1rem;
+    color: red;
+    font-weight: bold;
+}
+
 details summary::-webkit-details-marker{
     display: none;
 }
@@ -69,7 +80,7 @@ details[open]>summary{
 </style>
 
 <script setup>
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 import { standardDateTime } from '@/indexApp/utils/formatUtils.js'
 import IconDown from '@/components/icons/IconDown.vue'
 
@@ -98,19 +109,25 @@ const {
     },
     location: location = '未知',
     createdTime: timestamp,
-    userAgent: ua = '未知'
+    userAgent: ua = '未知',
+    status,
+    statusText
 } = props.activity
+
+const activityStatusText = computed(() => {
+    return status ? '登录成功' : statusText.replace('！', '').replace('!', '')
+})
 
 const state = reactive({
     details: [
+        { icon: 'info', title: '操作结果', value: activityStatusText },
         { icon: 'language', title: '浏览器', value: `${browserName} ${browserVersion}` },
-        { icon: 'developer_board', title: '渲染引擎', value: `${engineName} ${engineVersion}` },
-        { icon: undefined, title: '操作系统', value: `${osName} ${osVersion}` },
-        { icon: 'location_on', title: '位置', value: location || '未知' },
         { icon: 'schedule', title: '时间', value: standardDateTime(timestamp) },
+        { icon: 'location_on', title: '位置', value: location || '未知' },
+        { icon: undefined, title: '操作系统', value: `${osName} ${osVersion}` },
+        { icon: 'developer_board', title: '渲染引擎', value: `${engineName} ${engineVersion}` },
         { icon: 'memory', title: '架构', value: cpu },
-        { icon: undefined, title: '设备', value: `${deviceType} ${deviceVendor} ${deviceModel}` },
-        { icon: 'tv_signin', title: '完整UA', value: ua }
+        { icon: undefined, title: '设备', value: `${deviceType} ${deviceVendor} ${deviceModel}` }
     ],
     deviceIconMap: new Map([
         ['DESKTOP_WINDOWS', 'desktop_windows'],
@@ -134,7 +151,9 @@ const state = reactive({
         ['TABLET', 'tablet'],
         ['WATCH', 'watch'],
         ['UNKNOWN', 'devices'],
-        [undefined, 'devices']
+        ['未知操作系统', 'devices'],
+        [undefined, 'devices'],
+        [null, 'devices']
     ])
 })
 </script>

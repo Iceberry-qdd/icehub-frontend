@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, defineAsyncComponent } from 'vue'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { store } from '@/indexApp/js/store.js'
