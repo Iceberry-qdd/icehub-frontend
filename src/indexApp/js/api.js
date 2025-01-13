@@ -890,11 +890,24 @@ export async function splitAndUploadVideo(file, chunkInfoList = [], onprogress) 
         if (it.uploaded) continue // 跳过已上传成功的分片
 
         const chunk = file.slice(it.startLoc, it.startLoc + CHUNK_SIZE)
-        const hash = await calcHash(chunk)
+
+        let hash = undefined
+        try {
+            hash = await calcHash(chunk)
         if (!it.hash) it.hash = hash // hash为空表示未初始化，此时更新hash
+        } catch (e) {
+            return new Promise(reject => {
+                reject(
+                    new Response(JSON.stringify({ message: e }), {
+                        status: 400,
+                        statusText: 'Bad Request'
+                    })
+                )
+            })
+        }
 
         if (it.hash !== hash) { // 重试时，可能会不一致
-            return new Promise((_, reject) => {
+            return new Promise(reject => {
                 reject(
                     new Response(JSON.stringify({ message: `文件hash值不一致！[${it.startLoc, it.endLoc}]` }), {
                         status: 400,
@@ -936,7 +949,7 @@ export async function splitAndUploadVideo(file, chunkInfoList = [], onprogress) 
     for (const res of resList) {
         if (res.status === 'fulfilled') {
             const response = await res.value
-            if(!response.ok) return new Promise(reject => {
+            if (!response.ok) return new Promise(reject => {
                 reject(
                     new Response(JSON.stringify(chunkInfoList), {
                         status: 408, // 返回请求超时表示上传失败
@@ -1009,18 +1022,19 @@ function composeChunks(chunkList, contentType) {
  * @returns {Promise<string>}
  */
 function calcHash(fileChunk) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
+        if (!window.Worker) {
+            reject('您的浏览器不支持Worker!')
+        }
+
         const worker = new Worker('/hash.js')
-        worker.postMessage({ fileChunk })
+        worker.postMessage({ fileChunk: fileChunk, origin: window.location.origin })
         worker.onmessage = function (e) {
-            const { hash, progress } = e.data
+            const { hash, progress, origin } = e.data
             if (hash) {
                 resolve(hash)
             }
         }
-    })
-        .catch((reason) => {
-            console.error(reason)
         })
 }
 

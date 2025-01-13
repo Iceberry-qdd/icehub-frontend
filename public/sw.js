@@ -44,7 +44,7 @@ FIRST_CACHE_TYPE.forEach(type => {
 
 FIRST_NETWORK_PATTERN.forEach(pattern => {
     registerRoute(
-        ({ url }) => new URL(url).host.startsWith('api.') && new URL(url).pathname.match(pattern),
+        ({ url }) => new URL(url).origin === import.meta.env.VITE_API_BASE_URL && new URL(url).pathname.match(pattern),
         new NetworkFirst({
             cacheName: `icehub-api-${SW_VERSION}`,
             plugins: [
