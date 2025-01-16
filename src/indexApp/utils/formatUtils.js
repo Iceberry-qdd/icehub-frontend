@@ -10,7 +10,7 @@ const oneHour = oneMinute * 60
 const oneDay = oneHour * 24
 const oneWeek = oneDay * 7
 const oneMonth = oneDay * 30
-const oneYear = oneMonth * 24
+const oneYear = oneMonth * 12
 const conditions = [
     // [上限, 小于上限时显示单位]
     [oneMinute, 'second'],
@@ -33,7 +33,7 @@ export function humanizedTime(timestamps) {
         }
         lastLimit = limit
     }
-    return postTime
+    return standardDateTime(timestamps)
 }
 
 const dateTimeFormatOptions = {
