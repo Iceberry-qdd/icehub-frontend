@@ -13,7 +13,7 @@
                 <RepostCard :post="state.post"></RepostCard>
             </div>
             <BaseCollapse
-                open
+                :open="!store.MOBILE_MODE"
                 title="主题颜色"
                 :value="state.setting.themeOptions[state.setting.theme]['zh']">
                 <ThemeSelector
@@ -23,7 +23,7 @@
                 </ThemeSelector>
             </BaseCollapse>
             <BaseCollapse
-                open
+                :open="!store.MOBILE_MODE"
                 title="强调色"
                 :value="state.setting.accentOptions[state.setting.accent]['zh']">
                 <AccentColorSelector
@@ -34,7 +34,7 @@
                 </AccentColorSelector>
             </BaseCollapse>
             <BaseCollapse
-                open
+                :open="!store.MOBILE_MODE"
                 title="表情系列"
                 :value="state.setting.emojiOptions[state.setting.emoji]">
                 <EmojiSelector
@@ -45,7 +45,7 @@
                 </EmojiSelector>
             </BaseCollapse>
             <BaseCollapse
-                open
+                :open="!store.MOBILE_MODE"
                 title="头像风格"
                 :value="state.setting.avatarOptions[state.setting.avatar]['zh']">
                 <AvatarSelector
@@ -56,7 +56,7 @@
                 </AvatarSelector>
             </BaseCollapse>
             <BaseCollapse
-                open
+                :open="!store.MOBILE_MODE"
                 title="代码高亮主题"
                 :value="state.setting.highlightOptions[state.setting.highlight]['zh']">
                 <HighlightSelector

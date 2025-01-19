@@ -19,6 +19,7 @@
                 </div>
             </Header>
             <ReviewCard
+                v-show="!state.isLoading"
                 tire-direction="top"
                 class="border-b-[1px] border-gray-100 dark:border-b-neutral-800"
                 :review="props.parentReview ?? props.post">

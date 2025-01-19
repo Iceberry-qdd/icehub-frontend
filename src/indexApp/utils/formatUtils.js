@@ -33,7 +33,7 @@ export function humanizedTime(timestamps) {
         }
         lastLimit = limit
     }
-    return standardDateTime(timestamps)
+    return standardDate(timestamps)
 }
 
 const dateTimeFormatOptions = {
