@@ -41,6 +41,7 @@ const SettingBlacklistManage = () => import('@/indexApp/routes/setting/DataPriva
 const SettingDisplayTheme = () => import('@/indexApp/routes/setting/DisplayTheme.vue')
 const SettingHelpFeedback = () => import('@/indexApp/routes/setting/HelpFeedback.vue')
 const SettingAbout = () => import('@/indexApp/routes/setting/About.vue')
+const SettingPasskeyManage = () => import('@/indexApp/routes/setting/AccountSafe/PasskeyManage.vue')
 
 const GlobalNotFoundPage = () => import('@/components/GlobalNotFoundPage.vue')
 
@@ -111,7 +112,8 @@ const routes = [
             { name: 'blacklist', path: 'data&privacy/blacklist', component: SettingBlacklistManage, meta: { key: 'setting', parent: 'dataPrivacy' } },
             { name: 'displayTheme', path: 'display&theme', component: SettingDisplayTheme, meta: { key: 'setting' } },
             { name: 'helpFeedback', path: 'help&feedback', component: SettingHelpFeedback, meta: { key: 'setting' } },
-            { name: 'about', path: 'about', component: SettingAbout, meta: { key: 'setting' } }
+            { name: 'about', path: 'about', component: SettingAbout, meta: { key: 'setting' } },
+            { name: 'passkey', path: 'account&safe/passkey', component: SettingPasskeyManage, meta: { key: 'setting', parent: 'accountSafe' } },
         ]
     },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: GlobalNotFoundPage }

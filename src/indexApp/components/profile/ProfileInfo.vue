@@ -30,7 +30,7 @@
             @click="props.user?.avatar?.url ? showSlide([props.user.avatar], 0) : ''">
         </Avatar>
         <div class="flex flex-col gap-y-1 px-[1rem]">
-            <div class="flex flex-nowrap flex-row justify-between">
+            <div class="flex flex-nowrap flex-row gap-x-2 justify-between">
                 <div class="flex gap-2 items-center">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                     <div class="font-bold max-w-[20rem] text-[18pt] w-fit webkit-box-1">{{ props.user.nickname }}</div>
@@ -52,7 +52,7 @@
                 </div>
                 <div
                     v-if="!isMyself && !props.user.blocking && !props.user.blocked"
-                    class="cursor-pointer font-bold px-5 py-[0.325rem] rounded-full"
+                    class="cursor-pointer flex-none font-bold px-5 py-[0.325rem] rounded-full"
                     :class="followButtonClass"
                     @click="toggleFollowState">
                     <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
@@ -62,7 +62,7 @@
                 </div>
                 <div
                     v-else-if="props.user.blocking && !isMyself"
-                    class="bg-red-200 cursor-pointer dark:bg-neutral-800 font-bold px-5 py-[0.325rem] rounded-full"
+                    class="bg-red-200 cursor-pointer dark:bg-neutral-800 flex-none font-bold px-5 py-[0.325rem] rounded-full"
                     @click="state.confirmBDialogUi.show = true">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line, vue/singleline-html-element-content-newline -->
                     <div v-if="!state.followBtnLoading" class="dark:text-red-300 text-red-500"> 解除屏蔽 </div>
@@ -81,18 +81,19 @@
             <div class="dark:text-white/50 flex flex-col gap-y-1 text-[0.85rem] text-neutral-600">
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div>{{ props.user.remark }}</div>
-                <div class="gap-x-2 gap-y-1 grid grid-cols-[1rem_auto] w-fit">
-                    <span class="cursor-default material-symbols-rounded no-hover">calendar_month</span>
-                    <div>{{ formattedDate }}</div>
+                <div class="gap-x-2 gap-y-1 grid grid-cols-[1rem_auto] info-list w-fit">
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <IconVerify v-if="props.user.verified" class="dark:text-onPrimary h-[0.9rem] text-primary w-[0.9rem]"></IconVerify>
                     <div v-if="props.user.verified">{{ props.user.verifiedInfo }}</div>
+
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <span v-if="props.user.address" class="cursor-default material-symbols-rounded no-hover">location_on</span>
                     <div v-if="props.user.address">{{ props.user.address }}</div>
+
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <span v-if="props.user.email" class="cursor-default material-symbols-rounded no-hover">mail</span>
                     <div v-if="props.user.email">{{ props.user.email }}</div>
+
                     <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                     <span v-if="props.user.website" class="cursor-default material-symbols-rounded no-hover">link</span>
                     <a
@@ -104,16 +105,15 @@
                 </div>
                 <div
                     v-if="!isPrivateAccountAndNotFollowed || isMyself"
-                    class="flex flex-row gap-x-6">
+                    class="bg-gray-50 dark:bg-[#1e1e1e] grid grid-cols-3 place-items-stretch rounded-md w-full">
                     <div
-                        class="cursor-pointer hover:underline"
-                        @click="routeTo('followList', props.user.nickname)">
-                        <span>{{ followCountText }}</span>
-                    </div>
-                    <div
-                        class="cursor-pointer hover:underline"
-                        @click="routeTo('fanList', props.user.nickname)">
-                        <span>{{ fanCountText }}</span>
+                        v-for="({name, alias, value, routePath}) in statCardData"
+                        :key="name"
+                        class="active:bg-gray-200 active:dark:bg-neutral-700 col-span-1 cursor-pointer first:rounded-l-md last:rounded-r-md place-items-center py-2 text-[0.85rem]"
+                        @click="!!routePath ? routeTo(routePath, props.user.name): undefined">
+                        <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
+                        <div class="font-bold">{{ value }}</div>
+                        <div>{{ alias }}</div>
                     </div>
                 </div>
             </div>
@@ -122,7 +122,7 @@
 </template>
 
 <style scoped>
-.grid>*:nth-child(odd){
+.grid.info-list>*:nth-child(odd){
     font-size: 1.125rem;
     padding: 0;
     place-self: center;
@@ -144,7 +144,7 @@ import { store } from '@/indexApp/js/store.js'
 import { useRouter } from 'vue-router'
 import IconLoading from '@/components/icons/IconLoading.vue'
 import Avatar from '@/components/Avatar.vue'
-import { standardDate } from '@/indexApp/utils/formatUtils.js'
+import { humanizedTime, humanizedNumber } from '@/indexApp/utils/formatUtils.js'
 const IconVerify = defineAsyncComponent(() => import('@/components/icons/IconVerify.vue'))
 const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
@@ -187,25 +187,13 @@ const state = reactive({
     showConfirmFollowBanner: true
 })
 
-const formattedDate = computed(() => {
-    const timestamps = props.user.createdTime
-    return standardDate(timestamps)
-})
-
-const fanCountText = computed(() => {
-    const gender = props.user.gender
-    const fanCount = props.user.fanCount
-    if (isMyself.value == true) return `订阅我的 ${fanCount}`
-    if (gender == 'FEMALE') return `订阅她的 ${fanCount}`
-    return `订阅他的 ${fanCount}`
-})
-
-const followCountText = computed(() => {
-    const gender = props.user.gender
-    const followCount = props.user.followCount
-    if (isMyself.value == true) return `我的订阅 ${followCount}`
-    if (gender == 'FEMALE') return `她的订阅 ${followCount}`
-    return `他的订阅 ${followCount}`
+const statCardData = computed(() => {
+    const { fanCount, followCount, createdTime } = props.user
+    return [
+        { name: 'fanCount', value: humanizedNumber(fanCount), routePath: 'fanList', alias: '订阅我' },
+        { name: 'followCount', value: humanizedNumber(followCount), routePath: 'followList', alias: '我订阅' },
+        { name: 'joinAt', value: humanizedTime(createdTime), routePath: undefined, alias: '加入于' }
+    ]
 })
 
 const isMyself = computed(() => {
@@ -217,8 +205,8 @@ const isPrivateAccountAndNotFollowed = computed(() => {
 })
 
 const followButtonText = computed(() => {
-    if(state.yourFollowStatus === 'FOLLOW' && state.yourFanStatus === 'FAN') return '相互订阅'
-    if(state.yourFollowStatus === 'NOT_FOLLOW' && props.user.confirmFollow) return '请求订阅'
+    if (state.yourFollowStatus === 'FOLLOW' && state.yourFanStatus === 'FAN') return '相互订阅'
+    if (state.yourFollowStatus === 'NOT_FOLLOW' && props.user.confirmFollow) return '请求订阅'
     return state.followTextMap.get(state.yourFollowStatus)
 })
 
@@ -249,7 +237,7 @@ async function followAUser(userId) {
         if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
-        if (result?.confirmed){
+        if (result?.confirmed) {
             store.setSuccessMsg("订阅成功！")
             state.yourFollowStatus = 'FOLLOW'
         } else {
@@ -297,7 +285,7 @@ async function unblockUser() {
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-    }finally{
+    } finally {
         state.confirmBDialogUi.loading = false
         state.confirmBDialogUi.show = false
     }
@@ -312,7 +300,7 @@ function choose(args) {
     }
 }
 
-async function passFanRequest(){
+async function passFanRequest() {
     try {
         state.confirmFanBtnLoading = true
         const response = await confirmFanRequest(props.user.id)
@@ -325,7 +313,7 @@ async function passFanRequest(){
         }
     } catch (e) {
         store.setErrorMsg(e.message)
-    }finally{
+    } finally {
         state.confirmFanBtnLoading = false
     }
 }

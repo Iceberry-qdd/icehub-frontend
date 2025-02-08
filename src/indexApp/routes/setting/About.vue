@@ -67,6 +67,6 @@ const info = computed(() => {
 })
 
 function handleAction(){
-    window.open('https://github.com/Iceberry-qdd/icehub-frontend', '_blank')
+    window.open('https://github.com/Iceberry-qdd/icehub-frontend', 'IcehubGithubWeb', 'noopener,noreferrer')
 }
 </script>
