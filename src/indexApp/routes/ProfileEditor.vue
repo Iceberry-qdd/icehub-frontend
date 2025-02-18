@@ -362,6 +362,7 @@ async function checkUsernameValid() {
         const result = await response.text()
         state.isUsernameExisted = result == 'true' ? true : false
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }
@@ -392,6 +393,7 @@ async function submitProfile() {
         store.setSuccessMsg('资料变更成功！')
         router.push({ name: 'profile', params: { nickname: data.nickname } })
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false

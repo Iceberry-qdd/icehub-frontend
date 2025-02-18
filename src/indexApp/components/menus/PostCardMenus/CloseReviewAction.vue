@@ -91,6 +91,7 @@ async function toggleCloseReview() {
         // eslint-disable-next-line vue/no-mutating-props
         props.post.allowReview = !props.post.allowReview
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         toggleDialogLoading(false)

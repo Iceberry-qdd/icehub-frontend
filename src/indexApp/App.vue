@@ -187,6 +187,7 @@ async function curUser() {
         const user = JSON.stringify(state.user)
         localStorage.setItem('CUR_USER', user)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
         if(e.message === 'Not Login!'){
             localStorage.removeItem('CUR_USER')

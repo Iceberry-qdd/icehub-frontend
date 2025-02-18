@@ -94,6 +94,7 @@ async function getUserInfo(nickname) {
         const result = await response.json()
         state.user = result
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }

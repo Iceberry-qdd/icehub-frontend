@@ -56,13 +56,14 @@ function doShare() {
     navigator.share(shareOptions)
         .then(() => store.setSuccessMsg(`分享${state.typeMap.get(props.type)}成功！`))
         .catch((e) => {
-            store.setErrorMsg(`分享${state.typeMap.get(props.type)}失败！`)
             console.error(e)
+            store.setErrorMsg(`分享${state.typeMap.get(props.type)}失败！`)
         })
 }
 
 async function copyLink() {
     if (!navigator.clipboard) {
+        console.error(e)
         store.setErrorMsg('复制链接失败，无法获取剪贴板！')
         return
     }
@@ -83,8 +84,8 @@ async function copyLink() {
             default: ;
         }
     } catch (e) {
-        store.setErrorMsg('链接复制失败！')
         console.error(e)
+        store.setErrorMsg('链接复制失败！')
     } finally {
         switch (props.type) {
             case 'USER': dismissProfileMenus(); break;

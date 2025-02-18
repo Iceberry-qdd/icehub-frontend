@@ -125,6 +125,7 @@ const router = createRouter({
 })
 
 router.onError((e) => {
+    console.error(e)
     store.setErrorMsg('无法加载页面，您可以刷新重试！')
 })
 

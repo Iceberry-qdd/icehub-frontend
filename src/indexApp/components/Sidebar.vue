@@ -124,6 +124,7 @@ async function getUnreadNotifyCount() {
         const statistic = await response.json()
         store.setNotifyStatistic(statistic)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }

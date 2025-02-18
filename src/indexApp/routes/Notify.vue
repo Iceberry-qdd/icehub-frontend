@@ -132,6 +132,7 @@ async function markAllNotifyReadOfCurUser({ choice }) {
         state.markReadTabId = id
         store.setSuccessMsg(`已将${result}条消息设为已读`)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.confirmBDialogUi.loading.show = false

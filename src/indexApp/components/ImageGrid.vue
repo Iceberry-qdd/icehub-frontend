@@ -162,6 +162,7 @@ async function getImageUrlIgnoreNSFW(index) {
         emits('realImage', {index: index, image: result})
         state.showRealImage[index] = true
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }

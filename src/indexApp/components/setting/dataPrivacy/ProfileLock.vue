@@ -96,6 +96,7 @@ async function doToggleLockProfile(){
         emits('toggle')
         store.setSuccessMsg(`已设为${props.locked ? '公开':  '私密'}账户`)
     }catch(e){
+        console.error(e)
         store.setErrorMsg(e.message)
     }finally{
         state.confirmBDialogUi.loading.show = false

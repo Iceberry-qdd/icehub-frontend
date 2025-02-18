@@ -238,8 +238,8 @@ async function doDeletePasskey() {
         if(!isDeleted) throw new Error('删除失败！')
         emits('deleteOnUi', props.passkey.id)
     } catch (e) {
-        store.setErrorMsg(e.message)
         console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.confirmBDialogUi.loading = false
         state.confirmBDialogUi.show = false
@@ -276,8 +276,8 @@ async function submitNewName() {
         localStorage.removeItem(PASSKEY_CACHED_KEY)
         emits('newNamedPasskey', passkey)
     } catch(e){
-        store.setErrorMsg(e.message)
         console.error(e)
+        store.setErrorMsg(e.message)
     } finally {
         state.passkeyName.loading = false
     }

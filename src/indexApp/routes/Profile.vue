@@ -189,6 +189,7 @@ async function getUser(nickname) {
         const user = await response.json()
         state.user = user
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }
@@ -198,6 +199,7 @@ async function refreshProfileOnUi(){
         await getUser(state.user.id)
         state.lastTimestamp = state.user?.lastPostAt || Date.now()
     }catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }

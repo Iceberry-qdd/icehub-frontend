@@ -80,6 +80,7 @@ async function doGetHotSearch() {
         const result = await response.json()
         state.threading = result
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally{
         state.loading = false

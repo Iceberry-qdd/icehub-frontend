@@ -121,6 +121,7 @@ async function tryCreatePasskey() {
         emits('newPasskeyOnUi', result)
     } catch (e) {
         if (!(e instanceof DOMException && e.name === 'NotAllowedError')) {
+            console.error(e)
             store.setErrorMsg(e.message)
             emits('close')
         }

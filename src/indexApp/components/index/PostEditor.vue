@@ -271,6 +271,7 @@ async function submitPost() {
         postingNew(state.result)
         handleClose()
     } catch (err) {
+        console.error(e)
         store.setErrorMsg(err.message)
     } finally {
         state.isLoading = false

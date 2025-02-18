@@ -228,6 +228,7 @@ async function reposting() {
         }
         dismiss()
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.loading = false

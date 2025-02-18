@@ -113,6 +113,7 @@ async function tryLogin() {
         store.setSuccessMsg("登录成功！")
         emits('referer')
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
         turnstile.reset(state.turnstile.widgetId)
         state.turnstile.token = undefined
@@ -145,6 +146,7 @@ async function autoComplete(abortController) {
             emits('referer')
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
         turnstile.reset(state.turnstile.widgetId)
         state.turnstile.token = undefined

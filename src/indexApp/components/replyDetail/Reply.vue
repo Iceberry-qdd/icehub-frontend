@@ -317,6 +317,7 @@ const toggleLike = debounce(async function() {
             state.reply.liked = false
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }, 300)

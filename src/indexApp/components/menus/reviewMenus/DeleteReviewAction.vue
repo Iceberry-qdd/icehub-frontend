@@ -97,6 +97,7 @@ async function deleteIt() {
             deleteReviewOnUi(props.review.id)
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         toggleDialogLoading(false)

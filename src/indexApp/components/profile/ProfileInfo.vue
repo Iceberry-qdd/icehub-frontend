@@ -244,6 +244,7 @@ async function followAUser(userId) {
             state.yourFollowStatus = 'WAIT_PASS'
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.followBtnLoading = false
@@ -260,6 +261,7 @@ async function unFollowAUser(userId) {
         state.yourFollowStatus = 'NOT_FOLLOW'
         store.setSuccessMsg("取消订阅成功！")
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.followBtnLoading = false
@@ -284,6 +286,7 @@ async function unblockUser() {
             throw new Error("解除屏蔽失败！")
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.confirmBDialogUi.loading = false
@@ -312,6 +315,7 @@ async function passFanRequest() {
             state.yourFanStatus = 'FAN'
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.confirmFanBtnLoading = false

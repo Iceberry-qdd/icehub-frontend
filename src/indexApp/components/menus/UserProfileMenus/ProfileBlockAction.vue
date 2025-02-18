@@ -65,6 +65,7 @@ async function unblockUser() {
             throw new Error("解除屏蔽失败！")
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally{
         state.confirmBDialogUi.loading = false
@@ -84,6 +85,7 @@ async function blockUser() {
         refreshProfileOnUi()
         state.confirmBDialogUi.show = false
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally{
         state.confirmBDialogUi.loading = false

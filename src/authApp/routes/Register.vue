@@ -112,6 +112,7 @@ async function tryRegister() {
         state.rePassword = ''
         routeTo('login')
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
         turnstile.reset(state.turnstile.widgetId)
         state.turnstile.token = undefined

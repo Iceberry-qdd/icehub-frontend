@@ -241,6 +241,7 @@ async function submitReview() {
         // const receiverId = !data.parentId ? props.post.user.id : props.parent.user.id
         // ws.sendToOneQueue(new MsgPack(reviewId, state.curUser.id, 'REVIEW', receiverId), 'interact')
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.loading = false

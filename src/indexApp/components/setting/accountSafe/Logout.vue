@@ -55,6 +55,7 @@ async function doLogout(){
             throw new Error('退出登录失败！')
         }
     }catch(e){
+        console.error(e)
         store.setErrorMsg(e.message)
     }finally{
         state.confirmBDialogUi.loading.show = false

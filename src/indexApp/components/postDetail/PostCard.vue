@@ -337,6 +337,7 @@ async function getUser(nickname) {
         const user = await response.json()
         store.setSelectUser(user)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }
@@ -364,6 +365,7 @@ const toggleLike = debounce(async function () {
             if (result == false) throw new Error("取消点赞失败!")
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
 
         state.post.liked = lastLikedState

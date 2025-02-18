@@ -180,6 +180,7 @@ async function doSearch() {
             }
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false

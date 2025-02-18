@@ -301,6 +301,7 @@ async function getReply() {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally{
         state.isLoading = false
@@ -340,6 +341,7 @@ const toggleLike = debounce(async function() {
             state.review.liked = false
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }, 300)
@@ -416,6 +418,7 @@ async function getPost(id) {
         const result = await response.json()
         state.post = result
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }

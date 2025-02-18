@@ -49,6 +49,7 @@ async function markIt(postId) {
         props.post.marked = true
         store.setSuccessMsg("已加入书签！")
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         dismissPostMenus()
@@ -68,6 +69,7 @@ async function unMarkIt(postId) {
         store.setSuccessMsg("已移出书签！")
         deleteBookmarkOnUi(props.post.id)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         dismissPostMenus()

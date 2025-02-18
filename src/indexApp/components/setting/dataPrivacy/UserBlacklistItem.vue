@@ -124,6 +124,7 @@ async function doUnblockUser() {
             throw new Error("解除屏蔽失败！")
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }finally{
         state.confirmBDialogUi.loading = false

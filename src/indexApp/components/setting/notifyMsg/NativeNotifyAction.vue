@@ -44,27 +44,27 @@ const info = computed(() => {
     return '启用后，将调用系统原生通知接口为您推送消息，需要您主动授权。'
 })
 
-function toggle(){
-    if(state.loading || !props.enabled) return
+function toggle() {
+    if (state.loading || !props.enabled) return
     state.loading = true
     askNotificationPermission()
 }
 
 function askNotificationPermission() {
-  if (!("Notification" in window)) {
-    store.setErrorMsg('此浏览器不支持原生通知！')
-    return
-  }
-
-  Notification.requestPermission().then((permission) => {
-    state.loading = false
-    if(permission === 'granted'){
-        emits('toggle')
-        createNotify()
-    } else {
-        store.setErrorMsg('获取通知权限失败！')
+    if (!("Notification" in window)) {
+        store.setErrorMsg('此浏览器不支持原生通知！')
+        return
     }
-  })
+
+    Notification.requestPermission().then((permission) => {
+        state.loading = false
+        if (permission === 'granted') {
+            emits('toggle')
+            createNotify()
+        } else {
+            store.setErrorMsg('获取通知权限失败！')
+        }
+    })
 }
 
 function createNotify() {

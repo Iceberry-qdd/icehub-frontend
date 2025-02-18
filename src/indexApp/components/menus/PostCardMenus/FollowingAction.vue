@@ -64,6 +64,7 @@ async function followingIt(postId) {
             props.user.yourFollowStatus = 'WAIT_PASS'
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         dismissPostMenus()
@@ -80,6 +81,7 @@ async function unFollowingIt(postId) {
         props.user.yourFollowStatus = 'NOT_FOLLOW'
         store.setSuccessMsg("取消订阅成功！")
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         dismissPostMenus()

@@ -67,6 +67,7 @@ async function fetchNotify() {
             state.lastTimestamp = content.slice(-1).at(0).timestamps
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false
@@ -86,6 +87,7 @@ async function ackMessage(messageId) {
         store.incrNotifyUnreadCountByType({ type: readMsg.type, delta: -1 })
         return true
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
         return false
     }
