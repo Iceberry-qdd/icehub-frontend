@@ -1,7 +1,7 @@
 <template>
     <div class="bg-[#00000066] fixed-page sm:backdrop-blur-sm">
         <div
-            class="absolute bg-white dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-y-[1px] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:top-1/2 w-[min(25rem,100vw)]">
+            class="absolute bg-white dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-y-[1px] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:left-1/2 sm:top-1/2 w-[min(25rem,100dvw)]">
             <div
                 class="absolute bg-gray-500/25 cursor-pointer material-symbols-rounded max-sm:hidden max-sm:left-3 p-1 sm:right-3 top-3 z-[100]"
                 @click="dismiss">
@@ -40,7 +40,7 @@
                     背景颜色
                 </div>
             </div>
-            <div class="h-[min(24rem,calc(100vh-25rem*9/16-2.5rem))] max-sm:h-[calc(100vh-100vw*9/16-3rem)] max-sm:pb-4 modern-scrollbar-y overflow-x-hidden overflow-y-auto sm:rounded-b-[8px]">
+            <div class="h-[min(24rem,calc(100dvh-25rem*9/16-2.5rem))] max-sm:h-[calc(100dvh-100dvw*9/16-3rem)] max-sm:pb-4 modern-scrollbar-y overflow-x-hidden overflow-y-auto sm:rounded-b-[8px]">
                 <Footer
                     class="absolute z-[-1]"
                     is-loading

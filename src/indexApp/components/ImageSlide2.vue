@@ -31,7 +31,7 @@
                 <img
                     :id="`img-${index}`"
                     :style="imgClass(index, img.thumb)"
-                    class="bg-center bg-cover bg-no-repeat max-h-screen max-w-[100vw] transition-all"
+                    class="bg-center bg-cover bg-no-repeat max-h-screen max-w-[100dvw] transition-all"
                     loading="lazy"
                     :src="img.thumb" />
             </picture>
@@ -39,7 +39,7 @@
                 <div
                     v-if="img.altText && state.editData[index].showAlt"
                     class="absolute bottom-20 flex items-center justify-center max-sm:bottom-0 w-full z-[1]">
-                    <div class="bg-[#000000AA] break-all break-words h-fit leading-[1.5rem] max-h-[calc(100vh-6rem)] max-sm:bg-white max-sm:dark:bg-[#1e1e1e] max-sm:dark:text-inherit max-sm:pt-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:text-neutral-500 max-sm:w-screen no-scrollbar overflow-y-auto px-4 py-3 rounded-[8px] sm:max-w-[75vw] text-[0.9rem] text-justify text-white w-fit">
+                    <div class="bg-[#000000AA] break-all break-words h-fit leading-[1.5rem] max-h-[calc(100dvh-6rem)] max-sm:bg-white max-sm:dark:bg-[#1e1e1e] max-sm:dark:text-inherit max-sm:pt-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:text-neutral-500 max-sm:w-screen no-scrollbar overflow-y-auto px-4 py-3 rounded-[8px] sm:max-w-[75dvw] text-[0.9rem] text-justify text-white w-fit">
                         <div class="bg-white dark:bg-[#1e1e1e] flex h-6 items-center justify-center sm:hidden sticky top-0">
                             <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
                         </div>
@@ -180,7 +180,7 @@ function imgClass(index, thumb){
     return {
         'background-image': `url(${thumb})`,
         'transform': `rotate(${editData.rotateAngle}deg) ${editData.flip ? 'scaleX(-1)' : ''} scale(${Math.max(editData.zoomRatio, 0)})`,
-        'width': editData.mode === 'fit-screen' ? '100vw' : ''
+        'width': editData.mode === 'fit-screen' ? '100dvw' : ''
     }
 }
 

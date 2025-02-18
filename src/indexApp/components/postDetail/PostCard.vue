@@ -117,7 +117,7 @@
                     :extensions="['exts']"
                     :markdown="state.post.content"
                     class="break-all overflow-y-hidden relative text-[0.9rem] text-justify"
-                    :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}">
+                    :class="{'shrink-content': state.shrinkContent, 'max-h-[45dvh]': state.shrinkContent}">
                 </VueShowdown>
             </div>
             <RepostCard

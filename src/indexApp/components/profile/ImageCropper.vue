@@ -26,7 +26,7 @@
             name="imgFile"
             accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
             @change="choosePics" />
-        <div class="bg-white dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-x-[1px] flex flex-nowrap flex-row h-[30rem] max-sm:bg-zinc-900 max-sm:divide-x-0 max-sm:flex-col max-sm:h-[calc(100vh-4rem-48px)] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none w-[min(50rem,100vw)]">
+        <div class="bg-white dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-x-[1px] flex flex-nowrap flex-row h-[30rem] max-sm:bg-zinc-900 max-sm:divide-x-0 max-sm:flex-col max-sm:h-[calc(100dvh-4rem-48px)] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none w-[min(50rem,100dvw)]">
             <div
                 v-if="!state.originImgFile"
                 class="-translate-x-1/2 -translate-y-1/2 absolute active:bg-gray-100/50 border-[1px] cursor-pointer dark:active:bg-neutral-700 dark:border-neutral-700 dark:hover:bg-neutral-800 flex flex-col flex-nowrap gap-2 h-[min(50%,15rem)] hover:bg-gray-100 items-center justify-center left-1/2 rounded-[8px] top-1/2 w-[min(50%,25rem)]"
@@ -109,7 +109,7 @@
                     </div>
                     <img
                         ref="originImg"
-                        class="h-auto max-h-[30rem] max-sm:max-h-[calc(100vh-4rem-48px)]"
+                        class="h-auto max-h-[30rem] max-sm:max-h-[calc(100dvh-4rem-48px)]"
                         :src="originImgBlob"
                         @load="initCropper" />
                 </div>

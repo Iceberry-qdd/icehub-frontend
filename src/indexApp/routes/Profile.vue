@@ -43,19 +43,19 @@
             </ProfileInfo>
             <div
                 v-if="state.user.blocking"
-                class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+                class="dark:text-white/25 flex flex-col gap-2 h-[calc(100dvh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
                 <span class="cursor-default material-symbols-rounded no-hover text-inherit">disabled_visible</span>
                 <div>你已屏蔽对方</div>
             </div>
             <div
                 v-else-if="state.user.blocked"
-                class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+                class="dark:text-white/25 flex flex-col gap-2 h-[calc(100dvh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
                 <span class="cursor-default material-symbols-rounded no-hover text-inherit">disabled_visible</span>
                 <div>对方屏蔽了你</div>
             </div>
             <div
                 v-else-if="isPrivateAccountAndNotFollowed"
-                class="dark:text-white/25 flex flex-col gap-2 h-[calc(100vh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
+                class="dark:text-white/25 flex flex-col gap-2 h-[calc(100dvh-56px-22rem-2.5rem-2px)] items-center justify-center text-neutral-400 w-full">
                 <span class="cursor-default material-symbols-rounded no-hover text-inherit">lock</span>
                 <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
                 <div class="text-[0.9rem]">这是私密账号，请求订阅通过后才可查看</div>

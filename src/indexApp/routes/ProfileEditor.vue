@@ -271,7 +271,7 @@
     left: 0;
     top: 0;
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     background-color: transparent;
     z-index: 1002;
     user-select: none;

@@ -16,7 +16,7 @@
                 <div>返回</div>
             </div>
         </Header>
-        <div class="bg-white h-fit max-h-[90vh] max-sm:bg-black max-sm:rounded-none modern-scrollbar-y overflow-y-auto relative rounded-[8px] sm:dark:bg-[#1e1e1e] sm:w-[min(25rem,100vw)]">
+        <div class="bg-white h-fit max-h-[90dvh] max-sm:bg-black max-sm:rounded-none modern-scrollbar-y overflow-y-auto relative rounded-[8px] sm:dark:bg-[#1e1e1e] sm:w-[min(25rem,100dvw)]">
             <div
                 id="imgWrapper"
                 class="flex flex-row items-center justify-center relative w-full">
@@ -25,7 +25,7 @@
                     class="absolute backdrop-blur-xl bg-white/5 h-full w-full" />
                 <img
                     :src="state.image.blob"
-                    class="image-picker max-h-[90vh] max-w-full object-cover" />
+                    class="image-picker max-h-[90dvh] max-w-full object-cover" />
                 <div class="absolute bottom-0 flex flex-row gap-x-2 max-sm:bg-zinc-900/75 max-sm:fixed max-sm:gap-x-0 max-sm:left-0 max-sm:p-0 max-sm:w-full p-2 sm:right-0">
                     <button
                         type="button"

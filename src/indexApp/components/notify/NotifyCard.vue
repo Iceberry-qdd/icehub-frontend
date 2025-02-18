@@ -91,7 +91,7 @@
                         tag="markdown"
                         :extensions="['exts']"
                         :markdown="props.message.content.content"
-                        :class="{'shrink-content': state.shrinkContent.repost, 'max-h-[45vh]': state.shrinkContent.repost}">
+                        :class="{'shrink-content': state.shrinkContent.repost, 'max-h-[45dvh]': state.shrinkContent.repost}">
                     </VueShowdown>
                 </div>
                 <RepostCard :post-id="props.message.content.parentId"></RepostCard>

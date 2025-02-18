@@ -34,7 +34,7 @@
                     tag="markdown"
                     :extensions="['exts']"
                     :markdown="state.content"
-                    class="break-all max-sm:w-[calc(100vw-2.5rem-0.75rem*3)] min-h-[3rem]">
+                    class="break-all max-sm:w-[calc(100dvw-2.5rem-0.75rem*3)] min-h-[3rem]">
                 </VueShowdown>
                 <!-- eslint-disable-next-line vue/html-self-closing -->
                 <textarea

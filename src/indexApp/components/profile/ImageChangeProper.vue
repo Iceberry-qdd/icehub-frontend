@@ -6,7 +6,7 @@
             <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
         </div>
         <div
-            class="bg-white cursor-default dark:bg-[#1e1e1e] flex flex-row flex-wrap items-center justify-around max-sm:grid max-sm:grid-cols-4 max-sm:pb-4 max-sm:place-items-center max-sm:pt-2 max-sm:rounded-none max-sm:w-screen py-8 rounded-[8px] select-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:left-1/2 sm:top-1/2 text-center w-[min(100vw,30rem)]">
+            class="bg-white cursor-default dark:bg-[#1e1e1e] flex flex-row flex-wrap items-center justify-around max-sm:grid max-sm:grid-cols-4 max-sm:pb-4 max-sm:place-items-center max-sm:pt-2 max-sm:rounded-none max-sm:w-screen py-8 rounded-[8px] select-none sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:left-1/2 sm:top-1/2 text-center w-[min(100dvw,30rem)]">
             <div
                 v-for="item in state.items"
                 v-show="item.show"

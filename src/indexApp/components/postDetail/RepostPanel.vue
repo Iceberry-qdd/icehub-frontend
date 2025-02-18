@@ -27,7 +27,7 @@
         </Header>
         <div
             :class="{'max-sm:h-full': state.loading}"
-            class="bg-white dark:bg-[#121212] flex flex-col flex-nowrap justify-between left-1/2 max-sm:h-[calc(100vh-2.5rem-48px)] max-sm:p-3 max-sm:rounded-none max-sm:w-screen modern-scrollbar-y overflow-y-auto p-4 rounded-[8px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:max-h-[80%] sm:min-h-[30%] top-1/2 w-[36rem]">
+            class="bg-white dark:bg-[#121212] flex flex-col flex-nowrap justify-between left-1/2 max-sm:h-[calc(100dvh-2.5rem-48px)] max-sm:p-3 max-sm:rounded-none max-sm:w-screen modern-scrollbar-y overflow-y-auto p-4 rounded-[8px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:absolute sm:max-h-[80%] sm:min-h-[30%] top-1/2 w-[36rem]">
             <div
                 v-if="!state.loading"
                 class="flex flex-row items-center justify-between">
