@@ -85,6 +85,6 @@ function handleClick(){
 
 function redirectToAuth(){
     const origin = location.origin
-    location.replace(`${origin}/auth.html`)
+    location.replace(`${origin}/auth.html?route=login`)
 }
 </script>

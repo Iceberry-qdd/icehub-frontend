@@ -135,7 +135,7 @@
 
 <!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
-import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick, provide } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, provide } from 'vue'
 import { NavigationFailureType, isNavigationFailure } from 'vue-router'
 import { getCurUserInfo } from '@/authApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
@@ -190,7 +190,7 @@ async function curUser() {
         store.setErrorMsg(e.message)
         if(e.message === 'Not Login!'){
             localStorage.removeItem('CUR_USER')
-            location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
+            location = `${window.origin}/auth.html?route=login`
         }
     }
 }
@@ -325,14 +325,8 @@ const routerViewKey = computed(() => {
     else return `${route.name}${suffix}`
 })
 
-onMounted(() => {
-    const url = window.document.location.search
-        .substring(1)
-        .split('&')
-        .find(it => it.substring(0, it.indexOf('=')) === 'url')
-    if(!!url) return
-    
-    nextTick(() => { curUser() })
+onMounted(() => {  
+    curUser()
 
     // router guard settings
     router.beforeEach((to, from) => {

@@ -6,20 +6,14 @@
                 class="fixed h-fit w-fit">
             </GlobalBanner>
         </div>
-        <div class="absolute bg-gray-100 dark:bg-inherit flex h-full items-center justify-center w-full">
+        <div>
             <!-- eslint-disable-next-line vue/component-name-in-template-casing, vue/no-undef-components -->
-            <router-view
-                v-slot="{ Component }"
-                class="bg-white dark:bg-[#1e1e1e] flex flex-col items-center justify-center max-h-[100vh] max-sm:h-[100vh] max-sm:rounded-none max-sm:w-[100vw] max-w-[100vw] relative rounded-xl">
-                <keep-alive
-                    :max="8"
-                    :include="['Index', 'Explore', 'Bookmark', 'Notify', 'Search', 'Profile']">
-                    <component
-                        :is="Component"
-                        :key="route.fullPath"
-                        @referer="referer">
-                    </component>
-                </keep-alive>
+            <router-view v-slot="{ Component }">
+                <component
+                    :is="Component"
+                    :key="route.fullPath"
+                    @referer="referer">
+                </component>
             </router-view>
         </div>
     </div>
@@ -39,19 +33,25 @@ const state = reactive(({
 }))
 
 function referer() {
-    const url = route.query?.url
+    const url = URL.canParse(document.referrer) ? new URL(document.referrer) : undefined
     if(!url) {
         window.location = `${window.location.origin}/index.html`
         return
     }
-    window.location = `${window.location.origin}/index.html?url=${route.query.url}`
+
+    window.location = `${window.location.origin}${url.pathname}${url.search}`
 }
 
-watch(() => route.query?.ph, (ph, oldVal) => {
-    if (ph){
-        router.push({name: 'quickLogin', query: {ph: ph}})
-    }
-})
+/**
+ * 1. 没有route参数是不进行跳转；
+ * 2. route参数值不是一个有效的路由名时跳转至login组件；
+ * 3. 否则跳转至指定组件
+ */
+watch(() => route.query?.route, (newVal, _) => {
+    if(!newVal) return
+    const name = !!newVal && router.hasRoute(newVal) ? newVal : 'login'
+    router.push({name: name, query: {referrer: route.query?.referrer}})
+}, {immediate: true})
 
 function handlePopstate(){
     history.pushState(null, null, document.URL)

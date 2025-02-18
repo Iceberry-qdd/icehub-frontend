@@ -2,13 +2,22 @@ import pLimit from "p-limit"
 
 const BASE_API_URL = import.meta.env.VITE_API_BASE_URL
 const BASE_VIDEO_URL = import.meta.env.VITE_VIDEO_BASE_URL
+export const REDIRECT_FLAG = 'redirect:'
 const { fetch: _fetch } = window
 
 window.fetch = async (...args) => {
     const [url, config] = args
-    const response = await _fetch(url, { ...config, credentials: 'include', redirect: 'follow' })
+    const response = await _fetch(url, { credentials: 'include', redirect: 'follow', ...config })
+
     if (!response.ok && response.status === 401) {
-        location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
+        const _response = response.clone()
+        const result = await _response.text()
+        if (result.startsWith(REDIRECT_FLAG)) {
+            const redirectUrl = result.substring(REDIRECT_FLAG.length)
+            location = `${window.origin}${redirectUrl}`
+        } else {
+            location = `${window.origin}/auth.html?route=login`
+        }
     }
 
     return response
@@ -983,6 +992,79 @@ export async function splitAndUploadVideo(file, chunkInfoList = [], onprogress) 
         chunkInfoList.map(it => { return { objectName: it.id, Etag: it.hash } }),
         file.type
     )
+}
+
+/**
+ * 创建新的通行密钥
+ * @param {string} credential registrationResponse
+ * @returns 
+ */
+export function createPasskey(credential) {
+    return fetch(`${BASE_API_URL}/auth/webauthn/register`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'registrationResponseJSON': JSON.stringify(credential)
+        })
+    })
+}
+
+/**
+ * 获取为当前登录用户创新新通行密钥的选项
+ * @returns 
+ */
+export function fetchCredentialCreateOptions() {
+    return fetch(`${BASE_API_URL}/auth/webauthn/register/options`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+/**
+ * 分页查询给定用户的消息列表
+ * @param {number} pageIndex 分页页码
+ * @param {number} pageSize 分页页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {Array<String>} types 要获取的消息类型，可包含多个，以数组形式提供，不传即代表获取所有类型的消息
+ * @returns 该用户的消息列表
+ */
+export function fetchPasskeys(pageIndex, pageSize, lastTimestamp){
+    return fetch(`${BASE_API_URL}/auth/webauthn/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET'
+    })
+}
+
+/**
+ * 根据id删除passkey
+ * @param {string} id passkeyId
+ * @returns 删除结果
+ */
+export function deletePasskey(id){
+    return fetch(`${BASE_API_URL}/auth/webauthn/${id}`, {
+        method: 'DELETE'
+    })
+}
+
+/**
+ * 根据id更改passkey的名称(备注)
+ * @param {string} id passkeyId
+ * @param {string} newName 新名字
+ * @returns 更改后的passkey对象
+ */
+export function updatePasskeyName(id, newName){
+    return fetch(`${BASE_API_URL}/auth/webauthn/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: newName
+        })
+    })
 }
 
 /**

@@ -16,36 +16,59 @@
         <div
             v-else
             class="dark:divide-[#1E1E1E] divide-y-[1px]">
-            <PasskeyItem
-                v-for="item in state.passkeys"
-                :key="item.id"
-                :passkey="item"
-                class="cursor-default p-2"
-                @delete-on-ui="deleteOnUi"
-                @new-name="handleNewName">
-            </PasskeyItem>
+            <TransitionGroup name="passkeys">
+                <PasskeyItem
+                    v-for="item in state.passkeys"
+                    :key="item.id"
+                    :passkey="item"
+                    class="cursor-default p-2"
+                    @delete-on-ui="deleteOnUi"
+                    @new-named-passkey="handleNewNamedPasskey">
+                </PasskeyItem>
+            </TransitionGroup>
         </div>
         <Footer
             v-if="!emptyPasskeys"
             :is-loading="state.isLoading"
             :has-more="hasMore"
-            @fetch-more="fetchPasskeys">
+            @fetch-more="fetchNew">
         </Footer>
         <Teleport to="#app">
             <PasskeyCreateDialog
                 v-if="state.showCreateDialog"
                 class="fixed top-0"
-                @close="state.showCreateDialog = false">
+                @close="state.showCreateDialog = false"
+                @new-passkey-on-ui="handleNewPasskeyObUi">
             </PasskeyCreateDialog>
         </Teleport>
     </div>
 </template>
 
+<style scoped>
+.passkeys-move,
+.passkeys-enter-active,
+.passkeys-leave-active {
+    transition: all 0.5s cubic-bezier(0.39, 0.58, 0.57, 1);
+}
+
+.passkeys-enter-from,
+.passkeys-leave-to {
+    opacity: 0;
+}
+
+.passkeys-leave-active {
+    position: absolute;
+    width: 100%;
+    height: fit-content;
+}
+</style>
+
 <script setup>
-import { computed, onMounted, reactive, defineAsyncComponent } from 'vue'
+import { computed, onMounted, reactive, defineAsyncComponent, watch } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import Footer from '@/indexApp/components/Footer.vue'
 import { store } from '@/indexApp/js/store.js'
+import { fetchPasskeys } from '@/indexApp/js/api'
 const PasskeyEmptyPage = defineAsyncComponent(() => import('@/indexApp/components/setting/accountSafe/PasskeyEmptyPage.vue'))
 const PasskeyItem = defineAsyncComponent(() => import('@/indexApp/components/setting/accountSafe/PasskeyItem.vue'))
 const PasskeyCreateDialog = defineAsyncComponent(() => import('@/indexApp/components/setting/accountSafe/PasskeyCreateDialog.vue'))
@@ -75,15 +98,25 @@ const emptyPasskeys = computed(() => {
     return state.passkeys.length === 0
 })
 
-// TODO
-async function fetchPasskeys() {
+watch(() => state.passkeys.length, (newVal, _) => {
+    state.headerConfig.showMenu = newVal > 0
+}, { immediate: true })
+
+async function tryFetchPasskeys() {
+    state.isLoading = true
     try {
-        state.isLoading = true
-        setTimeout(() => {
-            store.setSuccessMsg('加载列表成功！')
-        }, 3000)
+        const response = await fetchPasskeys(state.pageIndex, state.pageSize, state.lastTimestamp)
+        if (!response.ok) throw new Error((await response.json()).message)
+
+        const { content, totalPages } = await response.json()
+        state.passkeys.push(...content)
+        state.totalPages = totalPages
+        if (content.length > 1) {
+            state.lastTimestamp = content.slice(-1)[0].createdTime
+        }
     } catch (e) {
         store.setErrorMsg(e.message)
+        console.error(e)
     } finally {
         state.isLoading = false
     }
@@ -96,15 +129,26 @@ function deleteOnUi(id) {
     }
 }
 
-function handleNewName(id, newName) {
-    state.passkeys.find(it => it.id === id).name = newName
+function handleNewNamedPasskey({ id, name, updatedTime }) {
+    const passkey = state.passkeys.find(it => it.id === id)
+    passkey.name = name
+    passkey.updatedTime = updatedTime
 }
 
 function createPasskey() {
     state.showCreateDialog = true
 }
 
+function handleNewPasskeyObUi(passkey) {
+    state.passkeys.push(passkey)
+    state.showCreateDialog = false
+}
+
+function fetchNew() {
+    tryFetchPasskeys()
+}
+
 onMounted(() => {
-    fetchPasskeys()
+    tryFetchPasskeys()
 })
 </script>

@@ -28,7 +28,7 @@
         <Footer
             :is-loading="state.isLoading"
             :has-more="hasMore"
-            @fetch-more="fetchUserBlacklist">
+            @fetch-more="fetchNew">
         </Footer>
     </div>
 </template>
@@ -150,6 +150,10 @@ async function unblockAllUser() {
 
 function deleteAllOnUi(){
     state.blacklist.splice(0)
+}
+
+function fetchNew() {
+    fetchUserBlacklist()
 }
 
 onMounted(() => {

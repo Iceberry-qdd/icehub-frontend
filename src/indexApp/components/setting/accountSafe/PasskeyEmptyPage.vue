@@ -21,9 +21,9 @@
         </div>
         <button
             type="button"
-            :class="{'bg-primaryContainer': !state.loading, 'bg-primaryContainer-disable cursor-not-allowed': state.loading}"
-            class="bottom-4 dark:text-onPrimary leading-10 min-w-40 rounded-full sticky text text-primary"
-            @click="createPasskey">
+            :class="{'cursor-not-allowed': state.loading}"
+            class="bg-primaryContainer bottom-4 dark:text-onPrimary leading-10 min-w-40 rounded-full sticky text text-primary"
+            @click="tryCreatePasskey">
             <IconLoading
                 v-if="state.loading"
                 class="box-content h-5 justify-self-center py-[0.6rem] text-inherit w-5">
@@ -79,8 +79,11 @@
 
 <script setup>
 import { reactive } from 'vue'
+import { store } from '@/indexApp/js/store.js'
+import { createPasskey, fetchCredentialCreateOptions } from '@/indexApp/js/api.js'
 import IconLoading from '@/components/icons/IconLoading.vue'
 
+const emits = defineEmits(['newPasskeyOnUi', 'close'])
 const state = reactive({
     intros: [
         { id: 1, text: '🔑 使用通行密钥(Passkey)作为登录凭据，可以有效防止网络钓鱼、撞库和其他远程攻击。', link: { text: '了解更多', href: 'https://fidoalliance.org/passkeys-2' } },
@@ -94,10 +97,35 @@ const state = reactive({
     loading: false
 })
 
-// TODO
-function createPasskey() {
-    if (state.loading === true) return
-
+async function tryCreatePasskey() {
     state.loading = true
+    try {
+        let response = await fetchCredentialCreateOptions()
+        if (!response.ok) throw new Error('创建通行密钥失败！')
+
+        let result = await response.json()
+        const publicKeyCredentialCreationOptions = PublicKeyCredential.parseCreationOptionsFromJSON(result)
+        delete publicKeyCredentialCreationOptions.extensions.appid
+        delete publicKeyCredentialCreationOptions.extensions.appidExclude
+        delete publicKeyCredentialCreationOptions.extensions.credentialProtectionPolicy
+        delete publicKeyCredentialCreationOptions.extensions.enforceCredentialProtectionPolicy
+
+        const credential = await navigator.credentials.create({
+            publicKey: publicKeyCredentialCreationOptions
+        })
+
+        response = await createPasskey(credential.toJSON())
+        if (!response.ok) throw new Error((await response.json()).message)
+
+        result = await response.json()
+        emits('newPasskeyOnUi', result)
+    } catch (e) {
+        if (!(e instanceof DOMException && e.name === 'NotAllowedError')) {
+            store.setErrorMsg(e.message)
+            emits('close')
+        }
+    } finally {
+        state.loading = false
+    }
 }
 </script>

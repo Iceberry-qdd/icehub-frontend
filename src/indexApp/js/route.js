@@ -116,7 +116,7 @@ const routes = [
             { name: 'passkey', path: 'account&safe/passkey', component: SettingPasskeyManage, meta: { key: 'setting', parent: 'accountSafe' } },
         ]
     },
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: GlobalNotFoundPage }
+    { name: 'NotFound', path: '/:pathMatch(.*)*', component: GlobalNotFoundPage }
 ]
 
 const router = createRouter({

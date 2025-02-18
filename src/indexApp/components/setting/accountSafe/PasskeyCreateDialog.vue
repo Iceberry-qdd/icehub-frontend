@@ -8,7 +8,10 @@
             <div class="flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
                 <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
             </div>
-            <PasskeyEmptyPage></PasskeyEmptyPage>
+            <PasskeyEmptyPage
+                @close="close"
+                @new-passkey-on-ui="(passkey) => emits('newPasskeyOnUi', passkey)">
+            </PasskeyEmptyPage>
         </div>
     </div>
 </template>
@@ -48,7 +51,7 @@
 <script setup>
 import PasskeyEmptyPage from '@/indexApp/components/setting/accountSafe/PasskeyEmptyPage.vue'
 
-const emits = defineEmits(['close'])
+const emits = defineEmits(['close', 'newPasskeyOnUi'])
 
 function close(){
     emits('close')

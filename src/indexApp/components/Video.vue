@@ -159,6 +159,7 @@ onMounted(async () => {
 
     // 生成正确请求
     player.getNetworkingEngine().registerRequestFilter((type, request) => {
+        request.allowCrossSiteCredentials = true
         if (type === shaka.net.NetworkingEngine.RequestType.KEY) {
             request.headers['X-Content-Type'] = 'video/*'
             request.uris = request.uris.map(it => `${BASE_API_URL}/object/video/key/${id}`)

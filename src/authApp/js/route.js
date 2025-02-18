@@ -2,13 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const Login = () => import('@/authApp/routes/Login.vue')
 const Register = () => import('@/authApp/routes/Register.vue')
-const QuickLogin = () => import('@/authApp/routes/QuickLogin.vue')
+const Confirm = () => import('@/authApp/routes/Confirm.vue')
 const GlobalNotFoundPage = () => import('@/components/GlobalNotFoundPage.vue')
 
 const routes = [
-    { name: 'login', path: '/auth/login', component: Login, alias: ['/auth.html'] },
+    { name: 'login', path: '/auth/login', component: Login },
     { name: 'register', path: '/auth/register', component: Register },
-    { name: 'quickLogin', path: '/auth/quickLogin', component: QuickLogin },
+    { name: 'confirm', path: '/auth/confirm', component: Confirm },
     { path: '/:pathMatch(.*)*', name: 'NotFound', component: GlobalNotFoundPage }
 ]
 
