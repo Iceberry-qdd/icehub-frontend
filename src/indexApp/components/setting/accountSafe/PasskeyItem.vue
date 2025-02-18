@@ -236,7 +236,7 @@ async function doDeletePasskey() {
 
         const isDeleted = await response.json()
         if(!isDeleted) throw new Error('删除失败！')
-        emits('deleteOnUi', props.passkey.id)
+        emits('deleteOnUi', props.passkey)
     } catch (e) {
         console.error(e)
         store.setErrorMsg(e.message)

@@ -122,10 +122,17 @@ async function tryFetchPasskeys() {
     }
 }
 
-function deleteOnUi(id) {
+async function deleteOnUi({id, credentialId}) {
     const index = state.passkeys.findIndex(it => it.id === id)
     if (index !== -1) {
         state.passkeys.splice(index, 1)
+    }
+
+    if (PublicKeyCredential.signalUnknownCredential) {
+        await PublicKeyCredential.signalUnknownCredential({
+            rpId: location.hostname,
+            credentialId: credentialId
+        })
     }
 }
 
