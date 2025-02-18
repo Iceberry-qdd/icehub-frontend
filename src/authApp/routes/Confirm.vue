@@ -187,7 +187,6 @@ async function getCurUser() {
 }
 
 onMounted(() => {
-    document.title = 'Icehub-请验证您的身份'
     getCurUser()
     
     // 阻止默认提交事件

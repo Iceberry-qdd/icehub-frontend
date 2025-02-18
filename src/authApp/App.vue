@@ -53,10 +53,6 @@ watch(() => route.query?.route, (newVal, _) => {
     router.push({name: name, query: {referrer: route.query?.referrer}})
 }, {immediate: true})
 
-function handlePopstate(){
-    history.pushState(null, null, document.URL)
-}
-
 function handleThemeMediaChange(mq) {
     store.setSysThemeMode(mq.matches ? 'dark' : 'light')
     if(!('theme' in localStorage)){
@@ -65,15 +61,25 @@ function handleThemeMediaChange(mq) {
 }
 
 onMounted(() => {
-    history.pushState(null, null, document.URL)
     window.addEventListener('popstate', handlePopstate)
-    
+
     document.getElementById('pre-loading').style.display = 'none'
 
     // Media query theme mode settings
     state.themeMediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
     handleThemeMediaChange(state.themeMediaQueryList)
     state.themeMediaQueryList.addEventListener('change', handleThemeMediaChange)
+
+    // router guard settings
+    router.afterEach((to, from, failure) => {
+        state.startRoute = false
+        if (failure && !isNavigationFailure(failure, NavigationFailureType.duplicated)) {
+            store.setErrorMsg('无法加载页面，您可以刷新重试！')
+        }
+        if (!!to.meta?.title) {
+            document.title = 'Icehub-' + to.meta.title
+        }
+    })
 })
 
 onUnmounted(() => {

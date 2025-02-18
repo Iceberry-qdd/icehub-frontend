@@ -339,6 +339,9 @@ onMounted(() => {
         if (failure && !isNavigationFailure(failure, NavigationFailureType.duplicated)) {
             store.setErrorMsg('无法加载页面，您可以刷新重试！')
         }
+        if(!!to.meta?.title){
+            document.title = 'Icehub-'+to.meta.title
+        }
     })
 
     // Media query mobile mode settings

@@ -88,7 +88,7 @@ const unreadNotifyCount = computed(() => {
 
 const state = reactive({
     menus: [
-        { id: 1, name: '主页', routeName: 'index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: false, mobileShow: true },
+        { id: 1, name: '动态', routeName: 'index', routeParams: {}, icon: 'home', badgeCount: 0, visible: true, active: false, mobileShow: true },
         { id: 2, name: '探索', routeName: 'explore', routeParams: {}, icon: 'explore', badgeCount: 0, visible: true, active: false, mobileShow: true },
         { id: 3, name: '话题', routeName: 'hashtag', routeParams: {}, icon: 'tag', badgeCount: 0, visible: showUnImpl, active: false, mobileShow: false }, // TODO implement it.
         { id: 4, name: '消息', routeName: 'notify', routeParams: {}, icon: 'notifications', badgeCount: unreadNotifyCount, visible: true, active: false, mobileShow: true },
@@ -162,5 +162,12 @@ watch(() => route.fullPath, (newVal, _) => {
 
 onMounted(() => {
     getUnreadNotifyCount(state.user.id)
+
+    // router guard settings
+    router.afterEach((to, from, failure) => {
+        if(['notify'].includes(to.name) && !!to.meta?.title){
+            document.title = `Icehub-${to.meta.title}(${unreadNotifyCount.value})`
+        }
+    })
 })
 </script>

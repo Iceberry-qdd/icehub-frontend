@@ -187,11 +187,18 @@ const state = reactive({
     showConfirmFollowBanner: true
 })
 
+const genderCall = computed(() => {
+    const gender = state.user?.gender
+    if (isMyself.value) return '我'
+    if (gender == 'FEMALE') return '她'
+    return '他'
+})
+
 const statCardData = computed(() => {
     const { fanCount, followCount, createdTime } = props.user
     return [
-        { name: 'fanCount', value: humanizedNumber(fanCount), routePath: 'fanList', alias: '订阅我' },
-        { name: 'followCount', value: humanizedNumber(followCount), routePath: 'followList', alias: '我订阅' },
+        { name: 'fanCount', value: humanizedNumber(fanCount), routePath: 'fanList', alias: `订阅${genderCall.value}` },
+        { name: 'followCount', value: humanizedNumber(followCount), routePath: 'followList', alias: `${genderCall.value}订阅` },
         { name: 'joinAt', value: humanizedTime(createdTime), routePath: undefined, alias: '加入于' }
     ]
 })

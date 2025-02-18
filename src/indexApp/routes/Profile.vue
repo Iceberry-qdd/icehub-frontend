@@ -242,6 +242,10 @@ onMounted(async () => {
     if(!CSS.supports('animation-timeline: scroll()')){
         window.addEventListener('scroll', handleScroll)
     }
+
+    if(!!state.user?.nickname){
+        document.title = `Icehub-${state.user.nickname}的个人主页`
+    }
 })
 
 onUnmounted(() => {

@@ -153,6 +153,11 @@ watch(() => unreadNotifyCount.value, (newVal, oldVal) => {
 watch(() => route.name, (newVal, _) => {
     const tab = state.tabs.find(it => it.id === newVal)
 
+    // 更新title
+    if(!!route.meta?.title && tab.count > 0){
+        document.title = `Icehub-${route.meta.title}(${tab.count})`
+    }
+
     if (!tab || tab.id === 'notifyAllTimelinePage') {
         state.confirmBDialogUi.title = `已读全部消息？`
         state.headerConfig.showMenu = false
