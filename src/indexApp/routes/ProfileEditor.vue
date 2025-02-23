@@ -10,7 +10,7 @@
             :icon-tooltip="state.headerConfig.iconTooltip"
             @handle-action="handleSubmit">
         </Header>
-
+    
         <div class="banner-cover">
             <span
                 class="material-symbols-rounded"
@@ -18,12 +18,12 @@
                 edit
             </span>
         </div>
-        
+
         <Banner
             :user="state.newUser"
             class="-mb-[calc(5rem/2)] aspect-video object-center object-cover w-full z-[1]">
         </Banner>
-
+    
         <div class="avatar-cover">
             <span
                 class="material-symbols-rounded"
@@ -31,7 +31,7 @@
                 edit
             </span>
         </div>
-
+    
         <Avatar
             :user="state.newUser"
             class="h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]">
@@ -59,7 +59,7 @@
                     v-model="state.newUser.remark"
                     class="form-control"
                     placeholder="个人简介">
-                    </textarea>
+                </textarea>
                 <label for="floatingTextarea">个人简介</label>
             </div>
             <div class="form-floating mb-3">

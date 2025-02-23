@@ -20,7 +20,7 @@ async function initApp() {
       openLinksInNewWindow: true,
       ghCodeBlocks: true,
       ghMentions: true,
-    ghMentionsLink: `${origin}/profile/{u}`
+      ghMentionsLink: `${origin}/profile/{u}`
     },
   }
   showdown.extension('exts', extensions)

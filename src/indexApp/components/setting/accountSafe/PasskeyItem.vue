@@ -294,7 +294,7 @@ const listenNameInput = debounce(function (e) {
     state.passkeyName.text = e.target.innerText
 }, 300) 
 
-// 将光标移动到末尾的函数
+// XXX 将光标移动到末尾的函数
 function moveCursorToEnd(element) {
     const range = document.createRange()
     const selection = window.getSelection()

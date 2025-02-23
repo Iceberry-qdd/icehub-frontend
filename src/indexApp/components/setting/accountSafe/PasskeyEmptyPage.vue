@@ -63,10 +63,10 @@
     font-size: inherit;
     color: inherit;
     padding: 0;
-    animation: count 4s steps(4, jump-end) infinite;
+    animation: jump 4s steps(4, jump-end) infinite;
 }
 
-@keyframes count {
+@keyframes jump {
     0% {
         transform: translateY(0);
     }
@@ -120,13 +120,17 @@ async function tryCreatePasskey() {
         result = await response.json()
         emits('newPasskeyOnUi', result)
     } catch (e) {
-        if (!(e instanceof DOMException && e.name === 'NotAllowedError')) {
-            console.error(e)
+        console.error(e)
+        if (e instanceof DOMException && e.name === 'NotAllowedError') {
+            store.setWarningMsg('您已取消创建新的通行密钥！')
+        } else if (e instanceof DOMException && e.name === 'InvalidStateError' ){
+            store.setErrorMsg('该设备上已存在您的通行密钥，请勿重复添加！')
+        } else {
             store.setErrorMsg(e.message)
-            emits('close')
         }
     } finally {
         state.loading = false
+        emits('close')
     }
 }
 </script>

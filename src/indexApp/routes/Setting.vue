@@ -1,5 +1,5 @@
 <template>
-    <div class="dark:divide-neutral-700 divide-x flex flex-nowrap flex-row max-sm:h-screen modern-scrollbar-y overflow-y-auto relative">
+    <div class="flex flex-nowrap flex-row lg:dark:divide-neutral-700 lg:divide-x max-sm:h-screen modern-scrollbar-y overflow-y-auto relative">
         <div
             id="setting"
             class="h-screen lg:basis-[30%] max-lg:w-full max-lg:z-[1] sm:max-lg:bg-inherit"
