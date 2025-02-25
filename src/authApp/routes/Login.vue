@@ -137,9 +137,8 @@ async function autoComplete(abortController) {
         if (isCMA) {
             // Call WebAuthn authentication
             const credential = await callWebAuthn(abortController, 'conditional')
-            // console.log(credential.toJSON())
             state.loading = true
-            const response = await loginWithWebauthn(credential.toJSON())
+            const response = await loginWithWebauthn(credential.toJSON(), state.turnstile.token)
             if (!response.ok) throw new Error((await response.json()).message)
 
             store.setSuccessMsg("登录成功！")

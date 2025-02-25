@@ -10,7 +10,7 @@
             @handle-action="createPasskey">
         </Header>
         <PasskeyEmptyPage
-            v-if="emptyPasskeys"
+            v-if="!state.isLoading && emptyPasskeys"
             class="m-4 max-sm:m-3">
         </PasskeyEmptyPage>
         <div
@@ -28,7 +28,7 @@
             </TransitionGroup>
         </div>
         <Footer
-            v-if="!emptyPasskeys"
+            v-if="!emptyPasskeys || state.isLoading"
             :is-loading="state.isLoading"
             :has-more="hasMore"
             @fetch-more="fetchNew">
@@ -38,7 +38,7 @@
                 v-if="state.showCreateDialog"
                 class="fixed top-0"
                 @close="state.showCreateDialog = false"
-                @new-passkey-on-ui="handleNewPasskeyObUi">
+                @new-passkey-on-ui="handleNewPasskeyOnUi">
             </PasskeyCreateDialog>
         </Teleport>
     </div>
@@ -146,7 +146,7 @@ function createPasskey() {
     state.showCreateDialog = true
 }
 
-function handleNewPasskeyObUi(passkey) {
+function handleNewPasskeyOnUi(passkey) {
     state.passkeys.push(passkey)
     state.showCreateDialog = false
 }

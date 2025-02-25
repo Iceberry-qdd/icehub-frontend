@@ -126,7 +126,7 @@ async function tryCreatePasskey() {
         } else if (e instanceof DOMException && e.name === 'InvalidStateError' ){
             store.setErrorMsg('该设备上已存在您的通行密钥，请勿重复添加！')
         } else {
-            store.setErrorMsg(e.message)
+            store.setErrorMsg('通行密钥创建失败！')
         }
     } finally {
         state.loading = false

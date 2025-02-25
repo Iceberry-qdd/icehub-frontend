@@ -903,7 +903,7 @@ export async function splitAndUploadVideo(file, chunkInfoList = [], onprogress) 
         let hash = undefined
         try {
             hash = await calcHash(chunk)
-        if (!it.hash) it.hash = hash // hash为空表示未初始化，此时更新hash
+            if (!it.hash) it.hash = hash // hash为空表示未初始化，此时更新hash
         } catch (e) {
             return new Promise(reject => {
                 reject(
@@ -1117,7 +1117,7 @@ function calcHash(fileChunk) {
                 resolve(hash)
             }
         }
-        })
+    })
 }
 
 /**

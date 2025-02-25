@@ -18,7 +18,7 @@
                             v-if="!!state.curUser"
                             :user="state.curUser"
                             :title="state.curUser.nickname"
-                            class="absolute avatar flex-none inline-block left-[0.375rem] max-sm:left-2 max-sm:top-2 max-sm:w-8 object-cover rounded-[9999px!important] text-[3rem] top-[0.375rem] w-7">
+                            class="absolute avatar flex-none inline-block leading-7 left-[0.375rem] max-sm:leading-8 max-sm:left-2 max-sm:top-2 max-sm:w-8 object-cover rounded-[9999px!important] top-[0.375rem] w-7">
                         </Avatar>
                         <input
                             v-model="state.password"
@@ -164,7 +164,14 @@ function doReferrer() {
     if (URL.canParse(document.referrer)) {
         const url = new URL(document.referrer)
         let newLocation = window.origin
-        if (!!url.pathname) newLocation += url.pathname
+        if (!!url.pathname){
+            if(url.pathname.startsWith('/auth/webauthn/register')) {
+                newLocation += '/auth/webauthn/register'
+            } else {
+                newLocation += url.pathname
+            }
+        }
+
         if (!!url.search) newLocation += url.search
         location = newLocation
     } else {
