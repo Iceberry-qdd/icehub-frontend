@@ -164,14 +164,8 @@ function doReferrer() {
     if (URL.canParse(document.referrer)) {
         const url = new URL(document.referrer)
         let newLocation = window.origin
-        if (!!url.pathname){
-            if(url.pathname.startsWith('/auth/webauthn/register')) {
-                newLocation += '/auth/webauthn/register'
-            } else {
-                newLocation += url.pathname
-            }
-        }
 
+        if (!!url.pathname) newLocation += url.pathname
         if (!!url.search) newLocation += url.search
         location = newLocation
     } else {
@@ -195,15 +189,25 @@ async function getCurUser() {
 
 onMounted(() => {
     getCurUser()
-    
+
     // 阻止默认提交事件
     document.getElementById('confirm-form').addEventListener('submit', (e) => {
         e.preventDefault()
     })
 
     // 获取需验证的路径
-    state.confirmUrl = route.query?.referrer
-    if(!state.confirmUrl){
+    const referrer = route.query?.referrer
+
+    if (!!referrer) {
+        const WEBAUTHN_REGISTER_PREFIX = btoa('/api/auth/webauthn/register')
+        if (referrer.startsWith(WEBAUTHN_REGISTER_PREFIX)) {
+            state.confirmUrl = WEBAUTHN_REGISTER_PREFIX
+        } else {
+            state.confirmUrl = referrer
+        }
+    }
+    
+    if (!state.confirmUrl) {
         doReferrer()
     }
 })

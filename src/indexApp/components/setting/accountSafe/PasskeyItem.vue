@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-row gap-x-2 items-start text-[0.75rem] text-neutral-400">
         <div
-            v-if="!!props.passkey.provider"
+            v-if="hasProviderIcon"
             id="icon"
             class="aspect-square bg-gray-100 dark:bg-[#262626] flex-none p-2 relative rounded-lg w-[2.25rem]">
             <span
@@ -30,7 +30,7 @@
                     class="name text-onSurface"
                     @compositionend="listenNameInput"
                     @input="listenNameInput">
-                    {{ state.passkeyName.text }}
+                    {{ displayProviderName }}
                 </span>
                 <span
                     class="align-middle edit material-symbols-rounded ml-1 no-hover p-0 text-[0.9rem] text-inherit"
@@ -59,7 +59,7 @@
                 {{ invalidNameChecker.reason }}
             </div>
             <div
-                v-if="!!props.passkey.provider"
+                v-if="!!props.passkey.provider?.name"
                 class="webkit-box-1">
                 <span>提供方：</span>
                 <span>{{ props.passkey.provider?.name || '未知' }}</span>
@@ -72,7 +72,7 @@
                 <span class="max-sm:hidden text-neutral-200">|</span>
                 <div class="webkit-box-1">
                     <span>最近使用：</span>
-                    <span>{{ humanizedTime(props.passkey.updatedTime) }}</span>
+                    <span>{{ humanizedTime(props.passkey.updatedTime) || '无' }}</span>
                 </div>
             </div>
         </div>
@@ -168,12 +168,13 @@ import { debounce } from '@/indexApp/utils/jsHelper.js'
 const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 
 let PASSKEY_CACHED_KEY = 'cache:passkey:${id}:name'
+const DEFAULT_PASSKEY_PROVIDER_NAME = '未命名通行密钥'
 const emits = defineEmits(['deleteOnUi', 'newNamedPasskey'])
 const passkeyName = ref()
 const props = defineProps({
     /**
      * 外部传递过来的passkey条目数据
-     * @type {{id:string, createdTime:number, provider:{name:string, iconLight:string, iconDark:string}, name:string, updatedTime:number}}
+     * @type {{id:string, createdTime:number, provider:{name:string|null, iconLight:string|null, iconDark:string|null}, name:string, updatedTime:number|null}}
      * */
     passkey: {
         type: Object,
@@ -205,12 +206,20 @@ const state = reactive({
     }
 })
 
+const hasProviderIcon = computed(() => {
+    return !!props.passkey.provider?.iconLight || !!props.passkey.provider?.iconDark
+})
+
 const iconLight = computed(() => {
-    return `url(${props.passkey.provider?.iconLight})`
+    return `url(${props.passkey.provider?.iconLight || props.passkey.provider?.iconDark})`
 })
 
 const iconDark = computed(() => {
-    return `url(${props.passkey.provider?.iconDark})`
+    return `url(${props.passkey.provider?.iconDark || props.passkey.provider?.iconLight})`
+})
+
+const displayProviderName = computed(() => {
+    return state.passkeyName.text || DEFAULT_PASSKEY_PROVIDER_NAME
 })
 
 function choose(args) {
@@ -249,11 +258,14 @@ async function doDeletePasskey() {
 
 function handleChangeName() {
     passkeyName.value.contentEditable = 'plaintext-only'
+    if(!props.passkey.name){
+        passkeyName.value.innerText = ''
+    }
 }
 
 function cancelChangeName() {
     passkeyName.value.removeAttribute('contenteditable')
-    passkeyName.value.innerText = props.passkey.name
+    passkeyName.value.innerText = props.passkey.name || DEFAULT_PASSKEY_PROVIDER_NAME
     state.passkeyName.text = props.passkey.name
     localStorage.removeItem(PASSKEY_CACHED_KEY)
 }
@@ -292,7 +304,7 @@ const listenNameInput = debounce(function (e) {
         moveCursorToEnd(e.target)
     }
     state.passkeyName.text = e.target.innerText
-}, 300) 
+}, 300)
 
 // XXX 将光标移动到末尾的函数
 function moveCursorToEnd(element) {

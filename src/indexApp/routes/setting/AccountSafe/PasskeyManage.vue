@@ -147,7 +147,7 @@ function createPasskey() {
 }
 
 function handleNewPasskeyOnUi(passkey) {
-    state.passkeys.push(passkey)
+    state.passkeys.unshift(passkey)
     state.showCreateDialog = false
 }
 

@@ -21,6 +21,8 @@ const conditions = [
     [oneYear, 'month']
 ]
 export function humanizedTime(timestamps) {
+    if(!timestamps) return undefined
+    
     const now = new Date()
     const postTime = new Date(Number.parseInt(timestamps))
     const timeDiff = now - postTime
