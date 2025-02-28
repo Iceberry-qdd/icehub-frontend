@@ -154,14 +154,20 @@
                         v-if="state.showEmojiPanel && store.MOBILE_MODE"
                         class="bg-black/50 fixed fixed-page h-screen left-0 sm:hidden top-0 w-screen z-[1001]" />
                     <Transition name="fade">
-                        <EmojiPanel
-                            v-if="state.showEmojiPanel"
-                            :id="`${props.switchFrom}-emoji-panel`"
-                            :switch-id="`${props.switchFrom}-emoji-panel`"
-                            class="absolute dark:border-neutral-700 h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max pb-4 pr-[1px] px-1 ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] z-[99]"
-                            @dismiss-emoji-panel="dismissEmojiPanel"
-                            @insert-emoji-code="insertEmoji">
-                        </EmojiPanel>
+                        <div v-if="state.showEmojiPanel">
+                            <div
+                                class="absolute bg-white dark:bg-[#1e1e1e] dark:border-neutral-700 h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max place-content-center ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] w-[18rem] z-[99]">
+                                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                                <Footer is-loading has-more></Footer>
+                            </div>
+                            <EmojiPanel
+                                :id="`${props.switchFrom}-emoji-panel`"
+                                :switch-id="`${props.switchFrom}-emoji-panel`"
+                                class="absolute dark:border-neutral-700 h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] z-[99]"
+                                @dismiss-emoji-panel="dismissEmojiPanel"
+                                @insert-emoji-code="insertEmoji">
+                            </EmojiPanel>
+                        </div>
                     </Transition>
                 </Teleport>
             </div>
@@ -261,6 +267,7 @@
 import { reactive, defineAsyncComponent, ref, computed, nextTick } from 'vue'
 import { getDateTimeRange, toDatePickerFormat } from '@/indexApp/utils/formatUtils.js'
 import { store } from '@/indexApp/js/store.js'
+const Footer = defineAsyncComponent(() => import('@/indexApp/components/Footer.vue'))
 const ConfirmDialogBox = defineAsyncComponent(() => import('@/components/ConfirmDialogBox.vue'))
 const EmojiPanel = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/EmojiPanel.vue'))
 const VisibilityAction = defineAsyncComponent(() => import('@/indexApp/components/menus/postEditorMenus/VisibilityAction.vue'))
