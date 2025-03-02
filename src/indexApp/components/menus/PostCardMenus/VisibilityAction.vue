@@ -81,6 +81,7 @@ async function updateVisibility({ code }) {
         // XXX 此处为方便，直接修改props对象的属性值
         // eslint-disable-next-line vue/no-mutating-props
         props.post.status = originStatus
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         dismiss()

@@ -92,6 +92,7 @@ async function blockThisUser() {
         deleteAllReviewsOfUserOnUi(props.post.user.id) // 供Search组件使用
         deleteAllUsersOfUserOnUi(props.post.user.id) // 供Search组件使用
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         dismissConfirmDialogBox()

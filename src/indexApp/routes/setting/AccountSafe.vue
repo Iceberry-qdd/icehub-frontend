@@ -11,6 +11,9 @@
         <div>
             <LookupProfile></LookupProfile>
             <ChangePwd v-if="showUnImpl"></ChangePwd>
+            <Passkey
+                @click="emits('routeTo', 'passkey')">
+            </Passkey>
             <ChangeEmail
                 v-if="showUnImpl"
                 :old-email="state.setting.changeEmail.oldEmail">
@@ -40,6 +43,7 @@ import TwoFA from '@/indexApp/components/setting/accountSafe/TwoFA.vue'
 import ChangeEmail from '@/indexApp/components/setting/accountSafe/ChangeEmail.vue'
 import DeleteAccount from '@/indexApp/components/setting/accountSafe/DeleteAccount.vue'
 import AccountActivity from '@/indexApp/components/setting/accountSafe/AccountActivity.vue'
+import Passkey from '@/indexApp/components/setting/accountSafe/Passkey.vue'
 import { store } from '@/indexApp/js/store.js'
 
 const showUnImpl = JSON.parse(import.meta.env.VITE_SHOW_UNFINISHED)

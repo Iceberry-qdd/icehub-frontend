@@ -2,13 +2,22 @@ import pLimit from "p-limit"
 
 const BASE_API_URL = import.meta.env.VITE_API_BASE_URL
 const BASE_VIDEO_URL = import.meta.env.VITE_VIDEO_BASE_URL
+export const REDIRECT_FLAG = 'redirect:'
 const { fetch: _fetch } = window
 
 window.fetch = async (...args) => {
     const [url, config] = args
-    const response = await _fetch(url, { ...config, credentials: 'include', redirect: 'follow' })
+    const response = await _fetch(url, { credentials: 'include', redirect: 'follow', ...config })
+
     if (!response.ok && response.status === 401) {
-        location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
+        const _response = response.clone()
+        const result = await _response.text()
+        if (result.startsWith(REDIRECT_FLAG)) {
+            const redirectUrl = result.substring(REDIRECT_FLAG.length)
+            location = `${window.origin}${redirectUrl}`
+        } else {
+            location = `${window.origin}/auth.html?route=login`
+        }
     }
 
     return response
@@ -890,11 +899,24 @@ export async function splitAndUploadVideo(file, chunkInfoList = [], onprogress) 
         if (it.uploaded) continue // 跳过已上传成功的分片
 
         const chunk = file.slice(it.startLoc, it.startLoc + CHUNK_SIZE)
-        const hash = await calcHash(chunk)
-        if (!it.hash) it.hash = hash // hash为空表示未初始化，此时更新hash
+
+        let hash = undefined
+        try {
+            hash = await calcHash(chunk)
+            if (!it.hash) it.hash = hash // hash为空表示未初始化，此时更新hash
+        } catch (e) {
+            return new Promise(reject => {
+                reject(
+                    new Response(JSON.stringify({ message: e }), {
+                        status: 400,
+                        statusText: 'Bad Request'
+                    })
+                )
+            })
+        }
 
         if (it.hash !== hash) { // 重试时，可能会不一致
-            return new Promise((_, reject) => {
+            return new Promise(reject => {
                 reject(
                     new Response(JSON.stringify({ message: `文件hash值不一致！[${it.startLoc, it.endLoc}]` }), {
                         status: 400,
@@ -936,7 +958,7 @@ export async function splitAndUploadVideo(file, chunkInfoList = [], onprogress) 
     for (const res of resList) {
         if (res.status === 'fulfilled') {
             const response = await res.value
-            if(!response.ok) return new Promise(reject => {
+            if (!response.ok) return new Promise(reject => {
                 reject(
                     new Response(JSON.stringify(chunkInfoList), {
                         status: 408, // 返回请求超时表示上传失败
@@ -970,6 +992,79 @@ export async function splitAndUploadVideo(file, chunkInfoList = [], onprogress) 
         chunkInfoList.map(it => { return { objectName: it.id, Etag: it.hash } }),
         file.type
     )
+}
+
+/**
+ * 创建新的通行密钥
+ * @param {string} credential registrationResponse
+ * @returns 
+ */
+export function createPasskey(credential) {
+    return fetch(`${BASE_API_URL}/auth/webauthn/register`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+            'registrationResponseJSON': JSON.stringify(credential)
+        })
+    })
+}
+
+/**
+ * 获取为当前登录用户创新新通行密钥的选项
+ * @returns 
+ */
+export function fetchCredentialCreateOptions() {
+    return fetch(`${BASE_API_URL}/auth/webauthn/register/options`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+/**
+ * 分页查询给定用户的消息列表
+ * @param {number} pageIndex 分页页码
+ * @param {number} pageSize 分页页大小
+ * @param {number} lastTimestamp 上一页最后一条消息的时间戳
+ * @param {Array<String>} types 要获取的消息类型，可包含多个，以数组形式提供，不传即代表获取所有类型的消息
+ * @returns 该用户的消息列表
+ */
+export function fetchPasskeys(pageIndex, pageSize, lastTimestamp){
+    return fetch(`${BASE_API_URL}/auth/webauthn/list?pageIndex=${pageIndex}&pageSize=${pageSize}&t=${lastTimestamp}`, {
+        method: 'GET'
+    })
+}
+
+/**
+ * 根据id删除passkey
+ * @param {string} id passkeyId
+ * @returns 删除结果
+ */
+export function deletePasskey(id){
+    return fetch(`${BASE_API_URL}/auth/webauthn/${id}`, {
+        method: 'DELETE'
+    })
+}
+
+/**
+ * 根据id更改passkey的名称(备注)
+ * @param {string} id passkeyId
+ * @param {string} newName 新名字
+ * @returns 更改后的passkey对象
+ */
+export function updatePasskeyName(id, newName){
+    return fetch(`${BASE_API_URL}/auth/webauthn/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: newName
+        })
+    })
 }
 
 /**
@@ -1009,19 +1104,20 @@ function composeChunks(chunkList, contentType) {
  * @returns {Promise<string>}
  */
 function calcHash(fileChunk) {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
+        if (!window.Worker) {
+            reject('您的浏览器不支持Worker!')
+        }
+
         const worker = new Worker('/hash.js')
-        worker.postMessage({ fileChunk })
+        worker.postMessage({ fileChunk: fileChunk, origin: window.location.origin })
         worker.onmessage = function (e) {
-            const { hash, progress } = e.data
+            const { hash, progress, origin } = e.data
             if (hash) {
                 resolve(hash)
             }
         }
     })
-        .catch((reason) => {
-            console.error(reason)
-        })
 }
 
 /**

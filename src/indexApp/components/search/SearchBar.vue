@@ -34,7 +34,7 @@
             <div
                 v-if="state.suggests.show"
                 id="search-suggest"
-                class="bg-white border-[1px] dark:bg-neutral-900 dark:border-neutral-800 divide-y fixed flex flex-col left-0 max-h-[min(24rem,75vh)] ml-1 modern-scrollbar-y overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-0.5rem)] z-[105]">
+                class="bg-white border-[1px] dark:bg-neutral-900 dark:border-neutral-800 divide-y fixed flex flex-col left-0 max-h-[min(24rem,75dvh)] ml-1 modern-scrollbar-y overflow-y-auto rounded-[8px] shadow-md text-base top-[50px] w-[calc(100%-0.5rem)] z-[105]">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <div v-if="state.suggests.hintSuggests && !state.suggests.showLoading" class="suggests">
                     <div

@@ -1,5 +1,5 @@
 <template>
-    <div class="cursor-pointer">
+    <div class="cursor-pointer shrink-0">
         <picture v-if="!!avatar && !props.user?.avatar?.emoji">
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <source :srcset="avatar.url" type="image/webp" />

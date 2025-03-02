@@ -28,7 +28,7 @@
         <Footer
             :is-loading="state.isLoading"
             :has-more="hasMore"
-            @fetch-more="fetchUserBlacklist">
+            @fetch-more="fetchNew">
         </Footer>
     </div>
 </template>
@@ -109,6 +109,7 @@ async function fetchUserBlacklist() {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false
@@ -141,6 +142,7 @@ async function unblockAllUser() {
         store.setSuccessMsg(`已将${result}位用户移出黑名单！`)
         deleteAllOnUi()
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }finally{
         state.confirmBDialogUi.loading = false
@@ -150,6 +152,10 @@ async function unblockAllUser() {
 
 function deleteAllOnUi(){
     state.blacklist.splice(0)
+}
+
+function fetchNew() {
+    fetchUserBlacklist()
 }
 
 onMounted(() => {

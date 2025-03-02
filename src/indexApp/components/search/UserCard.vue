@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue'
+import { reactive, computed, defineAsyncComponent } from 'vue'
 import Avatar from '@/components/Avatar.vue'
 import Banner from '@/indexApp/components/Banner.vue'
 import { store } from '@/indexApp/js/store.js'
@@ -97,6 +97,7 @@ async function doFollowUser() {
             state.yourFollowStatus = 'WAIT_PASS'
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.loading = false
@@ -113,6 +114,7 @@ async function doUnFollowUser() {
         state.yourFollowStatus = 'NOT_FOLLOW'
         store.setSuccessMsg("取消订阅成功！")
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.loading = false

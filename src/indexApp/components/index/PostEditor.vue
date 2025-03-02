@@ -229,8 +229,10 @@ async function doUploadVideos() {
             if (response.status === 408) {
                 state.videoChunkInfo = await response.json()
                 state.videoUploadFailed = true
+                throw new Error('视频上传中断！')
+            } else {
+                throw new Error((await response.json()).message)
             }
-            throw new Error('视频上传失败！')
         }
 
         const videoId = await response.text()
@@ -269,6 +271,7 @@ async function submitPost() {
         postingNew(state.result)
         handleClose()
     } catch (err) {
+        console.error(e)
         store.setErrorMsg(err.message)
     } finally {
         state.isLoading = false

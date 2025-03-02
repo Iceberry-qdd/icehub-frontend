@@ -22,7 +22,7 @@
 
 <style scoped>
 #footer {
-    height: 10vh;
+    height: 10dvh;
 }
 </style>
 
@@ -60,6 +60,7 @@ async function getReview(id) {
 
         state.review = await response.json()
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }

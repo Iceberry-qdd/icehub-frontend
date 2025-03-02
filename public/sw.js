@@ -13,7 +13,7 @@ clientsClaim()
 
 setCacheNameDetails({
     prefix: 'icehub',
-    suffix: 'v5',
+    suffix: 'v12',
     precache: 'precache',
     runtime: 'runtime',
     googleAnalytics: 'ga'
@@ -22,7 +22,7 @@ setCacheNameDetails({
 const DAY = 24 * 60 * 60
 const SW_VERSION = cacheNames.suffix
 const FIRST_CACHE_TYPE = ['audio', 'audioworklet', 'document', 'embed', 'font', /*'frame', 'fencedframe', 'iframe',*/ 'image', 'json', 'manifest', 'object', 'paintworklet', 'report', 'script', 'sharedworker', 'style', 'track', 'video', 'worker', 'xslt']
-const FIRST_NETWORK_PATTERN = [/\/api\/curUser/, /\/api\/search\/hot.*/]
+const FIRST_NETWORK_PATTERN = [/\/curUser/, /\/search\/hot.*/]
 const PRE_CACHES = /self.__WB_MANIFEST/
 const VUE_FALLBACK_PAGE = PRE_CACHES.find(it => it.url.match(/assets\/GlobalNetworkOffPage\.[0-9a-f]{8}\.js/)).url
 
@@ -44,7 +44,7 @@ FIRST_CACHE_TYPE.forEach(type => {
 
 FIRST_NETWORK_PATTERN.forEach(pattern => {
     registerRoute(
-        ({ url }) => new URL(url).pathname.match(pattern),
+        ({ url }) => new URL(url).origin === import.meta.env.VITE_API_BASE_URL && new URL(url).pathname.match(pattern),
         new NetworkFirst({
             cacheName: `icehub-api-${SW_VERSION}`,
             plugins: [
@@ -56,7 +56,7 @@ FIRST_NETWORK_PATTERN.forEach(pattern => {
 })
 
 registerRoute(
-    ({ url }) => new URL(url).pathname.match(/\/api\/.*/),
+    ({ url }) => new URL(url).host.startsWith('api.'),
     new NetworkOnly({
         cacheName: `icehub-api-${SW_VERSION}`,
         plugins: [

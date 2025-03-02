@@ -84,7 +84,7 @@
                         tag="markdown"
                         :extensions="['exts']"
                         class="break-all overflow-y-hidden"
-                        :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}"
+                        :class="{'shrink-content': state.shrinkContent, 'max-h-[45dvh]': state.shrinkContent}"
                         :markdown="state.reply.content">
                     </VueShowdown>
                 </div>
@@ -317,6 +317,7 @@ const toggleLike = debounce(async function() {
             state.reply.liked = false
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }, 300)

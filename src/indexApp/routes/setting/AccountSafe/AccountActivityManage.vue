@@ -1,5 +1,5 @@
 <template>
-    <div id="setting-data-and-privacy">
+    <div id="setting-account-and-safe">
         <Header
             class="sticky"
             :title="state.headerConfig.title"
@@ -15,7 +15,9 @@
             active>
         </AccountActivityItem>
         <div>
-            <div class="cursor-default px-4 py-2 text-[0.9rem] text-neutral-500">历史活动</div>
+            <div class="cursor-default px-4 py-2 text-[0.9rem] text-neutral-500">
+                历史活动
+            </div>
             <AccountActivityItem
                 v-for="activity in inactiveActivities"
                 :key="activity.id"
@@ -108,6 +110,7 @@ async function fetchActivities() {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false

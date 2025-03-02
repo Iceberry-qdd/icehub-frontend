@@ -101,6 +101,7 @@ async function fetchReviews() {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false

@@ -21,7 +21,7 @@
                 <Transition name="alt">
                     <div
                         v-if="pic.altText && state.showAltText[idx]"
-                        class="absolute bg-black/75 bottom-0 break-words cursor-text h-fit leading-[1.5rem] max-h-full max-sm:bg-white max-sm:dark:bg-[#1e1e1e] max-sm:dark:text-white max-sm:fixed max-sm:max-h-[75vh] max-sm:pt-0 max-sm:rounded-t-[0.75rem] max-sm:text-neutral-700 max-sm:z-[1001] no-scrollbar overflow-scroll p-3 text-[11pt] text-justify text-white w-full z-[100]"
+                        class="absolute bg-black/75 bottom-0 break-words cursor-text h-fit leading-[1.5rem] max-h-full max-sm:bg-white max-sm:dark:bg-[#1e1e1e] max-sm:dark:text-white max-sm:fixed max-sm:max-h-[75dvh] max-sm:pt-0 max-sm:rounded-t-[0.75rem] max-sm:text-neutral-700 max-sm:z-[1001] no-scrollbar overflow-scroll p-3 text-[11pt] text-justify text-white w-full z-[100]"
                         @mouseleave="toggleAltTextShow(idx, false, 'mouseleave')">
                         <div class="bg-white dark:bg-[#1e1e1e] flex h-6 items-center justify-center sm:hidden sticky top-0">
                             <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />
@@ -137,7 +137,7 @@ const wrapperWidth = reactive({
 
 const mPicClass = reactive({
     'aspect-square': gridColCount.value !== 1,
-    'max-h-[90vh]': gridColCount.value === 1,
+    'max-h-[90dvh]': gridColCount.value === 1,
     'bg-no-repeat': true,
     'bg-cover': true,
     'bg-center': true
@@ -162,6 +162,7 @@ async function getImageUrlIgnoreNSFW(index) {
         emits('realImage', {index: index, image: result})
         state.showRealImage[index] = true
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }

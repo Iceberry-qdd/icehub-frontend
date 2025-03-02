@@ -44,7 +44,7 @@
                 v-show="!store.MOBILE_MODE || (store.MOBILE_MODE && state.isShowPostEditor)"
                 id="post-editor"
                 :class="{'fixed-page': store.MOBILE_MODE && state.isShowPostEditor}"
-                class="border-b-[1px] border-border max-sm:fixed max-sm:h-[calc(100vh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
+                class="border-b-[1px] border-border max-sm:fixed max-sm:h-[calc(100dvh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
                 @close="state.isShowPostEditor = false"
                 @get-data="getData"
                 @posting-new="postingNew">
@@ -164,6 +164,7 @@ async function getData() {
             state.lastTimestamp = content.slice(-1)[0].createdTime
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false

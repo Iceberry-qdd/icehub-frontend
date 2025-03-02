@@ -40,6 +40,7 @@ async function blockThisPost() {
         store.setSuccessMsg('将为您减少此类内容!')
         deletePostOnUi(props.post.id)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }

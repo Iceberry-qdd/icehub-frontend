@@ -45,18 +45,18 @@
 <script setup>
 import { reactive, computed, onMounted } from 'vue'
 import { store } from '@/indexApp/js/store.js'
-import { useRoute } from 'vue-router'
-import router from '@/indexApp/js/route.js'
+import { useRoute, useRouter } from 'vue-router'
 import Header from '@/indexApp/components/Header.vue'
 import { getUserInfoByNickname } from '@/indexApp/js/api.js'
 
 const route = useRoute()
+const router = useRouter()
 const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     user: undefined,
     menus: [
-        { id: 'followList', name: '我的订阅' },
-        { id: 'fanList', name: '订阅我的' },
+        { id: 'followList', name: '我订阅' },
+        { id: 'fanList', name: '订阅我' },
     ],
     headerConfig: {
         title: route.params.nickname,
@@ -66,7 +66,7 @@ const state = reactive({
     }
 })
 
-const menuText = computed(() => {
+const genderCall = computed(() => {
     const gender = state.user?.gender
     if (isMyself.value) return '我'
     if (gender == 'FEMALE') return '她'
@@ -94,6 +94,7 @@ async function getUserInfo(nickname) {
         const result = await response.json()
         state.user = result
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }
@@ -101,6 +102,6 @@ async function getUserInfo(nickname) {
 onMounted(async () => {
     const username = route.params.nickname
     await getUserInfo(username)
-    state.menus.forEach(menu => { menu.name = menu.name.replace('我', menuText.value) })
+    state.menus.forEach(menu => { menu.name = menu.name.replace('我', genderCall.value) })
 })
 </script>

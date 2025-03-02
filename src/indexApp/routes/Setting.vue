@@ -1,5 +1,5 @@
 <template>
-    <div class="dark:divide-neutral-700 divide-x flex flex-nowrap flex-row max-sm:h-screen modern-scrollbar-y overflow-y-auto relative">
+    <div class="flex flex-nowrap flex-row lg:dark:divide-neutral-700 lg:divide-x max-sm:h-screen modern-scrollbar-y overflow-y-auto relative">
         <div
             id="setting"
             class="h-screen lg:basis-[30%] max-lg:w-full max-lg:z-[1] sm:max-lg:bg-inherit"
@@ -17,7 +17,7 @@
                     v-for="menu in state.menus.filter(it => it.show)"
                     :key="menu.id"
                     :class="{'bg-[#f4f4f5] dark:bg-primaryContainer border-l-primary dark:border-l-onPrimary border-l-4 pl-[calc(1rem-4px)]': [$route.name, $route.meta?.parent].includes(menu.id)}"
-                    class="flex flex-row hover:bg-helper items-center justify-between max-sm:p-3 p-4 text-[12pt]"
+                    class="flex flex-row hover:bg-helper items-center justify-between max-sm:px-3 p-4 text-[1rem]"
                     @click="routeTo(menu.id)">
                     <div class="flex flex-row gap-x-2 items-center">
                         <span class="material-symbols-rounded no-hover p-0">{{ menu.icon }}</span>

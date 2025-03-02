@@ -10,7 +10,7 @@ const oneHour = oneMinute * 60
 const oneDay = oneHour * 24
 const oneWeek = oneDay * 7
 const oneMonth = oneDay * 30
-const oneYear = oneMonth * 24
+const oneYear = oneMonth * 12
 const conditions = [
     // [上限, 小于上限时显示单位]
     [oneMinute, 'second'],
@@ -21,6 +21,8 @@ const conditions = [
     [oneYear, 'month']
 ]
 export function humanizedTime(timestamps) {
+    if(!timestamps) return undefined
+    
     const now = new Date()
     const postTime = new Date(Number.parseInt(timestamps))
     const timeDiff = now - postTime
@@ -33,7 +35,7 @@ export function humanizedTime(timestamps) {
         }
         lastLimit = limit
     }
-    return postTime
+    return standardDate(timestamps)
 }
 
 const dateTimeFormatOptions = {
@@ -178,4 +180,32 @@ export function toDatePickerFormat(timestamp) {
 export function toTimePickerFormat(timestamp) {
     const date = new Date(timestamp)
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getDate()).padStart(2, '0')}`
+}
+
+/**
+ * 农历时间类，转换为农历时间、判断给定时间是否在农历春节范围内
+ */
+export class LunarDate {
+    static #ONE_DAY = 1000 * 60 * 60 * 24
+    static #format = new Intl.DateTimeFormat("en", { localeMather: "best fit", calendar: "chinese", timezone: "+08:00", day: "2-digit", year: "numeric", month: "2-digit" })
+
+    constructor(timestamp = Date.now()) {
+        this.timestamp = timestamp
+    }
+
+    toLunar() {
+        return new Date(LunarDate.#format.format(new Date(this.timestamp)))
+    }
+
+    #toLunar(timestamp) {
+        return new Date(LunarDate.#format.format(new Date(timestamp)))
+    }
+
+    isInLunarFestival(includeEve = true) {
+        const lunarDate = includeEve ? this.#toLunar(this.timestamp + LunarDate.#ONE_DAY) : this.toLunar()
+        const month = lunarDate.getMonth() + 1
+        const day = lunarDate.getDate()
+
+        return month === 1 && day >= 1 && day <= 15
+    }
 }

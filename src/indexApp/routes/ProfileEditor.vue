@@ -10,7 +10,7 @@
             :icon-tooltip="state.headerConfig.iconTooltip"
             @handle-action="handleSubmit">
         </Header>
-
+    
         <div class="banner-cover">
             <span
                 class="material-symbols-rounded"
@@ -18,12 +18,12 @@
                 edit
             </span>
         </div>
-        
+
         <Banner
             :user="state.newUser"
             class="-mb-[calc(5rem/2)] aspect-video object-center object-cover w-full z-[1]">
         </Banner>
-
+    
         <div class="avatar-cover">
             <span
                 class="material-symbols-rounded"
@@ -31,7 +31,7 @@
                 edit
             </span>
         </div>
-
+    
         <Avatar
             :user="state.newUser"
             class="h-[5rem] rounded-lg text-[5rem] translate-x-[1rem] w-[5rem]">
@@ -59,7 +59,7 @@
                     v-model="state.newUser.remark"
                     class="form-control"
                     placeholder="个人简介">
-                    </textarea>
+                </textarea>
                 <label for="floatingTextarea">个人简介</label>
             </div>
             <div class="form-floating mb-3">
@@ -271,7 +271,7 @@
     left: 0;
     top: 0;
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     background-color: transparent;
     z-index: 1002;
     user-select: none;
@@ -362,6 +362,7 @@ async function checkUsernameValid() {
         const result = await response.text()
         state.isUsernameExisted = result == 'true' ? true : false
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }
 }
@@ -392,6 +393,7 @@ async function submitProfile() {
         store.setSuccessMsg('资料变更成功！')
         router.push({ name: 'profile', params: { nickname: data.nickname } })
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         state.isLoading = false

@@ -81,6 +81,7 @@ async function deleteIt() {
         store.setSuccessMsg("已删除！")
         deletePostOnUi(props.post.id)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         toggleDialogLoading(false)

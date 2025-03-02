@@ -41,22 +41,23 @@ const SettingBlacklistManage = () => import('@/indexApp/routes/setting/DataPriva
 const SettingDisplayTheme = () => import('@/indexApp/routes/setting/DisplayTheme.vue')
 const SettingHelpFeedback = () => import('@/indexApp/routes/setting/HelpFeedback.vue')
 const SettingAbout = () => import('@/indexApp/routes/setting/About.vue')
+const SettingPasskeyManage = () => import('@/indexApp/routes/setting/AccountSafe/PasskeyManage.vue')
 
 const GlobalNotFoundPage = () => import('@/components/GlobalNotFoundPage.vue')
 
 const routes = [
-    { name: 'index', path: '/', component: Index, alias: ['/index', '/home', '/index.html'] },
-    { name: 'explore', path: '/explore', component: Explore },
-    { name: 'bookmark', path: '/bookmark', component: Bookmark },
-    { name: 'search', path: '/search', component: Search },
-    { name: 'profileEdit', path: '/profile/edit', component: ProfileEditor },
-    { name: 'replyDetail', path: '/reply/:id', component: ReplyDetail },
+    { name: 'index', path: '/', component: Index, alias: ['/index', '/home', '/index.html'], meta: { title: '动态' } },
+    { name: 'explore', path: '/explore', component: Explore, meta: { title: '探索' } },
+    { name: 'bookmark', path: '/bookmark', component: Bookmark, meta: { title: '书签' } },
+    { name: 'search', path: '/search', component: Search, meta: { title: '搜索' } },
+    { name: 'profileEdit', path: '/profile/edit', component: ProfileEditor, meta: { title: '编辑个人资料' } },
+    { name: 'replyDetail', path: '/reply/:id', component: ReplyDetail, meta: { title: '评论详情' } },
     {
         path: '/post/:id',
         component: PostDetail,
         meta: { key: 'postDetail' },
         children: [
-            { name: 'postDetail', path: '', component: PostReviewListPage, meta: { key: 'postDetail' } },
+            { name: 'postDetail', path: '', component: PostReviewListPage, meta: { key: 'postDetail', title: '帖子详情' } },
             { name: 'postLikeListPage', path: 'like', component: PostLikeListPage, meta: { key: 'postDetail' } },
             { name: 'postReviewListPage', path: 'review', component: PostReviewListPage, meta: { key: 'postDetail' } },
             { name: 'postRepostListPage', path: 'repost', component: PostRepostListPage, meta: { key: 'postDetail' } }
@@ -67,14 +68,14 @@ const routes = [
         component: Notify,
         meta: { key: 'notify' },
         children: [
-            { name: 'notify', path: '', component: NotifyAllNotifyTimePage, meta: { key: 'notify' } },
-            { name: 'notifyAllTimelinePage', path: 'all', component: NotifyAllNotifyTimePage, meta: { key: 'notify' } },
-            { name: 'notifyLikeTimelinePage', path: 'like', component: NotifyLikeNotifyTimePage, meta: { key: 'notify' } },
-            { name: 'notifyReviewTimelinePage', path: 'review', component: NotifyReviewNotifyTimePage, meta: { key: 'notify' } },
-            { name: 'notifyFanNotifyTimePage', path: 'fan', component: NotifyFanNotifyTimePage, meta: { key: 'notify' } },
-            { name: 'notifyRepostNotifyTimePage', path: 'repost', component: NotifyRepostNotifyTimePage, meta: { key: 'notify' } },
-            { name: 'notifyAtSignNotifyTimePage', path: 'atSign', component: NotifyAtSignNotifyTimePage, meta: { key: 'notify' } },
-            { name: 'notifySysNotifyTimePage', path: 'sys', component: NotifySysNotifyTimePage, meta: { key: 'notify' } }
+            { name: 'notify', path: '', component: NotifyAllNotifyTimePage, meta: { key: 'notify', title: '消息' } },
+            { name: 'notifyAllTimelinePage', path: 'all', component: NotifyAllNotifyTimePage, meta: { key: 'notify', title: '所有消息' } },
+            { name: 'notifyLikeTimelinePage', path: 'like', component: NotifyLikeNotifyTimePage, meta: { key: 'notify', title: '点赞消息' } },
+            { name: 'notifyReviewTimelinePage', path: 'review', component: NotifyReviewNotifyTimePage, meta: { key: 'notify', title: '评论消息' } },
+            { name: 'notifyFanNotifyTimePage', path: 'fan', component: NotifyFanNotifyTimePage, meta: { key: 'notify', title: '粉丝关注消息' } },
+            { name: 'notifyRepostNotifyTimePage', path: 'repost', component: NotifyRepostNotifyTimePage, meta: { key: 'notify', title: '帖子转发消息' } },
+            { name: 'notifyAtSignNotifyTimePage', path: 'atSign', component: NotifyAtSignNotifyTimePage, meta: { key: 'notify', title: '提及我消息' } },
+            { name: 'notifySysNotifyTimePage', path: 'sys', component: NotifySysNotifyTimePage, meta: { key: 'notify', title: '系统消息' } }
         ]
     },
     {
@@ -82,7 +83,7 @@ const routes = [
         component: Profile,
         meta: { key: 'profile' },
         children: [
-            { name: 'profile', path: '', component: ProfilePostTimelinePage, meta: { key: 'profile' } },
+            { name: 'profile', path: '', component: ProfilePostTimelinePage, meta: { key: 'profile', title: '个人主页' } },
             { name: 'postTimelinePage', path: 'posts', component: ProfilePostTimelinePage, meta: { key: 'profile' } },
             { name: 'reviewTimelinePage', path: 'reviews', component: ProfileReviewTimelinePage, meta: { key: 'profile' } },
             { name: 'mediaTimelinePage', path: 'medias', component: ProfileMediaTimelinePage, meta: { key: 'profile' } },
@@ -94,27 +95,28 @@ const routes = [
         component: Follow,
         meta: { key: 'follow' },
         children: [
-            { name: 'followList', path: '/follow/:nickname', component: FollowList, meta: { key: 'follow' } },
-            { name: 'fanList', path: '/fan/:nickname', component: FanList, meta: { key: 'follow' } },
+            { name: 'followList', path: '/follow/:nickname', component: FollowList, meta: { key: 'follow', title: '订阅列表' } },
+            { name: 'fanList', path: '/fan/:nickname', component: FanList, meta: { key: 'follow', title: '粉丝列表' } },
         ]
     },
     {
         path: '/setting',
         component: Setting,
         name: 'setting',
-        meta: { key: 'setting' },
+        meta: { key: 'setting', title: '设置' },
         children: [
-            { name: 'accountSafe', path: 'account&safe', component: SettingAccountSafe, meta: { key: 'setting' } },
-            { name: 'accountActivity', path: 'account&safe/activity', component: SettingAccountActivityManage, meta: { key: 'setting', parent: 'accountSafe' } },
-            { name: 'notifyMsg', path: 'notify&msg', component: SettingNotifyMsg, meta: { key: 'setting' } },
-            { name: 'dataPrivacy', path: 'data&privacy', component: SettingDataPrivacy, meta: { key: 'setting' } },
-            { name: 'blacklist', path: 'data&privacy/blacklist', component: SettingBlacklistManage, meta: { key: 'setting', parent: 'dataPrivacy' } },
-            { name: 'displayTheme', path: 'display&theme', component: SettingDisplayTheme, meta: { key: 'setting' } },
-            { name: 'helpFeedback', path: 'help&feedback', component: SettingHelpFeedback, meta: { key: 'setting' } },
-            { name: 'about', path: 'about', component: SettingAbout, meta: { key: 'setting' } }
+            { name: 'accountSafe', path: 'account&safe', component: SettingAccountSafe, meta: { key: 'setting', title: '设置-账号与安全' } },
+            { name: 'accountActivity', path: 'account&safe/activity', component: SettingAccountActivityManage, meta: { key: 'setting', parent: 'accountSafe', title: '设置-账号与安全-账户活动记录' } },
+            { name: 'notifyMsg', path: 'notify&msg', component: SettingNotifyMsg, meta: { key: 'setting', title: '设置-消息通知' } },
+            { name: 'dataPrivacy', path: 'data&privacy', component: SettingDataPrivacy, meta: { key: 'setting', title: '设置-数据与隐私' } },
+            { name: 'blacklist', path: 'data&privacy/blacklist', component: SettingBlacklistManage, meta: { key: 'setting', parent: 'dataPrivacy', title: '设置-数据与隐私-黑名单管理' } },
+            { name: 'displayTheme', path: 'display&theme', component: SettingDisplayTheme, meta: { key: 'setting', title: '设置-界面个性化设置' } },
+            { name: 'helpFeedback', path: 'help&feedback', component: SettingHelpFeedback, meta: { key: 'setting', title: '设置-帮助与反馈' } },
+            { name: 'about', path: 'about', component: SettingAbout, meta: { key: 'setting', meta: { title: '设置-关于' } } },
+            { name: 'passkey', path: 'account&safe/passkey', component: SettingPasskeyManage, meta: { key: 'setting', parent: 'accountSafe', title: '设置-账号与安全-通行密钥' } },
         ]
     },
-    { path: '/:pathMatch(.*)*', name: 'NotFound', component: GlobalNotFoundPage }
+    { name: 'NotFound', path: '/:pathMatch(.*)*', component: GlobalNotFoundPage, meta: { title: '页面不存在' } }
 ]
 
 const router = createRouter({
@@ -123,6 +125,7 @@ const router = createRouter({
 })
 
 router.onError((e) => {
+    console.error(e)
     store.setErrorMsg('无法加载页面，您可以刷新重试！')
 })
 

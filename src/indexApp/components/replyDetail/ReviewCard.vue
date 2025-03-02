@@ -44,8 +44,8 @@
                         tag="markdown"
                         :extensions="['exts']"
                         :markdown="props.review.content"
-                        class="max-sm:w-[calc(100vw-2.5rem-0.75rem*3)] overflow-hidden sm:w-[calc(36rem-2.5rem-1rem*3)]"
-                        :class="{'shrink-content': state.shrinkContent, 'max-h-[45vh]': state.shrinkContent}">
+                        class="max-sm:w-[calc(100dvw-2.5rem-0.75rem*3)] overflow-hidden sm:w-[calc(36rem-2.5rem-1rem*3)]"
+                        :class="{'shrink-content': state.shrinkContent, 'max-h-[45dvh]': state.shrinkContent}">
                     </VueShowdown>
                     <ImageGrid
                         v-if="props.review.images?.length"

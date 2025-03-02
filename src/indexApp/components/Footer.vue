@@ -1,7 +1,7 @@
 <template>
     <div
         ref="footer"
-        class="dark:text-white/25 flex flex-row h-[10vh] items-center justify-center select-none text-gray-500 text-sm w-full">
+        class="dark:text-white/25 flex flex-row h-[10dvh] items-center justify-center select-none text-gray-500 text-sm w-full">
         <IconLoading
             v-if="props.isLoading"
             class="dark:text-white/50 h-5 text-primary w-5">

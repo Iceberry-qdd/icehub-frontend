@@ -1,5 +1,5 @@
 <template>
-    <div class="dark:text-white/25 flex flex-col h-64 items-center justify-center text-gray-300 w-full">
+    <div class="dark:text-white/25 flex flex-col h-full items-center justify-center text-gray-300 w-full">
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
         <div class="font-bold select-none text-[6rem]">404</div>
         <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->

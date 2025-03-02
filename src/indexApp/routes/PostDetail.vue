@@ -50,7 +50,7 @@
 
 <style scoped>
 #footer {
-    height: 10vh;
+    height: 10dvh;
 }
 
 .reviews-move,

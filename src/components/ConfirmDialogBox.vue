@@ -16,7 +16,7 @@
                     v-if="showConfirmBtn"
                     id="confirmButton"
                     :class="[confirmBtnColor, confirmBtnBgColor]"
-                    class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
+                    class="btn-no-select cursor-pointer font-bold max-sm:py-3 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
                     @click="confirm">
                     {{ confirmBtnText }}
                 </div>
@@ -24,7 +24,7 @@
                     v-if="showCancelBtn"
                     id="cancelButton"
                     :class="[cancelBtnColor, cancelBtnBgColor]"
-                    class="btn-no-select cursor-pointer font-bold max-sm:py-2 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
+                    class="btn-no-select cursor-pointer font-bold max-sm:py-3 min-w-[4.5rem] px-4 py-[0.3rem] rounded-full text-center"
                     @click="cancel">
                     {{ cancelBtnText }}
                 </div>

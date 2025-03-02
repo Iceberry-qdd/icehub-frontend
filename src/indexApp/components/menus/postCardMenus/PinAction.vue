@@ -40,6 +40,7 @@ async function doTogglePin() {
         pinPostOnUi(props.post.id, props.post.top)
         store.setSuccessMsg(`该帖子已${!props.post.top ? '取消置顶' : '置顶'}！`)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     } finally {
         dismissPostMenus()

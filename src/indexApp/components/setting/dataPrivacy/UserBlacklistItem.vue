@@ -29,7 +29,7 @@
         </div>
         <div
             class="bg-primary cursor-pointer flex flex-none flex-nowrap font-bold items-center justify-center place-self-center px-[1rem] py-[0.4rem] rounded-full text-[11pt] text-onPrimary w-[6rem]"
-            @click="state.confirmBDialogUi.show = true">
+            @click="unBlockUser">
             <!-- eslint-disable-next-line vue/singleline-html-element-content-newline -->
             <div v-if="!state.loading">移出</div>
             <IconLoading
@@ -98,13 +98,19 @@ function brief(remark) {
 function choose(args) {
     const choice = args.choice
     if (choice == 'confirm') {
-        unblockUser()
+        doUnblockUser()
     } else {
         state.confirmBDialogUi.show = false
+        state.loading = false
     }
 }
 
-async function unblockUser() {
+function unBlockUser(){
+    state.confirmBDialogUi.show = true
+    state.loading = true
+}
+
+async function doUnblockUser() {
     try {
         state.confirmBDialogUi.loading.show = true
         const response = await deleteOneBlacklist('USER', props.user.id, state.curUser.id)
@@ -118,10 +124,12 @@ async function unblockUser() {
             throw new Error("解除屏蔽失败！")
         }
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
     }finally{
         state.confirmBDialogUi.loading = false
         state.confirmBDialogUi.show = false
+        state.loading = false
     }
 }
 </script>

@@ -65,6 +65,7 @@ async function doRemoveFan(){
         removeFanOnUi()
         dismissProfileMenus()
     }catch(e){
+        console.error(e)
         store.setErrorMsg(e.message)
     }finally{
         state.confirmBDialogUi.loading.show = false

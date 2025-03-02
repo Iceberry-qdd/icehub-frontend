@@ -55,6 +55,7 @@ async function doLogout(){
             throw new Error('退出登录失败！')
         }
     }catch(e){
+        console.error(e)
         store.setErrorMsg(e.message)
     }finally{
         state.confirmBDialogUi.loading.show = false
@@ -85,6 +86,6 @@ function handleClick(){
 
 function redirectToAuth(){
     const origin = location.origin
-    location.replace(`${origin}/auth.html`)
+    location.replace(`${origin}/auth.html?route=login`)
 }
 </script>

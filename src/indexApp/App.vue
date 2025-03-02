@@ -52,7 +52,7 @@
             <div
                 id="main"
                 :class="{'lg:flex-1 max-w-[64rem]': !isSetting, 'lg:flex-[1.8266]': isSetting}"
-                class="max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100vw-5rem)] sm:z-[1]">
+                class="max-sm:pb-[calc(0.5rem*2+0.1rem*2+1.75rem+0.8rem)] min-w-0 relative sm:max-lg:flex sm:max-lg:justify-center sm:max-lg:w-[calc(100dvw-5rem)] sm:z-[1]">
                 <div class="absolute flex items-start justify-center top-2 w-full z-[1999]">
                     <GlobalBanner
                         v-if="store.GLOBAL_MSG.length > 0"
@@ -135,13 +135,13 @@
 
 <!-- eslint-disable vue/max-lines-per-block -->
 <script setup>
-import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, nextTick, provide } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, watch, defineAsyncComponent, ref, provide } from 'vue'
 import { NavigationFailureType, isNavigationFailure } from 'vue-router'
 import { getCurUserInfo } from '@/authApp/js/api.js'
 import { store } from '@/indexApp/js/store.js'
 import { ws } from '@/indexApp/js/websocket.js'
 import { useRoute, useRouter } from 'vue-router'
-import { isType } from '@/indexApp/utils/formatUtils.js'
+import { isType, LunarDate } from '@/indexApp/utils/formatUtils.js'
 import Sidebar from '@/indexApp/components/Sidebar.vue'
 import Recommend from '@/indexApp/components/Recommend.vue'
 import Brand from '@/indexApp/components/Brand.vue'
@@ -187,10 +187,11 @@ async function curUser() {
         const user = JSON.stringify(state.user)
         localStorage.setItem('CUR_USER', user)
     } catch (e) {
+        console.error(e)
         store.setErrorMsg(e.message)
         if(e.message === 'Not Login!'){
             localStorage.removeItem('CUR_USER')
-            location = `${window.origin}/auth.html?url=${btoa(encodeURIComponent(window.location.pathname))}`
+            location = `${window.origin}/auth.html?route=login`
         }
     }
 }
@@ -325,14 +326,8 @@ const routerViewKey = computed(() => {
     else return `${route.name}${suffix}`
 })
 
-onMounted(() => {
-    const url = window.document.location.search
-        .substring(1)
-        .split('&')
-        .find(it => it.substring(0, it.indexOf('=')) === 'url')
-    if(!!url) return
-    
-    nextTick(() => { curUser() })
+onMounted(() => {  
+    curUser()
 
     // router guard settings
     router.beforeEach((to, from) => {
@@ -343,6 +338,9 @@ onMounted(() => {
         state.startRoute = false
         if (failure && !isNavigationFailure(failure, NavigationFailureType.duplicated)) {
             store.setErrorMsg('无法加载页面，您可以刷新重试！')
+        }
+        if(!!to.meta?.title){
+            document.title = 'Icehub-'+to.meta.title
         }
     })
 
@@ -374,6 +372,22 @@ onMounted(() => {
     state.reduceAnimMediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)')
     handleReduceAnimMediaChange(state.reduceAnimMediaQueryList)
     state.reduceAnimMediaQueryList.addEventListener('change', handleReduceAnimMediaChange)
+
+    // Lunar festival accent color settings
+    const isInLunarFestival = new LunarDate(Date.now()).isInLunarFestival()
+    if(isInLunarFestival){
+        let enable = JSON.parse(localStorage.getItem('enableFestivalAccent'))
+
+        if(enable === null){
+            enable = true
+            localStorage.setItem('enableFestivalAccent', enable)
+            localStorage.setItem('accentColor', 'rose')
+        }
+        
+        if(enable === true){
+            document.body.setAttribute('accent','rose')
+        }
+    }
 })
 
 onUnmounted(() => {
