@@ -1,14 +1,14 @@
 <template>
-    <ul class="flex flex-col flex-nowrap justify-start max-lg:gap-y-2 max-sm:bg-background max-sm:border-border max-sm:border-t-[1px] max-sm:bottom-0 max-sm:flex-row max-sm:py-2">
+    <ul class="flex flex-col flex-nowrap justify-start max-lg:gap-y-2 max-sm:bg-background max-sm:border-border max-sm:border-t-[1px] max-sm:flex-row">
         <li
             v-for="menu in state.menus.filter(menu => menu.visible == true)"
             :key="menu.id"
             :title="menu.name"
             :class="{ 'active': menu.active, 'mobile': menu.mobileShow }"
-            class="border-0 flex flex-nowrap items-center justify-between m-[0.2rem] max-lg:py-[0.3rem] max-sm:flex-1 max-sm:flex-col max-sm:m-0 max-sm:px-0 max-sm:py-0 px-[1rem] py-3 sm:flex-row sm:rounded-full"
+            class="border-0 flex flex-nowrap items-center justify-between m-[0.2rem] max-lg:py-[0.3rem] max-sm:flex-1 max-sm:flex-col max-sm:h-16 max-sm:justify-center max-sm:m-0 max-sm:px-0 max-sm:py-0 px-[1rem] py-3 sm:flex-row sm:rounded-full"
             @click="routeTo(menu.routeName, menu.routeParams)">
             <div
-                class="content-center flex flex-nowrap gap-x-[1rem] items-center justify-between max-sm:flex-col max-sm:gap-y-[0.1rem] relative sm:flex-row">
+                class="content-center flex flex-nowrap gap-x-[1rem] items-center justify-between max-sm:flex-col max-sm:gap-y-[0.35rem] relative sm:flex-row">
                 <div
                     v-if="menu.badgeCount"
                     class="absolute bg-red-500 dark:text-onPrimaryContainer leading-3 left-1/2 lg:hidden min-w-[1.05rem] px-[0.3rem] py-[0.15rem] rounded-full select-none text-[0.7rem] text-center text-onPrimary top-0 z-[1]">
@@ -24,7 +24,7 @@
                     </Avatar>
                 </div>
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
-                <span v-else class="dark:text-inherit material-symbols-rounded max-lg:text-[1.5rem] max-sm:px-4 max-sm:py-1 max-sm:rounded-full max-sm:text-[1.25rem] no-hover p-0 rounded-none text-[1.75rem]">{{ menu.icon }}</span>
+                <span v-else class="dark:text-inherit material-symbols-rounded max-lg:text-[1.5rem] max-sm:px-4 max-sm:py-[0.15rem] max-sm:rounded-full max-sm:text-[1.25rem] no-hover p-0 rounded-none text-[1.75rem]">{{ menu.icon }}</span>
                 <span class="btn-no-select font-bold max-sm:leading-4 max-sm:text-[0.8rem] sm:max-lg:hidden text-lg webkit-box-1">{{ menu.name }}</span>
             </div>
 
@@ -47,6 +47,12 @@ li.active {
 }
 
 @media not all and (min-width: 640px) {
+    ul{
+        bottom: 0;
+        padding-bottom: var(--safe-area-max-inset-bottom);
+        bottom: calc(env(safe-area-inset-bottom, 0px) - var(--safe-area-max-inset-bottom));
+    }
+
     li:not(.mobile) {
         display: none;
     }

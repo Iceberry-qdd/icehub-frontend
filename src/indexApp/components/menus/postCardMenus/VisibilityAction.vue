@@ -16,7 +16,7 @@
             <Transition name="fade">
                 <VisibilityChoiceAction
                     v-if="state.showSubAction"
-                    class="absolute left-0 max-sm:bottom-0 max-sm:fixed max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-full max-sm:z-[1001] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-0 z-[99]"
+                    class="absolute left-0 max-sm:fixed max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-full max-sm:z-[1001] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-0 visibility-action z-[99]"
                     :visibility="props.post.status"
                     :ui="state.actions"
                     @picked-visibility="updateVisibility">
@@ -25,6 +25,14 @@
         </Teleport>
     </div>
 </template>
+
+<style scoped>
+@media not all and (min-width: 640px) {
+    .visibility-action{
+        padding-bottom: calc(var(--safe-area-max-inset-bottom) + 1rem);
+    }
+}
+</style>
 
 <script setup>
 import { reactive, computed, inject } from 'vue'

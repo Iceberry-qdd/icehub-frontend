@@ -1,6 +1,6 @@
 <template>
     <div
-        class="bg-[#00000066] fixed-page max-sm:bg-white max-sm:rounded-t-[0.75rem] sm:backdrop-blur-sm"
+        class="bg-[#00000066] fixed-page max-sm:bg-white max-sm:dark:bg-[#1e1e1e] max-sm:rounded-t-[0.75rem] sm:backdrop-blur-sm"
         @click.self="dismiss">
         <div class="bg-white dark:bg-[#1e1e1e] flex h-6 items-center justify-center rounded-t-[0.75rem] sm:hidden">
             <div class="bg-gray-200 dark:bg-neutral-700 h-[0.35rem] rounded-full w-12" />

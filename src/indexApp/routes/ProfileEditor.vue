@@ -133,7 +133,7 @@
             <Transition name="fade">
                 <ImageChangeProper
                     v-if="state.imageChangeProper.show"
-                    class="fixed h-full max-sm:bottom-0 max-sm:h-fit max-sm:z-[1001] sm:top-0 w-full z-[99]"
+                    class="fixed h-full image-change-proper max-sm:h-fit max-sm:z-[1001] sm:top-0 w-full z-[99]"
                     :from="state.imageChangeProper.from"
                     @dismiss="state.imageChangeProper.show = false"
                     @select="handleImageChangeProperSelect">

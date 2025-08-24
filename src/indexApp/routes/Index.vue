@@ -22,7 +22,7 @@
                         v-if="state.theme.showMenu"
                         :icon-map="state.theme.iconMap"
                         :active-mode="state.theme.mode"
-                        class="fixed h-fit max-sm:bottom-0 max-sm:left-0 max-sm:pb-4 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] z-[1002]"
+                        class="fixed h-fit max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] theme-menu z-[1002]"
                         @active-mode="toggleTheme"
                         @dismiss="state.theme.showMenu = false">
                     </ThemeMenu>
@@ -44,7 +44,7 @@
                 v-show="!store.MOBILE_MODE || (store.MOBILE_MODE && state.isShowPostEditor)"
                 id="post-editor"
                 :class="{'fixed-page': store.MOBILE_MODE && state.isShowPostEditor}"
-                class="border-b-[1px] border-border max-sm:fixed max-sm:h-[calc(100dvh-2.5rem)] max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
+                class="border-b-[1px] border-border max-sm:fixed max-sm:overflow-y-auto max-sm:w-screen max-sm:z-[1000] top-0"
                 @close="state.isShowPostEditor = false"
                 @get-data="getData"
                 @posting-new="postingNew">
@@ -63,7 +63,7 @@
         </Footer>
         <div
             id="create-post-btn"
-            class="bg-primary bottom-20 dark:shadow-neutral-800/25 fixed material-symbols-rounded no-hover p-3 right-4 shadow-lg shadow-primary-disable sm:hidden text-white z-[111]"
+            class="bg-primary dark:shadow-neutral-800/25 fixed material-symbols-rounded no-hover p-3 right-4 shadow-lg shadow-primary-disable sm:hidden text-white z-[111]"
             @click="state.isShowPostEditor = true">
             create
         </div>
@@ -71,6 +71,10 @@
 </template>
 
 <style scoped>
+#create-post-btn{
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 5rem);
+}
+
 .v-enter-active {
     animation: slide-in-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
@@ -106,6 +110,14 @@
 @media not all and (min-width: 640px) {
     #main:has(#back-to-top)>#index>#create-post-btn{
         display: none;
+    }
+
+    #post-editor{
+        height: calc(100dvh - 2.5rem - env(safe-area-inset-bottom, 0px) / 2 + 0.1rem);
+    }
+
+    .theme-menu{
+        padding-bottom: calc(var(--safe-area-max-inset-bottom) + 1rem);
     }
 }
 </style>

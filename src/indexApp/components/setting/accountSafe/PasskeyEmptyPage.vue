@@ -22,7 +22,7 @@
         <button
             type="button"
             :class="{'cursor-not-allowed': state.loading}"
-            class="bg-primaryContainer bottom-4 dark:text-onPrimary leading-10 min-w-40 rounded-full sticky text text-primary"
+            class="bg-primaryContainer bottom-4 create-pk-btn dark:text-onPrimary leading-10 min-w-40 rounded-full sticky text text-primary"
             @click="tryCreatePasskey">
             <IconLoading
                 v-if="state.loading"
