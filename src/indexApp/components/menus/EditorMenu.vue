@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <template>
-    <div class="bg-inherit flex flex-row justify-between">
+    <div class="bg-inherit flex flex-row justify-between max-sm:h-auto">
         <div class="content-center flex flex-row gap-x-1 items-center justify-start text-base">
             <input
                 v-show="false"

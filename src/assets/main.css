@@ -300,7 +300,9 @@ body:has(div:where(.fixed-page)) {
     .theme-menu,
     .profile-menu,
     .image-change-proper,
-    .image-cropper-menu{
+    .image-cropper-menu,
+    #reviewEditorMenu,
+    .review-menu{
         bottom: 0;
         padding-bottom: var(--safe-area-max-inset-bottom);
         bottom: calc(env(safe-area-inset-bottom, 0px) - var(--safe-area-max-inset-bottom));
