@@ -38,7 +38,7 @@
             </div>
             <div
                 v-if="state.originImgFile"
-                class="bg-red-500 dark:bg-[#1e1e1e] flex flex-row h-full items-center justify-center sm:basis-3/5">
+                class="bg-black dark:bg-[#1e1e1e] flex flex-row h-full items-center justify-center sm:basis-3/5">
                 <div class="h-fit relative w-fit">
                     <div
                         ref="cropperMask"

@@ -113,7 +113,7 @@
     }
 
     #post-editor{
-        height: calc(100dvh - 2.5rem - env(safe-area-inset-bottom, 0px) / 2 + 0.1rem);
+        height: calc(100dvh - 2.5rem - env(safe-area-inset-bottom, 0px) / 2 + 0.4rem);
     }
 
     .theme-menu{
