@@ -136,6 +136,8 @@ async function getUnreadNotifyCount() {
 }
 
 watch(() => unreadNotifyCount.value, (newVal, oldVal) => {
+    if(!window.isSecureContext) return
+    
     if (newVal <= 0) {
         navigator.clearAppBadge()
     } else {
