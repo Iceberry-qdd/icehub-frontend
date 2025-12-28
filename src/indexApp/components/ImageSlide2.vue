@@ -30,8 +30,8 @@
                 <source :srcset="getRealUrl(index)" type="image/webp" />
                 <img
                     :id="`img-${index}`"
-                    :style="imgClass(index, img.thumb)"
-                    class="bg-center bg-cover bg-no-repeat max-h-screen max-w-[100dvw] transition-all"
+                    :style="imgStyle(index, img.thumb)"
+                    class="bg-center bg-cover bg-no-repeat transition-all"
                     loading="lazy"
                     :src="img.thumb" />
             </picture>
@@ -175,13 +175,53 @@ function scrollToSpec(index){
     container.value.scrollLeft = container.value.offsetWidth * index
 }
 
-function imgClass(index, thumb){
+function imgStyle(index, thumb){
     const editData = state.editData[index]
-    return {
+    const img = state.imgs[index]
+
+    let style = {
         'background-image': `url(${thumb})`,
         'transform': `rotate(${editData.rotateAngle}deg) ${editData.flip ? 'scaleX(-1)' : ''} scale(${Math.max(editData.zoomRatio, 0)})`,
-        'width': editData.mode === 'fit-screen' ? '100dvw' : ''
+        'aspect-ratio': `${img.width}/${img.height}`
     }
+
+    if(editData.mode === 'fit-screen' && img.width >= img.height){
+        style = {
+            ...style,
+            'width': '100dvw'
+        }
+    }
+    
+    if(editData.mode === 'fit-screen' && img.width < img.height){
+        style = {
+            ...style,
+            'height': '100dvh'
+        }
+    }
+
+    if(editData.mode === 'fit-content'){
+        style = {
+            ...style,
+            'max-width': '100dvw',
+            'max-height': '100dvh'
+        }
+    }
+
+    if(editData.mode === 'fit-content' && img.width >= img.height){
+        style = {
+            ...style,
+            'height': `min(${innerHeight.value}px, ${img.height}px)`
+        }
+    }
+
+        if(editData.mode === 'fit-content' && img.width < img.height){
+        style = {
+            ...style,
+            'width': `min(${innerWidth.value}px, ${img.width}px)`
+        }
+    }
+
+    return style
 }
 
 function rotate(angle, index){
