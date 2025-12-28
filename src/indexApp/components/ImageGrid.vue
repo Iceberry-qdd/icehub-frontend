@@ -11,6 +11,12 @@
                 @mouseenter="toggleAltTextShow(idx, true, 'mouseenter')"
                 @click="toggleAltTextShow(idx, true)">
             </IconAltOn>
+            <!-- eslint-disable-next-line vue/html-self-closing -->
+            <div
+                v-if="pic.motionPhotoUrl"
+                class="absolute box-content cursor-pointer h-[1.2rem] left-[0.3rem] material-symbols-rounded no-hover p-[0.25rem] rounded-full text-white top-[0.3rem] w-[1.2rem] z-[100]">
+                motion_play
+            </div>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                 <div
