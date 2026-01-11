@@ -87,7 +87,7 @@
 import { reactive, computed, ref, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
-import IconMotionPhoto from '@/components/icons/IconMotionPhoto.vue'
+const IconMotionPhoto = defineAsyncComponent(() => import('@/components/icons/IconMotionPhoto.vue'))
 const IconGif = defineAsyncComponent(() => import('@/components/icons/IconGif.vue'))
 const IconAltOn = defineAsyncComponent(() => import('@/components/icons/IconAltOn.vue'))
 

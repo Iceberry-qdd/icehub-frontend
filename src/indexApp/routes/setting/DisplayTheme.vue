@@ -139,9 +139,9 @@ print('The product is:', product)
         },
         avatar: 'rounded',
         avatarOptions: {
-            'square': {class : 'rounded-[0!important]', zh: '方形'},
-            'rounded': {class : 'rounded-[16%!important]', zh: '圆角'},
-            'circle': {class : 'rounded-[100%!important]', zh: '圆形'}
+            'square': {class : 'rounded-[0!important] shape-square', zh: '方形'},
+            'rounded': {class : 'rounded-[16%!important] shape-rounded', zh: '圆角'},
+            'circle': {class : 'rounded-[100%!important] shape-circle', zh: '圆形'}
         },
         highlight: 'light',
         highlightOptions: {

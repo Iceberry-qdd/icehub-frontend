@@ -1,5 +1,9 @@
 <template>
     <div class="relative">
+        <IconMotionPhoto
+            v-if="props.image.motionPhotoUrl && !props.image.hidden"
+            class="absolute box-content cursor-pointer left-[0.3rem] no-hover rounded-full text-white top-[0.3rem] z-[100]">
+        </IconMotionPhoto>
         <div
             v-if="props.image.hidden && !state.showRealImage"
             class="absolute flex flex-row h-full items-center justify-center w-full z-[99]">
@@ -54,6 +58,7 @@ import { reactive, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
 import { useRouter } from 'vue-router'
+const IconMotionPhoto = defineAsyncComponent(() => import('@/components/icons/IconMotionPhoto.vue'))
 const IconGif = defineAsyncComponent(() => import('@/components/icons/IconGif.vue'))
 
 const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL

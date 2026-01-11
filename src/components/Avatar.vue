@@ -7,6 +7,7 @@
                 :style="{'background-image': `url(${avatar.thumb})`}"
                 :src="avatar.thumb"
                 class="bg-center bg-cover bg-no-repeat object-cover"
+                :class="cornerShapeClass"
                 loading="lazy"
                 v-bind="$attrs"
                 @click="routeToProfile" />
@@ -14,6 +15,7 @@
         <div
             v-else
             class="default-bg flex img items-center justify-center"
+            :class="cornerShapeClass"
             v-bind="$attrs">
             <!-- eslint-disable-next-line vue/static-class-names-order, vue/singleline-html-element-content-newline -->
             <div class="text-white dark:text-white/75 font-bold text-[45%]">{{ noPicAvatarText }}</div>
@@ -32,6 +34,25 @@
 
 img,.img{
     border-radius: v-bind(borderRadius);
+}
+
+@supports (corner-shape: square){
+    .shape-square{
+        corner-shape: square;
+    }
+}
+
+@supports (corner-shape: squircle){
+    .shape-rounded{
+        corner-shape: squircle;
+        border-radius: 100% !important;
+    }
+}
+
+@supports (corner-shape: round){
+    .shape-circle{
+        corner-shape: round;
+    }
 }
 </style>
 
@@ -88,6 +109,19 @@ const borderRadius = computed(() => {
             return '0'
         default:
             return '16%'
+    }
+})
+
+const cornerShapeClass = computed(() => {
+    switch (store.AVATAR_STYLE) {
+        case 'circle':
+            return 'shape-circle'
+        case 'rounded':
+            return 'shape-rounded'
+        case 'square':
+            return 'shape-square'
+        default:
+            return 'shape-rounded'
     }
 })
 </script>

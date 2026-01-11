@@ -162,10 +162,10 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
-import IconAltOn from '@/components/icons/IconAltOn.vue'
-import IconMotionPhoto from '@/components/icons/IconMotionPhoto.vue'
+const IconAltOn = defineAsyncComponent(() => import('@/components/icons/IconAltOn.vue'))
+const IconMotionPhoto = defineAsyncComponent(() => import('@/components/icons/IconMotionPhoto.vue'))
 
 const BASE_IMAGE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const BASE_VIDEO_URL = import.meta.env.VITE_VIDEO_BASE_URL

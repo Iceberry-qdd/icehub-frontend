@@ -3,8 +3,8 @@
         <svg
             v-if="props.playing"
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            :width="props.size"
+            :height="props.size"
             viewBox="0 0 24 24">
             <g
                 fill="none"
@@ -19,8 +19,8 @@
         <svg
             v-else
             xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
+            :width="props.size"
+            :height="props.size"
             viewBox="0 0 24 24">
             <g
                 fill="none"
@@ -42,6 +42,12 @@
         type: Boolean,
         required: false,
         default: true
-    }
+    },
+    /** 大小 */
+    size: {
+        type: Number,
+        required: false,
+        default: 24
+    },
 })
 </script>
