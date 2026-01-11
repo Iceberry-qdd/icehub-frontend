@@ -26,9 +26,11 @@
             class="flex-none grid h-screen overflow-y-auto place-items-center relative snap-center w-screen"
             @click.self="close">
             <video
-                v-if="img.motionPhotoUrl"
+                v-if="img.motionPhotoUrl && state.activeImgIndex === index"
+                v-show="state.editData[index].playing"
                 :id="`video-${index}`"
                 preload="metadata"
+                :autoplay="state.motionPhotoConfig.autoPlay"
                 playsinline="true"
                 disablepictureinpicture="true"
                 controlslist="nodownload nofullscreen noremoteplayback"
@@ -46,7 +48,7 @@
                 <source :src="getRealVideoUrl(index)" type="video/mp4" />
                 抱歉，你的浏览器不支持 HTML 视频。
             </video>
-            <picture v-else>
+            <picture v-if="!img.motionPhotoUrl || (img.motionPhotoUrl && !state.editData[index].playing)">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <source :srcset="getRealUrl(index)" type="image/webp" />
                 <img
@@ -78,13 +80,13 @@
             </div>
         </div>
         <div class="-translate-x-1/2 backdrop-blur-md bg-gray-500/50 bottom-8 fixed flex flex-nowrap flex-row left-1/2 px-2 rounded-full">
-            <div
+            <IconMotionPhoto
                 v-if="state.imgs[state.activeImgIndex].motionPhotoUrl"
                 title="实况"
-                class="active:text-white material-symbols-rounded no-hover text-white/50"
+                class="active:text-white cursor-pointer no-hover p-2 select-none text-white/50"
+                :playing="state.editData[state.activeImgIndex].playing"
                 @click="playMotionPhoto(state.activeImgIndex)">
-                {{ state.editData[state.activeImgIndex].playing ? 'motion_photos_paused' : 'motion_play' }}
-            </div>
+            </IconMotionPhoto>
             <div
                 v-if="state.imgs[state.activeImgIndex].motionPhotoUrl"
                 title="切换静音"
@@ -160,20 +162,34 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import IconAltOn from '@/components/icons/IconAltOn.vue'
+import IconMotionPhoto from '@/components/icons/IconMotionPhoto.vue'
 
 const BASE_IMAGE_URL = import.meta.env.VITE_IMAGE_BASE_URL
 const BASE_VIDEO_URL = import.meta.env.VITE_VIDEO_BASE_URL
+const MOTION_PHOTO_CONFIG_AUTOPLAY = 'motionPhoto:autoplay'
+const MOTION_PHOTO_CONFIG_MUTE = 'motionPhoto:mute'
 const container = ref()
 const state = reactive({
     imgs: store.SLIDE_DATA.urls,
     activeImgIndex: store.SLIDE_DATA.curIdx,
     scrollSmooth: false,
-    editData: store.SLIDE_DATA.urls.map((_) => {return {rotateAngle: 0, zoomRatio: 1, flip: false, mode: 'fit-content', showOrigin: false, showAlt: false, playing: false}}),
+    editData: store.SLIDE_DATA.urls.map((_) => {
+        return {
+            rotateAngle: 0,
+            zoomRatio: 1,
+            flip: false,
+            mode: 'fit-content',
+            showOrigin: false,
+            showAlt: false,
+            playing: false
+        }
+    }),
     motionPhotoConfig: {
-        mute: true
+        mute: JSON.parse(localStorage.getItem(MOTION_PHOTO_CONFIG_MUTE)) ?? true,
+        autoPlay: JSON.parse(localStorage.getItem(MOTION_PHOTO_CONFIG_AUTOPLAY)) ?? true
     }
 })
 
@@ -192,6 +208,14 @@ const showScrollNext = computed(() => {
 const showScrollPre = computed(() => {
     return state.activeImgIndex > 0
 })
+
+watch(() => state.activeImgIndex, (newVal, _) => {
+    if(state.imgs?.at(newVal)?.motionPhotoUrl && state.motionPhotoConfig.autoPlay === true && state.motionPhotoConfig.mute){
+        nextTick(() => {
+            container.value.querySelector(`#video-${newVal}`)?.play()
+        })
+    }
+}, {immediate: true})
 
 function close() {
     if(store.MOBILE_MODE && state.imgs[state.activeImgIndex].altText && state.editData[state.activeImgIndex].showAlt){
@@ -255,14 +279,14 @@ function imgStyle(index){
     if(editData.mode === 'fit-content' && img.width >= img.height){
         style = {
             ...style,
-            'height': `min(${innerHeight.value}px, ${img.height}px)`
+            'height': `min(100%, ${img.height}px)`
         }
     }
 
         if(editData.mode === 'fit-content' && img.width < img.height){
         style = {
             ...style,
-            'width': `min(${innerWidth.value}px, ${img.width}px)`
+            'width': `min(100%, ${img.width}px)`
         }
     }
 
@@ -300,7 +324,7 @@ function handleIntersection(e){
     const activeImgIndex = [...e].filter(it => it.isIntersecting)
           .map(it => parseInt(it.target.id.split('-').at(-1)))
           .at(0)
-    state.activeImgIndex = activeImgIndex || store.SLIDE_DATA.curIdx
+    state.activeImgIndex = activeImgIndex ?? store.SLIDE_DATA.curIdx
 }
 
 function getRealUrl(index){
@@ -318,6 +342,7 @@ async function playMotionPhoto(index){
 
 function toggleMuteVolume(){
     state.motionPhotoConfig.mute = !state.motionPhotoConfig.mute
+    localStorage.setItem(MOTION_PHOTO_CONFIG_MUTE, JSON.stringify(state.motionPhotoConfig.mute))
 }
 
 function toggleMPPlayStatus(value, index){
