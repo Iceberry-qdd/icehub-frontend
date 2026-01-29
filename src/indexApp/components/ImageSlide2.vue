@@ -247,10 +247,11 @@ function imgStyle(index){
         'aspect-ratio': `${img.width}/${img.height}`
     }
 
-    if(!img.motionPhotoUrl){
+    if(img.thumb){
         style = {
             ...style,
-            'background-image': `url(${img.thumb})`
+            'background-image': `url(${img.thumb})`,
+            'object-fit': 'cover'
         }
     }
 

@@ -71,6 +71,14 @@ const props = defineProps({
     user: {
         type: Object,
         required: true
+    },
+    /**
+     * 是否为演示模式
+     */
+    demoMode: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 })
 
@@ -113,6 +121,10 @@ const borderRadius = computed(() => {
 })
 
 const cornerShapeClass = computed(() => {
+    if(props.demoMode){
+        return ''
+    }
+    
     switch (store.AVATAR_STYLE) {
         case 'circle':
             return 'shape-circle'

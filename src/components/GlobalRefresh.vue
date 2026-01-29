@@ -8,7 +8,8 @@
                 v-for="user in state.users"
                 :key="user.id"
                 :user="user"
-                class="-translate-x-1 border-4 border-border border-solid dark:border-onHelper h-9 rounded-[100%!important] text-[2.25rem] w-9">
+                demo-mode
+                class="-translate-x-1 border-4 border-border border-solid dark:border-onHelper h-9 rounded-[100%!important] shape-circle text-[2.25rem] w-9">
             </Avatar>
         </div>
         <div class="text-sm">新动态</div>
