@@ -277,14 +277,14 @@ function imgStyle(index){
         }
     }
 
-    if(editData.mode === 'fit-content' && img.width >= img.height){
+    if(editData.mode === 'fit-content' && innerHeight.value < innerWidth.value){
         style = {
             ...style,
             'height': `min(100%, ${img.height}px)`
         }
     }
 
-        if(editData.mode === 'fit-content' && img.width < img.height){
+        if(editData.mode === 'fit-content' && innerHeight.value >= innerWidth.value){
         style = {
             ...style,
             'width': `min(100%, ${img.width}px)`
