@@ -26,7 +26,7 @@
                 <img
                     :src="state.image.blob"
                     class="image-picker max-h-[90dvh] max-w-full object-cover" />
-                <div class="absolute bottom-0 flex flex-row gap-x-2 max-sm:bg-zinc-900/75 max-sm:fixed max-sm:gap-x-0 max-sm:left-0 max-sm:p-0 max-sm:w-full p-2 sm:right-0">
+                <div class="absolute bottom-0 flex flex-row gap-x-2 image-editor-menu max-sm:bg-zinc-900/75 max-sm:fixed max-sm:gap-x-0 max-sm:left-0 max-sm:p-0 max-sm:w-full p-2 sm:right-0">
                     <button
                         type="button"
                         title="裁剪"
@@ -125,6 +125,16 @@
 
     button:active {
         background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .image-editor-menu{
+        bottom: 0;
+        padding-bottom: var(--safe-area-max-inset-bottom);
+        bottom: calc(env(safe-area-inset-bottom, 0px) - var(--safe-area-max-inset-bottom));
+    }
+
+    #post-input{
+        bottom: calc(1rem + 1.2rem + 1.2rem + env(safe-area-inset-bottom, 0px));
     }
 }
 

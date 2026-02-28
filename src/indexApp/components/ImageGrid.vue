@@ -11,6 +11,10 @@
                 @mouseenter="toggleAltTextShow(idx, true, 'mouseenter')"
                 @click="toggleAltTextShow(idx, true)">
             </IconAltOn>
+            <IconMotionPhoto
+                v-if="pic.motionPhotoUrl && !(pic.hidden && !state.showRealImage[idx])"
+                class="absolute box-content cursor-pointer h-[1.2rem] left-[0.3rem] no-hover p-[0.25rem] rounded-full text-white top-[0.3rem] w-[1.2rem] z-[100]">
+            </IconMotionPhoto>
             <!-- eslint-disable-next-line vue/max-attributes-per-line -->
             <Teleport to="#app" :disabled="!store.MOBILE_MODE">
                 <div
@@ -83,6 +87,7 @@
 import { reactive, computed, ref, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
 import { getImageUrlIgnoreHidden } from '@/indexApp/js/api.js'
+const IconMotionPhoto = defineAsyncComponent(() => import('@/components/icons/IconMotionPhoto.vue'))
 const IconGif = defineAsyncComponent(() => import('@/components/icons/IconGif.vue'))
 const IconAltOn = defineAsyncComponent(() => import('@/components/icons/IconAltOn.vue'))
 

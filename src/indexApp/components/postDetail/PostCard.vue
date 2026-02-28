@@ -39,7 +39,7 @@
             <Transition name="fade">
                 <PostMenus
                     v-if="state.isShowMenu"
-                    class="absolute cursor-pointer h-auto max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-2 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1000] right-[3%] rounded-[8px] sm:max-w-[18rem] sm:min-w-[12rem] sm:top-[1rem] z-[100]"
+                    class="absolute cursor-pointer h-auto max-sm:fixed max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1000] post-menus right-[3%] rounded-[8px] sm:max-w-[18rem] sm:min-w-[12rem] sm:top-[1rem] z-[100]"
                     :post="state.post">
                 </PostMenus>
             </Transition>
@@ -55,7 +55,7 @@
                     <UserInfoPop
                         v-if="state.showUserInfoPop"
                         :user="state.post.user"
-                        class="absolute h-fit max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] w-[20rem] z-[103]"
+                        class="absolute h-fit max-sm:fixed max-sm:left-0 max-sm:w-screen max-sm:z-[1001] sm:top-[1rem] user-info-pop w-[20rem] z-[103]"
                         @mouseleave="state.showUserInfoPop = false"
                         @close-user-info-pop="state.showUserInfoPop = false">
                     </UserInfoPop>

@@ -26,7 +26,7 @@
                         <ProfileMenu
                             v-if="state.showProfileMenus"
                             :user="state.user"
-                            class="fixed h-fit max-sm:bottom-0 max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] z-[1002]">
+                            class="fixed h-fit max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] profile-menu ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:-translate-x-[calc(100%+1rem)] sm:max-w-[18rem] sm:min-w-[10rem] sm:top-[1rem] z-[1002]">
                         </ProfileMenu>
                     </Transition>
                 </Teleport>
@@ -113,10 +113,10 @@
     background-color: transparent;
 }
 
-@supports (animation-timeline: scroll()){
+@supports (animation-timeline: scroll(y)){
     #profile>#h{
         animation: opacity-progress 3s linear forwards;
-        animation-timeline: scroll();
+        animation-timeline: scroll(y);
         animation-range: entry 0 exit 100px
     }
     
@@ -126,6 +126,13 @@
         }
         to {
             opacity: 100%;
+        }
+    }
+
+    @container html scroll-state(scrollable: none){
+        #profile>#h{
+            animation-direction: reverse;
+            animation-timeline: none;
         }
     }
 }

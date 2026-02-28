@@ -192,9 +192,9 @@ async function followAUser(userId) {
         const result = await response.json()
         if (result?.confirmed) {
             store.setSuccessMsg("订阅成功！")
-            state.yourFollowStatus = 'FOLLOW'
+            state.user.yourFollowStatus = 'FOLLOW'
         } else {
-            state.yourFollowStatus = 'WAIT_PASS'
+            state.user.yourFollowStatus = 'WAIT_PASS'
         }
     } catch (e) {
         console.error(e)
@@ -211,8 +211,8 @@ async function unFollowAUser(userId) {
         if (!response.ok) throw new Error((await response.json()).message)
 
         const result = await response.json()
-        state.yourFollowStatus = 'NOT_FOLLOW'
-        store.setSuccessMsg("取消订阅成功！")
+        state.user.yourFollowStatus = 'NOT_FOLLOW'
+        store.user.setSuccessMsg("取消订阅成功！")
     } catch (e) {
         console.error(e)
         store.setErrorMsg(e.message)

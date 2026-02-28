@@ -94,6 +94,12 @@
 </template>
 
 <style scoped>
+@media not all and (min-width: 640px) {
+    #back-to-top {
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 5rem);
+    }
+}
+
 .btt-fade-enter-active {
     transition: bottom 0.15s ease-in-out;
 }

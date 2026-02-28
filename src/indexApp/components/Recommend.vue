@@ -93,6 +93,6 @@ function routeToSearch(key) {
 
 
 onMounted(() => {
-doGetHotSearch()
+    doGetHotSearch()
 })
 </script>

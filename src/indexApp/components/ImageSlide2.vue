@@ -25,13 +25,36 @@
             :key="index"
             class="flex-none grid h-screen overflow-y-auto place-items-center relative snap-center w-screen"
             @click.self="close">
-            <picture>
+            <video
+                v-if="img.motionPhotoUrl && state.activeImgIndex === index"
+                v-show="state.editData[index].playing"
+                :id="`video-${index}`"
+                preload="metadata"
+                :autoplay="state.motionPhotoConfig.autoPlay"
+                playsinline="true"
+                disablepictureinpicture="true"
+                controlslist="nodownload nofullscreen noremoteplayback"
+                :muted="state.motionPhotoConfig.mute"
+                :poster="getRealUrl(index)"
+                :style="imgStyle(index)"
+                class="bg-center bg-cover bg-no-repeat transition-all"
+                @contextmenu.prevent
+                @playing="toggleMPPlayStatus(true, index)"
+                @play="toggleMPPlayStatus(true, index)"
+                @pause="toggleMPPlayStatus(false, index)"
+                @ended="toggleMPPlayStatus(false, index)"
+                @waiting="toggleMPPlayStatus(true, index)">
+                <!-- eslint-disable-next-line vue/max-attributes-per-line -->
+                <source :src="getRealVideoUrl(index)" type="video/mp4" />
+                抱歉，你的浏览器不支持 HTML 视频。
+            </video>
+            <picture v-if="!img.motionPhotoUrl || (img.motionPhotoUrl && !state.editData[index].playing)">
                 <!-- eslint-disable-next-line vue/max-attributes-per-line -->
                 <source :srcset="getRealUrl(index)" type="image/webp" />
                 <img
                     :id="`img-${index}`"
-                    :style="imgClass(index, img.thumb)"
-                    class="bg-center bg-cover bg-no-repeat max-h-screen max-w-[100dvw] transition-all"
+                    :style="imgStyle(index)"
+                    class="bg-center bg-cover bg-no-repeat transition-all"
                     loading="lazy"
                     :src="img.thumb" />
             </picture>
@@ -57,6 +80,20 @@
             </div>
         </div>
         <div class="-translate-x-1/2 backdrop-blur-md bg-gray-500/50 bottom-8 fixed flex flex-nowrap flex-row left-1/2 px-2 rounded-full">
+            <IconMotionPhoto
+                v-if="state.imgs[state.activeImgIndex].motionPhotoUrl"
+                title="实况"
+                class="active:text-white cursor-pointer no-hover p-2 select-none text-white/50"
+                :playing="state.editData[state.activeImgIndex].playing"
+                @click="playMotionPhoto(state.activeImgIndex)">
+            </IconMotionPhoto>
+            <div
+                v-if="state.imgs[state.activeImgIndex].motionPhotoUrl"
+                title="切换静音"
+                class="active:text-white material-symbols-rounded no-hover text-white/50"
+                @click="toggleMuteVolume">
+                {{ state.motionPhotoConfig.mute ? 'volume_off' : 'volume_up' }} 
+            </div>
             <div
                 title="向左旋转"
                 class="active:text-white material-symbols-rounded max-lg:hidden no-hover text-white/50"
@@ -125,26 +162,36 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch, defineAsyncComponent } from 'vue'
 import { store } from '@/indexApp/js/store.js'
-import IconAltOn from '@/components/icons/IconAltOn.vue'
+const IconAltOn = defineAsyncComponent(() => import('@/components/icons/IconAltOn.vue'))
+const IconMotionPhoto = defineAsyncComponent(() => import('@/components/icons/IconMotionPhoto.vue'))
 
-const BASE_URL = import.meta.env.VITE_IMAGE_BASE_URL
+const BASE_IMAGE_URL = import.meta.env.VITE_IMAGE_BASE_URL
+const BASE_VIDEO_URL = import.meta.env.VITE_VIDEO_BASE_URL
+const MOTION_PHOTO_CONFIG_AUTOPLAY = 'motionPhoto:autoplay'
+const MOTION_PHOTO_CONFIG_MUTE = 'motionPhoto:mute'
 const container = ref()
 const state = reactive({
     imgs: store.SLIDE_DATA.urls,
     activeImgIndex: store.SLIDE_DATA.curIdx,
     scrollSmooth: false,
-    editData: store.SLIDE_DATA.urls.map((_) => {return {rotateAngle: 0, zoomRatio: 1, flip: false, mode: 'fit-content', showOrigin: false, showAlt: false}}),
-})
-
-function close() {
-    if(store.MOBILE_MODE && state.imgs[state.activeImgIndex].altText && state.editData[state.activeImgIndex].showAlt){
-        state.editData[state.activeImgIndex].showAlt = false
-        return
+    editData: store.SLIDE_DATA.urls.map((_) => {
+        return {
+            rotateAngle: 0,
+            zoomRatio: 1,
+            flip: false,
+            mode: 'fit-content',
+            showOrigin: false,
+            showAlt: false,
+            playing: false
+        }
+    }),
+    motionPhotoConfig: {
+        mute: JSON.parse(localStorage.getItem(MOTION_PHOTO_CONFIG_MUTE)) ?? true,
+        autoPlay: JSON.parse(localStorage.getItem(MOTION_PHOTO_CONFIG_AUTOPLAY)) ?? true
     }
-    store.dismissSlide()
-}
+})
 
 const innerWidth = computed(() => {
     return window.innerWidth
@@ -162,6 +209,22 @@ const showScrollPre = computed(() => {
     return state.activeImgIndex > 0
 })
 
+watch(() => state.activeImgIndex, (newVal, _) => {
+    if(state.imgs?.at(newVal)?.motionPhotoUrl && state.motionPhotoConfig.autoPlay === true && state.motionPhotoConfig.mute){
+        nextTick(() => {
+            container.value.querySelector(`#video-${newVal}`)?.play()
+        })
+    }
+}, {immediate: true})
+
+function close() {
+    if(store.MOBILE_MODE && state.imgs[state.activeImgIndex].altText && state.editData[state.activeImgIndex].showAlt){
+        state.editData[state.activeImgIndex].showAlt = false
+        return
+    }
+    store.dismissSlide()
+}
+
 function scrollToNext() {
     container.value.scrollLeft += container.value.offsetWidth
 }
@@ -175,13 +238,60 @@ function scrollToSpec(index){
     container.value.scrollLeft = container.value.offsetWidth * index
 }
 
-function imgClass(index, thumb){
+function imgStyle(index){
     const editData = state.editData[index]
-    return {
-        'background-image': `url(${thumb})`,
+    const img = state.imgs[index]
+
+    let style = {
         'transform': `rotate(${editData.rotateAngle}deg) ${editData.flip ? 'scaleX(-1)' : ''} scale(${Math.max(editData.zoomRatio, 0)})`,
-        'width': editData.mode === 'fit-screen' ? '100dvw' : ''
+        'aspect-ratio': `${img.width}/${img.height}`
     }
+
+    if(img.thumb){
+        style = {
+            ...style,
+            'background-image': `url(${img.thumb})`,
+            'object-fit': 'cover'
+        }
+    }
+
+    if(editData.mode === 'fit-screen' && img.width >= img.height){
+        style = {
+            ...style,
+            'width': '100dvw'
+        }
+    }
+    
+    if(editData.mode === 'fit-screen' && img.width < img.height){
+        style = {
+            ...style,
+            'height': '100dvh'
+        }
+    }
+
+    if(editData.mode === 'fit-content'){
+        style = {
+            ...style,
+            'max-width': '100dvw',
+            'max-height': '100dvh'
+        }
+    }
+
+    if(editData.mode === 'fit-content' && innerHeight.value < innerWidth.value){
+        style = {
+            ...style,
+            'height': `min(100%, ${img.height}px)`
+        }
+    }
+
+        if(editData.mode === 'fit-content' && innerHeight.value >= innerWidth.value){
+        style = {
+            ...style,
+            'width': `min(100%, ${img.width}px)`
+        }
+    }
+
+    return style
 }
 
 function rotate(angle, index){
@@ -215,12 +325,29 @@ function handleIntersection(e){
     const activeImgIndex = [...e].filter(it => it.isIntersecting)
           .map(it => parseInt(it.target.id.split('-').at(-1)))
           .at(0)
-    state.activeImgIndex = activeImgIndex || store.SLIDE_DATA.curIdx
+    state.activeImgIndex = activeImgIndex ?? store.SLIDE_DATA.curIdx
 }
 
 function getRealUrl(index){
     const suffix = state.editData.at(index).showOrigin ? '' : `?max_width=${innerWidth.value}&max_height=${innerHeight.value}`
-    return `${BASE_URL}${state.imgs.at(index).url}${suffix}`
+    return `${BASE_IMAGE_URL}${state.imgs.at(index).url}${suffix}`
+}
+
+function getRealVideoUrl(index){
+    return `${BASE_VIDEO_URL}${state.imgs.at(index).motionPhotoUrl}`
+}
+
+async function playMotionPhoto(index){
+    await container.value.querySelector(`video#video-${index}`).play()
+}
+
+function toggleMuteVolume(){
+    state.motionPhotoConfig.mute = !state.motionPhotoConfig.mute
+    localStorage.setItem(MOTION_PHOTO_CONFIG_MUTE, JSON.stringify(state.motionPhotoConfig.mute))
+}
+
+function toggleMPPlayStatus(value, index){
+    state.editData[index].playing = value
 }
 
 onMounted(() => {

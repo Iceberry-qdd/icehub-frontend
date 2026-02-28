@@ -1,6 +1,15 @@
+:root{
+    --safe-area-max-inset-bottom: env(safe-area-max-inset-bottom, 36px);
+}
+
 html,body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'San Francisco Pro', 'Microsoft YaHei UI', system-ui, sans-serif, 'Segoe UI' !important;
+}
+
+html{
+    container-type: scroll-state;
+    container-name: html;
 }
 
 body {
@@ -167,6 +176,7 @@ span:has(.m-icon):hover:where([theme="dark"], [theme="dark"] *){
 }
 
 .webkit-box-1 {
+    line-clamp: 1;
     -webkit-line-clamp: 1;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -175,6 +185,7 @@ span:has(.m-icon):hover:where([theme="dark"], [theme="dark"] *){
 }
 
 .webkit-box-2 {
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -278,6 +289,23 @@ body:has(div:where(.fixed-page)) {
     .fade-leave-to {
         translate: 0 100%;
         opacity: 1;
+    }
+
+    .user-info-pop,
+    .post-menus,
+    #repostEditorMenu,
+    #postEditorMenu,
+    .visibility-action,
+    .emoji-panel,
+    .theme-menu,
+    .profile-menu,
+    .image-change-proper,
+    .image-cropper-menu,
+    #reviewEditorMenu,
+    .review-menu{
+        bottom: 0;
+        padding-bottom: var(--safe-area-max-inset-bottom);
+        bottom: calc(env(safe-area-inset-bottom, 0px) - var(--safe-area-max-inset-bottom));
     }
 }
 

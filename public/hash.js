@@ -1,7 +1,7 @@
 self.importScripts('https://cdn.jsdelivr.net/npm/spark-md5@3.0.2/spark-md5.min.js')
 
 self.onmessage = function (e) {
-    const targetOrigin = window.location.origin
+    const targetOrigin = location.origin
     const { fileChunk, origin } = e.data
     if (origin !== targetOrigin) return
 

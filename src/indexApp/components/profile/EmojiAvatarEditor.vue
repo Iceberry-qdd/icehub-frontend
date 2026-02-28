@@ -40,7 +40,7 @@
                     背景颜色
                 </div>
             </div>
-            <div class="h-[min(24rem,calc(100dvh-25rem*9/16-2.5rem))] max-sm:h-[calc(100dvh-100dvw*9/16-3rem)] max-sm:pb-4 modern-scrollbar-y overflow-x-hidden overflow-y-auto sm:rounded-b-[8px]">
+            <div class="h-[min(24rem,calc(100dvh-25rem*9/16-2.5rem))] max-sm:h-[calc(100dvh-100dvw*9/16-3rem)] modern-scrollbar-y overflow-x-hidden overflow-y-auto palette sm:rounded-b-[8px]">
                 <Footer
                     class="absolute z-[-1]"
                     is-loading
@@ -119,6 +119,12 @@ details>summary>.material-symbols-rounded {
         translate: -100% 0;
     }
 }
+
+@media not all and (min-width: 640px) {
+    .palette{
+        padding-bottom: calc(var(--safe-area-max-inset-bottom) + 1rem);
+    }
+}
 </style>
 
 <!-- eslint-disable vue/no-setup-props-reactivity-loss -->
@@ -157,6 +163,9 @@ function insertEmojiCode(unified){
 }
 
 function setAvatar(){
+    if(!(/^#[0-9a-fA-F]{6}$/.test(state.user.avatar.emoji.bgColor))){
+        state.user.avatar.emoji.bgColor = undefined
+    }
     emits('avatar', {avatar: state.user.avatar})
     dismiss()
 }

@@ -26,7 +26,7 @@
             name="imgFile"
             accept=".jpg,.png,.jpeg,.bmp,.gif,.svg,.heic,.nef,.webp,.tiff,.tif"
             @change="choosePics" />
-        <div class="bg-white dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-x-[1px] flex flex-nowrap flex-row h-[30rem] max-sm:bg-zinc-900 max-sm:divide-x-0 max-sm:flex-col max-sm:h-[calc(100dvh-4rem-48px)] max-sm:rounded-none max-sm:w-full rounded-[8px] select-none w-[min(50rem,100dvw)]">
+        <div class="bg-white cropper-inner dark:bg-[#1e1e1e] dark:divide-neutral-700 divide-x-[1px] flex flex-nowrap flex-row h-[30rem] max-sm:bg-zinc-900 max-sm:divide-x-0 max-sm:flex-col max-sm:rounded-none max-sm:w-full rounded-[8px] select-none w-[min(50rem,100dvw)]">
             <div
                 v-if="!state.originImgFile"
                 class="-translate-x-1/2 -translate-y-1/2 absolute active:bg-gray-100/50 border-[1px] cursor-pointer dark:active:bg-neutral-700 dark:border-neutral-700 dark:hover:bg-neutral-800 flex flex-col flex-nowrap gap-2 h-[min(50%,15rem)] hover:bg-gray-100 items-center justify-center left-1/2 rounded-[8px] top-1/2 w-[min(50%,25rem)]"
@@ -109,14 +109,14 @@
                     </div>
                     <img
                         ref="originImg"
-                        class="h-auto max-h-[30rem] max-sm:max-h-[calc(100dvh-4rem-48px)]"
+                        class="h-auto max-h-[30rem] origin-img"
                         :src="originImgBlob"
                         @load="initCropper" />
                 </div>
             </div>
             <div
                 v-if="state.originImgFile"
-                class="flex flex-col max-sm:bottom-0 max-sm:fixed max-sm:h-[4rem] max-sm:overflow-x-auto max-sm:overflow-y-hidden modern-scrollbar-y overflow-x-hidden overflow-y-auto relative sm:basis-2/5 w-full">
+                class="flex flex-col image-cropper-menu max-sm:fixed max-sm:overflow-x-auto max-sm:overflow-y-hidden modern-scrollbar-y overflow-x-hidden overflow-y-auto relative sm:basis-2/5 w-full">
                 <div
                     v-if="!showUnImpl"
                     class="flex h-[calc(100%-2.25rem-0.5rem*2)] items-center justify-center max-sm:hidden w-full">
@@ -239,6 +239,18 @@
     .menu > .text {
         color: white;
         font-size: 0.75rem;
+    }
+
+    .cropper-inner,.origin-img{
+        height: calc(100dvh - 4rem - 48px - env(safe-area-inset-bottom, 0px));
+    }
+
+    .image-cropper-menu{
+        height: calc(4rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .origin-img{
+        max-height: unset;
     }
 }
 </style>

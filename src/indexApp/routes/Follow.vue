@@ -55,8 +55,8 @@ const state = reactive({
     curUser: JSON.parse(localStorage.getItem("CUR_USER")),
     user: undefined,
     menus: [
-        { id: 'followList', name: '我订阅' },
         { id: 'fanList', name: '订阅我' },
+        { id: 'followList', name: '我订阅' }
     ],
     headerConfig: {
         title: route.params.nickname,

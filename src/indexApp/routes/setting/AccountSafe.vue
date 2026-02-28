@@ -12,6 +12,7 @@
             <LookupProfile></LookupProfile>
             <ChangePwd v-if="showUnImpl"></ChangePwd>
             <Passkey
+                v-if="state.showPasskey"
                 @click="emits('routeTo', 'passkey')">
             </Passkey>
             <ChangeEmail
@@ -35,7 +36,7 @@
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
 import Header from '@/indexApp/components/Header.vue'
 import ChangePwd from '@/indexApp/components/setting/accountSafe/ChangePwd.vue'
 import LookupProfile from '@/indexApp/components/setting/accountSafe/LookupProfile.vue'
@@ -56,6 +57,7 @@ const state = reactive({
         menuIcon: undefined,
         noBorder: false
     },
+    showPasskey: false,
     setting: {
         enableNativeNotify: false,
         twoFA: {
@@ -65,6 +67,22 @@ const state = reactive({
         changeEmail: {
             oldEmail: 'abcdefg@foxmail.com'
         }
+    }
+})
+
+onMounted(() => {
+    if (window.PublicKeyCredential &&
+        PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable &&
+        PublicKeyCredential.isConditionalMediationAvailable) {
+        // Check if user verifying platform authenticator is available.  
+        Promise.all([
+            PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(),
+            PublicKeyCredential.isConditionalMediationAvailable(),
+        ]).then(results => {
+            if (results.every(r => r === true)) {
+                state.showPasskey = true
+            }
+        })
     }
 })
 </script>

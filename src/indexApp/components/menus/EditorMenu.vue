@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/max-lines-per-block -->
 <template>
-    <div class="bg-inherit flex flex-row justify-between">
+    <div class="bg-inherit flex flex-row justify-between max-sm:h-auto">
         <div class="content-center flex flex-row gap-x-1 items-center justify-start text-base">
             <input
                 v-show="false"
@@ -77,7 +77,7 @@
                             v-if="state.showVisibilityPanel"
                             :id="`${props.switchFrom}-visibility-action`"
                             :switch-id="`${props.switchFrom}-visibility-action`"
-                            class="absolute max-sm:bottom-0 max-sm:fixed max-sm:left-0 max-sm:pb-4 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-full ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] z-[1001]"
+                            class="absolute max-sm:fixed max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-full ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] visibility-action z-[1001]"
                             :visibility="props.visibility"
                             :ui="state.visibilityOptions"
                             @dismiss="dismissVisibilityAction"
@@ -163,7 +163,7 @@
                             <EmojiPanel
                                 :id="`${props.switchFrom}-emoji-panel`"
                                 :switch-id="`${props.switchFrom}-emoji-panel`"
-                                class="absolute dark:border-neutral-700 h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] z-[99]"
+                                class="absolute dark:border-neutral-700 emoji-panel h-[18rem] max-sm:bottom-0 max-sm:fixed max-sm:h-[24rem] max-sm:left-0 max-sm:rounded-b-none max-sm:rounded-t-[0.75rem] max-sm:w-screen max-sm:z-[1001] min-h-[8rem] min-w-max ring-1 ring-slate-900/5 rounded-[8px] shadow-lg sm:top-[2.5rem] z-[99]"
                                 @dismiss-emoji-panel="dismissEmojiPanel"
                                 @insert-emoji-code="insertEmoji">
                             </EmojiPanel>
@@ -259,6 +259,12 @@
 
 .material-symbols-rounded:not(.inactive):where([theme="dark"], [theme="dark"] *):hover{
     color: inherit;
+}
+
+@media not all and (min-width: 640px) {
+    .visibility-action{
+        padding-bottom: calc(var(--safe-area-max-inset-bottom) + 1rem);
+    }
 }
 </style>
 

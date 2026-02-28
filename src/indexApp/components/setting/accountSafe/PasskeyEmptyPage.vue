@@ -22,7 +22,7 @@
         <button
             type="button"
             :class="{'cursor-not-allowed': state.loading}"
-            class="bg-primaryContainer bottom-4 dark:text-onPrimary leading-10 min-w-40 rounded-full sticky text text-primary"
+            class="bg-primaryContainer bottom-4 create-pk-btn dark:text-onPrimary leading-10 min-w-40 rounded-full sticky text text-primary"
             @click="tryCreatePasskey">
             <IconLoading
                 v-if="state.loading"
@@ -125,6 +125,8 @@ async function tryCreatePasskey() {
             store.setWarningMsg('您已取消创建新的通行密钥！')
         } else if (e instanceof DOMException && e.name === 'InvalidStateError' ){
             store.setErrorMsg('该设备上已存在您的通行密钥，请勿重复添加！')
+        } else if(e instanceof DOMException && e.name === 'NotReadableError'){
+            store.setErrorMsg('与密钥管理器交互时发生错误！')
         } else {
             store.setErrorMsg('通行密钥创建失败！')
         }

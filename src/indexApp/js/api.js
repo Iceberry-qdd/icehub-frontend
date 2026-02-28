@@ -6,21 +6,25 @@ export const REDIRECT_FLAG = 'redirect:'
 const { fetch: _fetch } = window
 
 window.fetch = async (...args) => {
-    const [url, config] = args
-    const response = await _fetch(url, { credentials: 'include', redirect: 'follow', ...config })
-
-    if (!response.ok && response.status === 401) {
-        const _response = response.clone()
-        const result = await _response.text()
-        if (result.startsWith(REDIRECT_FLAG)) {
-            const redirectUrl = result.substring(REDIRECT_FLAG.length)
-            location = `${window.origin}${redirectUrl}`
-        } else {
-            location = `${window.origin}/auth.html?route=login`
+    try{
+        const [url, config] = args
+        const response = await _fetch(url, { credentials: 'include', redirect: 'follow', ...config })
+    
+        if (!response.ok && response.status === 401) {
+            const _response = response.clone()
+            const result = await _response.text()
+            if (result.startsWith(REDIRECT_FLAG)) {
+                const redirectUrl = result.substring(REDIRECT_FLAG.length)
+                location = `${window.origin}${redirectUrl}`
+            } else {
+                location = `${window.origin}/auth.html?route=login`
+            }
         }
+    
+        return response
+    } catch(e){
+        throw new Error('网络连接失败')
     }
-
-    return response
 }
 
 /**

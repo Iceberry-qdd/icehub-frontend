@@ -172,6 +172,7 @@ export const store = reactive({
     },
     VIDEO_ERROR_MSG_MAP: new Map([
         ['ENCODING', '视频转码中...'],
+        ['ENCODE_FAIL', '视频转码失败！'],
         [undefined, '视频暂不可用']
     ]),
     getVideoErrorMsg(status){
